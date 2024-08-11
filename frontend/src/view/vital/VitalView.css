@@ -1,0 +1,16 @@
+.MuiTableCell-root {
+  border: 1px solid #e4e4e4;
+}
+
+.MuiTableCell-head {
+  background-color: #f5f5f5;
+  width: 150px;
+  position: 'sticky';
+  left: 0;
+  box-shadow: '5px 2px 5px grey';
+}
+
+.MuiTableCell-sizeMedium {
+  width: 150px;
+  font-weight: 400;
+}

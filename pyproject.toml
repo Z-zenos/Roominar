@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "Roominar"
+version = "0.1.0"
+description = ""
+authors = ["Z-zenos <hoanganhtuanbk2001@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = {extras = ["all"], version = "^0.108.0"}
+uvicorn = {extras = ["standard"], version = "^0.25.0"}
+pydantic = "^2.5.3"
+sqlalchemy = "^2.0.24"
+alembic = "^1.13.1"
+sqlmodel = "^0.0.14"
+passlib = "^1.7.4"
+python-jose = "^3.3.0"
+pandas = "^2.2.2"
+openpyxl = "^3.1.5"
+requests = "^2.32.3"
+psycopg2 = "^2.9.9"
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^3.6.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

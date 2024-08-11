@@ -1,0 +1,17 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "frontend-api-generate",
+            "command": "pnpm",
+            "args": [
+                "run",
+                "generate-api-local",
+                "-y",
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/frontend",
+            },
+        },
+    ]
+}

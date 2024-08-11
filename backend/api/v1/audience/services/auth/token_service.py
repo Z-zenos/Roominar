@@ -1,0 +1,78 @@
+import secrets
+import string
+from datetime import datetime, timedelta, timezone
+from typing import Tuple
+
+from jose import ExpiredSignatureError, JWTError, jwt
+
+from backend.core.config import settings
+from backend.core.error_code import ErrorCode
+from backend.core.exception import BadRequestException, UnauthorizedException
+
+
+def create_token(token_length: int):
+    characters = string.ascii_letters + string.digits
+    token = "".join(secrets.choice(characters) for _ in range(token_length))
+    return token
+
+
+# def create_email_confirmation_token():
+#     expire = datetime.now() + timedelta(
+#         minutes=settings.EMAIL_CONFIRMATION_TOKEN_EXPIRE_MINUTES
+#     )
+#     return create_token(settings.EMAIL_CONFIRMATION_TOKEN_LENGTH), expire
+
+
+def create_refresh_token(data: dict, remember_me: bool) -> Tuple[str, datetime]:
+    to_encode = data.copy()
+    expire = datetime.now() + timedelta(
+        minutes=(
+            settings.REFRESH_TOKEN_REMEMBERED_EXPIRE_MINUTES
+            if remember_me
+            else settings.REFRESH_TOKEN_EXPIRE_MINUTES
+        )
+    )
+
+    to_encode.update({"exp": expire.astimezone(timezone.utc)})
+    encoded_jwt = jwt.encode(
+        to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM
+    )
+    return encoded_jwt, expire
+
+
+def create_access_token(data: dict, expire: datetime):
+    to_encode = data.copy()
+    to_encode.update({"exp": expire.astimezone(timezone.utc)})
+    encoded_jwt = jwt.encode(
+        to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM
+    )
+    return encoded_jwt
+
+
+def verify_refresh_token(token: str):
+    try:
+        payload = jwt.decode(
+            token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
+        )
+        if payload["exp"] < datetime.now().timestamp():
+            raise UnauthorizedException(ErrorCode.ERR_TOKEN_EXPIRED)
+        if not payload["sub"]:
+            raise UnauthorizedException(ErrorCode.ERR_UNAUTHORIZED)
+        return payload
+
+    except ExpiredSignatureError:
+        raise BadRequestException(ErrorCode.ERR_TOKEN_EXPIRED)
+
+    except JWTError:
+        raise BadRequestException(ErrorCode.ERR_INVALID_TOKEN)
+
+
+# def create_reset_password_token():
+#     expire_at = datetime.now() + timedelta(
+#         minutes=settings.RESET_PASSWORD_TOKEN_EXPIRE_MINUTES
+#     )
+
+#     reset_token = create_token(settings.RESET_PASSWORD_TOKEN_LENGTH)
+#     encrypted_token = hashlib.sha256(reset_token.encode("utf-8")).hexdigest()
+
+#     return reset_token, encrypted_token, expire_at
