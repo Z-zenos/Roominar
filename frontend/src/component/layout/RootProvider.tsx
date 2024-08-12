@@ -6,8 +6,6 @@ import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from '@ta
 import type { Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
 import { useMemo } from 'react';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { RecoilRoot } from 'recoil';
 
 export interface IRootProviderProps {
@@ -49,10 +47,7 @@ export default function RootProvider({ children, session }: IRootProviderProps) 
     <ErrorBoundary>
       <SessionProvider session={session}>
         <RecoilRoot>
-          <QueryClientProvider client={queryClient}>
-            <ToastContainer style={{ width: 'fit-content' }} />
-            {children}
-          </QueryClientProvider>
+          <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
         </RecoilRoot>
       </SessionProvider>
     </ErrorBoundary>

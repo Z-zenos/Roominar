@@ -1,5 +1,15 @@
-import LoginView from '@/src/view/login/LoginView';
+import AudLoginForm from '@/src/component/form/AudLoginForm';
 
-export default function Page() {
-  return <LoginView />;
+async function Page() {
+  return (
+    <div className='mx-auto w-[500px] py-[5%]'>
+      <h2 className='text-primary text-lg font-semibold'>Welcome back 👋🏻</h2>
+      <p className='mt-2 mb-8 font-light text-gray-700 text-nm'>
+        Enter to get interesting event & webinar & seminar you like.
+      </p>
+      <AudLoginForm />
+    </div>
+  );
 }
+
+export default Page;

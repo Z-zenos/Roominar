@@ -1,14 +1,18 @@
-import type { Metadata } from 'next';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'ZOLL',
-  description: 'ZOLL',
-};
+import Footer from '@/src/component/common/Footer';
+import Navbar from '@/src/component/common/Navbar';
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <div className='h-[100vh] flex flex-col'>{children}</div>;
+  return (
+    <>
+      <Navbar />
+      {children}
+      <Footer />
+    </>
+  );
 }

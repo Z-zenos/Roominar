@@ -1,21 +1,19 @@
 import LoadingGlobal from '@/src/component/layout/LoadingGlobal';
 import RootProvider from '@/src/component/layout/RootProvider';
-import theme from '@/src/theme/configTheme';
 import authOptions from '@/src/util/authOptions';
-import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
-import { ThemeProvider } from '@mui/material/styles';
 import type { Metadata } from 'next';
 import { getServerSession } from 'next-auth';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
-import { Noto_Sans_JP } from 'next/font/google';
-import '../src/style/globals.css';
-
-const inter = Noto_Sans_JP({ subsets: ['latin'] });
+import '@/src/styles/globals.css';
+import clsx from 'clsx';
+import { fontSans } from '@/src/constant/fonts.constant';
+import { UIProvider } from '@/src/contexts/UIProvider';
+import { Toaster } from 'react-hot-toast';
 
 export const metadata: Metadata = {
-  title: 'ZOLL',
-  description: 'ZOLL',
+  title: 'Roominar',
+  description: 'Webinar & Event System',
 };
 
 export default async function RootLayout({
@@ -30,17 +28,17 @@ export default async function RootLayout({
   const session = await getServerSession(authOptions);
   return (
     <html lang='en' className='bg-[#fff]'>
-      <body className={inter.className}>
-        <AppRouterCacheProvider>
-          <NextIntlClientProvider messages={messages}>
-            <ThemeProvider theme={theme}>
-              <RootProvider session={session}>
-                <LoadingGlobal />
-                {children}
-              </RootProvider>
-            </ThemeProvider>
-          </NextIntlClientProvider>
-        </AppRouterCacheProvider>
+      <head />
+      <body className={clsx('min-h-screen bg-background font-sans antialiased', fontSans.variable)}>
+        <NextIntlClientProvider messages={messages}>
+          <RootProvider session={session}>
+            <UIProvider themeProps={{ attribute: 'class', defaultTheme: 'dark' }}>
+              <LoadingGlobal />
+              <div>{children}</div>
+              <Toaster position='top-right' reverseOrder={false} />
+            </UIProvider>
+          </RootProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

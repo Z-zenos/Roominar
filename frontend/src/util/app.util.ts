@@ -1,7 +1,14 @@
 import routers from '@/src/constant/router.constant';
 import type { GetRouterFunc, RoutersType } from '@/src/type/app';
-import { toastError } from './toast.util';
+import type { ClassValue } from 'clsx';
+import clsx from 'clsx';
+import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import type { ReadonlyURLSearchParams } from 'next/navigation';
+import { toast } from 'react-hot-toast';
+import queryString from 'query-string';
+import { twMerge } from 'tailwind-merge';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getRouter = (name?: RoutersType, ...rest: Array<any>) => {
   if (!name) return '#';
 
@@ -36,7 +43,7 @@ export const parseErrorMessage = (errorMessage?: string) => {
 
 export const handleToast = (code: number, message: string) => {
   if (code === 400) {
-    return toastError(message);
+    return toast.error(message);
   }
   return;
 };
@@ -44,3 +51,26 @@ export const handleToast = (code: number, message: string) => {
 export const camelToSnake = (camelCase: string): string => {
   return camelCase.replace(/([A-Z])/g, '_$1').toLowerCase();
 };
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+export function getTotalQueryParams(searchParams: string) {
+  return Object.keys(queryString.parse(searchParams)).length;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function searchQuery(router: AppRouterInstance, filters: any, searchParams: ReadonlyURLSearchParams) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const refineQuery: { [key: string]: any } = {
+    ...queryString.parse(searchParams.toString()),
+    ...filters,
+  };
+
+  Object.keys(refineQuery).map((key: string) => refineQuery[key] !== 0 && !refineQuery[key] && delete refineQuery[key]);
+
+  const query = queryString.stringify(refineQuery);
+
+  router.push(`?${query}`);
+}

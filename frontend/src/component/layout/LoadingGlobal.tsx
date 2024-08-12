@@ -4,9 +4,7 @@ import { Fragment } from 'react';
 import { useRecoilValue } from 'recoil';
 import { LoadingGlobalState } from '@/src/recoil/app.recoil';
 
-export interface ILoadingGlobalProps {}
-
-export default function LoadingGlobal(props: ILoadingGlobalProps) {
+export default function LoadingGlobal() {
   const loadingGlobalState = useRecoilValue(LoadingGlobalState);
   return (
     <Fragment>

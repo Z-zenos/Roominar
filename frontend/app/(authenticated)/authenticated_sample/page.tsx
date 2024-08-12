@@ -1,11 +1,10 @@
 import type { Metadata } from 'next';
-import AuthenticatedSampleView from '@/src/view/sample/AuthenticatedSampleView';
 
 export default function Page() {
-  return <AuthenticatedSampleView />;
+  return <span>Authenticated</span>;
 }
 
 export const metadata: Metadata = {
-  title: 'ZOLL',
-  description: 'ZOLL | Authenticated Sample',
+  title: 'Roominar',
+  description: 'Roominar | Authenticated Sample',
 };
