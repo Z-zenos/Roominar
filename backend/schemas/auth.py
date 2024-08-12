@@ -7,7 +7,7 @@ class UserLoginRequest(BaseModel):
     email: EmailStr
     password: str
     role_code: str
-    remember_me: bool
+    remember_me: bool | None = None
 
 
 class TokenResponse(BaseModel):

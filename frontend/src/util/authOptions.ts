@@ -23,9 +23,9 @@ const authOptions: AuthOptions = {
       id: 'credentials',
       name: 'credentials',
       credentials: {
-        username: {
-          label: 'username',
-          type: 'text',
+        email: {
+          label: 'email',
+          type: 'email',
         },
         password: {
           label: 'password',
@@ -36,13 +36,13 @@ const authOptions: AuthOptions = {
           type: 'text',
         },
       },
-      async authorize({ username, password, roleCode }) {
-        if (!username || !password) {
+      async authorize({ email, password, roleCode }) {
+        if (!email || !password) {
           throw Error('Invalid credentials');
         }
         return await makeAuthApi().login({
           userLoginRequest: {
-            username,
+            email,
             password,
             roleCode: roleCode,
           },
