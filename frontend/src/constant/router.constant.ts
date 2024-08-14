@@ -25,7 +25,7 @@ const routers = createRouters({
   },
   events: {
     router: (slug: string) => `/events/${slug}`,
-    pattern: '/events/:id',
+    pattern: '/events/:slug',
     private: false,
   },
   search: {

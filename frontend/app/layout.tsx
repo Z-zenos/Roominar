@@ -27,12 +27,12 @@ export default async function RootLayout({
   const messages = await getMessages();
   const session = await getServerSession(authOptions);
   return (
-    <html lang='en' className='bg-[#fff]'>
+    <html lang='en'>
       <head />
       <body className={clsx('min-h-screen bg-background font-sans antialiased', fontSans.variable)}>
         <NextIntlClientProvider messages={messages}>
           <RootProvider session={session}>
-            <UIProvider themeProps={{ attribute: 'class', defaultTheme: 'dark' }}>
+            <UIProvider themeProps={{ attribute: 'class', defaultTheme: 'white' }}>
               <LoadingGlobal />
               <div>{children}</div>
               <Toaster position='top-right' reverseOrder={false} />

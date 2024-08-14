@@ -6,9 +6,9 @@ const audLoginFormSchema = z.object({
   password: z
     .string({ required_error: 'Please enter password.' })
     .trim()
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z_\d@$!%*?&]{8,}$/, {
-      message: 'Invalid password.',
-    })
+    // .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z_\d@$!%*?&]{8,}$/, {
+    //   message: 'Invalid password.',
+    // })
     .min(8, {
       message: 'Invalid password.',
     })

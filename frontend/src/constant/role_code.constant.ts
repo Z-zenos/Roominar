@@ -1,0 +1,6 @@
+export const RoleCode = {
+  AUDIENCE: 'AUDIENCE',
+  ORGANIZER: 'ORGANIZER',
+  SPEAKER: 'SPEAKER',
+  ADMIN: 'ADMIN',
+};

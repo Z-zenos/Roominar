@@ -11,8 +11,17 @@ import {
   NavbarMenuItem,
   Link,
   Button,
+  Dropdown,
+  DropdownTrigger,
+  Avatar,
+  DropdownMenu,
+  DropdownItem,
 } from '@nextui-org/react';
 import Logo from './Logo';
+import { signOut, useSession } from 'next-auth/react';
+import type { Session } from 'next-auth';
+import { useRouter } from 'next/navigation';
+import { RoleCode } from '@/src/constant/role_code.constant';
 
 const menuItems = [
   'Profile',
@@ -29,6 +38,26 @@ const menuItems = [
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const { data: auth, status } = useSession();
+  console.log(auth);
+  const router = useRouter();
+
+  const handleLogout = (auth: Session) => {
+    localStorage.setItem('rememberMe', 'false');
+    if (process.env.NODE_ENV === 'development') {
+      signOut({ redirect: false }).then(() => router.push('/home'));
+    } else {
+      signOut(
+        auth.user.roleCode == RoleCode.ORGANIZER
+          ? { callbackUrl: '/organization/login' }
+          : {
+              callbackUrl: '/home',
+            },
+      ).then(() => {
+        router.refresh();
+      });
+    }
+  };
 
   return (
     <UINavbar
@@ -75,46 +104,49 @@ export default function Navbar() {
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify='end'>
-        <NavbarItem className='hidden lg:flex'>
-          <Link href='/login' underline='hover'>
-            Login
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Button as={Link} color='primary' href='/register' variant='flat' radius='sm'>
-            Sign Up
-          </Button>
-          {/* <Dropdown placement="bottom-end">
-						<DropdownTrigger>
-							<Avatar
-								isBordered
-								as="button"
-								className="transition-transform"
-								color="secondary"
-								name="Jason Hughes"
-								size="sm"
-								src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
-							/>
-						</DropdownTrigger>
-						<DropdownMenu aria-label="Profile Actions" variant="flat">
-							<DropdownItem key="profile" className="h-14 gap-2">
-								<p className="font-semibold">Signed in as</p>
-								<p className="font-semibold">zoey@example.com</p>
-							</DropdownItem>
-							<DropdownItem key="settings">My Settings</DropdownItem>
-							<DropdownItem key="team_settings">Team Settings</DropdownItem>
-							<DropdownItem key="analytics">Analytics</DropdownItem>
-							<DropdownItem key="system">System</DropdownItem>
-							<DropdownItem key="configurations">Configurations</DropdownItem>
-							<DropdownItem key="help_and_feedback">
-								Help & Feedback
-							</DropdownItem>
-							<DropdownItem key="logout" color="danger">
-								Log Out
-							</DropdownItem>
-						</DropdownMenu>
-					</Dropdown> */}
-        </NavbarItem>
+        {status === 'authenticated' ? (
+          <Dropdown placement='bottom-end'>
+            <DropdownTrigger>
+              <Avatar
+                isBordered
+                as='button'
+                className='transition-transform'
+                color='secondary'
+                name='Jason Hughes'
+                size='sm'
+                src={auth?.user?.avatarUrl}
+              />
+            </DropdownTrigger>
+            <DropdownMenu aria-label='Profile Actions' variant='flat'>
+              <DropdownItem key='profile' className='h-14 gap-2'>
+                <p className='font-semibold'>Signed in as</p>
+                <p className='font-semibold'>zoey@example.com</p>
+              </DropdownItem>
+              <DropdownItem key='settings'>My Settings</DropdownItem>
+              <DropdownItem key='team_settings'>Team Settings</DropdownItem>
+              <DropdownItem key='analytics'>Analytics</DropdownItem>
+              <DropdownItem key='system'>System</DropdownItem>
+              <DropdownItem key='configurations'>Configurations</DropdownItem>
+              <DropdownItem key='help_and_feedback'>Help & Feedback</DropdownItem>
+              <DropdownItem key='logout' color='danger' onClick={() => handleLogout(auth)}>
+                Log Out
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+        ) : (
+          <>
+            <NavbarItem className='hidden lg:flex'>
+              <Link href='/login' underline='hover'>
+                Login
+              </Link>
+            </NavbarItem>
+            <NavbarItem>
+              <Button as={Link} color='primary' href='/register' variant='flat' radius='sm'>
+                Sign Up
+              </Button>
+            </NavbarItem>
+          </>
+        )}
       </NavbarContent>
       <NavbarMenu>
         {menuItems.map((item, index) => (

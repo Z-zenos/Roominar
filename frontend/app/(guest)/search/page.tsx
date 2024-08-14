@@ -29,7 +29,7 @@ const Page: FC<Props> = () => {
             content: <Text className='py-[10%] text-center' content='Coming soon.' />,
           },
         ]}
-        className='1600px:px-[20%] px-[15%]'
+        className='px-[10%]'
       />
     </>
   );

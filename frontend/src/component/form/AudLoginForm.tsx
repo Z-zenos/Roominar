@@ -1,12 +1,11 @@
 'use client';
 
-import { useState } from 'react';
-import type { Message } from 'react-hook-form';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { AiOutlineEye, AiOutlineEyeInvisible, AiFillFacebook } from 'react-icons/ai';
 import { FcGoogle } from 'react-icons/fc';
 import { toast } from 'react-hot-toast';
-import { signIn } from 'next-auth/react';
+import { getSession, signIn } from 'next-auth/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { HiMail } from 'react-icons/hi';
 import clsx from 'clsx';
@@ -16,6 +15,11 @@ import { Form, FormCheckBox, FormInput } from './Form';
 import { Label } from '../common/Label';
 import { styles } from '@/src/constant/styles.constant';
 import Button from '../common/Button/Button';
+import { useRouter } from 'next/navigation';
+import { getCookie, setCookie } from 'cookies-next';
+import { initialScreen } from '@/middleware';
+import { RoleCode } from '@/src/constant/role_code.constant';
+import { toCamelCase } from '@/src/util/app.util';
 
 export default function AudLoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -30,40 +34,55 @@ export default function AudLoginForm() {
     resolver: zodResolver(audLoginFormSchema),
   });
 
-  //   useEffect(() => {
-  //     if (isSuccess) {
-  //       const message = data?.message || 'Login successful';
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
-  //       toast.success(message, { duration: 3000 });
-  //       form.reset();
-  //       setTimeout(() => window.location.reload(), 1000);
-  //     }
-  //     if (error) {
-  //       if ('data' in error) {
-  //         const errorData = error as any;
+  useEffect(() => {
+    form.setValue('rememberMe', getCookie('rememberMe') === 'true');
+  }, [form]);
 
-  //         toast.error(errorData.data.message);
-  //       }
-  //     }
-  //   }, [isSuccess, error]);
+  const handleLogin = form.handleSubmit((data: AudLoginFormSchema) => {
+    if (!isLoading) {
+      setIsLoading(true);
 
-  async function handleLoginUser(data: AudLoginFormSchema) {
-    if (Object.keys(form.formState.errors).length === 0 && form.formState.errors.constructor === Object) {
-      try {
-        console.log(data);
-        // await loginUser(data);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (error: any) {
-        toast.error(error?.response?.data?.message as Message);
-      }
-    } else {
-      toast.error(form.formState.errors?.email?.message as Message);
+      setCookie('rememberMe', data.rememberMe?.toString());
+
+      signIn('credentials', {
+        email: data.email,
+        password: data.password,
+        rememberMe: data.rememberMe,
+        redirect: false,
+        roleCode: RoleCode.AUDIENCE,
+      }).then(async (value) => {
+        if (value.status == 200) {
+          const session = await getSession();
+          console.log('aud login', session, value);
+          router.push(initialScreen?.[toCamelCase(session.user).roleCode]);
+          router.refresh();
+        }
+        if (value.status == 401) {
+          setIsLoading(false);
+          return toast.error('Invalid email or password.');
+        }
+        if (value.status == 404) {
+          setIsLoading(false);
+          return toast.error('Invalid email or password.');
+        }
+      });
     }
-  }
+  });
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleLoginUser)} className={clsx('flex items-center justify-center flex-col')}>
+      <form
+        onSubmit={(data) => {
+          if (form.formState.isValid) {
+            setIsLoading(true);
+            handleLogin(data);
+          }
+        }}
+        className={clsx('flex items-center justify-center flex-col')}
+      >
         <div className='w-full'>
           <div className='mb-2 block'>
             <Label htmlFor='email' className={clsx(styles.label)}>

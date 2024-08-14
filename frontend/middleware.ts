@@ -3,8 +3,16 @@ import type { NextRequest } from 'next/server';
 import { NextResponse, URLPattern } from 'next/server';
 import type { JWT } from 'next-auth/jwt';
 import type { IRouter, RoutersType } from '@/src/type/app';
-import routers from '@/src/constant/router.constant';
 import authOptions from '@/src/util/authOptions';
+import routers from './src/constant/router.constant';
+
+export const initialScreen = {
+  AUDIENCE: '/home',
+  SPEAKER: '/home',
+  ORGANIZER: '/organization/events',
+  ADMIN: '/admin/organizers',
+  GUEST: '/home',
+};
 
 const routesPattern = Object.keys(routers).map((name) => {
   const router = routers[name as RoutersType] as IRouter;

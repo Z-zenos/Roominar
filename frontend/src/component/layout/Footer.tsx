@@ -362,7 +362,7 @@ const Footer = () => {
 
             <ul
               style={{ listStyle: 'none' }}
-              className='mt-8 flex flex-wrap justify-start gap-4 text-nm sm:mt-0 lg:justify-end'
+              className='mt-8 flex flex-wrap justify-start gap-4 text-nm sm:mt-0 lg:justify-end '
             >
               <li>
                 <Link

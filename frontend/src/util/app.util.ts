@@ -74,3 +74,16 @@ export function searchQuery(router: AppRouterInstance, filters: any, searchParam
 
   router.push(`?${query}`);
 }
+
+export function toCamelCase(obj) {
+  if (Array.isArray(obj)) {
+    return obj.map((item) => toCamelCase(item));
+  } else if (obj !== null && typeof obj === 'object') {
+    return Object.keys(obj).reduce((acc, key) => {
+      const camelKey = key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+      acc[camelKey] = toCamelCase(obj[key]);
+      return acc;
+    }, {});
+  }
+  return obj;
+}
