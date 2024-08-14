@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from backend.core.constants import RoleCode
+from backend.core.constants import IndustryCode, JobTypeCode, RoleCode
 from backend.models.base_model import BaseModel
 from sqlmodel import DateTime, Enum, Field, String, Text
 
@@ -24,8 +24,8 @@ class User(BaseModel, table=True):
 
     address: Optional[str] = Field(sa_type=Text)
     city_code: Optional[str] = Field(sa_type=String(50))
-    industry_code: Optional[str] = Field(sa_type=String(50))
-    job_type_code: Optional[str] = Field(sa_type=String(20))
+    industry_code: Optional[IndustryCode] = Field(sa_type=Enum(IndustryCode))
+    job_type_code: Optional[JobTypeCode] = Field(sa_type=Enum(JobTypeCode))
     avatar_url: Optional[str] = Field(sa_type=String(2048))
 
     email_verify_token: Optional[str] = Field(sa_type=String(2048))

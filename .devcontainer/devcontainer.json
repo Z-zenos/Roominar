@@ -26,7 +26,7 @@
         3000,
     ],
     // Use 'postCreateCommand' to run commands after the container is created.
-    "postCreateCommand": "poetry install && cd frontend && pnpm install",
+    "postCreateCommand": "poetry install && pre-commit install && cd frontend && pnpm install",
     // Configure tool-specific properties.
     "customizations": {
         "vscode": {
