@@ -123,5 +123,12 @@ class EventStatusCode(str, enum.Enum):
 
 
 class QuestionnaireStatusCode(str, enum.Enum):
-    Open = "OPEN"
-    Archive = "ARCHIVE"
+    OPEN = "OPEN"
+    ARCHIVE = "ARCHIVE"
+
+
+class EventSortByCode(str, enum.Enum):
+    START_AT = "START_AT"
+    PUBLIC_AT = "PUBLIC_AT"
+    APPLICATION_END_AT = "APPLICATION_END_AT"
+    RECOMMEDATION = "RECOMMEDATION"

@@ -2,9 +2,9 @@ from collections import defaultdict
 from datetime import datetime
 
 from pydantic import BaseModel
-from sqlalchemy import Date
-from sqlmodel import Session, and_, asc, case, desc, func, or_, select
+from sqlmodel import Date, Session, and_, asc, case, desc, func, or_, select
 
+from backend.core.constants import EventSortByCode
 from backend.models.application import Application
 from backend.models.bookmark import Bookmark
 from backend.models.event import Event
@@ -12,13 +12,13 @@ from backend.models.event_tag import EventTag
 from backend.models.organization import Organization
 from backend.models.target import Target
 from backend.models.user import User
-from backend.schemas.event import EventSortByCriteria, FilteringEventsQueryParams
+from backend.schemas.event import FilterEventsQueryParams
 
 
 def listing_events(
     db: Session,
     user: User | None,
-    query_params: FilteringEventsQueryParams,
+    query_params: FilterEventsQueryParams,
 ):
     filters = _build_filters(db, user, query_params)
 
@@ -80,7 +80,7 @@ def listing_events(
         query.where(and_(*filters["conditions"]))
         .order_by(
             asc(filters["sort_by"])
-            if query_params.sort_by == EventSortByCriteria.application_end_at
+            if query_params.sort_by == EventSortByCode.APPLICATION_END_AT
             else desc(filters["sort_by"])
         )
         .limit(query_params.per_page)
@@ -145,7 +145,7 @@ def _build_recommendation_targets(targets_list: list):
     return dict(targets)
 
 
-def _build_filters(db: Session, user: User, query_params: FilteringEventsQueryParams):
+def _build_filters(db: Session, user: User, query_params: FilterEventsQueryParams):
     """
     Build conditions for WHERE clause in query from filter query params
     and criteria for ORDER BY clause
@@ -241,21 +241,18 @@ def _build_filters(db: Session, user: User, query_params: FilteringEventsQueryPa
             Event.start_at.cast(Date) <= query_params.ending_starting_period.date()
         )
 
-    if query_params.sort_by == EventSortByCriteria.public_at:
+    if query_params.sort_by == EventSortByCode.PUBLIC_AT:
         filters.append(Event.end_at > datetime.now())
 
-    if query_params.sort_by == EventSortByCriteria.start_at:
+    if query_params.sort_by == EventSortByCode.START_AT:
         filters.append(Event.start_at >= datetime.now())
         sort_by = Event.start_at
 
-    if query_params.sort_by == EventSortByCriteria.application_end_at:
+    if query_params.sort_by == EventSortByCode.APPLICATION_END_AT:
         filters.append(Event.application_end_at >= datetime.now())
         sort_by = Event.application_end_at
 
-    if (
-        query_params.sort_by == EventSortByCriteria.recommendation
-        and recommendation_targets
-    ):
+    if query_params.sort_by == EventSortByCode.RECOMMEDATION and recommendation_targets:
         conditions = []
         rankings = []
 
