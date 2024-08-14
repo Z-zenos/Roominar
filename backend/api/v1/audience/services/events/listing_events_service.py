@@ -12,13 +12,13 @@ from backend.models.event_tag import EventTag
 from backend.models.organization import Organization
 from backend.models.target import Target
 from backend.models.user import User
-from backend.schemas.event import FilterEventsQueryParams
+from backend.schemas.event import SearchEventQueryParams
 
 
 def listing_events(
     db: Session,
     user: User | None,
-    query_params: FilterEventsQueryParams,
+    query_params: SearchEventQueryParams,
 ):
     filters = _build_filters(db, user, query_params)
 
@@ -26,7 +26,6 @@ def listing_events(
         select(
             Event.id,
             Event.slug,
-            Organization.display_name.label("organization_display_name"),
             Organization.name.label("organization_name"),
             Event.name,
             Event.start_at,
@@ -35,7 +34,7 @@ def listing_events(
             Event.application_start_at,
             Event.application_end_at,
             Event.cover_image_url,
-            Event.organize_prefecture_code,
+            Event.organize_city_code,
             Event.organize_place_name,
             Event.organize_address,
             Event.is_online,
@@ -66,7 +65,6 @@ def listing_events(
                 ),
                 else_=False,
             ).label("is_bookmarked"),
-            Organization.display_name.label("organization_display_name"),
             Organization.name.label("organization_name"),
         )
     )
@@ -145,11 +143,7 @@ def _build_recommendation_targets(targets_list: list):
     return dict(targets)
 
 
-def _build_filters(db: Session, user: User, query_params: FilterEventsQueryParams):
-    """
-    Build conditions for WHERE clause in query from filter query params
-    and criteria for ORDER BY clause
-    """
+def _build_filters(db: Session, user: User, query_params: SearchEventQueryParams):
     filters = [
         Event.public_at.isnot(None),
         Event.application_start_at <= datetime.now(),
@@ -194,7 +188,7 @@ def _build_filters(db: Session, user: User, query_params: FilterEventsQueryParam
             )
         )
 
-    if query_params.is_being_accepted:
+    if query_params.is_apply_ongoing:
         filters.extend(
             [
                 and_(Event.application_start_at <= datetime.now()),
@@ -202,16 +196,8 @@ def _build_filters(db: Session, user: User, query_params: FilterEventsQueryParam
             ]
         )
 
-    if query_params.is_finished:
+    if query_params.is_apply_ended:
         filters.append(Event.application_end_at < datetime.now())
-
-    if query_params.employee_size_codes:
-        filters.append(
-            or_(
-                Target.employee_size_codes.any(code)
-                for code in query_params.employee_size_codes
-            )
-        )
 
     if query_params.job_type_codes:
         filters.append(
@@ -223,23 +209,17 @@ def _build_filters(db: Session, user: User, query_params: FilterEventsQueryParam
             or_(Target.industry_codes.any(code) for code in query_params.industry_codes)
         )
 
-    if query_params.prefecture_codes:
-        filters.append(
-            Event.organize_prefecture_code.in_(query_params.prefecture_codes)
-        )
+    if query_params.city_codes:
+        filters.append(Event.organize_city_code.in_(query_params.city_codes))
 
     if query_params.tags:
         filters.append(EventTag.tag_id.in_(query_params.tags))
 
-    if query_params.beginning_starting_period:
-        filters.append(
-            Event.start_at.cast(Date) >= query_params.beginning_starting_period.date()
-        )
+    if query_params.start_start_at:
+        filters.append(Event.start_at.cast(Date) >= query_params.start_start_at.date())
 
-    if query_params.ending_starting_period:
-        filters.append(
-            Event.start_at.cast(Date) <= query_params.ending_starting_period.date()
-        )
+    if query_params.end_start_at:
+        filters.append(Event.start_at.cast(Date) <= query_params.end_start_at.date())
 
     if query_params.sort_by == EventSortByCode.PUBLIC_AT:
         filters.append(Event.end_at > datetime.now())
