@@ -7,6 +7,7 @@ import type { ReadonlyURLSearchParams } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import queryString from 'query-string';
 import { twMerge } from 'tailwind-merge';
+import dayjs from 'dayjs';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getRouter = (name?: RoutersType, ...rest: Array<any>) => {
@@ -86,4 +87,8 @@ export function toCamelCase(obj) {
     }, {});
   }
   return obj;
+}
+
+export function formatEventDate(datetime: Date) {
+  return dayjs(datetime).format('YYYY MMM d - HH:MM');
 }

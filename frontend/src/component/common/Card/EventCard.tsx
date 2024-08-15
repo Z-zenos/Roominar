@@ -11,14 +11,17 @@ import { Image, Link } from '@nextui-org/react';
 import { SlNote } from 'react-icons/sl';
 import { useRouter } from 'next/navigation';
 import { styles } from '@/src/constant/styles.constant';
+import type { ListingEventItem } from '@/src/lib/api/generated';
+import { formatEventDate } from '@/src/util/app.util';
 
 interface EventCardProps {
   className?: string;
   direction?: 'horizontal' | 'vertical';
   variant?: 'simple' | 'complex';
+  event: ListingEventItem;
 }
 
-function EventCard({ className, direction = 'vertical', variant = 'complex' }: EventCardProps) {
+function EventCard({ className, direction = 'vertical', variant = 'complex', event }: EventCardProps) {
   const router = useRouter();
 
   return (
@@ -30,7 +33,7 @@ function EventCard({ className, direction = 'vertical', variant = 'complex' }: E
           : 'border border-gray-200 items-start px-3',
         className,
       )}
-      onClick={() => router.push(`/events/a12`)}
+      onClick={() => router.push(`/events/${event.slug}`)}
     >
       <div
         className={clsx(
@@ -42,45 +45,57 @@ function EventCard({ className, direction = 'vertical', variant = 'complex' }: E
         <div className={clsx(direction === 'vertical' ? '' : 'w-[50%]', 'flex gap-2 flex-col')}>
           <div className='flex gap-3 items-center px-3'>
             <Image
-              src={'https://cdn-icons-png.flaticon.com/128/3175/3175209.png'}
+              src={event.coverImageUrl ?? 'https://cdn-icons-png.flaticon.com/128/3175/3175209.png'}
               width={32}
               height={32}
-              alt='event name'
+              alt='event cover image'
             />
             <div>
-              <p className='font-semibold text-sm'>GOOGLE</p>
+              <p className='font-semibold text-sm'>{event.organizationName}</p>
               <p className='font-light text-xs text-gray-600'>Published on Jan 01, 2023</p>
             </div>
           </div>
 
           <div className='px-3'>
-            <h3 className='font-medium text-nm text-primary line-clamp-2'>Sporty Oplumy Three Year</h3>
-            <p className='text-sm font-light line-clamp-1 text-gray-700'>12 Alainas Streem, Sinas Valley - Hana</p>
+            <h3 className='font-medium text-nm text-primary line-clamp-2'>{event.name}</h3>
+            <p className='text-sm font-light line-clamp-1 text-gray-700'>{event.organizeAddress}</p>
             <span className='flex items-center text-ss gap-1 my-2'>
-              <MdOutlineAccessTime className='text-nm mt-1' /> yyyy MMM d - HH:MM{' '}
-              {direction === 'horizontal' && '〜 yyyy MMM d - HH:MM'}
+              <MdOutlineAccessTime className='text-nm mt-1' /> {formatEventDate(event.startAt)}{' '}
+              {direction === 'horizontal' && '〜' + formatEventDate(event.endAt)}
             </span>
             {direction === 'vertical' && (
               <div className={clsx(styles.between)}>
-                <Chip content='100' leftIcon={<FaUserFriends className='text-sm' />} type='info' />
                 <Chip
-                  content='Google Meet'
-                  leftIcon={<MdOutlineOnlinePrediction className='text-sm' />}
-                  type='success'
+                  content={event.applicationNumber + ''}
+                  leftIcon={<FaUserFriends className='text-sm' />}
+                  type='info'
                 />
+                {event.meetingToolCode && (
+                  <Chip
+                    content={event.meetingToolCode}
+                    leftIcon={<MdOutlineOnlinePrediction className='text-sm' />}
+                    type='success'
+                  />
+                )}
               </div>
             )}
             {direction === 'horizontal' && (
               <div className='flex flex-col justify-start gap-y-2 mt-3'>
                 <div className={clsx(styles.flexStart, 'gap-2 flex-wrap')}>
                   <Chip content='Not open application' className='w-fit' type='error' />
+                  {event.meetingToolCode && (
+                    <Chip
+                      content={event.meetingToolCode}
+                      leftIcon={<MdOutlineOnlinePrediction className='text-sm' />}
+                      className=''
+                      type='success'
+                    />
+                  )}
                   <Chip
-                    content='Google Meet'
-                    leftIcon={<MdOutlineOnlinePrediction className='text-sm' />}
-                    className=''
-                    type='success'
+                    content={event.applicationNumber + ''}
+                    leftIcon={<FaUserFriends className='text-sm' />}
+                    type='info'
                   />
-                  <Chip content='100' leftIcon={<FaUserFriends className='text-sm' />} type='info' />
                 </div>
               </div>
             )}
@@ -89,7 +104,10 @@ function EventCard({ className, direction = 'vertical', variant = 'complex' }: E
 
         <div className={clsx(direction === 'vertical' ? '' : 'w-[45%] flex justify-end items-start h-full')}>
           <Image
-            src={'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVoYkFRN0wzDRnM7OwHq7yINArQLe5UJKV9A&s'}
+            src={
+              event.coverImageUrl ??
+              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVoYkFRN0wzDRnM7OwHq7yINArQLe5UJKV9A&s'
+            }
             alt='event image'
             width={400}
             height={200}
@@ -113,9 +131,6 @@ function EventCard({ className, direction = 'vertical', variant = 'complex' }: E
             <Button isIconOnly color='default' variant='flat'>
               <BsThreeDots size={16} />
             </Button>
-            {/* <Button as={Link} color="primary" href="#" variant="flat">
-						More Detail
-					</Button> */}
           </div>
         </div>
       </div>

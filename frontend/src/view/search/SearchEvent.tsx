@@ -15,13 +15,18 @@ import { searchCourseFormSchema, type SearchCourseFormSchema } from '@/src/schem
 import { styles } from '@/src/constant/styles.constant';
 import { Form } from '@/src/component/form/Form';
 import { searchQuery } from '@/src/util/app.util';
+import { useListingEventQuery } from '@/src/api/event.api';
+import queryString from 'query-string';
+import DotLoader from '@/src/component/common/Loader/DotLoader';
 
 function SearchEvent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  // const { data, isLoading } = useGetAllCoursesQuery({
-  // 	...queryString.parse(searchParams.toString()),
-  // });
+  const { data, isLoading } = useListingEventQuery({
+    ...queryString.parse(searchParams.toString()),
+  });
+
+  console.log(data);
 
   const { width } = useWindowDimensions();
   const FilterContainer = useMemo(() => (width > 1000 ? Fragment : Drawer), [width]);
@@ -88,26 +93,26 @@ function SearchEvent() {
       <form className={clsx(styles.section, 'mt-8')} onSubmit={form.handleSubmit(handleSearch)}>
         <SearchHeader total={12} form={form} onSearch={handleSearch} />
         <div className='py-10 flex 1000px:flex-row 1000px:justify-between 1000px:items-start flex-col items-center justify-center gap-3'>
-          {/* {false ? (
+          {!data && isLoading ? (
             <DotLoader />
-          ) : ( */}
-          <>
-            <FilterContainer {...filterContainerProps}>
-              <SearchFilter
-                className='xl:w-1/5 lg:w-1/4 1000px:w-1/4 w-full h-fit'
-                control={form.control}
-                onSearch={handleSearch}
+          ) : (
+            <>
+              <FilterContainer {...filterContainerProps}>
+                <SearchFilter
+                  className='xl:w-1/5 lg:w-1/4 1000px:w-1/4 w-full h-fit'
+                  control={form.control}
+                  onSearch={handleSearch}
+                />
+              </FilterContainer>
+              <SearchResults
+                events={data?.data}
+                total={data?.total}
+                perPage={data?.perPage}
+                isLoading={isLoading}
+                className='flex 800px:justify-start justify-center flex-wrap lg:w-4/5 w-full h-fit gap-7 1000px:px-5 px-0'
               />
-            </FilterContainer>
-            <SearchResults
-              // courses={[]}
-              total={12}
-              perPage={10}
-              isLoading={false}
-              className='flex 800px:justify-start justify-center flex-wrap lg:w-4/5 w-full h-fit gap-7 1000px:px-5 px-0'
-            />
-          </>
-          {/* )} */}
+            </>
+          )}
         </div>
       </form>
     </Form>

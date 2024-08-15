@@ -4,51 +4,31 @@ import { useRouter } from 'next/navigation';
 import ReactPaginate from 'react-paginate';
 import EventCard from '../../component/common/Card/EventCard';
 import useWindowDimensions from '@/src/hook/useWindowDimension';
+import type { ListingEventItem } from '@/src/lib/api/generated';
 
 interface SearchResultsProps {
   className?: string;
   isLoading?: boolean;
-  // courses: DetailCourseSchema[];
+  events: ListingEventItem[];
   total: number;
   perPage: number;
 }
 
-function SearchResults({
-  className,
-  // courses,
-  total,
-  perPage,
-}: SearchResultsProps) {
+function SearchResults({ className, events, total, perPage }: SearchResultsProps) {
   const { width } = useWindowDimensions();
   const router = useRouter();
 
   return (
     <div className={className}>
-      {/* {courses?.length > 0 &&
-				courses?.map((course: DetailCourseSchema) => (
-					<CourseCard
-						course={course}
-						direction={width < 1024 && width > 800 ? 'horizontal' : 'vertical'}
-						key={`${course.id}`}
-					/>
-				))} */}
-
-      <EventCard
-        direction={(width < 1200 && width > 1000) || width < 800 ? 'vertical' : 'horizontal'}
-        className='w-full'
-      />
-      <EventCard
-        direction={(width < 1200 && width > 1000) || width < 800 ? 'vertical' : 'horizontal'}
-        className='w-full'
-      />
-      <EventCard
-        direction={(width < 1200 && width > 1000) || width < 800 ? 'vertical' : 'horizontal'}
-        className='w-full'
-      />
-      <EventCard
-        direction={(width < 1200 && width > 1000) || width < 800 ? 'vertical' : 'horizontal'}
-        className='w-full'
-      />
+      {events?.length > 0 &&
+        events?.map((event: ListingEventItem) => (
+          <EventCard
+            direction={(width < 1200 && width > 1000) || width < 800 ? 'vertical' : 'horizontal'}
+            className='w-full'
+            event={event}
+            key={event.id}
+          />
+        ))}
 
       <ReactPaginate
         breakLabel='...'
