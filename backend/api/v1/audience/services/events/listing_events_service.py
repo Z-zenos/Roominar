@@ -4,7 +4,7 @@ from datetime import datetime
 from pydantic import BaseModel
 from sqlmodel import Date, Session, and_, asc, case, desc, func, or_, select
 
-from backend.core.constants import EventSortByCode
+from backend.core.constants import EventSortByCode, EventStatusCode
 from backend.models.application import Application
 from backend.models.bookmark import Bookmark
 from backend.models.event import Event
@@ -147,7 +147,7 @@ def _build_filters(db: Session, user: User, query_params: SearchEventQueryParams
     filters = [
         Event.public_at.isnot(None),
         Event.application_start_at <= datetime.now(),
-        Event.private_flag.is_(False),
+        Event.status == EventStatusCode.PUBLIC,
     ]
     sort_by = Event.public_at
     recommendation_targets = []

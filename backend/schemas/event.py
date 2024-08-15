@@ -30,28 +30,30 @@ class ListingEventItem(BaseModel):
 
 
 class SearchEventQueryParams(BaseModel):
-    keyword: Optional[str] = Field(Query())
+    keyword: Optional[str] = Field(Query(default=None))
 
     # exclude_bookmarks: Optional[bool] = Field(Query(default=False)
     # exclude_applications: Optional[bool] = Field(Query(default=False)
-    is_online: Optional[bool] = Field(Query())
-    is_offline: Optional[bool] = Field(Query())
-    is_apply_ongoing: Optional[bool] = Field(Query())
-    is_apply_ended: Optional[bool] = Field(Query())
+    is_online: Optional[bool] = Field(Query(default=False))
+    is_offline: Optional[bool] = Field(Query(default=False))
+    is_apply_ongoing: Optional[bool] = Field(Query(default=False))
+    is_apply_ended: Optional[bool] = Field(Query(default=False))
 
-    job_type_codes: Optional[list[JobTypeCode]] = Field(Query(default=[]))
-    industry_codes: Optional[list[IndustryCode]] = Field(Query(default=[]))
-    city_codes: Optional[list[str]] = Field(Query())
-    tags: Optional[list[int]] = Field(Query())
+    job_type_codes: list[JobTypeCode] = Field(Query(default=None))
+    industry_codes: list[IndustryCode] = Field(Query(default=None))
+    city_codes: list[str] = Field(Query(default=None))
+    tags: list[int] = Field(Query(default=None))
 
-    start_start_at: Optional[datetime] = Field(Query())
-    end_start_at: Optional[datetime] = Field(Query())
+    start_start_at: Optional[datetime] = Field(Query(default=None))
+    end_start_at: Optional[datetime] = Field(Query(default=None))
 
     sort_by: Optional[EventSortByCode] = Field(Query(default=EventSortByCode.PUBLIC_AT))
     per_page: Optional[int] = Field(Query(default=10, le=100, ge=1))
     page: Optional[int] = Field(Query(default=1, ge=1))
 
-    @field_validator("job_type_codes", "industry_codes", "tags", mode="before")
+    @field_validator(
+        "job_type_codes", "industry_codes", "city_codes", "tags", mode="before"
+    )
     def check_list_empty(cls, v):
         return v or []
 
