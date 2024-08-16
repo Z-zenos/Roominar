@@ -80,27 +80,27 @@ export function searchQuery(
   router: AppRouterInstance,
   filters: EventsApiListingEventsRequest,
   searchParams: ReadonlyURLSearchParams,
+  exclude_queries: string[],
 ) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let refineQuery: { [key: string]: any } = {
     ...queryString.parse(searchParams.toString()),
     ...filters,
   };
+  console.log(refineQuery);
+  for (const query of exclude_queries) {
+    console.log(query);
+    delete refineQuery[query];
+  }
 
   refineQuery = camelToSnake(refineQuery);
 
   for (const key in refineQuery) {
-    if (
-      refineQuery[key] === null ||
-      refineQuery[key] === undefined ||
-      (Array.isArray(refineQuery[key]) && refineQuery[key].length === 0)
-    ) {
+    if (!refineQuery[key] || (Array.isArray(refineQuery[key]) && refineQuery[key].length === 0)) {
       delete refineQuery[key];
     }
   }
-
   const query = queryString.stringify(refineQuery);
-
   router.push(`?${query}`);
 }
 

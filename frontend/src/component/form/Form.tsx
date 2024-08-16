@@ -14,6 +14,7 @@ import { DateRangePicker, type DateRangePickerProps } from '../common/Datetime/D
 import Checkbox from '../common/Input/Checkbox';
 import type { TextInputProps } from '../common/Input/TextInput';
 import TextInput from '../common/Input/TextInput';
+import dayjs from 'dayjs';
 
 const Form = FormProvider;
 
@@ -243,7 +244,7 @@ const FormCheckBox = ({ name, control, onSearch, ...props }: FormCheckBoxProps) 
         <FormItem className='flex flex-row items-center justify-start space-x-1'>
           <FormControl>
             <Checkbox
-              checked={field.value ?? undefined}
+              checked={field.value}
               {...props}
               onCheckedChange={(checked) => {
                 field.onChange(checked);
@@ -362,8 +363,9 @@ const FormDateRangePicker = ({ name, control, onSearch, className }: FormDateRan
               daterange={field.value}
               onDateRangeChange={(daterange: DateRange | undefined) => {
                 field.onChange(daterange);
+
                 // eslint-disable-next-line @typescript-eslint/ban-types
-                (onSearch as Function)({ registerDateRange: daterange });
+                (onSearch as Function)({ start_at_range: daterange });
               }}
             />
           </FormControl>
