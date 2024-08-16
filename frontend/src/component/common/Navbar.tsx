@@ -39,7 +39,6 @@ const menuItems = [
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const { data: auth, status } = useSession();
-  console.log(auth);
   const router = useRouter();
 
   const handleLogout = (auth: Session) => {

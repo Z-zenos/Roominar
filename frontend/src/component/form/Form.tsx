@@ -206,9 +206,10 @@ const FormCheckBoxList = ({ items, name, control, onSearch, className, ...props 
                             newItems = field.value?.filter((value: any) => value !== item.value);
                           }
                           field.onChange(newItems);
-                          (onSearch as Function)({
-                            [`${name}`]: newItems,
-                          });
+                          if (onSearch)
+                            onSearch({
+                              [`${name}`]: newItems,
+                            });
                         }}
                         title={item.label}
                       />
@@ -242,7 +243,7 @@ const FormCheckBox = ({ name, control, onSearch, ...props }: FormCheckBoxProps) 
         <FormItem className='flex flex-row items-center justify-start space-x-1'>
           <FormControl>
             <Checkbox
-              checked={field.value || false}
+              checked={field.value ?? undefined}
               {...props}
               onCheckedChange={(checked) => {
                 field.onChange(checked);

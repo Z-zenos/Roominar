@@ -12,13 +12,13 @@ import { Label } from '../../component/common/Label';
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/react';
 import { FormCheckBox, FormCheckBoxList, FormDateRangePicker } from '@/src/component/form/Form';
 import { styles } from '@/src/constant/styles.constant';
-import type { SearchCourseFormSchema } from '@/src/schemas/course/SearchCourseFormSchema';
-import { INDUSTRY_CODES } from '@/src/constant/industry_code.constant';
+import { IndustryCode, type EventsApiListingEventsRequest } from '@/src/lib/api/generated';
+import { parseCode } from '@/src/util/app.util';
 
 interface SearchFilterProps {
   className?: string;
-  control: Control<SearchCourseFormSchema>;
-  onSearch: (data: SearchCourseFormSchema) => void;
+  control: Control<EventsApiListingEventsRequest>;
+  onSearch: (data: EventsApiListingEventsRequest) => void;
 }
 
 function SearchFilter({ className, control, onSearch }: SearchFilterProps) {
@@ -35,13 +35,13 @@ function SearchFilter({ className, control, onSearch }: SearchFilterProps) {
     >
       <FilterBox title='Industry'>
         <FormCheckBoxList
-          name='industries'
+          name='industryCodes'
           control={control}
-          items={Object.keys(INDUSTRY_CODES)
-            .slice(0, showMoreIndustryCodes ? Object.keys(INDUSTRY_CODES).length : 7)
-            .map((industryCode: string) => ({
-              value: industryCode,
-              label: INDUSTRY_CODES[industryCode],
+          items={Object.keys(IndustryCode)
+            .slice(0, showMoreIndustryCodes ? Object.keys(IndustryCode).length : 7)
+            .map((ic: string) => ({
+              value: IndustryCode[ic],
+              label: parseCode(IndustryCode[ic]),
             }))}
           onSearch={onSearch}
         />
@@ -54,9 +54,9 @@ function SearchFilter({ className, control, onSearch }: SearchFilterProps) {
           {showMoreIndustryCodes ? <FaChevronUp /> : <FaChevronDown />}
         </Link>
       </FilterBox>
-      <FilterBox title='Category'>
+      <FilterBox title='Tags'>
         <Button radius='sm' variant='bordered' color='primary' startContent={<IoMdAdd />} onPress={onOpen}>
-          Add category
+          Add tags
         </Button>
         <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement='top-center' size='2xl'>
           <ModalContent>
@@ -68,9 +68,9 @@ function SearchFilter({ className, control, onSearch }: SearchFilterProps) {
                     className='flex justify-start flex-wrap items-center gap-3'
                     name='categories'
                     control={control}
-                    items={Object.keys(INDUSTRY_CODES).map((industryCode: string) => ({
-                      value: industryCode,
-                      label: INDUSTRY_CODES[industryCode],
+                    items={Object.keys(IndustryCode).map((ic: string) => ({
+                      value: IndustryCode[ic],
+                      label: parseCode(IndustryCode[ic]),
                     }))}
                     onSearch={onSearch}
                   />
@@ -100,7 +100,7 @@ function SearchFilter({ className, control, onSearch }: SearchFilterProps) {
       <FilterBox title='Timeline'>
         <FormCheckBox name='today' control={control} onSearch={onSearch} title='Today' />
         <FormCheckBox name='isOnGoing' control={control} onSearch={onSearch} title='On going' />
-        <FormCheckBox name='isApplicationOpening' control={control} onSearch={onSearch} title='Opening Application' />
+        <FormCheckBox name='isApplyOngoing' control={control} onSearch={onSearch} title='Opening Application' />
         <Label className='mt-3'>Start date</Label>
         <FormDateRangePicker name='startDateRange' control={control} className='w-full' onSearch={onSearch} />
       </FilterBox>

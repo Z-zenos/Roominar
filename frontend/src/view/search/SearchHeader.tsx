@@ -9,19 +9,21 @@ import { Button } from '@nextui-org/button';
 import Text from '../../component/common/Typography/Text';
 import { SelectInput } from '../../component/common/Input/SelectInput';
 import { HiOutlineAdjustmentsHorizontal } from 'react-icons/hi2';
-import type { SearchCourseFormSchema } from '@/src/schemas/course/SearchCourseFormSchema';
 import { FormInput } from '@/src/component/form/Form';
+import type { EventsApiListingEventsRequest } from '@/src/lib/api/generated';
+import { useRouter } from 'next/navigation';
 
 interface SearchHeaderProps {
   total?: number;
-  onSearch: (data: SearchCourseFormSchema) => void;
+  onSearch: (data: EventsApiListingEventsRequest) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  form: UseFormReturn<SearchCourseFormSchema, any, undefined>;
+  form: UseFormReturn<EventsApiListingEventsRequest, any, undefined>;
 }
 
-function SearchHeader({ total, onSearch, form }: SearchHeaderProps) {
-  const { control, getValues, setValue, reset } = form;
+function SearchHeader({ total, form }: SearchHeaderProps) {
+  const { control, getValues, reset } = form;
   const filters: { [key: string]: any } = getValues();
+  const router = useRouter();
 
   return (
     <div className='pb-4 border-b border-b-gray-200 800px:px-0 400px:px-5'>
@@ -43,14 +45,17 @@ function SearchHeader({ total, onSearch, form }: SearchHeaderProps) {
             )}
             radius='sm'
             size='md'
-            onClick={() => reset({})}
+            onClick={() => {
+              reset({});
+              router.push('/search');
+            }}
             startContent={<GrPowerReset />}
           >
             Reset
           </Button>
           <div className='600px:min-w-[300px] min-w-full'>
             <FormInput
-              name='name'
+              name='keyword'
               leftIcon={<IoSearchOutline size={20} />}
               placeholder='Find web(sem)inar events you like...'
               className='w-full'
@@ -83,7 +88,7 @@ function SearchHeader({ total, onSearch, form }: SearchHeaderProps) {
       <div className='flex justify-between items-center mt-4 flex-wrap gap-2'>
         <div className='flex justify-end items-center gap-4'>
           <Text content='Suggestion: ' className='font-light' />
-          <div className='flex justify-start gap-2'>
+          {/* <div className='flex justify-start gap-2'>
             {['english', 'hat', 'TOEIC', 'JLPT'].map((sgt) => (
               <Text
                 key={sgt}
@@ -95,15 +100,15 @@ function SearchHeader({ total, onSearch, form }: SearchHeaderProps) {
                 }}
               />
             ))}
-          </div>
+          </div> */}
         </div>
         <div className='flex justify-end items-center gap-2'>
           <Text content={total} className='text-primary font-semibold' />
           <Text content='results' className='font-light text-gray-500' />
-          {filters['name'] && (
+          {filters['keyword'] && (
             <>
               <Text content='find for' className='font-light text-gray-500' />
-              <Text content={`"${getValues('name')}"`} className='text-gradient' />
+              <Text content={`"${getValues('keyword')}"`} className='text-gradient' />
             </>
           )}
         </div>

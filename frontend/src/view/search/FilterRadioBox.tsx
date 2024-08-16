@@ -3,7 +3,7 @@
 import type { ReactNode } from 'react';
 import type { Control } from 'react-hook-form';
 import { RadioGroup, RadioGroupItem } from '../../component/common/RadioGroup';
-import type { SearchCourseFormSchema } from '@/src/schemas/course/SearchCourseFormSchema';
+import type { SearchCourseFormSchema } from '@/src/schemas/event/SearchEventFormSchema';
 import { FormControl, FormField, FormItem, FormLabel } from '@/src/component/form/Form';
 
 interface FilterRadioBoxProps {

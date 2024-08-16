@@ -1,7 +1,7 @@
 import z from 'zod';
 
-const searchCourseFormSchema = z.object({
-  name: z.string().optional(),
+const searchEventFormSchema = z.object({
+  keyword: z.string().optional(),
   averageRatings: z.enum(['3', '3.5', '4', '4.5']).optional(),
   level: z.array(z.string()).default([]).optional(),
   price: z.array(z.number()).default([1, 1000]).optional(),
@@ -14,7 +14,7 @@ const searchCourseFormSchema = z.object({
     .optional(),
 });
 
-type SearchCourseFormSchema = z.infer<typeof searchCourseFormSchema>;
+type SearchEventFormSchema = z.infer<typeof searchEventFormSchema>;
 
-export type { SearchCourseFormSchema };
-export { searchCourseFormSchema };
+export type { SearchEventFormSchema };
+export { searchEventFormSchema };

@@ -56,7 +56,6 @@ export default function AudLoginForm() {
       }).then(async (value) => {
         if (value.status == 200) {
           const session = await getSession();
-          console.log('aud login', session, value);
           router.push(initialScreen?.[toCamelCase(session.user).roleCode]);
           router.refresh();
         }
