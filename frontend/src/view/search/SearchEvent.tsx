@@ -97,7 +97,7 @@ function SearchEvent() {
                 perPage={data?.perPage}
                 isLoading={isLoading}
                 onPageChange={setPage}
-                page={data?.page}
+                page={page}
                 className='flex 800px:justify-start justify-center flex-wrap lg:w-4/5 w-full h-fit gap-7 1000px:px-5 px-0'
               />
             </>

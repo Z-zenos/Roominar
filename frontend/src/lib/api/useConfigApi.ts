@@ -5,6 +5,7 @@ import type { JwtPayload } from 'jwt-decode';
 import { jwtDecode } from 'jwt-decode';
 import { signOut, useSession } from 'next-auth/react';
 import { useMemo } from 'react';
+import queryString from 'query-string';
 
 function useApiConfig() {
   const session = useSession();
@@ -46,6 +47,15 @@ function useApiConfig() {
                   return Promise.reject(context);
                 }
               }
+
+              /* === RE-FORMAT QUERY PARAMS === */
+              context.setUrl(
+                queryString.stringifyUrl(
+                  queryString.parseUrl(context.getUrl(), {
+                    arrayFormat: 'comma',
+                  }),
+                ),
+              );
 
               return Promise.resolve(context);
             },

@@ -119,19 +119,6 @@ export function formatEventDate(datetime: Date) {
   return dayjs(datetime).format('YYYY MMM d - HH:MM');
 }
 
-export function convertQueryParams(params) {
-  const query = Object.keys(params)
-    .filter((key) => !!params[key])
-    .map((key) => {
-      if (Array.isArray(params[key])) {
-        return params[key].map((item) => `${key}=${item}`).join('&');
-      } else {
-        return `${key}=${params[key]}`;
-      }
-    });
-  return query.join('&');
-}
-
 export function parseCode(code: string) {
   const words = code.toLowerCase().split('_');
   const capitalizedWords = words.map((word) => word.charAt(0).toUpperCase() + word.slice(1));

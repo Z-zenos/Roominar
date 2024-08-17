@@ -234,7 +234,7 @@ FormCheckBoxList.displayName = 'FormCheckBoxList';
 interface FormCheckBoxProps extends CheckboxProps {
   name: string;
   control: Control<any>;
-  onSearch?(data: any): void;
+  onSearch?(data?: any): void;
 }
 
 const FormCheckBox = ({ name, control, onSearch, ...props }: FormCheckBoxProps) => {
@@ -250,10 +250,7 @@ const FormCheckBox = ({ name, control, onSearch, ...props }: FormCheckBoxProps) 
               {...props}
               onCheckedChange={(checked) => {
                 field.onChange(checked);
-                onSearch &&
-                  onSearch({
-                    [`${name}`]: checked,
-                  });
+                onSearch && onSearch();
               }}
             />
           </FormControl>
