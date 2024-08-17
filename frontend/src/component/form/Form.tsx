@@ -14,7 +14,12 @@ import { DateRangePicker, type DateRangePickerProps } from '../common/Datetime/D
 import Checkbox from '../common/Input/Checkbox';
 import type { TextInputProps } from '../common/Input/TextInput';
 import TextInput from '../common/Input/TextInput';
-import dayjs from 'dayjs';
+import { Popover, PopoverContent, PopoverTrigger } from '../common/Popover';
+import type { ComboboxProps } from '../common/Combobox';
+import { Button } from '../common/Button/ShardButton';
+import { Check, ChevronsUpDown } from 'lucide-react';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '../common/Command';
+import type { SelectItem } from '@/src/constant/app.constant';
 
 const Form = FormProvider;
 
@@ -173,7 +178,7 @@ interface FormCheckBoxListProps extends CheckboxProps {
   items: { value: any; label: string }[];
   name: string;
   control: Control<any>;
-  onSearch?(data: any): void;
+  onSearch?(data?: any): void;
 }
 
 const FormCheckBoxList = ({ items, name, control, onSearch, className, ...props }: FormCheckBoxListProps) => {
@@ -207,10 +212,7 @@ const FormCheckBoxList = ({ items, name, control, onSearch, className, ...props 
                             newItems = field.value?.filter((value: any) => value !== item.value);
                           }
                           field.onChange(newItems);
-                          if (onSearch)
-                            onSearch({
-                              [`${name}`]: newItems,
-                            });
+                          if (onSearch) onSearch();
                         }}
                         title={item.label}
                       />
@@ -262,6 +264,72 @@ const FormCheckBox = ({ name, control, onSearch, ...props }: FormCheckBoxProps) 
 };
 
 FormCheckBox.displayName = 'FormCheckBox';
+
+interface FormComboboxProps extends ComboboxProps {
+  name: string;
+  control: Control<any>;
+  onSearch?(data?: any): void;
+}
+
+const FormCombobox = ({ name, control, data, title, onSearch }: FormComboboxProps) => {
+  return (
+    <FormField
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <FormItem className='flex flex-col'>
+          <Popover>
+            <PopoverTrigger asChild>
+              <FormControl>
+                <Button
+                  variant='outline'
+                  role='combobox'
+                  className={cn('w-[200px] justify-between px-2', !field.value && 'text-muted-foreground')}
+                >
+                  <span className='text-gray-500 font-medium'>Select {title}</span>
+                  <ChevronsUpDown className='h-4 w-4 shrink-0 opacity-50' />
+                </Button>
+              </FormControl>
+            </PopoverTrigger>
+            <PopoverContent className='w-[200px] p-0'>
+              <Command>
+                <CommandInput placeholder={`Search ${title}...`} />
+                <CommandList>
+                  <CommandEmpty>No {title} found.</CommandEmpty>
+                  <CommandGroup>
+                    {data.map((item: SelectItem) => (
+                      <CommandItem
+                        value={item.label}
+                        key={item.value}
+                        onSelect={() => {
+                          let newItems = null;
+                          if (field?.value.includes(item.value)) {
+                            newItems = field.value?.filter((value: string) => value !== item.value);
+                          } else {
+                            newItems = field?.value ? [...field.value, item.value] : [item.value];
+                          }
+                          field.onChange(newItems);
+                          if (onSearch) onSearch();
+                        }}
+                      >
+                        <Check
+                          className={cn('mr-2 h-4 w-4', field.value.includes(item.value) ? 'opacity-100' : 'opacity-0')}
+                        />
+                        {item.label}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+        </FormItem>
+      )}
+    />
+  );
+};
+
+FormCombobox.displayName = 'FormCombobox';
 
 // interface FormSliderProps extends HTMLAttributes<HTMLDivElement> {
 // 	min: number;
@@ -347,7 +415,7 @@ FormCheckBox.displayName = 'FormCheckBox';
 interface FormDateRangePickerProps extends DateRangePickerProps {
   name: string;
   control: Control<any>;
-  onSearch?(data: any): void;
+  onSearch?(data?: any): void;
 }
 
 const FormDateRangePicker = ({ name, control, onSearch, className }: FormDateRangePickerProps) => {
@@ -363,9 +431,7 @@ const FormDateRangePicker = ({ name, control, onSearch, className }: FormDateRan
               daterange={field.value}
               onDateRangeChange={(daterange: DateRange | undefined) => {
                 field.onChange(daterange);
-
-                // eslint-disable-next-line @typescript-eslint/ban-types
-                (onSearch as Function)({ start_at_range: daterange });
+                if (onSearch) onSearch();
               }}
             />
           </FormControl>
@@ -500,4 +566,5 @@ export {
   // FormTextarea,
   // FormSelect,
   // FormImageUploader,
+  FormCombobox,
 };

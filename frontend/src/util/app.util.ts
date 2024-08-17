@@ -87,9 +87,7 @@ export function searchQuery(
     ...queryString.parse(searchParams.toString()),
     ...filters,
   };
-  console.log(refineQuery);
   for (const query of exclude_queries) {
-    console.log(query);
     delete refineQuery[query];
   }
 
@@ -131,59 +129,6 @@ export function convertQueryParams(params) {
         return `${key}=${params[key]}`;
       }
     });
-  return query.join('&');
-}
-
-export function concatQueryParams(params: EventsApiListingEventsRequest) {
-  const queryParams = [
-    {
-      key: 'sort_by',
-      value: params.sortBy,
-    },
-    {
-      key: 'page',
-      value: params.page ? `${params.page}&per_page=${params.perPage}` : null,
-    },
-    { key: 'keyword', value: params.keyword },
-    { key: 'is_apply_ongoing', value: params.isApplyOngoing },
-    { key: 'is_apply_ended', value: params.isApplyEnded },
-    {
-      key: 'industry_codes',
-      value:
-        params?.industryCodes?.length > 0
-          ? params.industryCodes.map((item, index) => (index === 0 ? item : `industry_codes=${item}`)).join('&')
-          : null,
-    },
-    {
-      key: 'city_codes',
-      value:
-        params?.cityCodes?.length > 0
-          ? params.cityCodes.map((item, index) => (index === 0 ? item : `city_codes=${item}`)).join('&')
-          : null,
-    },
-    {
-      key: 'startStartAt',
-      value: params.startStartAt ? dayjs(params.startStartAt).format('YYYY-MM-DDTHH:mm:ss') : null,
-    },
-    {
-      key: 'endingendStartAt_starting_period',
-      value: params.endStartAt ? dayjs(params.endStartAt).format('YYYY-MM-DDTHH:mm:ss') : null,
-    },
-    { key: 'is_online', value: params.isOnline },
-    { key: 'is_offline', value: params.isOffline },
-    {
-      key: 'job_type_codes',
-      value:
-        params?.jobTypeCodes?.length > 0
-          ? typeof params.jobTypeCodes === 'string'
-            ? params.jobTypeCodes
-            : params.jobTypeCodes.map((item, index) => (index === 0 ? item : `job_type_codes=${item}`)).join('&')
-          : null,
-    },
-  ];
-
-  const query = queryParams.filter((param) => !!param.value).map((param) => `${param.key}=${param.value}`);
-
   return query.join('&');
 }
 

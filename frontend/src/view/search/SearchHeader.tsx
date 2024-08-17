@@ -9,18 +9,18 @@ import { Button } from '@nextui-org/button';
 import Text from '../../component/common/Typography/Text';
 import { SelectInput } from '../../component/common/Input/SelectInput';
 import { HiOutlineAdjustmentsHorizontal } from 'react-icons/hi2';
-import { FormInput } from '@/src/component/form/Form';
+import { FormCombobox, FormInput } from '@/src/component/form/Form';
 import type { EventsApiListingEventsRequest } from '@/src/lib/api/generated';
 import { useRouter } from 'next/navigation';
+import { JobTypeCodeMapping } from '@/src/constant/code.constant';
 
 interface SearchHeaderProps {
   total?: number;
-  onSearch: (data: EventsApiListingEventsRequest) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onSearch: (data: any) => void;
   form: UseFormReturn<EventsApiListingEventsRequest, any, undefined>;
 }
 
-function SearchHeader({ total, form }: SearchHeaderProps) {
+function SearchHeader({ total, form, onSearch }: SearchHeaderProps) {
   const { control, getValues, reset } = form;
   const filters: { [key: string]: any } = getValues();
   const router = useRouter();
@@ -62,6 +62,16 @@ function SearchHeader({ total, form }: SearchHeaderProps) {
               control={control}
             />
           </div>
+          <FormCombobox
+            data={Object.keys(JobTypeCodeMapping).map((key: string) => ({
+              value: key,
+              label: JobTypeCodeMapping[key],
+            }))}
+            name='jobTypeCodes'
+            control={control}
+            title='type job'
+            onSearch={onSearch}
+          />
         </div>
         <div className='flex items-center justify-start gap-4 400px:mt-3'>
           <Text content='Sort by:' className='font-light text-gray-500' />

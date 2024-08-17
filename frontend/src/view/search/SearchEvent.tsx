@@ -57,8 +57,8 @@ function SearchEvent() {
     },
   });
 
-  function handleSearch(data: any) {
-    if (form.getValues()['start_at_range'].from) {
+  function handleSearch(data: any = {}) {
+    if (form.getValues()['start_at_range']) {
       const start_at_range = form.getValues()['start_at_range'];
       data.start_start_at = dayjs(start_at_range.from).format('YYYY-MM-DD');
       data.end_start_at = dayjs(start_at_range.to).format('YYYY-MM-DD');

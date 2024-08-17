@@ -12,7 +12,7 @@ import { Label } from '../../component/common/Label';
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/react';
 import { FormCheckBox, FormCheckBoxList, FormDateRangePicker } from '@/src/component/form/Form';
 import { styles } from '@/src/constant/styles.constant';
-import { IndustryCode, JobTypeCode, type EventsApiListingEventsRequest } from '@/src/lib/api/generated';
+import { IndustryCode, type EventsApiListingEventsRequest } from '@/src/lib/api/generated';
 import { parseCode } from '@/src/util/app.util';
 
 interface SearchFilterProps {
@@ -23,7 +23,6 @@ interface SearchFilterProps {
 
 function SearchFilter({ className, control, onSearch }: SearchFilterProps) {
   const [showMoreIndustryCodes, setShowMoreIndustryCodes] = useState<boolean>(false);
-  const [showMoreJobTypeCodes, setShowMoreJobTypeCodes] = useState<boolean>(false);
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -67,7 +66,7 @@ function SearchFilter({ className, control, onSearch }: SearchFilterProps) {
                 <ModalBody>
                   <FormCheckBoxList
                     className='flex justify-start flex-wrap items-center gap-3'
-                    name='categories'
+                    name='tags'
                     control={control}
                     items={Object.keys(IndustryCode).map((ic: string) => ({
                       value: IndustryCode[ic],
