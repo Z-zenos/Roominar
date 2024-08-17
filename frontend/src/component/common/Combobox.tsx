@@ -7,7 +7,7 @@ import { Popover, PopoverContent, PopoverTrigger } from './Popover';
 import { cn } from '@/src/util/app.util';
 import { Button } from './Button/ShardButton';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './Command';
-import type { SelectItem } from '@/src/constant/app.constant';
+import type { SelectItem } from '@/src/type/SelectItem';
 
 export interface ComboboxProps {
   data?: SelectItem[];

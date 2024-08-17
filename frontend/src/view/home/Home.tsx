@@ -30,7 +30,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { Organization } from '@/src/component/common/Card/OrganizationCard';
 import useWindowDimensions from '@/src/hook/useWindowDimension';
-import EventCard from '@/src/component/common/Card/EventCard';
+// import EventCard from '@/src/component/common/Card/EventCard';
 import OrganizationCard from '@/src/component/common/Card/OrganizationCard';
 import type { Rank } from '@/src/component/common/Ranking/RankingList';
 import RankingList from '@/src/component/common/Ranking/RankingList';
@@ -201,7 +201,7 @@ export default function Home() {
           >
             {[1, 2, 3, 4, 5, 6].map((i, index) => (
               <SwiperSlide key={index} className={clsx('dark:rounded-lg dark:p-0')}>
-                <EventCard direction={width > 800 ? 'vertical' : 'horizontal'} variant='simple' />
+                {/* <EventCard direction={width > 800 ? 'vertical' : 'horizontal'} variant='simple' /> */}
               </SwiperSlide>
             ))}
           </Swiper>
@@ -230,7 +230,7 @@ export default function Home() {
           >
             {[7, 8, 9].map((i, index) => (
               <SwiperSlide key={index} className={clsx('dark:rounded-lg dark:p-0')}>
-                <EventCard direction='horizontal' variant='simple' />
+                {/* <EventCard direction='horizontal' variant='simple' /> */}
               </SwiperSlide>
             ))}
           </Swiper>

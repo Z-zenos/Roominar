@@ -32,13 +32,13 @@ const Footer = () => {
             <div className='col-span-2 lg:col-span-3 lg:flex lg:items-end'>
               <form className='w-full'>
                 <div className='relative max-w-lg'>
-                  <label className='sr-only' htmlFor='email'>
+                  <label className='sr-only' htmlFor='newsletter'>
                     Email
                   </label>
 
                   <input
                     className='w-full rounded-full border-gray-200 outline-none bg-gray-100 p-4 pe-32 text-nm font-medium'
-                    id='email'
+                    id='newsletter'
                     type='email'
                     placeholder='user@Roominar.com'
                   />

@@ -17,9 +17,9 @@ import { styles } from '@/src/constant/styles.constant';
 import Button from '../common/Button/Button';
 import { useRouter } from 'next/navigation';
 import { getCookie, setCookie } from 'cookies-next';
-import { initialScreen } from '@/middleware';
 import { RoleCode } from '@/src/constant/role_code.constant';
 import { toCamelCase } from '@/src/util/app.util';
+import { initialScreen } from '@/src/constant/app.constant';
 
 export default function AudLoginForm() {
   const [showPassword, setShowPassword] = useState(false);

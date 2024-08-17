@@ -19,7 +19,7 @@ import type { ComboboxProps } from '../common/Combobox';
 import { Button } from '../common/Button/ShardButton';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '../common/Command';
-import type { SelectItem } from '@/src/constant/app.constant';
+import type { SelectItem } from '@/src/type/SelectItem';
 
 const Form = FormProvider;
 
