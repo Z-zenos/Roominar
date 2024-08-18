@@ -27,6 +27,7 @@ async def register_audience(db: Session, request: RegisterAudienceRequest) -> Us
                 user.email_verify_token
             }""",
             "expire_at": user.email_verify_token_expire_at.strftime("%Y/%m/%d %H:%M"),
+            "first_name": user.first_name,
         }
 
         mailer = Email()
@@ -63,6 +64,7 @@ async def register_audience(db: Session, request: RegisterAudienceRequest) -> Us
             new_user.email_verify_token
         }""",
         "expire_at": expire.strftime("%Y/%m/%d %H:%M"),
+        "first_name": new_user.first_name,
     }
 
     mailer = Email()

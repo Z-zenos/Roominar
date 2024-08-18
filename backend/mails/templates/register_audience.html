@@ -3,59 +3,84 @@
 
 <head>
 	<meta charset="UTF-8" />
-	<title>Ehaco</title>
+	<title>Roominar</title>
 </head>
 
-<body style="font-family: Arial, Helvetica, sans-serif; color: #6e6d6d">
+<body style="
+		font-family: Arial, Helvetica, sans-serif;
+		color: #6e6d6d;
+		font-size: 16px;
+		margin: 0;
+		padding: 0;
+		box-sizing: border-box;
+		">
 	<div style="width: 600px; margin: 0 auto; font-size: 14px;">
-		<a href="{{homepage_url}}" style="text-decoration: none;">
-			<img src="https://d3pww53a0zff91.cloudfront.net/media/mail/icon/logo.png" alt="Ehaco logo"
-				style="display: block; width: 150px; margin: 16px auto;" />
+		<a href="{{homepage_url}}" style="
+				text-decoration: none;
+				display: block;
+				margin: 0 auto;
+				font-size: 30px;
+				padding: 40px;
+				background-color: #ECFCF5;
+				color: #006FEE;
+				text-align: center;
+				font-weight: 700;
+			">
+			Roominar 🎉
 		</a>
 		<div style="
         background-color: white;
-        border: 1px solid #c9c7c7;
+        border: 1px solid #ECFCF5;
         padding: 25px 20px 10px;
         color: #333333;
+				font-size: 16px;
       ">
 			<p style="
           font-weight: 700;
-          color: #134F7A;
           font-size: 26px;
           text-align: center;
           margin-top: 0;
           margin-bottom: 40px;
         ">
-				本登録完了のお願い
+				You are almost there!
 			</p>
 			<div>
-				<p>この度は ehaco!（エハコ）にご登録いただき、誠にありがとうございます。</p>
+				<h3>Hi, {first_name} </h3>
 				<p>
-					現在、お客様のアカウントは「仮登録」の状態です。
-					サービスを本格的にご利用いただくために、以下の手順で本登録をお願いいたします。
+					Only one step left to become a part of Roominar's family 🏡.
+					Please enter below verification button to start joining interesting
+					events over the world 🌎.
 				</p>
-				<div style="
-            background-color: #F5F5F5;
-            padding: 20px 15px;
-            border-radius: 5px;
-            margin-top: 40px;
-            padding-left: 20px;
-          ">
-					<p style="color: #134F7A; margin: 0; font-size: 18px;">本登録の手順</p>
-					<ol style="padding-left: 0px;">
-						<li>下記の「本登録URL」をクリックしてください。</li>
-						<li>表示されたページで必要事項を入力し、登録を完了してください。</li>
-					</ol>
-					<p style="padding-left: 0px;">【本登録URL】</p>
-					<p style="margin: 0;">
-						<a href="{{url}}" style="word-break: break-all;">{{ url }}</a>
-					</p>
-				</div>
 
-				<ul style="color: #FF4A4A; padding-left: 0px;">
-					<li>有効期限: このURLの有効期限は {{expire_at}} までです。</li>
-					<li>有効期限が過ぎるか、本登録が完了すると、このURLは無効となりますのでご注意ください。</li>
-					<li>お心当たりのない方は、URLへのアクセスは控え、本メールを破棄して下さいますようお願いいたします。</li>
+				<button style="
+						padding: 16px 30px;
+						border-radius: 5px;
+						background-color: #006fee;
+						color: #fff;
+						font-weight: 600;
+						border: none;
+						margin: 30px auto;
+						display: block;
+					">
+					<a href="{{url}}" style="color: #fff; text-decoration: none; font-size: 16px;">
+						Verify Account
+					</a>
+				</button>
+
+
+				<ul style="
+						color: #FF4A4A;
+						padding: 20px 10px;
+						border-top: 1px solid #aaa;
+						display: flex;
+						flex-direction: column;
+						justify-items: start;
+						row-gap: 7px;
+						">
+					<li>This URL will expire on {{expire_at}}. </li>
+					<li>Please note that this URL will become invalid once the expiration date has passed or registration is
+						complete. </li>
+					<li>If you are not aware of this, please refrain from accessing the URL and discard this email. </li>
 				</ul>
 
 			</div>
@@ -64,30 +89,19 @@
       margin-top: 20px;
       color: #666666;
     ">
-			<div style="padding: 0 25px">
-				<p style="margin: 0; font-size: 9px">
-					※このメールアドレスは送信専用のため、返信は受け付けておりません。
-				</p>
-				<p style="margin: 0; font-size: 9px">
-					※本メールの作成時点でサービスに登録している方に配信しています。既に退会済みの場合は、メールを廃棄してください。
-				</p>
-				<p style="margin: 0; font-size: 9px">
-					※配信停止の手続き後も、1週間程度メールが自動的に配信される場合がありますので、あらかじめご了承ください。
-				</p>
-			</div>
 			<table role="presentation" border="0" cellspacing="0" width="100%" style="
           text-align: center;
           margin: 40px 0;
         ">
-				<tr style="font-size: 10px;">
+				<tr style="font-size: 14px;">
 					<td>
-						<a style="color: #666666;" href="{{homepage_url}}">ehaco!（エハコ）</a>
+						<a style="color: #666666;" href="{{homepage_url}}">Roominar</a>
 					</td>
 					<td>
-						<a style="color: #666666;" href="#">お問合せ</a>
+						<a style="color: #666666;" href="#">Contact</a>
 					</td>
 					<td>
-						<a style="color: #666666;" href="#">メールの受信を解除</a>
+						<a style="color: #666666;" href="#">Explore</a>
 					</td>
 					<td>
 						<a href="#" style="text-decoration: none;">
@@ -109,7 +123,7 @@
 					</td>
 				</tr>
 			</table>
-			<p style="text-align: center; font-size: 11px;"> © FLAGOUT Inc. All rights reserved.</p>
+			<p style="text-align: center; font-size: 14px;"> © Roominar Inc. All rights reserved.</p>
 		</div>
 	</div>
 </body>

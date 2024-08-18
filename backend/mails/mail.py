@@ -28,7 +28,7 @@ class Email:
     async def send_aud_email(
         self, receivers: str | list, template: str, subject: str, data
     ):
-        content = self.read_template(template, data)
+        content = self.read_template(template, {**self.constant_data, **data})
 
         if isinstance(receivers, str):
             receivers = [receivers]

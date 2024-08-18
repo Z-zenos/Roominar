@@ -1,5 +1,6 @@
-# import time
-# import os
+import os
+import time
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -17,8 +18,8 @@ from backend.core.response import (
 
 app = FastAPI(title="Roominar", openapi_url="/api/v1/openapi.json")
 
-# os.environ["TZ"] = "Asia/Ho_Chi_Minh"
-# time.tzset()
+os.environ["TZ"] = "Asia/Ho_Chi_Minh"
+time.tzset()
 
 app.add_middleware(
     CORSMiddleware,
