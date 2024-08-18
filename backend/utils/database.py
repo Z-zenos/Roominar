@@ -1,12 +1,15 @@
 import typing as t
-from backend.models.base_model import BaseModel
+
 from sqlmodel import Session
+
+from backend.models.base_model import BaseModel
 
 
 def save(db: Session, object: BaseModel):
     db.add(object)
     db.commit()
     db.refresh(object)
+    return object
 
 
 def fetch_one(db: Session, query: t.Any) -> dict[str, t.Any] | None:

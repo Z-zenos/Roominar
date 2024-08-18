@@ -16,11 +16,11 @@ def create_token(token_length: int):
     return token
 
 
-# def create_email_confirmation_token():
-#     expire = datetime.now() + timedelta(
-#         minutes=settings.EMAIL_CONFIRMATION_TOKEN_EXPIRE_MINUTES
-#     )
-#     return create_token(settings.EMAIL_CONFIRMATION_TOKEN_LENGTH), expire
+def create_email_verification_token():
+    expire = datetime.now() + timedelta(
+        minutes=settings.EMAIL_VERIFICATION_TOKEN_EXPIRE_MINUTES
+    )
+    return create_token(settings.EMAIL_VERIFICATION_TOKEN_LENGTH), expire
 
 
 def create_refresh_token(data: dict, remember_me: bool) -> Tuple[str, datetime]:
@@ -76,3 +76,29 @@ def verify_refresh_token(token: str):
 #     encrypted_token = hashlib.sha256(reset_token.encode("utf-8")).hexdigest()
 
 #     return reset_token, encrypted_token, expire_at
+
+
+# def check_valid_token(token: str, db: Session):
+#     user = db.exec(select(User).where(User.email_verify_token == token)).first()
+#     if not user:
+#         raise BadRequestException(
+#             error_code=ErrorCode.ERR_TOKEN_INVALID,
+#             message="トークンの有効期限が切れました。",
+#         )
+
+#     if user and user.email_verify_at:
+#         raise BadRequestException(
+#             error_code=ErrorCode.ERR_USER_ALREADY_EXISTS,
+#             message="URLの有効期限が切れています。",
+#         )
+
+#     if user and user.email_verify_token_expire_at < datetime.now():
+#         raise BadRequestException(
+#             error_code=ErrorCode.ERR_TOKEN_EXPIRED,
+#             message="URLの有効期限が切れています。",
+#         )
+
+
+# def get_email_by_token(token: str, db: Session):
+#     user = db.exec(select(User).where(User.email_verify_token == token)).first()
+#     return user.email

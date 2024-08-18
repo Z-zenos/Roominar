@@ -1,5 +1,9 @@
 import re
-from pydantic import BaseModel, EmailStr
+from datetime import datetime
+from typing import Optional
+
+from pydantic import BaseModel, EmailStr, ValidationInfo, field_validator
+
 from backend.core.error_code import ErrorCode, ErrorMessage
 
 
@@ -17,6 +21,32 @@ class UserBase(BaseModel):
     industry_code: str | None = None
     job_type_code: str | None = None
     avatar_url: str | None = None
+
+
+class RegisterAudienceRequest(BaseModel):
+    email: EmailStr
+    first_name: str
+    last_name: str
+    password: str
+    confirm_password: str
+
+    @field_validator("password")
+    def password_validator(cls, v):
+        return password_validator(v)
+
+    @field_validator("confirm_password")
+    def confirm_password_validator(cls, v: Optional[str], values: ValidationInfo):
+        if values.data.get("password") != v:
+            raise ValueError(
+                ErrorCode.ERR_PASSWORD_NOT_MATCHING,
+                ErrorMessage.ERR_PASSWORD_NOT_MATCHING,
+            )
+        return v
+
+
+class RegisterAudienceResponse(BaseModel):
+    email: str
+    expire_at: datetime
 
 
 def company_url_validator(v):

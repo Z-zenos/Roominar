@@ -10,18 +10,13 @@ import { PiRankingFill } from 'react-icons/pi';
 import { GoOrganization } from 'react-icons/go';
 import { GiMicrophone, GiPartyPopper } from 'react-icons/gi';
 
-// Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-// Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/free-mode';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 
-// import '@/styles/custom.module.css';
-
-// import required modules
 import { Autoplay, FreeMode, Navigation } from 'swiper/modules';
 import { Button } from '@nextui-org/button';
 import { Image, Kbd } from '@nextui-org/react';

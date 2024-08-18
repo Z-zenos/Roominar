@@ -84,7 +84,7 @@ function AudRegisterForm() {
               id='email'
               name='email'
               type='email'
-              rightIcon={<HiMail size={20} className='text-purple-main' />}
+              rightIcon={<HiMail size={20} className='text-primary' />}
               placeholder='registermail@gmail.com'
               control={form.control}
               isDisplayError={true}
@@ -141,9 +141,9 @@ function AudRegisterForm() {
               type={!showPassword ? 'password' : 'text'}
               rightIcon={
                 !showPassword ? (
-                  <AiOutlineEyeInvisible className='text-purple-main' size={20} onClick={() => setShowPassword(true)} />
+                  <AiOutlineEyeInvisible className='text-primary' size={20} onClick={() => setShowPassword(true)} />
                 ) : (
-                  <AiOutlineEye className='text-purple-main' size={20} onClick={() => setShowPassword(false)} />
+                  <AiOutlineEye className='text-primary' size={20} onClick={() => setShowPassword(false)} />
                 )
               }
               placeholder='password!@%'
@@ -168,12 +168,12 @@ function AudRegisterForm() {
               rightIcon={
                 !showConfirmPassword ? (
                   <AiOutlineEyeInvisible
-                    className='text-purple-main'
+                    className='text-primary'
                     size={20}
                     onClick={() => setShowConfirmPassword(true)}
                   />
                 ) : (
-                  <AiOutlineEye className='text-purple-main' size={20} onClick={() => setShowConfirmPassword(false)} />
+                  <AiOutlineEye className='text-primary' size={20} onClick={() => setShowConfirmPassword(false)} />
                 )
               }
               placeholder='password!@%'

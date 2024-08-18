@@ -1,9 +1,10 @@
 from datetime import datetime
 from typing import Optional
 
+from sqlmodel import DateTime, Enum, Field, String, Text
+
 from backend.core.constants import IndustryCode, JobTypeCode, RoleCode
 from backend.models.base_model import BaseModel
-from sqlmodel import DateTime, Enum, Field, String, Text
 
 
 class User(BaseModel, table=True):
@@ -29,18 +30,20 @@ class User(BaseModel, table=True):
     avatar_url: Optional[str] = Field(sa_type=String(2048))
 
     email_verify_token: Optional[str] = Field(sa_type=String(2048))
-    email_verify_token_expire_at: Optional[str] = Field(sa_type=DateTime(timezone=True))
+    email_verify_token_expire_at: Optional[datetime] = Field(
+        sa_type=DateTime(timezone=True)
+    )
     email_verify_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
 
     reset_password_token: Optional[str] = Field(sa_type=String(2048))
-    reset_password_token_expire_at: Optional[str] = Field(
+    reset_password_token_expire_at: Optional[datetime] = Field(
         sa_type=DateTime(timezone=True)
     )
     change_password_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
 
     new_email: Optional[str] = Field(sa_type=String(255))
     new_email_verify_token: Optional[str] = Field(sa_type=String(2048))
-    new_email_verify_token_expire_at: Optional[str] = Field(
+    new_email_verify_token_expire_at: Optional[datetime] = Field(
         sa_type=DateTime(timezone=True)
     )
     deleted_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))

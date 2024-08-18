@@ -6,7 +6,7 @@ from .event import router as event_router
 
 # from .tags import router as tag_router
 # from .tickets import router as ticket_router
-# from .user import router as user_router
+from .user import router as user_router
 
 audience_routers = APIRouter()
 
@@ -16,5 +16,5 @@ audience_routers.include_router(event_router, prefix="/events", tags=["events"])
 # audience_routers.include_router(
 #     application_router, prefix="/applications", tags=["application"]
 # )
-# audience_routers.include_router(user_router, prefix="/users", tags=["user"])
+audience_routers.include_router(user_router, prefix="/users", tags=["users"])
 # audience_routers.include_router(ticket_router, prefix="/tickets", tags=["tickets"])

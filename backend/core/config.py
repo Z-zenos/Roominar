@@ -1,6 +1,7 @@
+from pathlib import Path
 from typing import Any, Optional
 
-from pydantic import PostgresDsn, ValidationInfo, field_validator
+from pydantic import DirectoryPath, PostgresDsn, ValidationInfo, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -39,23 +40,28 @@ class Settings(BaseSettings):
     EMAIL_USERNAME: Optional[str]
     EMAIL_PASSWORD: Optional[str]
     EMAIL_PORT: Optional[str]
-    EMAIL_SENDER: Optional[str]
-    EMAIL_CONFIRMATION_TOKEN_LENGTH: Optional[int]
-    EMAIL_CONFIRMATION_TOKEN_EXPIRE_MINUTES: Optional[int]
+    AUD_SENDER_EMAIL: Optional[str]
+    ORG_SENDER_EMAIL: Optional[str]
+
+    AUD_SENDER_NAME: Optional[str]
+    ORG_SENDER_NAME: Optional[str]
+
+    EMAIL_VERIFICATION_TOKEN_LENGTH: Optional[int]
+    EMAIL_VERIFICATION_TOKEN_EXPIRE_MINUTES: Optional[int]
     RESET_PASSWORD_TOKEN_LENGTH: Optional[int]
     RESET_PASSWORD_TOKEN_EXPIRE_MINUTES: Optional[int]
     FRONTEND_URL: Optional[str]
     EMAIL_ADMIN: Optional[str]
 
-    # TEMPLATE_FOLDER: DirectoryPath = (
-    #     Path(__file__).parent / "../mail/templates"
-    # )
+    TEMPLATE_FOLDER: DirectoryPath = Path(__file__).parent / "../mails/templates"
     # BUCKET_NAME: Optional[str]
     # MEDIA_PATH: Optional[str]
     # MEDIA_PATH_TMP_PREFIX: str = "tmp/"
     # PUBLIC_CDN_URL: Optional[str]
     APP_PORT: Optional[str]
     APP_URL: Optional[str]
+
+    AUD_FRONTEND_URL: Optional[str]
 
     @field_validator("MASTER_DATABASE_URI", mode="before")
     def assemble_master_db_connection(
