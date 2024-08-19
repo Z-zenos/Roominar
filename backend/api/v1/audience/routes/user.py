@@ -1,10 +1,14 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Path
 from sqlmodel import Session
 
 import backend.api.v1.audience.services.users as users_service
 from backend.core.response import public_api_responses
 from backend.db.database import get_read_db
-from backend.schemas.user import RegisterAudienceRequest, RegisterAudienceResponse
+from backend.schemas.user import (
+    RegisterAudienceRequest,
+    RegisterAudienceResponse,
+    VerifyRegisterAudienceResponse,
+)
 
 router = APIRouter()
 
@@ -20,3 +24,16 @@ async def register_audience(
     return RegisterAudienceResponse(
         email=new_user.email, expire_at=new_user.email_verify_token_expire_at
     )
+
+
+@router.get(
+    "/verify/{token}",
+    response_model=VerifyRegisterAudienceResponse,
+    responses=public_api_responses,
+)
+async def register_with_token(
+    db: Session = Depends(get_read_db),
+    token: str = Path(..., description="Email Verify Token"),
+):
+    new_user = await users_service.verify_register_audience(db, token)
+    return VerifyRegisterAudienceResponse(**new_user.model_dump())

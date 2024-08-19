@@ -1,7 +1,7 @@
 from datetime import datetime
 
 import pytz
-from sqlmodel import Session
+from sqlmodel import Session, select
 
 import backend.api.v1.audience.services.auth as auth_service
 from backend.api.v1.audience.services.auth.auth_service import get_user_by_email
@@ -34,7 +34,7 @@ async def register_audience(db: Session, request: RegisterAudienceRequest) -> Us
         await mailer.send_aud_email(
             email,
             "register_audience.html",
-            "Road to success",
+            "Account Verification",
             context,
         )
 
@@ -71,42 +71,50 @@ async def register_audience(db: Session, request: RegisterAudienceRequest) -> Us
     await mailer.send_aud_email(
         email,
         "register_audience.html",
-        "Account verification",
+        "Account Verification",
         context,
     )
 
     return new_user
 
 
-# async def verify_register_audience(
-#     db: Session,
-#     token: str,
-# ) -> User:
-#     check_valid_token(token, db)
+async def verify_register_audience(
+    db: Session,
+    token: str,
+) -> User:
+    user = db.exec(select(User).where(User.email_verify_token == token)).first()
+    if not user:
+        raise BadRequestException(
+            error_code=ErrorCode.ERR_INVALID_TOKEN,
+        )
 
-#     user = db.exec(select(User).where(User.email_verify_token == token)).first()
+    if user and user.email_verify_at:
+        raise BadRequestException(
+            error_code=ErrorCode.ERR_USER_ALREADY_EXISTED,
+        )
 
-#     update_user(user, **kwargs)
-#     user.role_code = RoleCode.AUDIENCE
-#     user.created_at = datetime.now()
-#     user.updated_at = datetime.now()
-#     user.email_verify_at = datetime.now()
-#     user.password = auth_service.get_password_hash(kwargs.get("password"))
-#     user.email_verify_token = None
-#     user.email_verify_token_expire_at = None
-#     new_user = save(db, user)
+    if user and user.email_verify_token_expire_at < datetime.now(pytz.utc):
+        raise BadRequestException(
+            error_code=ErrorCode.ERR_TOKEN_EXPIRED,
+        )
 
-#     # TODO: Get events replaced for context
-#     context = {
-#         "username": user.first_name_kanji + user.last_name_kanji,
-#         "search_page_url": f"{settings.FRONTEND_AUD_URL}/search",
-#     }
+    user.email_verify_at = datetime.now()
+    user.email_verify_token = None
+    user.email_verify_token_expire_at = None
+    user = save(db, user)
 
-#     mailer = Email()
-#     mailer.send_email(
-#         new_user.email,
-#         "register_second_step.html",
-#         "【ehaco!（エハコ）】本登録完了のお知らせ",
-#         context,
-#     )
-#     return new_user
+    # TODO: Get events replaced for context
+    context = {
+        "username": user.first_name,
+        "search_page_url": f"{settings.AUD_FRONTEND_URL}/search",
+        "my_profile_page_url": f"{settings.AUD_FRONTEND_URL}/profiles",
+    }
+
+    mailer = Email()
+    await mailer.send_aud_email(
+        user.email,
+        "verify_register_audience.html",
+        "Thankyu",
+        context,
+    )
+    return user

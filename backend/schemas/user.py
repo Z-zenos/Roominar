@@ -49,6 +49,10 @@ class RegisterAudienceResponse(BaseModel):
     expire_at: datetime
 
 
+class VerifyRegisterAudienceResponse(UserBase):
+    pass
+
+
 def company_url_validator(v):
     if not v.startswith("http"):
         raise ValueError(
