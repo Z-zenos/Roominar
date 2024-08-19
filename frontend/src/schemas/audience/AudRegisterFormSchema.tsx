@@ -19,11 +19,11 @@ const audRegisterFormSchema = z
       .max(50, { message: 'Last name must be less than 50 characters.' }),
 
     password: z
-      .string({ required_error: 'パスワードを入力してください。' })
+      .string({ required_error: "Password can't empty" })
       .trim()
-      .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z_\d@$!%*?&]{8,}$/, {
-        message: 'Invalid password.',
-      })
+      // .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z_\d@$!%*?&]{8,}$/, {
+      //   message: 'Invalid password.',
+      // })
       .min(8, {
         message: 'Invalid password.',
       })

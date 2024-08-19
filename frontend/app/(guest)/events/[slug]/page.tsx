@@ -1,5 +1,5 @@
 import Head from '@/src/component/common/Head';
-import EventDetail from '@/src/view/events/EventDetail';
+import EventDetail from '@/src/view/event/EventDetail';
 
 async function Page({ params: { slug } }: { params: { slug: string } }) {
   return (

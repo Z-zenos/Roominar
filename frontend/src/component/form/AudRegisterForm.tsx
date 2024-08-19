@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import type { Message } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
 import { AiOutlineEye, AiOutlineEyeInvisible, AiFillFacebook } from 'react-icons/ai';
 import { FcGoogle } from 'react-icons/fc';
@@ -17,6 +16,9 @@ import { audRegisterFormSchema } from '@/src/schemas/audience/AudRegisterFormSch
 import { Label } from '../common/Label';
 import { styles } from '@/src/constant/styles.constant';
 import Button from '../common/Button/Button';
+import { useRegisterAudienceMutation } from '@/src/api/auth.api';
+import type { ApiException } from '@/src/lib/api/generated';
+import SuccessRegistration from '@/src/view/audience/SuccessRegistration';
 
 function AudRegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -35,44 +37,42 @@ function AudRegisterForm() {
     resolver: zodResolver(audRegisterFormSchema),
   });
 
-  // const [registerUser, { data, error, isSuccess, isLoading }] = useAudRegisterMutation();
+  const {
+    trigger,
+    data,
+    isMutating: isLoading,
+  } = useRegisterAudienceMutation({
+    onSuccess() {
+      toast.success('Successfully Account Registration!');
+      setIsRegisterSuccess(true);
+    },
+    onError(error) {
+      const apiException = error as ApiException<string>;
+      const body = JSON.parse(apiException.body);
+      toast.error(body.message);
+    },
+  });
 
-  // useEffect(() => {
-  //   if (isSuccess) {
-  //     const message = data?.message || 'Registration successful';
+  const [isRegisterSuccess, setIsRegisterSuccess] = useState<boolean>(false);
+  const handleRegister = (value: AudRegisterFormSchema) => {
+    trigger({
+      registerAudienceRequest: {
+        email: value.email,
+        firstName: value.firstName,
+        lastName: value.lastName,
+        password: value.password,
+        confirmPassword: value.confirmPassword,
+      },
+    });
+  };
 
-  //     toast.success(message, { duration: 3000 });
-  //     form.reset();
-  //   }
-  //   if (error) {
-  //     if ('data' in error) {
-  //       const errorData = error as any;
+  console.log(form.formState);
 
-  //       toast.error(errorData.data.message);
-  //     }
-  //   }
-  // }, [isSuccess, error]);
-
-  async function handleAudRegister(data: AudRegisterFormSchema) {
-    if (Object.keys(form.formState.errors).length === 0 && form.formState.errors.constructor === Object) {
-      try {
-        // await registerUser(data);
-        console.log(data);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (error: any) {
-        toast.error(error?.response?.data?.message as Message);
-      }
-    } else {
-      toast.error(form.formState.errors?.email?.message as Message);
-    }
-  }
-
-  return (
+  return isRegisterSuccess ? (
+    <SuccessRegistration email={data.email} expireAt={data.expireAt} />
+  ) : (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(handleAudRegister)}
-        className={clsx('flex items-center justify-center flex-col')}
-      >
+      <form onSubmit={form.handleSubmit(handleRegister)} className={clsx('flex items-center justify-center flex-col')}>
         <div className='w-full'>
           <div className='w-full'>
             <div className='mb-2 block'>
@@ -202,8 +202,8 @@ function AudRegisterForm() {
           title='Register'
           type='submit'
           className='w-80 mt-5'
-          disabled={!form.formState.isValid || !form.formState.isDirty}
-          isLoading={false}
+          disabled={!form.formState.isValid}
+          isLoading={isLoading}
         />
         <br />
         <h5 className='text-center pt-4 font-Poppins text-[14px] text-black dark:text-white'>Or join with</h5>

@@ -11,3 +11,6 @@ class ErrorCode:
 class ErrorMessage:
     ERR_UNAUTHORIZED = "Unauthorized"
     ERR_PASSWORD_NOT_MATCHING = "The password and confirmation password do not match."
+    ERR_TOKEN_EXPIRED = "The token was expired."
+    ERR_USER_ALREADY_EXISTED = "This account already existed."
+    ERR_INVALID_TOKEN = "Invalid token."
