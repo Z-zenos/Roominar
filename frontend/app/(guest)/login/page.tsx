@@ -1,4 +1,4 @@
-import AudLoginForm from '@/src/component/form/AudLoginForm';
+import LoginAudienceForm from '@/src/component/form/LoginAudienceForm';
 
 async function Page() {
   return (
@@ -7,7 +7,7 @@ async function Page() {
       <p className='mt-2 mb-8 font-light text-gray-700 text-nm'>
         Enter to get interesting event & webinar & seminar you like.
       </p>
-      <AudLoginForm />
+      <LoginAudienceForm />
     </div>
   );
 }

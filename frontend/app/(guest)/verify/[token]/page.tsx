@@ -1,16 +1,16 @@
 import Logo from '@/src/component/common/Logo';
-import RegisterAudienceForm from '@/src/component/form/RegisterAudienceForm';
+import ImproveExperienceForm from '@/src/component/form/ImproveAudienceExperienceForm';
 
-async function Page() {
+async function Page({ token }: { token: string }) {
   return (
-    <div className='mx-auto w-[500px] py-[5%]'>
+    <div className='px-[15%] py-[100px] text-center'>
       <h2 className='text-primary text-lg font-semibold'>
         Welcome to <Logo /> 👋🏻
       </h2>
       <p className='mt-2 mb-8 font-light text-gray-700 text-nm'>
         Enter to get interesting event & webinar & seminar you like.
       </p>
-      <RegisterAudienceForm />
+      <ImproveExperienceForm token={token} />
     </div>
   );
 }

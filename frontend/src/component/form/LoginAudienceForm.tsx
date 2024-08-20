@@ -10,7 +10,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { HiMail } from 'react-icons/hi';
 import clsx from 'clsx';
 import { Link } from '@nextui-org/link';
-import { audLoginFormSchema, type AudLoginFormSchema } from '@/src/schemas/audience/AudLoginFormSchema';
 import { Form, FormCheckBox, FormInput } from './Form';
 import { Label } from '../common/Label';
 import { styles } from '@/src/constant/styles.constant';
@@ -20,18 +19,20 @@ import { getCookie, setCookie } from 'cookies-next';
 import { RoleCode } from '@/src/constant/role_code.constant';
 import { toCamelCase } from '@/src/util/app.util';
 import { initialScreen } from '@/src/constant/app.constant';
+import type { LoginAudienceFormSchema } from '@/src/schemas/audience/LoginAudienceFormSchema';
+import { loginAudienceFormSchema } from '@/src/schemas/audience/LoginAudienceFormSchema';
 
-export default function AudLoginForm() {
+export default function LoginAudienceForm() {
   const [showPassword, setShowPassword] = useState(false);
 
-  const form = useForm<AudLoginFormSchema>({
+  const form = useForm<LoginAudienceFormSchema>({
     mode: 'all',
     defaultValues: {
       email: '',
       password: '',
       rememberMe: false,
     },
-    resolver: zodResolver(audLoginFormSchema),
+    resolver: zodResolver(loginAudienceFormSchema),
   });
 
   const router = useRouter();
@@ -41,7 +42,7 @@ export default function AudLoginForm() {
     form.setValue('rememberMe', getCookie('rememberMe') === 'true');
   }, [form]);
 
-  const handleLogin = form.handleSubmit((data: AudLoginFormSchema) => {
+  const handleLogin = form.handleSubmit((data: LoginAudienceFormSchema) => {
     if (!isLoading) {
       setIsLoading(true);
 

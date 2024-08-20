@@ -1,6 +1,6 @@
 import z from 'zod';
 
-const audRegisterFormSchema = z
+const registerAudienceFormSchema = z
   .object({
     avatar: z.string().optional(),
 
@@ -49,7 +49,7 @@ const audRegisterFormSchema = z
     }
   });
 
-type AudRegisterFormSchema = z.infer<typeof audRegisterFormSchema>;
+type RegisterAudienceFormSchema = z.infer<typeof registerAudienceFormSchema>;
 
-export type { AudRegisterFormSchema };
-export { audRegisterFormSchema };
+export type { RegisterAudienceFormSchema };
+export { registerAudienceFormSchema };

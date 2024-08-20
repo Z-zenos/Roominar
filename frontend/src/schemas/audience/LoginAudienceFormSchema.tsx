@@ -1,6 +1,6 @@
 import z from 'zod';
 
-const audLoginFormSchema = z.object({
+const loginAudienceFormSchema = z.object({
   email: z.string({ required_error: "Email can't empty." }).email({ message: 'Invalid email.' }),
 
   password: z
@@ -17,7 +17,7 @@ const audLoginFormSchema = z.object({
   rememberMe: z.boolean().optional(),
 });
 
-type AudLoginFormSchema = z.infer<typeof audLoginFormSchema>;
+type LoginAudienceFormSchema = z.infer<typeof loginAudienceFormSchema>;
 
-export type { AudLoginFormSchema };
-export { audLoginFormSchema };
+export type { LoginAudienceFormSchema };
+export { loginAudienceFormSchema };

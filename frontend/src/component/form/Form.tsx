@@ -266,9 +266,11 @@ interface FormComboboxProps extends ComboboxProps {
   name: string;
   control: Control<any>;
   onSearch?(data?: any): void;
+  multiple?: boolean;
+  className?: string;
 }
 
-const FormCombobox = ({ name, control, data, title, onSearch }: FormComboboxProps) => {
+const FormCombobox = ({ name, control, data, title, onSearch, multiple = true, className }: FormComboboxProps) => {
   return (
     <FormField
       control={control}
@@ -281,14 +283,14 @@ const FormCombobox = ({ name, control, data, title, onSearch }: FormComboboxProp
                 <Button
                   variant='outline'
                   role='combobox'
-                  className={cn('w-[200px] justify-between px-2', !field.value && 'text-muted-foreground')}
+                  className={cn('w-[200px] justify-between px-2', !field.value && 'text-muted-foreground', className)}
                 >
                   <span className='text-gray-500 font-medium'>Select {title}</span>
                   <ChevronsUpDown className='h-4 w-4 shrink-0 opacity-50' />
                 </Button>
               </FormControl>
             </PopoverTrigger>
-            <PopoverContent className='w-[200px] p-0'>
+            <PopoverContent className={clsx('w-[200px] p-0', className)}>
               <Command>
                 <CommandInput placeholder={`Search ${title}...`} />
                 <CommandList>
@@ -300,17 +302,31 @@ const FormCombobox = ({ name, control, data, title, onSearch }: FormComboboxProp
                         key={item.value}
                         onSelect={() => {
                           let newItems = null;
-                          if (field?.value.includes(item.value)) {
-                            newItems = field.value?.filter((value: string) => value !== item.value);
+
+                          if (multiple) {
+                            if (field?.value.includes(item.value)) {
+                              newItems = field.value?.filter((value: string) => value !== item.value);
+                            } else {
+                              newItems = field?.value ? [...field.value, item.value] : [item.value];
+                            }
                           } else {
-                            newItems = field?.value ? [...field.value, item.value] : [item.value];
+                            newItems = item.value;
                           }
                           field.onChange(newItems);
                           if (onSearch) onSearch();
                         }}
                       >
                         <Check
-                          className={cn('mr-2 h-4 w-4', field.value.includes(item.value) ? 'opacity-100' : 'opacity-0')}
+                          className={cn(
+                            'mr-2 h-4 w-4',
+                            multiple
+                              ? field.value.includes(item.value)
+                                ? 'opacity-100'
+                                : 'opacity-0'
+                              : field.value === item.value
+                                ? 'opacity-100'
+                                : 'opacity-0',
+                          )}
                         />
                         {item.label}
                       </CommandItem>

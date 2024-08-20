@@ -11,20 +11,20 @@ import { HiMail } from 'react-icons/hi';
 import clsx from 'clsx';
 import { Form, FormInput } from './Form';
 import { Link } from '@nextui-org/link';
-import type { AudRegisterFormSchema } from '@/src/schemas/audience/AudRegisterFormSchema';
-import { audRegisterFormSchema } from '@/src/schemas/audience/AudRegisterFormSchema';
 import { Label } from '../common/Label';
 import { styles } from '@/src/constant/styles.constant';
 import Button from '../common/Button/Button';
 import { useRegisterAudienceMutation } from '@/src/api/auth.api';
 import type { ApiException } from '@/src/lib/api/generated';
 import SuccessRegistration from '@/src/view/audience/SuccessRegistration';
+import type { RegisterAudienceFormSchema } from '@/src/schemas/audience/RegisterAudienceFormSchema';
+import { registerAudienceFormSchema } from '@/src/schemas/audience/RegisterAudienceFormSchema';
 
-function AudRegisterForm() {
+function RegisterAudienceForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const form = useForm<AudRegisterFormSchema>({
+  const form = useForm<RegisterAudienceFormSchema>({
     mode: 'all',
     defaultValues: {
       avatar: '',
@@ -34,7 +34,7 @@ function AudRegisterForm() {
       password: '',
       confirmPassword: '',
     },
-    resolver: zodResolver(audRegisterFormSchema),
+    resolver: zodResolver(registerAudienceFormSchema),
   });
 
   const {
@@ -54,7 +54,7 @@ function AudRegisterForm() {
   });
 
   const [isRegisterSuccess, setIsRegisterSuccess] = useState<boolean>(false);
-  const handleRegister = (value: AudRegisterFormSchema) => {
+  const handleRegister = (value: RegisterAudienceFormSchema) => {
     trigger({
       registerAudienceRequest: {
         email: value.email,
@@ -65,8 +65,6 @@ function AudRegisterForm() {
       },
     });
   };
-
-  console.log(form.formState);
 
   return isRegisterSuccess ? (
     <SuccessRegistration email={data.email} expireAt={data.expireAt} />
@@ -228,4 +226,4 @@ function AudRegisterForm() {
   );
 }
 
-export default AudRegisterForm;
+export default RegisterAudienceForm;
