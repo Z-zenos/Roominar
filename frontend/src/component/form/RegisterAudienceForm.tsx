@@ -14,11 +14,11 @@ import { Link } from '@nextui-org/link';
 import { Label } from '../common/Label';
 import { styles } from '@/src/constant/styles.constant';
 import Button from '../common/Button/Button';
-import { useRegisterAudienceMutation } from '@/src/api/auth.api';
 import type { ApiException } from '@/src/lib/api/generated';
 import SuccessRegistration from '@/src/view/audience/SuccessRegistration';
 import type { RegisterAudienceFormSchema } from '@/src/schemas/audience/RegisterAudienceFormSchema';
 import { registerAudienceFormSchema } from '@/src/schemas/audience/RegisterAudienceFormSchema';
+import { useRegisterAudienceMutation } from '@/src/api/user.api';
 
 function RegisterAudienceForm() {
   const [showPassword, setShowPassword] = useState(false);

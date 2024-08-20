@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import useApiConfig from './useConfigApi';
-import { AuthApi, EventsApi, UsersApi } from '@/src/lib/api/generated';
+import { AuthApi, EventsApi, TagsApi, UsersApi } from '@/src/lib/api/generated';
 
 function useApi() {
   const config = useMemo(() => useApiConfig, [])();
@@ -8,6 +8,7 @@ function useApi() {
     auth: new AuthApi(config),
     events: new EventsApi(config),
     users: new UsersApi(config),
+    tags: new TagsApi(config),
   };
 }
 

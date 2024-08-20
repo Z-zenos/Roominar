@@ -1,7 +1,7 @@
 import Logo from '@/src/component/common/Logo';
 import ImproveExperienceForm from '@/src/component/form/ImproveAudienceExperienceForm';
 
-async function Page({ token }: { token: string }) {
+async function Page({ params: { token } }: { params: { token: string } }) {
   return (
     <div className='px-[15%] py-[100px] text-center'>
       <h2 className='text-primary text-lg font-semibold'>

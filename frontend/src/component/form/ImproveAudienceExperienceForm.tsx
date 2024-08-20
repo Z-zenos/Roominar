@@ -9,16 +9,22 @@ import { Label } from '../common/Label';
 import clsx from 'clsx';
 import { styles } from '@/src/constant/styles.constant';
 import { JobTypeCodeMapping } from '@/src/constant/code.constant';
+import type { TagItem } from '@/src/lib/api/generated';
 import { IndustryCode } from '@/src/lib/api/generated';
 import { parseCode } from '@/src/util/app.util';
-import Tag from '../common/Tag';
+import Tag from '../common/Tag/Tag';
+import { useListingTagsQuery } from '@/src/api/tag.api';
+import TagSkeleton from '../common/Tag/TagSkeleton';
+import { useState } from 'react';
+import { Button } from '@nextui-org/button';
 
 interface ImproveExperienceFormProps {
   token: string;
 }
 
 function ImproveExperienceForm({ token }: ImproveExperienceFormProps) {
-  console.log(token);
+  const { data, isLoading: isListingTagsLoading } = useListingTagsQuery();
+
   const form = useForm<ImproveAudienceExperienceFormSchema>({
     mode: 'all',
     defaultValues: {
@@ -28,6 +34,8 @@ function ImproveExperienceForm({ token }: ImproveExperienceFormProps) {
     },
     resolver: zodResolver(improveAudienceExperienceFormSchema),
   });
+
+  const [selectedTags, setSelectedTags] = useState<number[]>([]);
 
   // const {
   //   trigger,
@@ -55,6 +63,15 @@ function ImproveExperienceForm({ token }: ImproveExperienceFormProps) {
     //     confirmPassword: value.confirmPassword,
     //   },
     // });
+    console.log(value, selectedTags);
+  };
+
+  const handleSelectTag = (id: number) => {
+    if (selectedTags.includes(id)) {
+      setSelectedTags((prev) => prev.filter((tag) => tag !== id));
+    } else {
+      setSelectedTags([...selectedTags, id]);
+    }
   };
 
   return (
@@ -63,7 +80,24 @@ function ImproveExperienceForm({ token }: ImproveExperienceFormProps) {
         onSubmit={form.handleSubmit(handleImproveUserExperience)}
         className={clsx('flex items-center justify-center flex-col')}
       >
-        <div className={clsx(styles.between, 'flex-wrap gap-20')}>
+        <div>
+          <Button
+            className='mr-3 text-black bg-slate-100 border-gray-400 border px-10 font-bold'
+            radius='sm'
+            variant='solid'
+          >
+            Skip
+          </Button>
+          <Button
+            className='mt-3 text-info-main bg-transparent border-info-main border px-10 font-bold'
+            radius='sm'
+            variant='flat'
+            type='submit'
+          >
+            Submit
+          </Button>
+        </div>
+        <div className={clsx(styles.between, 'flex-wrap gap-20 mt-8')}>
           <div>
             <div className='mb-6 block'>
               <Label htmlFor='email' className={clsx(styles.label, 'font-medium text-xm')}>
@@ -104,7 +138,7 @@ function ImproveExperienceForm({ token }: ImproveExperienceFormProps) {
               }))}
               name='industryCode'
               control={form.control}
-              title='type job'
+              title='industry'
               multiple={false}
               className='w-full'
             />
@@ -115,14 +149,25 @@ function ImproveExperienceForm({ token }: ImproveExperienceFormProps) {
           <Label htmlFor='email' className={clsx(styles.label, 'font-medium text-xm')}>
             Tags
           </Label>
-          <h4 className='font-light opacity-80 text-sm'>Select fields that you like.</h4>
+          <h4 className='font-light opacity-80 text-sm'>
+            Customize your experience by choosing tags that align with your goals. <br />
+            These tags allow us to tailor content that fits your unique professional profile and interests.
+          </h4>
 
-          <div className='flex justify-center gap-3 items-center py-8'>
-            <Tag title='React' />
-            <Tag title='React' />
-            <Tag title='React' />
-            <Tag title='React' />
-            <Tag title='React' />
+          <div className='flex justify-center gap-3 items-center py-8 flex-wrap'>
+            {data &&
+              data?.data
+                ?.reduce((acc, group) => acc.concat(group.tags), [])
+                .map((tag: TagItem) => (
+                  <Tag
+                    title={tag.name}
+                    key={tag.id}
+                    id={tag.id}
+                    onSelect={handleSelectTag}
+                    active={selectedTags.includes(tag.id)}
+                  />
+                ))}
+            {isListingTagsLoading && Array.from({ length: 10 }, (_, k) => <TagSkeleton key={k} />)}
           </div>
         </div>
       </form>

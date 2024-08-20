@@ -60,7 +60,7 @@ async def register_audience(db: Session, request: RegisterAudienceRequest) -> Us
         new_user = save(db, new_user)
 
     context = {
-        "url": f"""{settings.AUD_FRONTEND_URL}/register?token={
+        "url": f"""{settings.AUD_FRONTEND_URL}/verify?token={
             new_user.email_verify_token
         }""",
         "expire_at": expire.strftime("%Y/%m/%d %H:%M"),
