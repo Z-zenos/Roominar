@@ -285,7 +285,18 @@ const FormCombobox = ({ name, control, data, title, onSearch, multiple = true, c
                   role='combobox'
                   className={cn('w-[200px] justify-between px-2', !field.value && 'text-muted-foreground', className)}
                 >
-                  <span className='text-gray-500 font-medium'>Select {title}</span>
+                  <span className='text-gray-500 font-medium'>
+                    {field.value
+                      ? multiple
+                        ? (field.value as SelectItem[])
+                            .map(
+                              (selectedItem: SelectItem) =>
+                                data.find((item) => item.value === selectedItem.value)?.label,
+                            )
+                            .join(', ')
+                        : data.find((item) => item.value === field.value)?.label
+                      : `Select ${title}`}
+                  </span>
                   <ChevronsUpDown className='h-4 w-4 shrink-0 opacity-50' />
                 </Button>
               </FormControl>

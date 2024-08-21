@@ -32,7 +32,7 @@ async def register_audience(
     )
 
 
-@router.get(
+@router.post(
     "/verify/{token}",
     response_model=VerifyAudienceResponse,
     responses=public_api_responses,
@@ -43,7 +43,7 @@ async def verify_audience(
     token: str = Path(..., description="Email Verify Token"),
 ):
     id = await users_service.verify_audience(db, request, token)
-    return VerifyAudienceResponse(id)
+    return VerifyAudienceResponse(id=id)
 
 
 @router.patch(

@@ -15,3 +15,4 @@ class ErrorMessage:
     ERR_TOKEN_EXPIRED = "The token was expired."
     ERR_USER_ALREADY_EXISTED = "This account already existed."
     ERR_INVALID_TOKEN = "Invalid token."
+    ERR_TAG_NOT_FOUND = "Unknown tag."

@@ -6,7 +6,7 @@ from sqlmodel import Session
 import backend.api.v1.audience.services.auth as auth_service
 from backend.api.v1.audience.services.auth.auth_service import get_user_by_email
 from backend.core.config import settings
-from backend.core.error_code import ErrorCode
+from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.mails.mail import Email
 from backend.models.user import RoleCode, User
@@ -19,13 +19,13 @@ async def register_audience(db: Session, request: RegisterAudienceRequest) -> Us
     user = get_user_by_email(db, email, RoleCode.AUDIENCE)
 
     if user and user.email_verify_at:
-        raise BadRequestException(ErrorCode.ERR_USER_ALREADY_EXISTED)
+        raise BadRequestException(
+            ErrorCode.ERR_USER_ALREADY_EXISTED, ErrorMessage.ERR_USER_ALREADY_EXISTED
+        )
 
     if user and user.email_verify_token_expire_at > datetime.now(pytz.utc):
         context = {
-            "url": f"""{settings.AUD_FRONTEND_URL}/register?token={
-                user.email_verify_token
-            }""",
+            "url": f"{settings.AUD_FRONTEND_URL}/verify/{user.email_verify_token}",
             "expire_at": user.email_verify_token_expire_at.strftime("%Y/%m/%d %H:%M"),
             "first_name": user.first_name,
         }
@@ -60,9 +60,7 @@ async def register_audience(db: Session, request: RegisterAudienceRequest) -> Us
         new_user = save(db, new_user)
 
     context = {
-        "url": f"""{settings.AUD_FRONTEND_URL}/verify?token={
-            new_user.email_verify_token
-        }""",
+        "url": f"{settings.AUD_FRONTEND_URL}/verify/{new_user.email_verify_token}",
         "expire_at": expire.strftime("%Y/%m/%d %H:%M"),
         "first_name": new_user.first_name,
     }

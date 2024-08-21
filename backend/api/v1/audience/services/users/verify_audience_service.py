@@ -43,7 +43,9 @@ async def verify_audience(
     if request.tags:
         request_tags = db.exec(select(Tag.id).where(Tag.id.in_(request.tags))).all()
         if (not request_tags) or (len(request.tags) != len(request_tags)):
-            raise BadRequestException(ErrorCode.ERR_TAG_NOT_FOUND)
+            raise BadRequestException(
+                ErrorCode.ERR_TAG_NOT_FOUND, ErrorMessage.ERR_TAG_NOT_FOUND
+            )
         user_tags = [UserTag(user_id=user.id, tag_id=tag) for tag in request.tags]
         db.add_all(user_tags)
 
@@ -53,7 +55,7 @@ async def verify_audience(
     user = save(db, user)
 
     context = {
-        "username": user.first_name,
+        "first_name": user.first_name,
         "search_page_url": f"{settings.AUD_FRONTEND_URL}/search",
         "my_profile_page_url": f"{settings.AUD_FRONTEND_URL}/profiles",
     }
@@ -65,4 +67,4 @@ async def verify_audience(
         "Thankyu",
         context,
     )
-    return {"id": user.id}
+    return user.id

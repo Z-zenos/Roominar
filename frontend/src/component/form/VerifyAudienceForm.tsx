@@ -7,7 +7,7 @@ import { Label } from '../common/Label';
 import clsx from 'clsx';
 import { styles } from '@/src/constant/styles.constant';
 import { JobTypeCodeMapping } from '@/src/constant/code.constant';
-import type { ApiException, TagItem } from '@/src/lib/api/generated';
+import type { ApiException, ErrorResponse400, TagItem } from '@/src/lib/api/generated';
 import { IndustryCode } from '@/src/lib/api/generated';
 import { parseCode } from '@/src/util/app.util';
 import Tag from '../common/Tag/Tag';
@@ -42,18 +42,19 @@ function VerifyAudienceForm({ token }: VerifyAudienceFormProps) {
   const { trigger, isMutating: isVerifying } = useVerifyAudienceMutation({
     onSuccess() {
       toast.success('Your account has verified and updated completely!');
+      form.reset();
       router.push('/login');
     },
-    onError(error) {
-      const apiException = error as ApiException<string>;
-      const body = JSON.parse(apiException.body);
-      toast.error(body.message);
+    onError(error: ApiException<unknown>) {
+      toast.error(
+        (error.body as ErrorResponse400)?.message ?? (error.body as ErrorResponse400)?.errorCode ?? 'Unknown Error 😵',
+      );
     },
   });
 
   const [selectedTags, setSelectedTags] = useState<number[]>([]);
 
-  const handleImproveUserExperience = (value: VerifyAudienceFormSchema) => {
+  const handleUpdateAndVerify = (value: VerifyAudienceFormSchema) => {
     trigger({
       token: token,
       verifyAudienceRequest: {
@@ -75,7 +76,7 @@ function VerifyAudienceForm({ token }: VerifyAudienceFormProps) {
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(handleImproveUserExperience)}
+        onSubmit={form.handleSubmit(handleUpdateAndVerify)}
         className={clsx('flex items-center justify-center flex-col')}
       >
         <div>
@@ -88,13 +89,17 @@ function VerifyAudienceForm({ token }: VerifyAudienceFormProps) {
             Skip
           </Button>
           <Button
-            className='mt-3 text-info-main bg-transparent border-info-main border px-10 font-bold'
+            className={clsx(
+              ' text-info-main bg-transparent border-info-main border px-10 font-bold',
+              !form.formState.isValid && 'bg-slate-400, border-slate-400 text-slate-500',
+            )}
             radius='sm'
             variant='flat'
             type='submit'
             isLoading={isVerifying}
+            disabled={!form.formState.isValid}
           >
-            Submit
+            Update & Verify
           </Button>
         </div>
         <div className={clsx(styles.between, 'flex-wrap gap-20 mt-8')}>
