@@ -1,8 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
 import type {
   RegisterAudienceResponse,
   UsersApiRegisterAudienceRequest,
-  UsersApiVerifyRegisterAudienceRequest,
+  UsersApiVerifyAudienceRequest,
+  VerifyAudienceResponse,
 } from '../lib/api/generated';
 import useApi from '../lib/api/useApi';
 import type { SWRMutationConfiguration } from 'swr/mutation';
@@ -18,10 +18,12 @@ export const useRegisterAudienceMutation = <T>(options?: SWRMutationConfiguratio
   );
 };
 
-export const useVerifyRegisterAudienceQuery = (params?: UsersApiVerifyRegisterAudienceRequest) => {
+export const useVerifyAudienceMutation = <T>(options?: SWRMutationConfiguration<VerifyAudienceResponse, T>) => {
   const api = useApi();
-  return useQuery({
-    queryKey: ['verify-audience', params],
-    queryFn: async () => await api.users.verifyRegisterAudience(params),
-  });
+  const key = `/api/v1/users/verify`;
+  return useSWRMutation<VerifyAudienceResponse, T, typeof key, UsersApiVerifyAudienceRequest>(
+    key,
+    async (_: string, { arg }) => await api.users.verifyAudience(arg),
+    options,
+  );
 };

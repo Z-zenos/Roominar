@@ -50,8 +50,14 @@ class RegisterAudienceResponse(BaseModel):
     expire_at: datetime
 
 
-class VerifyRegisterAudienceResponse(UserBase):
-    pass
+class VerifyAudienceRequest(BaseModel):
+    industry_code: IndustryCode = None
+    job_type_code: JobTypeCode = None
+    tags: list[int] = Field([])
+
+
+class VerifyAudienceResponse(UserBase):
+    id: int
 
 
 class UpdateUserRequest(BaseModel):

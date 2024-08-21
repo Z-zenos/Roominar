@@ -2,14 +2,12 @@
 
 import { useForm } from 'react-hook-form';
 import { Form, FormCombobox } from './Form';
-import type { ImproveAudienceExperienceFormSchema } from '@/src/schemas/audience/ImproveAudienceExperienceFormSchema';
-import { improveAudienceExperienceFormSchema } from '@/src/schemas/audience/ImproveAudienceExperienceFormSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Label } from '../common/Label';
 import clsx from 'clsx';
 import { styles } from '@/src/constant/styles.constant';
 import { JobTypeCodeMapping } from '@/src/constant/code.constant';
-import type { TagItem } from '@/src/lib/api/generated';
+import type { ApiException, TagItem } from '@/src/lib/api/generated';
 import { IndustryCode } from '@/src/lib/api/generated';
 import { parseCode } from '@/src/util/app.util';
 import Tag from '../common/Tag/Tag';
@@ -17,53 +15,53 @@ import { useListingTagsQuery } from '@/src/api/tag.api';
 import TagSkeleton from '../common/Tag/TagSkeleton';
 import { useState } from 'react';
 import { Button } from '@nextui-org/button';
+import type { VerifyAudienceFormSchema } from '@/src/schemas/audience/VerifyAudienceFormSchema';
+import { verifyAudienceFormSchema } from '@/src/schemas/audience/VerifyAudienceFormSchema';
+import { useVerifyAudienceMutation } from '@/src/api/user.api';
+import toast from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
 
-interface ImproveExperienceFormProps {
+interface VerifyAudienceFormProps {
   token: string;
 }
 
-function ImproveExperienceForm({ token }: ImproveExperienceFormProps) {
-  const { data, isLoading: isListingTagsLoading } = useListingTagsQuery();
+function VerifyAudienceForm({ token }: VerifyAudienceFormProps) {
+  const { data: tagData, isLoading: isListingTagsLoading } = useListingTagsQuery();
+  const router = useRouter();
 
-  const form = useForm<ImproveAudienceExperienceFormSchema>({
+  const form = useForm<VerifyAudienceFormSchema>({
     mode: 'all',
     defaultValues: {
       industryCode: undefined,
       jobTypeCode: undefined,
       tags: [],
     },
-    resolver: zodResolver(improveAudienceExperienceFormSchema),
+    resolver: zodResolver(verifyAudienceFormSchema),
+  });
+
+  const { trigger, isMutating: isVerifying } = useVerifyAudienceMutation({
+    onSuccess() {
+      toast.success('Your account has verified and updated completely!');
+      router.push('/login');
+    },
+    onError(error) {
+      const apiException = error as ApiException<string>;
+      const body = JSON.parse(apiException.body);
+      toast.error(body.message);
+    },
   });
 
   const [selectedTags, setSelectedTags] = useState<number[]>([]);
 
-  // const {
-  //   trigger,
-  //   data,
-  //   isMutating: isLoading,
-  // } = useRegisterAudienceMutation({
-  //   onSuccess() {
-  //     toast.success('Successfully Account Registration!');
-  //     setIsRegisterSuccess(true);
-  //   },
-  //   onError(error) {
-  //     const apiException = error as ApiException<string>;
-  //     const body = JSON.parse(apiException.body);
-  //     toast.error(body.message);
-  //   },
-  // });
-
-  const handleImproveUserExperience = (value: ImproveAudienceExperienceFormSchema) => {
-    // form.trigger({
-    //   registerAudienceRequest: {
-    //     email: value.email,
-    //     firstName: value.firstName,
-    //     lastName: value.lastName,
-    //     password: value.password,
-    //     confirmPassword: value.confirmPassword,
-    //   },
-    // });
-    console.log(value, selectedTags);
+  const handleImproveUserExperience = (value: VerifyAudienceFormSchema) => {
+    trigger({
+      token: token,
+      verifyAudienceRequest: {
+        industryCode: value.industryCode,
+        jobTypeCode: value.jobTypeCode,
+        tags: value.tags,
+      },
+    });
   };
 
   const handleSelectTag = (id: number) => {
@@ -85,6 +83,7 @@ function ImproveExperienceForm({ token }: ImproveExperienceFormProps) {
             className='mr-3 text-black bg-slate-100 border-gray-400 border px-10 font-bold'
             radius='sm'
             variant='solid'
+            onClick={() => router.push('/login')}
           >
             Skip
           </Button>
@@ -93,6 +92,7 @@ function ImproveExperienceForm({ token }: ImproveExperienceFormProps) {
             radius='sm'
             variant='flat'
             type='submit'
+            isLoading={isVerifying}
           >
             Submit
           </Button>
@@ -155,8 +155,8 @@ function ImproveExperienceForm({ token }: ImproveExperienceFormProps) {
           </h4>
 
           <div className='flex justify-center gap-3 items-center py-8 flex-wrap'>
-            {data &&
-              data?.data
+            {tagData &&
+              tagData?.data
                 ?.reduce((acc, group) => acc.concat(group.tags), [])
                 .map((tag: TagItem) => (
                   <Tag
@@ -175,4 +175,4 @@ function ImproveExperienceForm({ token }: ImproveExperienceFormProps) {
   );
 }
 
-export default ImproveExperienceForm;
+export default VerifyAudienceForm;

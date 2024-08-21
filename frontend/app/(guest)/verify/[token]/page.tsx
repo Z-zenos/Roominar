@@ -1,5 +1,5 @@
 import Logo from '@/src/component/common/Logo';
-import ImproveExperienceForm from '@/src/component/form/ImproveAudienceExperienceForm';
+import VerifyAudienceForm from '@/src/component/form/VerifyAudienceForm';
 
 async function Page({ params: { token } }: { params: { token: string } }) {
   return (
@@ -10,7 +10,7 @@ async function Page({ params: { token } }: { params: { token: string } }) {
       <p className='mt-2 mb-8 font-light text-gray-700 text-nm'>
         Enter to get interesting event & webinar & seminar you like.
       </p>
-      <ImproveExperienceForm token={token} />
+      <VerifyAudienceForm token={token} />
     </div>
   );
 }

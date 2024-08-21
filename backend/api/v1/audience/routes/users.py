@@ -12,7 +12,8 @@ from backend.schemas.user import (
     RegisterAudienceRequest,
     RegisterAudienceResponse,
     UpdateUserRequest,
-    VerifyRegisterAudienceResponse,
+    VerifyAudienceRequest,
+    VerifyAudienceResponse,
 )
 
 router = APIRouter()
@@ -33,15 +34,16 @@ async def register_audience(
 
 @router.get(
     "/verify/{token}",
-    response_model=VerifyRegisterAudienceResponse,
+    response_model=VerifyAudienceResponse,
     responses=public_api_responses,
 )
-async def verify_register_audience(
+async def verify_audience(
     db: Session = Depends(get_read_db),
+    request: VerifyAudienceRequest = None,
     token: str = Path(..., description="Email Verify Token"),
 ):
-    new_user = await users_service.verify_register_audience(db, token)
-    return VerifyRegisterAudienceResponse(**new_user.model_dump())
+    id = await users_service.verify_audience(db, request, token)
+    return VerifyAudienceResponse(id)
 
 
 @router.patch(

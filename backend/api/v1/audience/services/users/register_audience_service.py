@@ -1,12 +1,12 @@
 from datetime import datetime
 
 import pytz
-from sqlmodel import Session, select
+from sqlmodel import Session
 
 import backend.api.v1.audience.services.auth as auth_service
 from backend.api.v1.audience.services.auth.auth_service import get_user_by_email
 from backend.core.config import settings
-from backend.core.error_code import ErrorCode, ErrorMessage
+from backend.core.error_code import ErrorCode
 from backend.core.exception import BadRequestException
 from backend.mails.mail import Email
 from backend.models.user import RoleCode, User
@@ -76,48 +76,3 @@ async def register_audience(db: Session, request: RegisterAudienceRequest) -> Us
     )
 
     return new_user
-
-
-async def verify_register_audience(
-    db: Session,
-    token: str,
-) -> User:
-    user = db.exec(select(User).where(User.email_verify_token == token)).first()
-    if not user:
-        raise BadRequestException(
-            error_code=ErrorCode.ERR_INVALID_TOKEN,
-            message=ErrorMessage.ERR_INVALID_TOKEN,
-        )
-
-    if user and user.email_verify_at:
-        raise BadRequestException(
-            error_code=ErrorCode.ERR_USER_ALREADY_EXISTED,
-            message=ErrorMessage.ERR_USER_ALREADY_EXISTED,
-        )
-
-    if user and user.email_verify_token_expire_at < datetime.now(pytz.utc):
-        raise BadRequestException(
-            error_code=ErrorCode.ERR_TOKEN_EXPIRED,
-            message=ErrorMessage.ERR_TOKEN_EXPIRED,
-        )
-
-    user.email_verify_at = datetime.now()
-    user.email_verify_token = None
-    user.email_verify_token_expire_at = None
-    user = save(db, user)
-
-    # TODO: Get events replaced for context
-    context = {
-        "username": user.first_name,
-        "search_page_url": f"{settings.AUD_FRONTEND_URL}/search",
-        "my_profile_page_url": f"{settings.AUD_FRONTEND_URL}/profiles",
-    }
-
-    mailer = Email()
-    await mailer.send_aud_email(
-        user.email,
-        "verify_register_audience.html",
-        "Thankyu",
-        context,
-    )
-    return user
