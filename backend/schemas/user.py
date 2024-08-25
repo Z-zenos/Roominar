@@ -92,39 +92,15 @@ def phone_validator(v):
     return v
 
 
-# def prefecture_code_validator(v):
-#     if v not in ValidCode.VALID_PREFECTURE_CODES:
-#         raise ValueError(ErrorCode.ERR_INVALID_PREFECTURE_CODE)
-#     return v
-
-
 # def industry_code_validator(v):
 #     if v not in ValidCode.VALID_INDUSTRY_CODES:
 #         raise ValueError(ErrorCode.ERR_INVALID_INDUSTRY_CODE)
 #     return v
 
 
-# def employee_size_code_validator(v):
-#     if v not in ValidCode.VALID_EMPLOYEE_SIZE_CODES:
-#         raise ValueError(ErrorCode.ERR_INVALID_EMPLOYEE_SIZE_CODE)
-#     return v
-
-
-# def revenue_validator(v):
-#     if v not in ValidCode.VALID_REVENUE_CODES:
-#         raise ValueError(ErrorCode.ERR_INVALID_REVENUE_CODE)
-#     return v
-
-
 # def job_type_code_validator(v):
 #     if v not in ValidCode.VALID_JOB_TYPE_CODES:
 #         raise ValueError(ErrorCode.ERR_INVALID_JOB_TYPE_CODE)
-#     return v
-
-
-# def position_code_validator(v):
-#     if v not in ValidCode.VALID_POSITION_CODES:
-#         raise ValueError(ErrorCode.ERR_INVALID_POSITION_CODE)
 #     return v
 
 

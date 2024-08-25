@@ -7,17 +7,17 @@ import { GrPowerReset } from 'react-icons/gr';
 import type { UseFormReturn } from 'react-hook-form';
 import { Button } from '@nextui-org/button';
 import Text from '../../component/common/Typography/Text';
-import { SelectInput } from '../../component/common/Input/SelectInput';
 import { HiOutlineAdjustmentsHorizontal } from 'react-icons/hi2';
-import { FormCombobox, FormInput } from '@/src/component/form/Form';
-import type { EventsApiListingEventsRequest } from '@/src/lib/api/generated';
+import { FormCombobox, FormInput, FormSelect } from '@/src/component/form/Form';
+import { type EventsApiSearchEventsRequest } from '@/src/lib/api/generated';
 import { useRouter } from 'next/navigation';
-import { JobTypeCodeMapping } from '@/src/constant/code.constant';
+import { EventSortByCodeMappings, JobTypeCodeMapping } from '@/src/constant/code.constant';
+import { toSelectItem } from '@/src/util/app.util';
 
 interface SearchHeaderProps {
   total?: number;
   onSearch: (data: any) => void;
-  form: UseFormReturn<EventsApiListingEventsRequest, any, undefined>;
+  form: UseFormReturn<EventsApiSearchEventsRequest, any, undefined>;
 }
 
 function SearchHeader({ total, form, onSearch }: SearchHeaderProps) {
@@ -75,22 +75,12 @@ function SearchHeader({ total, form, onSearch }: SearchHeaderProps) {
         </div>
         <div className='flex items-center justify-start gap-4 400px:mt-3'>
           <Text content='Sort by:' className='font-light text-gray-500' />
-          <SelectInput
-            values={[
-              'Newest',
-              'Most popular',
-              'Most reviews',
-              'Register deadline',
-              'Recommendation', // Build based by user.
-            ]}
-            onChange={function (): void {
-              throw new Error('Function not implemented.');
-            }}
-            onBlur={function (): void {
-              throw new Error('Function not implemented.');
-            }}
-            value={undefined}
-            name={''}
+          <FormSelect
+            data={toSelectItem(EventSortByCodeMappings)}
+            control={control}
+            onSearch={onSearch}
+            defaultValue={getValues('sortBy')}
+            name='sortBy'
           />
         </div>
       </div>

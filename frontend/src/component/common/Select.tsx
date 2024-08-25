@@ -3,9 +3,6 @@
 import * as React from 'react';
 import * as SelectPrimitive from '@radix-ui/react-select';
 import { Check, ChevronDown, ChevronUp } from 'lucide-react';
-
-import clsx from 'clsx';
-import type { ControllerRenderProps } from 'react-hook-form';
 import { cn } from '@/src/util/app.util';
 
 const Select = SelectPrimitive.Root;
@@ -32,7 +29,6 @@ const SelectTrigger = React.forwardRef<
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
 ));
-
 SelectTrigger.displayName = SelectPrimitive.Trigger.displayName;
 
 const SelectScrollUpButton = React.forwardRef<
@@ -47,7 +43,6 @@ const SelectScrollUpButton = React.forwardRef<
     <ChevronUp className='h-4 w-4' />
   </SelectPrimitive.ScrollUpButton>
 ));
-
 SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName;
 
 const SelectScrollDownButton = React.forwardRef<
@@ -62,7 +57,6 @@ const SelectScrollDownButton = React.forwardRef<
     <ChevronDown className='h-4 w-4' />
   </SelectPrimitive.ScrollDownButton>
 ));
-
 SelectScrollDownButton.displayName = SelectPrimitive.ScrollDownButton.displayName;
 
 const SelectContent = React.forwardRef<
@@ -95,7 +89,6 @@ const SelectContent = React.forwardRef<
     </SelectPrimitive.Content>
   </SelectPrimitive.Portal>
 ));
-
 SelectContent.displayName = SelectPrimitive.Content.displayName;
 
 const SelectLabel = React.forwardRef<
@@ -104,10 +97,9 @@ const SelectLabel = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Label ref={ref} className={cn('py-1.5 pl-8 pr-2 text-sm font-semibold', className)} {...props} />
 ));
-
 SelectLabel.displayName = SelectPrimitive.Label.displayName;
 
-const SelectItem = React.forwardRef<
+const SelectElement = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>
 >(({ className, children, ...props }, ref) => (
@@ -128,8 +120,7 @@ const SelectItem = React.forwardRef<
     <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
   </SelectPrimitive.Item>
 ));
-
-SelectItem.displayName = SelectPrimitive.Item.displayName;
+SelectElement.displayName = SelectPrimitive.Item.displayName;
 
 const SelectSeparator = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Separator>,
@@ -137,49 +128,16 @@ const SelectSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Separator ref={ref} className={cn('-mx-1 my-1 h-px bg-muted', className)} {...props} />
 ));
-
 SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface SelectInputProps extends ControllerRenderProps<any, string> {
-  className?: string;
-  label?: string;
-  values: string[];
-}
-
-const SelectInput = React.forwardRef<HTMLButtonElement, SelectInputProps>(
-  ({ label, values, className, ...props }, ref) => {
-    return (
-      <Select defaultValue={props.value} onValueChange={props.onChange}>
-        <SelectTrigger className={clsx('w-[180px]', className)} ref={ref}>
-          <SelectValue placeholder={`${values[0]}`} />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectLabel>{label}</SelectLabel>
-            {values?.map((v) => (
-              <SelectItem key={v} value={v}>
-                {v}
-              </SelectItem>
-            ))}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-    );
-  },
-);
-
-SelectInput.displayName = SelectPrimitive.Select.displayName;
 
 export {
   Select,
-  SelectInput,
   SelectGroup,
   SelectValue,
   SelectTrigger,
   SelectContent,
   SelectLabel,
-  SelectItem,
+  SelectElement,
   SelectSeparator,
   SelectScrollUpButton,
   SelectScrollDownButton,

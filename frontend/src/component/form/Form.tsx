@@ -19,6 +19,7 @@ import type { ComboboxProps } from '../common/Combobox';
 import { Button } from '../common/Button/ShardButton';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '../common/Command';
+import { Select, SelectContent, SelectGroup, SelectElement, SelectTrigger, SelectValue } from '../common/Select';
 import type { SelectItem } from '@/src/type/SelectItem';
 
 const Form = FormProvider;
@@ -285,17 +286,16 @@ const FormCombobox = ({ name, control, data, title, onSearch, multiple = true, c
                   role='combobox'
                   className={cn('w-[200px] justify-between px-2', !field.value && 'text-muted-foreground', className)}
                 >
-                  <span className='text-gray-500 font-medium'>
-                    {field.value
-                      ? multiple
-                        ? (field.value as SelectItem[])
-                            .map(
-                              (selectedItem: SelectItem) =>
-                                data.find((item) => item.value === selectedItem.value)?.label,
-                            )
-                            .join(', ')
-                        : data.find((item) => item.value === field.value)?.label
-                      : `Select ${title}`}
+                  <span className='text-gray-500 font-medium line-clamp-1'>
+                    {multiple &&
+                      field.value &&
+                      (field.value as string[])
+                        .map((selectedItem: string) => data.find((item) => item.value === selectedItem)?.label)
+                        .join(', ')}
+
+                    {!multiple && field.value && data.find((item) => item.value === field.value)?.label}
+
+                    {!field.value && `Select ${title}`}
                   </span>
                   <ChevronsUpDown className='h-4 w-4 shrink-0 opacity-50' />
                 </Button>
@@ -503,38 +503,52 @@ FormDateRangePicker.displayName = 'FormDateRangePicker';
 
 // FormTextarea.displayName = 'FormTextarea';
 
-// interface FormSelectProps extends SelectInputProps {
-// 	name: string;
-// 	control: Control<any>;
-// 	onSearch?(data: any): void;
-// 	isDisplayError?: boolean;
-// }
+interface FormSelectProps {
+  name: string;
+  control: Control<any>;
+  onSearch?(data?: any): void;
+  data: SelectItem[];
+  className?: string;
+  defaultValue?: string;
+}
 
-// const FormSelect = ({
-// 	values,
-// 	name,
-// 	control,
-// 	onSearch,
-// 	isDisplayError,
-// 	className,
-// }: FormSelectProps) => {
-// 	return (
-// 		<FormField
-// 			control={control}
-// 			name={name}
-// 			render={({ field }) => (
-// 				<FormItem>
-// 					<FormControl>
-// 						<SelectInput values={values} className={className} {...field} />
-// 					</FormControl>
-// 					{isDisplayError && <FormMessage />}
-// 				</FormItem>
-// 			)}
-// 		/>
-// 	);
-// };
+const FormSelect = ({ data, name, control, onSearch, className, defaultValue }: FormSelectProps) => {
+  return (
+    <FormField
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <FormItem>
+          {/* <FormLabel>Sort By</FormLabel> */}
+          <Select
+            onValueChange={(value: string) => {
+              field.onChange(value);
+              if (onSearch) onSearch();
+            }}
+            defaultValue={defaultValue}
+          >
+            <FormControl>
+              <SelectTrigger className={clsx('w-[180px]', className)}>
+                <SelectValue placeholder={`${data[0].label}`} />
+              </SelectTrigger>
+            </FormControl>
+            <SelectContent>
+              <SelectGroup>
+                {data?.map((item: SelectItem) => (
+                  <SelectElement key={item.value} value={item.value}>
+                    {item.label}
+                  </SelectElement>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </FormItem>
+      )}
+    />
+  );
+};
 
-// FormSelect.displayName = 'FormSelect';
+FormSelect.displayName = 'FormSelect';
 
 // interface FormImageUploaderProps extends ImageUploaderProps {
 // 	name: string;
@@ -588,7 +602,7 @@ export {
   // FormSlider,
   FormDateRangePicker,
   // FormTextarea,
-  // FormSelect,
+  FormSelect,
   // FormImageUploader,
   FormCombobox,
 };

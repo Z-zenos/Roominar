@@ -1,3 +1,3 @@
-from .listing_events_service import listing_events
+from .search_events_service import search_events
 
-all = listing_events
+all = search_events

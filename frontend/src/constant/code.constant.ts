@@ -50,3 +50,10 @@ export const JobTypeCodeMapping = {
   VET: 'Veterinarian',
   HORT: 'Horticulturist',
 };
+
+export const EventSortByCodeMappings = {
+  START_AT: 'Upcoming',
+  PUBLIC_AT: 'Recently Public',
+  APPLICATION_END_AT: 'Deadline',
+  RECOMMEDATION: 'Recommendation',
+};

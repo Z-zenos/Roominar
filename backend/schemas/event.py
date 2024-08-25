@@ -8,7 +8,7 @@ from backend.core.constants import EventSortByCode, IndustryCode, JobTypeCode
 from backend.schemas.common import PaginationResponse
 
 
-class ListingEventItem(BaseModel):
+class SearchEventsItem(BaseModel):
     id: int
     slug: str
     organization_name: str
@@ -29,27 +29,30 @@ class ListingEventItem(BaseModel):
     applied_number: int | None = None
 
 
-class SearchEventQueryParams(BaseModel):
+class SearchEventsQueryParams(BaseModel):
     keyword: Optional[str] = Field(Query(default=None))
 
     # exclude_bookmarks: Optional[bool] = Field(Query(default=False)
     # exclude_applications: Optional[bool] = Field(Query(default=False)
-    is_online: Optional[bool] = Field(Query(default=False))
-    is_offline: Optional[bool] = Field(Query(default=False))
-    is_apply_ongoing: Optional[bool] = Field(Query(default=False))
-    is_apply_ended: Optional[bool] = Field(Query(default=False))
+    is_online: bool | None = Field(Query(default=False))
+    is_offline: bool | None = Field(Query(default=False))
+    is_apply_ongoing: bool | None = Field(Query(default=False))
+    is_apply_ended: bool | None = Field(Query(default=False))
+    is_today: bool | None = Field(Query(default=False))
+    is_free: bool | None = Field(Query(default=False))
+    is_paid: bool | None = Field(Query(default=False))
 
     job_type_codes: list[JobTypeCode] = Field(Query(default=None))
     industry_codes: list[IndustryCode] = Field(Query(default=None))
     city_codes: list[str] = Field(Query(default=None))
     tags: list[int] = Field(Query(default=None))
 
-    start_start_at: Optional[datetime] = Field(Query(default=None))
-    end_start_at: Optional[datetime] = Field(Query(default=None))
+    start_start_at: datetime | None = Field(Query(default=None))
+    end_start_at: datetime | None = Field(Query(default=None))
 
-    sort_by: Optional[EventSortByCode] = Field(Query(default=EventSortByCode.PUBLIC_AT))
-    per_page: Optional[int] = Field(Query(default=10, le=100, ge=1))
-    page: Optional[int] = Field(Query(default=1, ge=1))
+    sort_by: EventSortByCode | None = Field(Query(default=EventSortByCode.PUBLIC_AT))
+    per_page: int | None = Field(Query(default=10, le=100, ge=1))
+    page: int | None = Field(Query(default=1, ge=1))
 
     @field_validator(
         "job_type_codes", "industry_codes", "city_codes", "tags", mode="before"
@@ -58,5 +61,5 @@ class SearchEventQueryParams(BaseModel):
         return v or []
 
 
-class ListingEventResponse(PaginationResponse[ListingEventItem]):
+class SearchEventsResponse(PaginationResponse[SearchEventsItem]):
     pass

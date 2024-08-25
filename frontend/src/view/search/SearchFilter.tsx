@@ -12,13 +12,13 @@ import { Label } from '../../component/common/Label';
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/react';
 import { FormCheckBox, FormCheckBoxList, FormDateRangePicker } from '@/src/component/form/Form';
 import { styles } from '@/src/constant/styles.constant';
-import { IndustryCode, type EventsApiListingEventsRequest } from '@/src/lib/api/generated';
+import { IndustryCode, type EventsApiSearchEventsRequest } from '@/src/lib/api/generated';
 import { parseCode } from '@/src/util/app.util';
 
 interface SearchFilterProps {
   className?: string;
-  control: Control<EventsApiListingEventsRequest>;
-  onSearch: (data: EventsApiListingEventsRequest) => void;
+  control: Control<EventsApiSearchEventsRequest>;
+  onSearch: (data: EventsApiSearchEventsRequest) => void;
 }
 
 function SearchFilter({ className, control, onSearch }: SearchFilterProps) {
@@ -99,7 +99,6 @@ function SearchFilter({ className, control, onSearch }: SearchFilterProps) {
       </FilterBox>
       <FilterBox title='Timeline'>
         <FormCheckBox name='today' control={control} onSearch={onSearch} title='Today' />
-        <FormCheckBox name='isOnGoing' control={control} onSearch={onSearch} title='On going' />
         <FormCheckBox name='isApplyOngoing' control={control} onSearch={onSearch} title='Opening Application' />
         <FormCheckBox name='isApplyEnded' control={control} onSearch={onSearch} title='Closed Application' />
         <Label className='mt-3'>Start date</Label>

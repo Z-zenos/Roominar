@@ -11,14 +11,14 @@ import { Image, Link } from '@nextui-org/react';
 import { SlNote } from 'react-icons/sl';
 import { useRouter } from 'next/navigation';
 import { styles } from '@/src/constant/styles.constant';
-import type { ListingEventItem } from '@/src/lib/api/generated';
+import type { SearchEventsItem } from '@/src/lib/api/generated';
 import { formatEventDate } from '@/src/util/app.util';
 
 interface EventCardProps {
   className?: string;
   direction?: 'horizontal' | 'vertical';
   variant?: 'simple' | 'complex';
-  event: ListingEventItem;
+  event: SearchEventsItem;
 }
 
 function EventCard({ className, direction = 'vertical', variant = 'complex', event }: EventCardProps) {

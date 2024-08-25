@@ -8,26 +8,26 @@ from backend.api.v1.dependencies.authentication import get_user_if_logged_in
 from backend.core.response import public_api_responses
 from backend.db.database import get_read_db
 from backend.models import User
-from backend.schemas.event import ListingEventResponse, SearchEventQueryParams
+from backend.schemas.event import SearchEventsQueryParams, SearchEventsResponse
 
 router = APIRouter()
 
 
 @router.get(
     "",
-    response_model=ListingEventResponse,
+    response_model=SearchEventsResponse,
     responses=public_api_responses,
 )
-def listing_events(
+def search_events(
     db: Annotated[Session, Depends(get_read_db)],
     user: Annotated[User | None, Depends(get_user_if_logged_in)] = None,
     query_params: Annotated[
-        SearchEventQueryParams, Depends(SearchEventQueryParams)
+        SearchEventsQueryParams, Depends(SearchEventsQueryParams)
     ] = None,
 ):
-    events, total = events_service.listing_events(db, user, query_params)
+    events, total = events_service.search_events(db, user, query_params)
 
-    return ListingEventResponse(
+    return SearchEventsResponse(
         page=query_params.page, per_page=query_params.per_page, total=total, data=events
     )
 

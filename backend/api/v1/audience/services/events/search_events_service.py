@@ -12,13 +12,13 @@ from backend.models.event_tag import EventTag
 from backend.models.organization import Organization
 from backend.models.target import Target
 from backend.models.user import User
-from backend.schemas.event import SearchEventQueryParams
+from backend.schemas.event import SearchEventsQueryParams
 
 
-def listing_events(
+def search_events(
     db: Session,
     user: User | None,
-    query_params: SearchEventQueryParams,
+    query_params: SearchEventsQueryParams,
 ):
     filters = _build_filters(db, user, query_params)
 
@@ -143,7 +143,7 @@ def _build_recommendation_targets(targets_list: list):
     return dict(targets)
 
 
-def _build_filters(db: Session, user: User, query_params: SearchEventQueryParams):
+def _build_filters(db: Session, user: User, query_params: SearchEventsQueryParams):
     filters = [
         Event.public_at.isnot(None),
         Event.application_start_at <= datetime.now(),
@@ -198,6 +198,9 @@ def _build_filters(db: Session, user: User, query_params: SearchEventQueryParams
 
     if query_params.is_apply_ended:
         filters.append(Event.application_end_at < datetime.now())
+
+    if query_params.is_today:
+        filters.append(Event.start_at.date() == datetime.now().date())
 
     if query_params.job_type_codes:
         filters.append(

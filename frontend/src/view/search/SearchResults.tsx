@@ -3,12 +3,12 @@
 import ReactPaginate from 'react-paginate';
 import EventCard from '../../component/common/Card/EventCard';
 import useWindowDimensions from '@/src/hook/useWindowDimension';
-import type { ListingEventItem } from '@/src/lib/api/generated';
+import type { SearchEventsItem } from '@/src/lib/api/generated';
 
 interface SearchResultsProps {
   className?: string;
   isLoading?: boolean;
-  events: ListingEventItem[];
+  events: SearchEventsItem[];
   total: number;
   perPage: number;
   onPageChange: (page: number) => void;
@@ -21,7 +21,7 @@ function SearchResults({ className, events, total, perPage, onPageChange, page }
   return (
     <div className={className}>
       {events?.length > 0 &&
-        events?.map((event: ListingEventItem) => (
+        events?.map((event: SearchEventsItem) => (
           <EventCard
             direction={(width < 1200 && width > 1000) || width < 800 ? 'vertical' : 'horizontal'}
             className='w-full'

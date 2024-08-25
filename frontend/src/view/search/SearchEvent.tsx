@@ -12,16 +12,16 @@ import useWindowDimensions from '@/src/hook/useWindowDimension';
 import { styles } from '@/src/constant/styles.constant';
 import { Form } from '@/src/component/form/Form';
 import { searchQuery } from '@/src/util/app.util';
-import { useListingEventQuery } from '@/src/api/event.api';
+import { useSearchEventsQuery } from '@/src/api/event.api';
 import queryString from 'query-string';
 import DotLoader from '@/src/component/common/Loader/DotLoader';
-import type { EventsApiListingEventsRequest, IndustryCode, JobTypeCode } from '@/src/lib/api/generated';
+import type { EventsApiSearchEventsRequest, EventSortByCode, IndustryCode, JobTypeCode } from '@/src/lib/api/generated';
 import dayjs from 'dayjs';
 
 function SearchEvent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { data, isLoading } = useListingEventQuery({
+  const { data, isLoading } = useSearchEventsQuery({
     ...queryString.parse(searchParams.toString()),
   });
 
@@ -40,7 +40,7 @@ function SearchEvent() {
     [width],
   );
 
-  const form = useForm<EventsApiListingEventsRequest>({
+  const form = useForm<EventsApiSearchEventsRequest>({
     mode: 'all',
     defaultValues: {
       keyword: searchParams.get('keyword') || '',
@@ -54,16 +54,18 @@ function SearchEvent() {
       tags: (searchParams.getAll('tags') as unknown as number[]) || undefined,
       startStartAt: searchParams.get('start_start_at') ? dayjs(searchParams.get('start_start_at')).toDate() : null,
       endStartAt: searchParams.get('end_start_at') ? dayjs(searchParams.get('end_start_at')).toDate() : null,
+      sortBy: (searchParams.get('sort_by') as EventSortByCode) ?? undefined,
     },
   });
 
   function handleSearch(data: any = {}) {
+    console.log('data: ', data);
     if (form.getValues()['start_at_range']) {
       const start_at_range = form.getValues()['start_at_range'];
       data.start_start_at = dayjs(start_at_range.from).format('YYYY-MM-DD');
       data.end_start_at = dayjs(start_at_range.to).format('YYYY-MM-DD');
     }
-    const filters: EventsApiListingEventsRequest = {
+    const filters: EventsApiSearchEventsRequest = {
       ...form.getValues(),
       ...data,
     };
