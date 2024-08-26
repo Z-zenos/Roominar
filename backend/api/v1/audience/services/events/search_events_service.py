@@ -10,6 +10,7 @@ from backend.models.bookmark import Bookmark
 from backend.models.event import Event
 from backend.models.event_tag import EventTag
 from backend.models.organization import Organization
+from backend.models.tag import Tag
 from backend.models.target import Target
 from backend.models.user import User
 from backend.schemas.event import SearchEventsQueryParams
@@ -85,8 +86,15 @@ def search_events(
         .offset((query_params.page - 1) * query_params.per_page)
     )
     events = db.exec(query).mappings().all()
+    result = {event.id: dict(event) for event in events}
+    event_ids = list(result.keys())
+    event_tags = _get_event_tags(db, event_ids=event_ids)
+
+    for item in event_tags:
+        result[item.id]["tags"] = item.tags
+
     total = count_events(db, filters)
-    return events, total
+    return list(result.values()), total
 
 
 def count_events(
@@ -266,3 +274,23 @@ def _build_filters(db: Session, user: User, query_params: SearchEventsQueryParam
         "conditions": filters,
         "sort_by": sort_by,
     }
+
+
+def _get_event_tags(db: Session, event_ids: list[int]):
+    query = (
+        select(
+            Event.id,
+            func.json_agg(
+                func.json_build_object(
+                    "id", Tag.id, "image_url", Tag.image_url, "name", Tag.name
+                )
+            ).label("tags"),
+        )
+        .join(EventTag, EventTag.event_id == Event.id)
+        .join(Tag, Tag.id == EventTag.tag_id)
+        .where(Event.id.in_(event_ids))
+        .group_by(Event.id)
+    )
+    event_tags = db.exec(query).all()
+
+    return event_tags

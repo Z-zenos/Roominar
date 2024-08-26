@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field, field_validator
 
 from backend.core.constants import EventSortByCode, IndustryCode, JobTypeCode
 from backend.schemas.common import PaginationResponse
+from backend.schemas.tag import TagItem
 
 
 class SearchEventsItem(BaseModel):
@@ -27,6 +28,7 @@ class SearchEventsItem(BaseModel):
     is_bookmarked: bool | None = None
     meeting_tool_code: str | None = None
     applied_number: int | None = None
+    tags: list[TagItem] = Field([])
 
 
 class SearchEventsQueryParams(BaseModel):

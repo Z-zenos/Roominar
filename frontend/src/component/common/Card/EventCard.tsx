@@ -11,7 +11,7 @@ import { Image, Link } from '@nextui-org/react';
 import { SlNote } from 'react-icons/sl';
 import { useRouter } from 'next/navigation';
 import { styles } from '@/src/constant/styles.constant';
-import type { SearchEventsItem } from '@/src/lib/api/generated';
+import type { SearchEventsItem, TagItem } from '@/src/lib/api/generated';
 import { formatEventDate } from '@/src/util/app.util';
 
 interface EventCardProps {
@@ -135,25 +135,20 @@ function EventCard({ className, direction = 'vertical', variant = 'complex', eve
         </div>
       </div>
 
-      {variant === 'complex' && (
+      {variant === 'complex' && event.tags.length > 0 && (
         <div className={clsx(styles.flexStart, 'flex-wrap gap-x-2 mt-2', direction === 'vertical' && 'px-3')}>
           <FaTags className='text-orange-500 ' size={16} />
-          <Link href='#' underline='hover' className='text-sm font-light text-gray-700 hover:text-primary'>
-            #AI,
-          </Link>
-          <Link href='#' underline='hover' className='text-sm font-light text-gray-700 hover:text-primary'>
-            #System Architecture,
-          </Link>
-          <Link href='#' underline='hover' className='text-sm font-light text-gray-700 hover:text-primary'>
-            #History,
-          </Link>
-          <Link href='#' underline='hover' className='text-sm font-light text-gray-700 hover:text-primary'>
-            #Medicine,
-          </Link>
-
-          <Link href='#' underline='hover' className='text-sm font-light text-gray-700 hover:text-primary'>
-            #Web developer
-          </Link>
+          {event.tags.map((tag: TagItem, i: number) => (
+            <Link
+              href='#'
+              underline='hover'
+              key={`event-card-tag-${tag.id}`}
+              className='text-sm font-light text-gray-700 hover:text-primary'
+            >
+              #{tag.name}
+              {i === event.tags.length - 1 ? '' : ', '}
+            </Link>
+          ))}
         </div>
       )}
     </div>
