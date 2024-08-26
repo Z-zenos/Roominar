@@ -25,7 +25,7 @@ const Page: FC<Props> = () => {
             content: <Text className='py-[10%] text-center' content='Coming soon.' />,
           },
           {
-            value: 'speacker',
+            value: 'speaker',
             content: <Text className='py-[10%] text-center' content='Coming soon.' />,
           },
         ]}

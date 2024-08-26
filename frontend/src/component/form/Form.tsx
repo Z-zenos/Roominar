@@ -295,7 +295,7 @@ const FormCombobox = ({ name, control, data, title, onSearch, multiple = true, c
 
                     {!multiple && field.value && data.find((item) => item.value === field.value)?.label}
 
-                    {!field.value && `Select ${title}`}
+                    {(!field.value || !field.value?.length) && `Select ${title}`}
                   </span>
                   <ChevronsUpDown className='h-4 w-4 shrink-0 opacity-50' />
                 </Button>

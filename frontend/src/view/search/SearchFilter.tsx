@@ -14,6 +14,7 @@ import { FormCheckBox, FormCheckBoxList, FormDateRangePicker } from '@/src/compo
 import { styles } from '@/src/constant/styles.constant';
 import { IndustryCode, type EventsApiSearchEventsRequest } from '@/src/lib/api/generated';
 import { parseCode } from '@/src/util/app.util';
+import TagsInput from '@/src/component/common/Input/TagsInput';
 
 interface SearchFilterProps {
   className?: string;
@@ -55,9 +56,10 @@ function SearchFilter({ className, control, onSearch }: SearchFilterProps) {
         </Link>
       </FilterBox>
       <FilterBox title='Tags'>
-        <Button radius='sm' variant='bordered' color='primary' startContent={<IoMdAdd />} onPress={onOpen}>
+        {/* <Button radius='sm' variant='bordered' color='primary' startContent={<IoMdAdd />} onPress={onOpen}>
           Add tags
-        </Button>
+        </Button> */}
+        <TagsInput />
         <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement='top-center' size='2xl'>
           <ModalContent>
             {(onClose) => (
