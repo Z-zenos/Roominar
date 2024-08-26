@@ -4,17 +4,14 @@ import clsx from 'clsx';
 import FilterBox from './FilterBox';
 import type { Control } from 'react-hook-form';
 import { useState } from 'react';
-import { Button } from '@nextui-org/button';
-import { IoMdAdd } from 'react-icons/io';
 import { Link } from '@nextui-org/link';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa6';
 import { Label } from '../../component/common/Label';
-import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/react';
-import { FormCheckBox, FormCheckBoxList, FormDateRangePicker } from '@/src/component/form/Form';
+import { FormCheckBox, FormCheckBoxList, FormDateRangePicker, FormTagsInput } from '@/src/component/form/Form';
 import { styles } from '@/src/constant/styles.constant';
 import { IndustryCode, type EventsApiSearchEventsRequest } from '@/src/lib/api/generated';
 import { parseCode } from '@/src/util/app.util';
-import TagsInput from '@/src/component/common/Input/TagsInput';
+import { useListingTagsQuery } from '@/src/api/tag.api';
 
 interface SearchFilterProps {
   className?: string;
@@ -24,8 +21,7 @@ interface SearchFilterProps {
 
 function SearchFilter({ className, control, onSearch }: SearchFilterProps) {
   const [showMoreIndustryCodes, setShowMoreIndustryCodes] = useState<boolean>(false);
-
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { data: tagData } = useListingTagsQuery();
 
   return (
     <div
@@ -56,39 +52,7 @@ function SearchFilter({ className, control, onSearch }: SearchFilterProps) {
         </Link>
       </FilterBox>
       <FilterBox title='Tags'>
-        {/* <Button radius='sm' variant='bordered' color='primary' startContent={<IoMdAdd />} onPress={onOpen}>
-          Add tags
-        </Button> */}
-        <TagsInput />
-        <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement='top-center' size='2xl'>
-          <ModalContent>
-            {(onClose) => (
-              <>
-                <ModalHeader className='flex flex-col gap-1'>Log in</ModalHeader>
-                <ModalBody>
-                  <FormCheckBoxList
-                    className='flex justify-start flex-wrap items-center gap-3'
-                    name='tags'
-                    control={control}
-                    items={Object.keys(IndustryCode).map((ic: string) => ({
-                      value: IndustryCode[ic],
-                      label: parseCode(IndustryCode[ic]),
-                    }))}
-                    onSearch={onSearch}
-                  />
-                </ModalBody>
-                <ModalFooter>
-                  <Button color='danger' variant='flat' onPress={onClose}>
-                    Close
-                  </Button>
-                  <Button color='primary' onPress={onClose}>
-                    Pick
-                  </Button>
-                </ModalFooter>
-              </>
-            )}
-          </ModalContent>
-        </Modal>
+        <FormTagsInput title='tags' name='tags' control={control} onSearch={onSearch} data={tagData} />
       </FilterBox>
 
       <FilterBox title='Price'>

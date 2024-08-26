@@ -1,10 +1,10 @@
 import type * as LabelPrimitive from '@radix-ui/react-label';
 import { Slot } from '@radix-ui/react-slot';
-import type { Control, ControllerProps, FieldPath, FieldValues } from 'react-hook-form';
+import type { Control, ControllerProps, ControllerRenderProps, FieldPath, FieldValues } from 'react-hook-form';
 import { Controller, FormProvider, useFormContext } from 'react-hook-form';
 
 import type { ChangeEvent, HTMLAttributes, ElementRef, ComponentPropsWithoutRef } from 'react';
-import { createContext, useContext, forwardRef, useId } from 'react';
+import { createContext, useContext, forwardRef, useId, useMemo } from 'react';
 import type { DateRange } from 'react-day-picker';
 import clsx from 'clsx';
 import { Label } from '../common/Label';
@@ -21,6 +21,11 @@ import { Check, ChevronsUpDown } from 'lucide-react';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '../common/Command';
 import { Select, SelectContent, SelectGroup, SelectElement, SelectTrigger, SelectValue } from '../common/Select';
 import type { SelectItem } from '@/src/type/SelectItem';
+import type { ListingTagsResponse, TagGroup, TagItem } from '@/src/lib/api/generated';
+import { styles } from '@/src/constant/styles.constant';
+import { IoClose } from 'react-icons/io5';
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner, useDisclosure } from '@nextui-org/react';
+import { Button as UIButton } from '@nextui-org/button';
 
 const Form = FormProvider;
 
@@ -355,6 +360,191 @@ const FormCombobox = ({ name, control, data, title, onSearch, multiple = true, c
 
 FormCombobox.displayName = 'FormCombobox';
 
+interface FormTagsInputProps {
+  name: string;
+  control: Control<any>;
+  onSearch?(data?: any): void;
+  className?: string;
+  data?: ListingTagsResponse;
+  title?: string;
+}
+
+const FormTagsInput = ({ data, name, control, onSearch, className, title }: FormTagsInputProps) => {
+  const tags = useMemo(
+    () =>
+      data && data.data.length
+        ? (data.data.flatMap((group: TagGroup) =>
+            group.tags
+              .map((tag: TagItem) => ({
+                id: tag.id,
+                name: tag.name,
+              }))
+              .map((tag) => ({ value: tag.id + '', label: tag.name })),
+          ) as SelectItem[])
+        : [],
+    [data],
+  );
+
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+  function handleSelectTags(field: ControllerRenderProps<any, string>, id: string) {
+    let newItems = null;
+
+    if (field?.value.includes(id)) {
+      newItems = field.value?.filter((value: string) => value !== id);
+    } else {
+      newItems = field?.value ? [...field.value, id] : [id];
+    }
+    field.onChange(newItems);
+  }
+
+  return (
+    <FormField
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <FormItem className='flex flex-col'>
+          <div className='border border-gray-300 rounded-sm'>
+            <div className={clsx('max-h-[100px] overflow-y-scroll p-1')}>
+              {field.value.length > 0 &&
+                field.value.map((id: string) => (
+                  <li
+                    key={`selected-tag-${id}`}
+                    className={clsx(
+                      'text-primary bg-info-sub border rounded-sm w-fit mb-[6px] mr-[6px] p-1',
+                      styles.flexStart,
+                      'gap-2 inline-flex',
+                    )}
+                  >
+                    <span className='break-all max-w-[90%]'>
+                      {'#' + tags?.find((tag: SelectItem) => tag.value === id)?.label}
+                    </span>
+                    <IoClose
+                      onClick={() => {
+                        field.onChange(field.value?.filter((value: string) => value !== id));
+                        if (onSearch) onSearch();
+                      }}
+                      className='min-w-5 cursor-pointer'
+                    />
+                  </li>
+                ))}
+            </div>
+
+            <Popover>
+              <PopoverTrigger asChild>
+                <FormControl>
+                  <Button
+                    variant='outline'
+                    role='combobox'
+                    className={cn(
+                      'w-full rounded-none border-t border-b-0 border-l-0 border-r-0 justify-between px-2',
+                      !field.value && 'text-muted-foreground',
+                      className,
+                    )}
+                  >
+                    <span className='text-gray-500 font-medium line-clamp-1'>
+                      {(!field.value || !field.value?.length) && `Select ${title}`}
+                    </span>
+                    <ChevronsUpDown className='h-4 w-4 shrink-0 opacity-50' />
+                  </Button>
+                </FormControl>
+              </PopoverTrigger>
+              <PopoverContent className={clsx('w-full p-0', className)}>
+                <Command>
+                  <CommandInput placeholder={`Search ${title}...`} />
+                  <CommandList>
+                    <CommandEmpty>No {title} found.</CommandEmpty>
+                    <CommandGroup>
+                      {tags.map((item: SelectItem) => (
+                        <CommandItem
+                          value={item.label}
+                          key={`command-${item.value}`}
+                          onSelect={() => {
+                            handleSelectTags(field, item.value);
+                            if (onSearch) onSearch();
+                          }}
+                          onKeyDown={() => {
+                            if (onSearch) onSearch();
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              'mr-2 h-4 w-4',
+                              field.value.includes(item.value) ? 'opacity-100' : 'opacity-0',
+                            )}
+                          />
+                          {item.label}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+
+            <button
+              className='w-full px-3 py-2 transition-all hover:bg-green-sub border-t border-t-green-sub hover:text-green-main'
+              onClick={onOpen}
+            >
+              More tags +
+            </button>
+
+            <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement='top-center' size='2xl'>
+              <ModalContent>
+                {(onClose) => (
+                  <>
+                    <ModalHeader className='flex flex-col gap-1'>Tags</ModalHeader>
+                    <ModalBody>
+                      {data && data.data.length > 0 ? (
+                        data.data.map((tagGroup: TagGroup) => (
+                          <div key={tagGroup.groupId}>
+                            <h3 className='py-1 px-3 bg-emerald-50'>{tagGroup.groupName}</h3>
+                            <div className={clsx(styles.flexStart, 'gap-2 flex-wrap my-2')}>
+                              {tagGroup.tags.map((tag: TagItem) => (
+                                <Checkbox
+                                  key={`modal-tag-${tag.id}`}
+                                  title={tag.name}
+                                  id={tag.id + ''}
+                                  onCheckedChange={() => {
+                                    handleSelectTags(field, tag.id + '');
+                                  }}
+                                  defaultChecked={field.value.includes(tag.id + '')}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <Spinner />
+                      )}
+                    </ModalBody>
+                    <ModalFooter>
+                      <UIButton color='danger' variant='flat' onPress={onClose}>
+                        Close
+                      </UIButton>
+                      <UIButton
+                        color='primary'
+                        onPress={() => {
+                          if (onSearch) onSearch();
+                          onClose();
+                        }}
+                      >
+                        Search
+                      </UIButton>
+                    </ModalFooter>
+                  </>
+                )}
+              </ModalContent>
+            </Modal>
+          </div>
+        </FormItem>
+      )}
+    />
+  );
+};
+
+FormTagsInput.displayName = 'FormTagsInput';
+
 // interface FormSliderProps extends HTMLAttributes<HTMLDivElement> {
 // 	min: number;
 // 	max: number;
@@ -605,4 +795,5 @@ export {
   FormSelect,
   // FormImageUploader,
   FormCombobox,
+  FormTagsInput,
 };
