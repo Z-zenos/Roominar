@@ -29,6 +29,7 @@ class SearchEventsItem(BaseModel):
     meeting_tool_code: str | None = None
     applied_number: int | None = None
     tags: list[TagItem] = Field([])
+    public_at: datetime
 
 
 class SearchEventsQueryParams(BaseModel):

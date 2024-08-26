@@ -442,9 +442,7 @@ const FormTagsInput = ({ data, name, control, onSearch, className, title }: Form
                       className,
                     )}
                   >
-                    <span className='text-gray-500 font-medium line-clamp-1'>
-                      {(!field.value || !field.value?.length) && `Select ${title}`}
-                    </span>
+                    <span className='text-gray-500 font-medium line-clamp-1'>Select {title}</span>
                     <ChevronsUpDown className='h-4 w-4 shrink-0 opacity-50' />
                   </Button>
                 </FormControl>

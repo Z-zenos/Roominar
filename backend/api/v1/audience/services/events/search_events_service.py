@@ -41,6 +41,7 @@ def search_events(
             Event.is_online,
             Event.is_offline,
             Event.meeting_tool_code,
+            Event.public_at,
             func.count(Application.id).label("applied_number"),
             case(
                 (

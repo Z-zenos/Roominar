@@ -9,10 +9,11 @@ import { FaRegShareSquare, FaTags, FaUserFriends } from 'react-icons/fa';
 import { BsThreeDots } from 'react-icons/bs';
 import { Image, Link } from '@nextui-org/react';
 import { SlNote } from 'react-icons/sl';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { styles } from '@/src/constant/styles.constant';
 import type { SearchEventsItem, TagItem } from '@/src/lib/api/generated';
 import { formatEventDate } from '@/src/util/app.util';
+import dayjs from 'dayjs';
 
 interface EventCardProps {
   className?: string;
@@ -23,6 +24,7 @@ interface EventCardProps {
 
 function EventCard({ className, direction = 'vertical', variant = 'complex', event }: EventCardProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   return (
     <div
@@ -52,7 +54,9 @@ function EventCard({ className, direction = 'vertical', variant = 'complex', eve
             />
             <div>
               <p className='font-semibold text-sm'>{event.organizationName}</p>
-              <p className='font-light text-xs text-gray-600'>Published on Jan 01, 2023</p>
+              <p className='font-light text-xs text-gray-600'>
+                Published on {dayjs(event.publicAt).format('MMM DD, YYYY')}
+              </p>
             </div>
           </div>
 
@@ -82,7 +86,13 @@ function EventCard({ className, direction = 'vertical', variant = 'complex', eve
             {direction === 'horizontal' && (
               <div className='flex flex-col justify-start gap-y-2 mt-3'>
                 <div className={clsx(styles.flexStart, 'gap-2 flex-wrap')}>
-                  <Chip content='Not open application' className='w-fit' type='error' />
+                  <Chip
+                    content={
+                      event.applicationStartAt > new Date(Date.now()) ? 'Not open application' : 'Opening application'
+                    }
+                    className='w-fit font-semibold'
+                    type={event.applicationStartAt > new Date(Date.now()) ? 'error' : 'warning'}
+                  />
                   {event.meetingToolCode && (
                     <Chip
                       content={event.meetingToolCode}
@@ -140,10 +150,13 @@ function EventCard({ className, direction = 'vertical', variant = 'complex', eve
           <FaTags className='text-orange-500 ' size={16} />
           {event.tags.map((tag: TagItem, i: number) => (
             <Link
-              href='#'
+              href={`?${searchParams.toString() ? searchParams.toString() + '&' : ''}tags=${tag.id}`}
               underline='hover'
               key={`event-card-tag-${tag.id}`}
-              className='text-sm font-light text-gray-700 hover:text-primary'
+              className={clsx(
+                'text-sm font-light text-gray-700 hover:text-primary',
+                searchParams.getAll('tags').includes(tag.id + '') && 'text-primary font-semibold',
+              )}
             >
               #{tag.name}
               {i === event.tags.length - 1 ? '' : ', '}
