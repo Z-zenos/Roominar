@@ -44,6 +44,7 @@ import useWindowDimensions from '@/src/hook/useWindowDimension';
 import Timeline from '@/src/component/common/Timeline';
 import Badge from '@/src/component/common/Badge';
 import SpeakerCard from '@/src/component/common/Card/SpeakerCard';
+import { useGetEventDetailQuery } from '@/src/api/event.api';
 
 const rows = [
   {
@@ -88,9 +89,8 @@ interface EventDetailProps {
 }
 
 function EventDetail({ slug }: EventDetailProps) {
-  console.log(slug);
-  // const { data, isLoading } = useGetCourseQuery(slug);
-  // const course = data?.course;
+  const { data: event, isLoading } = useGetEventDetailQuery({ slug });
+  console.log(event);
   const { width } = useWindowDimensions();
 
   const [showMore, setShowMore] = useState<boolean>(false);
@@ -142,8 +142,7 @@ function EventDetail({ slug }: EventDetailProps) {
     setTimeout(() => setIsCopied(false), 30000);
   }, [isCopied]);
 
-  // eslint-disable-next-line no-constant-condition
-  return false ? (
+  return isLoading && !event ? (
     <DotLoader />
   ) : (
     <div className='w-full'>
@@ -156,9 +155,7 @@ function EventDetail({ slug }: EventDetailProps) {
               <BreadcrumbItem>Song</BreadcrumbItem>
             </Breadcrumbs>
           </div>
-          <h2 className='text-primary font-bold text-lg'>
-            Viewing the stunning pink and white cherry blossoms in full bloom
-          </h2>
+          <h2 className='text-primary font-bold text-lg'>{event?.name}</h2>
           <Image
             src='https://s3.techplay.jp/tp-images/event/213554109a7a983ba7e40f3a64b1d623638bfdbc.png?w=1200'
             className='w-full '

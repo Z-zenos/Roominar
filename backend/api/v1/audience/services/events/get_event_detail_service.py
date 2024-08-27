@@ -73,6 +73,7 @@ def _get_tickets(db: Session, event_id: int):
                 func.greatest((Ticket.quantity - func.count(Application.id)), 0).label(
                     "remain"
                 ),
+                Ticket.quantity,
             )
             .outerjoin(
                 Application,
