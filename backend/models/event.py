@@ -2,16 +2,7 @@ import uuid
 from datetime import datetime
 from typing import Optional
 
-from sqlmodel import (
-    Field,
-    ARRAY,
-    Column,
-    Enum,
-    String,
-    Text,
-    func,
-    DateTime,
-)
+from sqlmodel import ARRAY, Column, DateTime, Enum, Field, String, Text, func
 
 from backend.core.constants import EventMeetingToolCode, EventStatusCode
 from backend.models.base_model import BaseModel
@@ -52,6 +43,7 @@ class Event(BaseModel, table=True):
     organize_place_name: Optional[str] = Field(sa_type=String(255))
     organize_city_code: Optional[str] = Field(sa_type=String(50))
     organize_address: Optional[str] = Field(sa_type=String(255))
+    # organize_coordinates
 
     meeting_tool_code: Optional[EventMeetingToolCode] = Field(
         sa_type=Enum(EventMeetingToolCode)

@@ -6,9 +6,10 @@ interface BadgeProps {
   icon?: ReactNode;
   iconColor?: string;
   className?: string;
+  onClick?(): void;
 }
 
-export default function Badge({ title, icon: Icon, iconColor = 'text-dark-main', className }: BadgeProps) {
+export default function Badge({ title, icon: Icon, iconColor = 'text-dark-main', className, onClick }: BadgeProps) {
   return (
     <div
       className={clsx(
@@ -16,6 +17,7 @@ export default function Badge({ title, icon: Icon, iconColor = 'text-dark-main',
         'bg-[#dcfffb] text-[#0a9484] border-none font-medium px-2 py-1 text-xs',
         className,
       )}
+      onClick={onClick}
     >
       {Icon && <span className={clsx('font-bold', iconColor)}>{Icon}</span>}
       <span className={clsx('')}>#{title}</span>

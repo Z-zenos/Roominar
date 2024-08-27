@@ -20,7 +20,7 @@ import {
 import { FaChevronDown, FaChevronUp, FaFacebookSquare, FaInstagram, FaLinkedin, FaRegCopy } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 import { BsFillPeopleFill } from 'react-icons/bs';
-import { IoBookmarkOutline } from 'react-icons/io5';
+import { IoBookmark, IoBookmarkOutline } from 'react-icons/io5';
 import { MdOutlineMail } from 'react-icons/md';
 import { GoOrganization } from 'react-icons/go';
 import { GiPartyPopper } from 'react-icons/gi';
@@ -45,6 +45,8 @@ import Timeline from '@/src/component/common/Timeline';
 import Badge from '@/src/component/common/Badge';
 import SpeakerCard from '@/src/component/common/Card/SpeakerCard';
 import { useGetEventDetailQuery } from '@/src/api/event.api';
+import type { TagItem } from '@/src/lib/api/generated';
+import { useRouter } from 'next/navigation';
 
 const rows = [
   {
@@ -90,7 +92,6 @@ interface EventDetailProps {
 
 function EventDetail({ slug }: EventDetailProps) {
   const { data: event, isLoading } = useGetEventDetailQuery({ slug });
-  console.log(event);
   const { width } = useWindowDimensions();
 
   const [showMore, setShowMore] = useState<boolean>(false);
@@ -98,6 +99,7 @@ function EventDetail({ slug }: EventDetailProps) {
   const [isFollowed, setIsFollowed] = useState<boolean>(false);
 
   const sectionNavigationMenuRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -150,22 +152,31 @@ function EventDetail({ slug }: EventDetailProps) {
         <div className={clsx('flex flex-col gap-7', width > 1200 ? 'w-[70%]' : 'w-full mb-8')}>
           <div className='flex flex-col flex-wrap gap-4 '>
             <Breadcrumbs color='primary'>
-              <BreadcrumbItem className='hover:underline'>Home</BreadcrumbItem>
-              <BreadcrumbItem className='hover:underline'>Music</BreadcrumbItem>
-              <BreadcrumbItem>Song</BreadcrumbItem>
+              <BreadcrumbItem className='hover:underline' href='/home'>
+                🏠 Home
+              </BreadcrumbItem>
+              <BreadcrumbItem className='hover:underline' href='/search'>
+                Events
+              </BreadcrumbItem>
+              <BreadcrumbItem>{event?.name}</BreadcrumbItem>
             </Breadcrumbs>
           </div>
-          <h2 className='text-primary font-bold text-lg'>{event?.name}</h2>
           <Image
-            src='https://s3.techplay.jp/tp-images/event/213554109a7a983ba7e40f3a64b1d623638bfdbc.png?w=1200'
-            className='w-full '
+            src={event?.coverImageUrl}
+            className='w-full'
+            classNames={{ wrapper: '!max-w-full' }}
             alt='Event banner image'
           />
+          <h2 className='text-primary font-bold text-lg'>{event?.name}</h2>
           <div className={clsx(styles.flexStart)}>
-            <Badge title='AI' />
-            <Badge title='System Architecture' />
-            <Badge title='History' />
-            <Badge title='Medicine' />
+            {event?.tags.map((tag: TagItem) => (
+              <Badge
+                title={tag.name}
+                key={`badge-tag-${tag.id}`}
+                className='cursor-pointer hover:underline'
+                onClick={() => router.push(`/search?tags=${tag.id}`)}
+              />
+            ))}
           </div>
         </div>
         <div className={clsx(width > 1200 ? 'w-[25%]' : 'w-full')}>
@@ -197,7 +208,7 @@ function EventDetail({ slug }: EventDetailProps) {
                   <FaRegCopy /> {isCopied ? 'Copied' : 'Copy'} URL
                 </Button>
                 <Button isIconOnly color='primary' variant='bordered' radius='sm'>
-                  <IoBookmarkOutline size={16} />
+                  {event?.isBookmarked ? <IoBookmark size={16} /> : <IoBookmarkOutline size={16} />}
                 </Button>
               </div>
             </div>
@@ -205,7 +216,9 @@ function EventDetail({ slug }: EventDetailProps) {
             <div>
               <div className={clsx(styles.flexStart, 'border-y border-y-gray-500 py-4')}>
                 <BsFillPeopleFill className='text-primary w-6 h-6' />
-                <span className='font-light'>123 applied / 1231</span>
+                <span className='font-light'>
+                  {event?.appliedNumber} applied / {event?.applicationNumber}
+                </span>
               </div>
               <Button color='primary' className='my-3 mx-auto w-[160px] font-semibold' radius='none'>
                 Apply Now
@@ -228,17 +241,19 @@ function EventDetail({ slug }: EventDetailProps) {
           <div>
             <h3 className='font-semibold text-lg border-b border-b-gray-400'>General Timeline</h3>
 
-            <Timeline />
+            <Timeline
+              applicationStartAt={event?.applicationStartAt}
+              applicationEndAt={event?.applicationEndAt}
+              startAt={event?.startAt}
+              endAt={event?.endAt}
+            />
           </div>
 
           {/* === LOCATION === */}
           <div>
             <h3 className='font-semibold text-lg '>Offline address</h3>
             <div className='mt-3'>
-              <p className='font-light'>
-                Trung tâm Tiệc cưới Louis Palace (Km 5+200 Lê Trọng Tấn kéo dài), An Khánh, Hoài Đức, Hà Nội Hà Nội
-                Hanoi, Hanoi 100000
-              </p>
+              <p className='font-light'>{event?.organizationAddress}</p>
               <Link className={styles.flexStart} href='#' underline='hover' onClick={() => {}}>
                 Show map <FaChevronDown />
               </Link>
@@ -250,7 +265,7 @@ function EventDetail({ slug }: EventDetailProps) {
             <h3 className='font-semibold text-lg border-b border-b-gray-400'>About this event</h3>
             <div className='mt-3'>
               <p className={clsx('font-light', showMore ? 'h-auto' : 'h-[400px] overflow-hidden gradient-mask-b-0')}>
-                a
+                {event?.description}
               </p>
               <Button
                 color='primary'
@@ -350,7 +365,7 @@ function EventDetail({ slug }: EventDetailProps) {
                 </div>
               </div>
               <div className='my-3 px-5'>
-                <h3 className='font-semibold text-primary text-md cursor-pointer'>Tech play</h3>
+                <h3 className='font-semibold text-primary text-md cursor-pointer'>{event?.organizationName}</h3>
                 <p className='opacity-70 text-ss line-clamp-3'>
                   Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque exercitationem illum veritatis quis
                   dicta. Laboriosam a minus aliquam amet, iure velit sunt nemo voluptatem labore dolores quo incidunt
@@ -365,7 +380,7 @@ function EventDetail({ slug }: EventDetailProps) {
                     alt='organization event image'
                   />
                   <div>
-                    <h3 className='font-medium text-nm'>
+                    <h3 className='font-medium text-sm'>
                       This is event title of AI conferenece of win champion if asf.
                     </h3>
                     <p className='text-ss font-light opacity-65'>Start at 2024/12/12</p>
@@ -379,7 +394,7 @@ function EventDetail({ slug }: EventDetailProps) {
                     alt='organization event image'
                   />
                   <div>
-                    <h3 className='font-medium text-nm'>
+                    <h3 className='font-medium text-sm'>
                       This is event title of AI conferenece of win champion if asf.
                     </h3>
                     <p className='text-ss font-light opacity-65'>Start at 2024/12/12</p>
@@ -393,7 +408,7 @@ function EventDetail({ slug }: EventDetailProps) {
                     alt='organization event image'
                   />
                   <div>
-                    <h3 className='font-medium text-nm'>
+                    <h3 className='font-medium text-sm'>
                       This is event title of AI conferenece of win champion if asf.
                     </h3>
                     <p className='text-ss font-light opacity-65'>Start at 2024/12/12</p>
