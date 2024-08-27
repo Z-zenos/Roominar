@@ -4,9 +4,16 @@ from typing import Optional
 from fastapi import Query
 from pydantic import BaseModel, Field, field_validator
 
-from backend.core.constants import EventSortByCode, IndustryCode, JobTypeCode
+from backend.core.constants import (
+    EventMeetingToolCode,
+    EventSortByCode,
+    EventStatusCode,
+    IndustryCode,
+    JobTypeCode,
+)
 from backend.schemas.common import PaginationResponse
 from backend.schemas.tag import TagItem
+from backend.schemas.ticket import TicketItem
 
 
 class SearchEventsItem(BaseModel):
@@ -66,3 +73,32 @@ class SearchEventsQueryParams(BaseModel):
 
 class SearchEventsResponse(PaginationResponse[SearchEventsItem]):
     pass
+
+
+class GetEventDetailResponse(BaseModel):
+    id: int
+    slug: str
+    name: str
+    cover_image_url: str
+    start_at: datetime
+    end_at: datetime
+    application_start_at: datetime
+    application_end_at: datetime
+    is_online: bool
+    is_offline: bool
+    organize_city_code: str | None = None
+    organize_place_name: str | None = None
+    description: str
+    is_bookmarked: bool | None = None
+    organization_name: str
+    meeting_url: str | None = None
+    meeting_tool_code: EventMeetingToolCode
+    organization_url: str | None = None
+    organization_address: str | None = None
+    tickets: list[TicketItem]
+    organization_contact_url: str | None = None
+    application_number: int
+    applied_number: int
+    status: EventStatusCode
+    application_form_url: str | None
+    tags: list[TagItem] = Field([])

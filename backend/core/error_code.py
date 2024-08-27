@@ -7,6 +7,7 @@ class ErrorCode:
     ERR_USER_ALREADY_EXISTED = "ERR_USER_ALREADY_EXISTED"
     ERR_PASSWORD_NOT_MATCHING = "ERR_PASSWORD_NOT_MATCHING"
     ERR_TAG_NOT_FOUND = "ERR_TAG_NOT_FOUND"
+    ERR_EVENT_NOT_FOUND = "ERR_EVENT_NOT_FOUND"
 
 
 class ErrorMessage:
@@ -16,3 +17,4 @@ class ErrorMessage:
     ERR_USER_ALREADY_EXISTED = "This account already existed."
     ERR_INVALID_TOKEN = "Invalid token."
     ERR_TAG_NOT_FOUND = "Unknown tag."
+    ERR_EVENT_NOT_FOUND = "The event doesn't exist."
