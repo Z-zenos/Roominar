@@ -16,7 +16,17 @@
         "@typescript-eslint/consistent-type-exports": "error",
         "@typescript-eslint/no-unused-vars": "warn",
         "prettier/prettier": [
-            "warn"
+            "warn",
+            {
+                "trailingComma": "all",
+                "tabWidth": 2,
+                "semi": true,
+                "singleQuote": true,
+                "jsxSingleQuote": true,
+                "printWidth": 100,
+                "useTabs": true,
+                "singleAttributePerLine": true
+            }
         ],
         "@next/next/no-html-link-for-pages": [
             "error",
