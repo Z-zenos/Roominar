@@ -31,6 +31,10 @@ import type { Rank } from '@/src/component/common/Ranking/RankingList';
 import RankingList from '@/src/component/common/Ranking/RankingList';
 import SpeakerCard from '@/src/component/common/Card/SpeakerCard';
 import Category from '@/src/component/common/Category';
+import { useSearchEventsQuery } from '@/src/api/event.api';
+import { EventSortByCode } from '@/src/lib/api/generated';
+import EventCard from '@/src/component/common/Card/EventCard';
+import EventCardSkeleton from '@/src/component/common/Card/EventCardSkeleton';
 
 interface HeadingGroupProps {
   heading: string | ReactNode;
@@ -75,7 +79,18 @@ const rankingEvents: Rank[] = [
 ];
 
 export default function Home() {
-  const { width } = useWindowDimensions();
+  const { data: upcomingEvents, isLoading: isUpcomingEventsLoading } = useSearchEventsQuery({
+    sortBy: EventSortByCode.StartAt,
+    perPage: 8,
+  });
+  const { data: applicationClosingSoonEvents, isLoading: isApplicationClosingSoonEventsLoading } = useSearchEventsQuery(
+    {
+      sortBy: EventSortByCode.ApplicationEndAt,
+      perPage: 8,
+    },
+  );
+
+  const { width = 800 } = useWindowDimensions();
   const router = useRouter();
   const [value, setValue] = useState<string>('');
 
@@ -174,13 +189,14 @@ export default function Home() {
         />
         <Link
           className='text-primary font-bold inline-flex justify-start gap-2 items-center cursor-pointer border-b border-b-primary pb-2'
-          href='#'
+          href='/search?sort_by=START_AT'
         >
           Upcoming Event <MdKeyboardDoubleArrowRight size={20} />
         </Link>
-        <div className='flex justify-between items-center flex-wrap gap-y-7 border-l border-l-primary'>
+
+        <div className='border-l border-l-primary'>
           <Swiper
-            key={4}
+            key={width > 1200 ? 4 : 2}
             autoplay={{
               delay: 3000,
               disableOnInteraction: false,
@@ -194,22 +210,32 @@ export default function Home() {
             spaceBetween={30}
             wrapperClass='pb-2'
           >
-            {[1, 2, 3, 4, 5, 6].map((i, index) => (
-              <SwiperSlide key={index} className={clsx('dark:rounded-lg dark:p-0')}>
-                {/* <EventCard direction={width > 800 ? 'vertical' : 'horizontal'} variant='simple' /> */}
-              </SwiperSlide>
-            ))}
+            {isUpcomingEventsLoading && (
+              <div className='flex justify-between'>
+                <EventCardSkeleton direction='vertical' variant='simple' />
+                <EventCardSkeleton direction='vertical' variant='simple' />
+                <EventCardSkeleton direction='vertical' variant='simple' />
+                <EventCardSkeleton direction='vertical' variant='simple' />
+              </div>
+            )}
+            {!isUpcomingEventsLoading &&
+              upcomingEvents &&
+              upcomingEvents.data.map((event) => (
+                <SwiperSlide key={event.id} className={clsx('dark:rounded-lg dark:p-0')}>
+                  <EventCard direction={width > 800 ? 'vertical' : 'horizontal'} event={event} variant='simple' />
+                </SwiperSlide>
+              ))}
           </Swiper>
         </div>
         <Link
           className='text-warning font-bold inline-flex justify-start gap-2 items-center cursor-pointer border-b border-b-warning pb-2 mt-8'
-          href='#'
+          href='/search?sort_by=APPLICATION_END_AT'
         >
-          Popular Event <MdKeyboardDoubleArrowRight size={20} />
+          Application Closing Soon Event <MdKeyboardDoubleArrowRight size={20} />
         </Link>
-        <div className='flex justify-between items-center flex-wrap gap-y-7 border-l border-l-warning'>
+        <div className='border-l border-l-warning'>
           <Swiper
-            key={2}
+            key={width > 1200 ? 2 : 1}
             autoplay={{
               delay: 4000,
               disableOnInteraction: false,
@@ -223,11 +249,19 @@ export default function Home() {
             spaceBetween={30}
             wrapperClass='pb-2'
           >
-            {[7, 8, 9].map((i, index) => (
-              <SwiperSlide key={index} className={clsx('dark:rounded-lg dark:p-0')}>
-                {/* <EventCard direction='horizontal' variant='simple' /> */}
-              </SwiperSlide>
-            ))}
+            {isApplicationClosingSoonEventsLoading && (
+              <div className='flex justify-between gap-8'>
+                <EventCardSkeleton direction='horizontal' variant='simple' />
+                <EventCardSkeleton direction='horizontal' variant='simple' />
+              </div>
+            )}
+            {!isApplicationClosingSoonEventsLoading &&
+              applicationClosingSoonEvents &&
+              applicationClosingSoonEvents.data.map((event) => (
+                <SwiperSlide key={event.id} className={clsx('dark:rounded-lg dark:p-0')}>
+                  <EventCard direction='horizontal' event={event} variant='simple' />
+                </SwiperSlide>
+              ))}
           </Swiper>
         </div>
       </section>
