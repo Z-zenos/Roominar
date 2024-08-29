@@ -1,9 +1,6 @@
 'use client';
 
 import { useForm } from 'react-hook-form';
-import { AiFillFacebook } from 'react-icons/ai';
-import { FcGoogle } from 'react-icons/fc';
-import { signIn } from 'next-auth/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { HiMail } from 'react-icons/hi';
 import clsx from 'clsx';

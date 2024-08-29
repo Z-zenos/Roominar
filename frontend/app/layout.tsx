@@ -27,15 +27,28 @@ export default async function RootLayout({
   const messages = await getMessages();
   const session = await getServerSession(authOptions);
   return (
-    <html lang='en'>
+    <html
+      lang='en'
+      suppressHydrationWarning
+    >
       <head />
-      <body className={clsx('min-h-screen bg-background font-sans antialiased', fontSans.variable)}>
+      <body
+        className={clsx(
+          'min-h-screen bg-background font-sans antialiased',
+          fontSans.variable,
+        )}
+      >
         <NextIntlClientProvider messages={messages}>
           <RootProvider session={session}>
-            <UIProvider themeProps={{ attribute: 'class', defaultTheme: 'white' }}>
+            <UIProvider
+              themeProps={{ attribute: 'class', defaultTheme: 'white' }}
+            >
               <LoadingGlobal />
               <div>{children}</div>
-              <Toaster position='top-right' reverseOrder={false} />
+              <Toaster
+                position='top-right'
+                reverseOrder={false}
+              />
             </UIProvider>
           </RootProvider>
         </NextIntlClientProvider>
