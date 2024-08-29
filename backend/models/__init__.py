@@ -1,8 +1,11 @@
+from .answer import Answer
 from .application import Application
 from .bookmark import Bookmark
 from .event import Event
 from .event_tag import EventTag
 from .organization import Organization
+from .question import Question
+from .question_answer_result import QuestionAnswerResult
 from .questionnaire import Questionnaire
 from .tag import Tag
 from .tag_group import TagGroup
@@ -24,4 +27,7 @@ all = (
     Ticket,
     UserTag,
     User,
+    Answer,
+    QuestionAnswerResult,
+    Question,
 )

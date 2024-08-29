@@ -132,3 +132,8 @@ class EventSortByCode(str, enum.Enum):
     PUBLIC_AT = "PUBLIC_AT"
     APPLICATION_END_AT = "APPLICATION_END_AT"
     RECOMMEDATION = "RECOMMEDATION"
+
+
+class QuestionTypeCode(str, enum.Enum):
+    Single = "SINGLE"
+    Multiple = "MULTIPLE"
