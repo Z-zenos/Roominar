@@ -1,6 +1,13 @@
-from pydantic import BaseModel, EmailStr, Field, field_validator
+from typing import Optional
 
-from backend.schemas.common import industry_code_validator, job_type_code_validator
+from pydantic import BaseModel, EmailStr, Field, ValidationInfo, field_validator
+
+from backend.core.error_code import ErrorCode, ErrorMessage
+from backend.schemas.common import (
+    industry_code_validator,
+    job_type_code_validator,
+    password_validator,
+)
 from backend.schemas.question_answer_result import QuestionAnswerResult
 
 
@@ -15,6 +22,21 @@ class CreateApplicationRequest(BaseModel):
     question_results: list[QuestionAnswerResult] = Field([])
     ticket_id: int
     is_agreed: bool
+    password: Optional[str]
+    confirm_password: Optional[str]
+
+    @field_validator("password")
+    def password_validator(cls, v):
+        return password_validator(v)
+
+    @field_validator("confirm_password")
+    def confirm_password_validator(cls, v: Optional[str], values: ValidationInfo):
+        if values.data.get("password") != v:
+            raise ValueError(
+                ErrorCode.ERR_PASSWORD_NOT_MATCHING,
+                ErrorMessage.ERR_PASSWORD_NOT_MATCHING,
+            )
+        return v
 
     @field_validator(
         "first_name",

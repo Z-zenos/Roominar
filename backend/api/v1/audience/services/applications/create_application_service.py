@@ -1,7 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import func
-from sqlmodel import Session, select
+from sqlmodel import Session, func, select
 
 from backend.core.config import settings
 from backend.core.error_code import ErrorCode, ErrorMessage
@@ -20,7 +19,7 @@ from backend.utils.database import save
 async def create_application(
     db: Session,
     request: CreateApplicationRequest,
-    current_user: User,
+    current_user: User | None,
     event_id: int,
 ):
     try:

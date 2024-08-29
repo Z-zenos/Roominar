@@ -1,4 +1,3 @@
-import re
 from datetime import datetime
 from typing import Optional
 
@@ -6,6 +5,7 @@ from pydantic import BaseModel, EmailStr, Field, ValidationInfo, field_validator
 
 from backend.core.constants import IndustryCode, JobTypeCode
 from backend.core.error_code import ErrorCode, ErrorMessage
+from backend.schemas.common import password_validator
 
 
 class UserBase(BaseModel):
@@ -76,48 +76,3 @@ class UpdateUserRequest(BaseModel):
         if v is not None and len(v) > 10:
             raise ValueError("Tags can have at most 10 items")
         return v
-
-
-def company_url_validator(v):
-    if not v.startswith("http"):
-        raise ValueError(
-            ErrorCode.ERR_INVALID_COMPANY_URL, ErrorMessage.ERR_INVALID_COMPANY_URL
-        )
-    return v
-
-
-def phone_validator(v):
-    if not re.match("^[0-9]*$", v) or len(v) != 11:
-        raise ValueError(ErrorCode.ERR_INVALID_PHONE, ErrorMessage.ERR_INVALID_PHONE)
-    return v
-
-
-# def industry_code_validator(v):
-#     if v not in ValidCode.VALID_INDUSTRY_CODES:
-#         raise ValueError(ErrorCode.ERR_INVALID_INDUSTRY_CODE)
-#     return v
-
-
-# def job_type_code_validator(v):
-#     if v not in ValidCode.VALID_JOB_TYPE_CODES:
-#         raise ValueError(ErrorCode.ERR_INVALID_JOB_TYPE_CODE)
-#     return v
-
-
-def password_validator(v):
-    if len(v) < 8:
-        raise ValueError(
-            ErrorCode.ERR_INVALID_PASSWORD, ErrorMessage.ERR_INVALID_PASSWORD
-        )
-    pattern = r"^[!-~]+$"
-    if not re.match(pattern, v):
-        raise ValueError(
-            ErrorCode.ERR_INVALID_PASSWORD, ErrorMessage.ERR_INVALID_PASSWORD_WIDTH
-        )
-    return v
-
-
-def hp_url_validator(v):
-    if not v.startswith("http"):
-        raise ValueError(ErrorCode.ERR_INVALID_URL, ErrorMessage.ERR_INVALID_URL)
-    return v

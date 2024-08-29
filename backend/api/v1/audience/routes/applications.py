@@ -1,23 +1,21 @@
-from typing import Annotated
-
 from fastapi import APIRouter, Depends
 from sqlmodel import Session
 
 import backend.api.v1.audience.services.applications as application_service
-from backend.api.v1.dependencies.authentication import authorize_role
-from backend.core.response import authenticated_api_responses
+from backend.api.v1.dependencies.authentication import get_user_if_logged_in
+from backend.core.response import public_api_responses
 from backend.db.database import get_read_db
-from backend.models.user import RoleCode, User
+from backend.models.user import User
 from backend.schemas.application import CreateApplicationRequest
 
 router = APIRouter()
 
 
-@router.post("/{event_id}", response_model=int, responses=authenticated_api_responses)
+@router.post("/{event_id}", response_model=int, responses=public_api_responses)
 async def create_application(
     event_id: int,
     request: CreateApplicationRequest,
-    current_user: Annotated[User, Depends(authorize_role(RoleCode.AUDIENCE))] = None,
+    current_user: User | None = Depends(get_user_if_logged_in),
     db: Session = Depends(get_read_db),
 ):
     return await application_service.create_application(
