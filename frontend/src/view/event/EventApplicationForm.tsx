@@ -68,7 +68,7 @@ export default function EventApplicationForm({
       >
         <div className='col-span-2'>
           {event && (
-            <div className='rounded-md p-5 shadow-[rgba(0,_0,_0,_0.02)_0px_1px_3px_0px,_rgba(27,_31,_35,_0.15)_0px_0px_0px_1px]'>
+            <div className='rounded-md p-5 shadow-[rgba(0,_0,_0,_0.02)_0px_1px_3px_0px,_rgba(27,_31,_35,_0.15)_0px_0px_0px_1px] bg-white'>
               <div className={'flex justify-between gap-2 items-start mb-3'}>
                 <Image
                   src={
@@ -111,10 +111,35 @@ export default function EventApplicationForm({
               </div>
             </div>
           )}
+          <div className='rounded-md py-5 shadow-[rgba(0,_0,_0,_0.02)_0px_1px_3px_0px,_rgba(27,_31,_35,_0.15)_0px_0px_0px_1px] my-6 bg-white'>
+            <h3 className='text-md font-semibold  px-5 pb-3 text-orange-500'>
+              Ticket 🎟
+            </h3>
+            {Array.from({ length: 10 }, (v, k) => (
+              <div
+                className={clsx(
+                  styles.between,
+                  'gap-3 border-t border-t-gray-200 py-3 cursor-pointer transition-all px-5 hover:bg-emerald-50 hover:border-emerald-100',
+                )}
+                key={`t-${k}`}
+              >
+                <div>
+                  <h4 className='text-nm'>Title</h4>
+                  <p className='font-light opacity-80 text-sm'>
+                    Description of ticket
+                  </p>
+                </div>
+                <FormCheckBox
+                  control={form.control}
+                  name='ticketId'
+                />
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className='col-span-5'>
-          <div className='w-full shadow-[rgba(0,_0,_0,_0.16)_0px_1px_4px] border border-gray-200 px-10 py-6 rounded-md'>
+          <div className='w-full shadow-[rgba(0,_0,_0,_0.16)_0px_1px_4px] border border-gray-200 px-10 py-6 rounded-md bg-white'>
             <h2 className='text-lg font-semibold text-primary'>
               Enter your detail information ✍
             </h2>
@@ -281,7 +306,7 @@ export default function EventApplicationForm({
               </div>
             </div>
           </div>
-          <div className='w-full shadow-[rgba(0,_0,_0,_0.16)_0px_1px_4px] border border-gray-200 px-10 py-6 rounded-md mt-6'>
+          <div className='w-full shadow-[rgba(0,_0,_0,_0.16)_0px_1px_4px] border border-gray-200 px-10 py-6 rounded-md mt-6 bg-white'>
             <h2 className='text-md font-semibold text-secondary'>
               Answer some questions
             </h2>
@@ -343,12 +368,12 @@ export default function EventApplicationForm({
                 >
                   Personal Information Handling
                 </Link>{' '}
-                before registering.
+                before apply.
               </p>
             </FormCheckBox>
           </div>
           <Button
-            title='Register'
+            title='Apply Event'
             type='submit'
             className='w-80 mt-5 mx-auto'
             disabled={!form.formState.isValid}

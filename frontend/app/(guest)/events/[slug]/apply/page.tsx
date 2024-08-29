@@ -9,7 +9,9 @@ async function Page({ params: { slug } }: { params: { slug: string } }) {
         keywords='Foreign Language,Webinar,Event,Sharing,Seminar,Ticket'
         title='Apply Event '
       />
-      <EventApplicationForm slug={slug} />
+      <div className='bg-gray-50'>
+        <EventApplicationForm slug={slug} />
+      </div>
     </>
   );
 }
