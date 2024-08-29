@@ -1,20 +1,20 @@
-import enum
+from enum import Enum
 
 
-class RoleCode(str, enum.Enum):
+class RoleCode(str, Enum):
     AUDIENCE = "AUDIENCE"
     SPEAKER = "SPEAKER"
     ORGANIZER = "ORGANIZER"
     ADMIN = "ADMIN"
 
 
-class ORGStatusCode(str, enum.Enum):
+class ORGStatusCode(str, Enum):
     PENDING = "PENDING"
     APPROVED = "APPROVED"
     REJECTED = "REJECTED"
 
 
-class IndustryCode(str, enum.Enum):
+class IndustryCode(str, Enum):
     REAL_ESTATE = "REAL_ESTATE"
     CONSTRUCTION = "CONSTRUCTION"
     FOOD_DRINK = "FOOD_DRINK"
@@ -45,7 +45,7 @@ class IndustryCode(str, enum.Enum):
     OTHER = "OTHER"
 
 
-class JobTypeCode(str, enum.Enum):
+class JobTypeCode(str, Enum):
     DEV = "DEV"  # Developer
     QA = "QA"  # Quality Assurance
     PM = "PM"  # Project Manager
@@ -107,7 +107,7 @@ class JobTypeCode(str, enum.Enum):
     HORT = "HORT"  # Horticulturist
 
 
-class EventMeetingToolCode(str, enum.Enum):
+class EventMeetingToolCode(str, Enum):
     ZOOM = "ZOOM"
     GOOGLE_MEET = "MEET"
     DISCORD = "DISCORD"
@@ -116,24 +116,60 @@ class EventMeetingToolCode(str, enum.Enum):
     CONTACT_LATER = "CONTACT_LATER"
 
 
-class EventStatusCode(str, enum.Enum):
+class EventStatusCode(str, Enum):
     PUBLIC = "PUBLIC"
     DRAFT = "DRAFT"
     PRIVATE = "PRIVATE"
 
 
-class QuestionnaireStatusCode(str, enum.Enum):
+class QuestionnaireStatusCode(str, Enum):
     OPEN = "OPEN"
     ARCHIVE = "ARCHIVE"
 
 
-class EventSortByCode(str, enum.Enum):
+class EventSortByCode(str, Enum):
     START_AT = "START_AT"
     PUBLIC_AT = "PUBLIC_AT"
     APPLICATION_END_AT = "APPLICATION_END_AT"
     RECOMMEDATION = "RECOMMEDATION"
 
 
-class QuestionTypeCode(str, enum.Enum):
-    Single = "SINGLE"
-    Multiple = "MULTIPLE"
+class QuestionTypeCode(str, Enum):
+    SINGLE = "SINGLE"
+    MULTIPLE = "MULTIPLE"
+
+
+class TicketTypeCode(str, Enum):
+    EARLY_BIRD = "EARLY_BIRD"
+    VIP = "VIP"
+    GROUP = "GROUP"
+    CORPORATE = "CORPORATE"
+    STUDENT = "STUDENT"
+    FREE = "FREE"
+    DONATION = "DONATION"
+    MULTIDAY = "MULTIDAY"
+    DAY_PASS = "DAY_PASS"
+
+
+class TicketDeliveryMethodCode(str, Enum):
+    ONLINE = "ONLINE"
+    OFFLINE = "OFFLINE"
+    BOTH = "BOTH"
+
+
+class TicketStatusCode(str, Enum):
+    AVAILABLE = "AVAILABLE"
+    SOLD_OUT = "SOLD_OUT"
+    CANCELED = "CANCELED"
+
+
+class ApplicationStatusCode(str, Enum):
+    PENDING = "PENDING"
+    CONFIRMED = "CONFIRMED"
+    CANCELED = "CANCELED"
+
+
+class ApplicationPaymentStatusCode(str, Enum):
+    PENDING = "PENDING"
+    PAID = "PAID"
+    FAILED = "FAILED"

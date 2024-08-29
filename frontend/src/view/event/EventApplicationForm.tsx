@@ -112,9 +112,12 @@ export default function EventApplicationForm({
             </div>
           )}
           <div className='rounded-md py-5 shadow-[rgba(0,_0,_0,_0.02)_0px_1px_3px_0px,_rgba(27,_31,_35,_0.15)_0px_0px_0px_1px] my-6 bg-white'>
-            <h3 className='text-md font-semibold  px-5 pb-3 text-orange-500'>
+            <h3 className='text-md font-semibold px-5 text-orange-500'>
               Ticket 🎟
             </h3>
+            <p className='font-light text-sm my-3 opacity-80 px-5'>
+              Check description to see which ticket type is right for you.
+            </p>
             {Array.from({ length: 10 }, (v, k) => (
               <div
                 className={clsx(

@@ -1,8 +1,8 @@
-"""Migrate All Model
+"""Migrate all model
 
-Revision ID: 9954d815fe41
+Revision ID: 1d057fa5d913
 Revises:
-Create Date: 2024-08-18 03:16:47.903846
+Create Date: 2024-08-29 17:00:57.388908
 
 """
 
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "9954d815fe41"
+revision: str = "1d057fa5d913"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -344,6 +344,31 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
+        "questions",
+        sa.Column("id", sa.BIGINT(), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column("questionnaire_id", sa.Integer(), nullable=False),
+        sa.Column(
+            "type_code",
+            sa.Enum("SINGLE", "MULTIPLE", name="questiontypecode"),
+            nullable=False,
+        ),
+        sa.Column("question", sa.String(length=1024), nullable=False),
+        sa.Column("order_number", sa.Integer(), nullable=False),
+        sa.PrimaryKeyConstraint("id"),
+    )
+    op.create_table(
         "user_tags",
         sa.Column("id", sa.BIGINT(), nullable=False),
         sa.Column(
@@ -360,6 +385,27 @@ def upgrade() -> None:
         ),
         sa.Column("user_id", sa.Integer(), nullable=True),
         sa.Column("tag_id", sa.Integer(), nullable=True),
+        sa.PrimaryKeyConstraint("id"),
+    )
+    op.create_table(
+        "answers",
+        sa.Column("id", sa.BIGINT(), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column("question_id", sa.Integer(), nullable=False),
+        sa.Column("questionnaire_id", sa.Integer(), nullable=False),
+        sa.Column("answer", sa.String(length=1024), nullable=False),
+        sa.Column("order_number", sa.Integer(), nullable=False),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
@@ -416,8 +462,41 @@ def upgrade() -> None:
             nullable=False,
         ),
         sa.Column("event_id", sa.Integer(), nullable=True),
-        sa.Column("name", sa.String(length=1024), nullable=False),
+        sa.Column("name", sa.String(length=255), nullable=False),
         sa.Column("quantity", sa.Integer(), nullable=False),
+        sa.Column("description", sa.String(length=1024), nullable=True),
+        sa.Column("price", sa.Float(), nullable=True),
+        sa.Column("expired_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column(
+            "type",
+            sa.Enum(
+                "EARLY_BIRD",
+                "VIP",
+                "GROUP",
+                "CORPORATE",
+                "STUDENT",
+                "FREE",
+                "DONATION",
+                "MULTIDAY",
+                "DAY_PASS",
+                name="tickettypecode",
+            ),
+            nullable=True,
+        ),
+        sa.Column(
+            "status",
+            sa.Enum("AVAILABLE", "SOLD_OUT", "CANCELED", name="ticketstatuscode"),
+            nullable=True,
+        ),
+        sa.Column("sales_start_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("sales_end_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column(
+            "delivery_method",
+            sa.Enum("ONLINE", "OFFLINE", "BOTH", name="ticketdeliverymethodcode"),
+            nullable=True,
+        ),
+        sa.Column("access_link_url", sa.String(length=2048), nullable=True),
+        sa.Column("is_refundable", sa.Boolean(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
@@ -436,108 +515,41 @@ def upgrade() -> None:
             nullable=False,
         ),
         sa.Column("event_id", sa.Integer(), nullable=False),
-        sa.Column("event_name", sa.String(length=1024), nullable=False),
         sa.Column("user_id", sa.Integer(), nullable=False),
         sa.Column("email", sa.String(length=255), nullable=False),
         sa.Column("first_name", sa.String(length=255), nullable=False),
         sa.Column("last_name", sa.String(length=255), nullable=False),
         sa.Column("workplace_name", sa.String(length=255), nullable=True),
         sa.Column("phone", sa.String(length=20), nullable=True),
-        sa.Column(
-            "industry_code",
-            sa.Enum(
-                "REAL_ESTATE",
-                "CONSTRUCTION",
-                "FOOD_DRINK",
-                "COSMETICS_MANUFACTURING",
-                "ELECTRONICS_MANUFACTURING",
-                "PRECISION_MANUFACTURING",
-                "AUTOMOTIVE_MANUFACTURING",
-                "FASHION_MANUFACTURING",
-                "B2C_MANUFACTURING",
-                "B2B_MANUFACTURING",
-                "LOGISTICS",
-                "IT_COMMUNICATIONS",
-                "CONTRACT_DEVELOPMENT",
-                "RETAIL",
-                "WHOLESALE",
-                "FINANCE",
-                "HOSPITALITY",
-                "CONSULTING",
-                "HEALTHCARE",
-                "ADVERTISING",
-                "ENTERTAINMENT",
-                "EDUCATION",
-                "MEDIA",
-                "MINING",
-                "TRANSPORTATION",
-                "WAREHOUSING",
-                "CHEMICAL",
-                "OTHER",
-                name="industrycode",
-            ),
-            nullable=True,
-        ),
-        sa.Column(
-            "job_type_code",
-            sa.Enum(
-                "DEV",
-                "QA",
-                "PM",
-                "TESTER",
-                "SYSADMIN",
-                "DBA",
-                "SA",
-                "ACC",
-                "FIN",
-                "CFA",
-                "TAX",
-                "AUD",
-                "SEO",
-                "SMM",
-                "PR",
-                "AD",
-                "CMM",
-                "TEACHER",
-                "LECTURER",
-                "TUTOR",
-                "PRINCIPAL",
-                "COUNSELOR",
-                "DOCTOR",
-                "NURSE",
-                "PHARM",
-                "SURGEON",
-                "THER",
-                "ARCH",
-                "ENG",
-                "CIVIL",
-                "CON",
-                "QS",
-                "DESIGNER",
-                "ARTIST",
-                "WRITER",
-                "MUSICIAN",
-                "ACTOR",
-                "CS",
-                "SALES",
-                "CRM",
-                "CASHIER",
-                "MERCH",
-                "DRIVER",
-                "LOG",
-                "WAREHOUSE",
-                "SHIP",
-                "FARMER",
-                "AGR",
-                "VET",
-                "HORT",
-                name="jobtypecode",
-            ),
-            nullable=True,
-        ),
         sa.Column("ticket_id", sa.Integer(), nullable=False),
-        sa.Column("deleted_at", sa.DateTime(timezone=True), nullable=True),
-        sa.Column("display_id", sa.String(length=20), nullable=False),
+        sa.Column(
+            "status",
+            sa.Enum("PENDING", "CONFIRMED", "CANCELED", name="applicationstatuscode"),
+            nullable=True,
+        ),
+        sa.Column("canceled_at", sa.DateTime(timezone=True), nullable=True),
+        sa.PrimaryKeyConstraint("id"),
+    )
+    op.create_table(
+        "question_answer_results",
+        sa.Column("id", sa.BIGINT(), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column("event_id", sa.Integer(), nullable=False),
+        sa.Column("application_id", sa.Integer(), nullable=False),
+        sa.Column("question_id", sa.Integer(), nullable=False),
+        sa.Column("questionnaire_id", sa.Integer(), nullable=False),
+        sa.Column("answers_ids", sa.ARRAY(sa.Integer()), nullable=False),
         sa.PrimaryKeyConstraint("id"),
     )
     # ### end Alembic commands ###
@@ -545,11 +557,14 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     # ### commands auto generated by Alembic - please adjust! ###
+    op.drop_table("question_answer_results")
     op.drop_table("applications")
     op.drop_table("tickets")
     op.drop_table("event_tags")
     op.drop_table("bookmarks")
+    op.drop_table("answers")
     op.drop_table("user_tags")
+    op.drop_table("questions")
     op.drop_table("events")
     op.drop_table("users")
     op.drop_table("targets")
