@@ -16,7 +16,7 @@
         "@typescript-eslint/consistent-type-exports": "error",
         "@typescript-eslint/no-unused-vars": "warn",
         "prettier/prettier": [
-            "warn",
+            "off",
             {
                 "trailingComma": "all",
                 "tabWidth": 2,
@@ -24,7 +24,6 @@
                 "singleQuote": true,
                 "jsxSingleQuote": true,
                 "printWidth": 100,
-                "useTabs": true,
                 "singleAttributePerLine": true
             }
         ],
