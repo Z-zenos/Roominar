@@ -47,7 +47,7 @@ const eventApplicationFormSchema = z.object({
     )
     .nullable(),
 
-  isAccepted: z.boolean({
+  isAgreed: z.boolean({
     required_error: 'Please agree with our term about privacy.',
   }),
 });

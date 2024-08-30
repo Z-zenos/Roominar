@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
 
-class QuestionAnswerResult(BaseModel):
+class QuestionAnswerResultItem(BaseModel):
     question_id: int
     answers_ids: list[int] = Field([])

@@ -77,7 +77,7 @@ async def create_application(
 
         save(db, application)
 
-        if request.question_answer_results:
+        if len(request.question_answer_results) > 0:
             question_answer_results = []
             for qar in request.question_answer_results:
                 result = QuestionAnswerResult(
@@ -85,6 +85,7 @@ async def create_application(
                     application_id=application.id,
                     question_id=qar.question_id,
                     answers_ids=qar.answers_ids,
+                    questionnaire_id=event.questionnaire_id,
                 )
                 question_answer_results.append(result)
 
@@ -134,7 +135,7 @@ async def create_application(
         # Add the meeting_tool_code to the context
 
         mailer = Email()
-        mailer.send_email(
+        await mailer.send_aud_email(
             request.email,
             "apply_event_success.html",
             "Thanks to apply our event.",

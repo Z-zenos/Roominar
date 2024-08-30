@@ -118,10 +118,7 @@ def _get_targets(db: Session, user: User, Model: BaseModel):
     targets_query = (
         select(
             Target.industry_codes,
-            Target.employee_size_codes,
             Target.job_type_codes,
-            Target.revenue_codes,
-            Target.position_codes,
         )
         .join(Event, Event.target_id == Target.id)
         .join(Model, and_(Model.event_id == Event.id, Model.user_id == user.id))
@@ -171,10 +168,7 @@ def _build_filters(db: Session, user: User, query_params: SearchEventsQueryParam
                 + [
                     {
                         "industry_codes": [user.industry_code],
-                        "employee_size_codes": [user.employee_size_code],
                         "job_type_codes": [user.job_type_code],
-                        "position_codes": [user.position_code],
-                        "revenue_codes": [user.revenue_code],
                     }
                 ]
             )

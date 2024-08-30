@@ -27,13 +27,19 @@ import { FaUserFriends } from 'react-icons/fa';
 import { Image, Link } from '@nextui-org/react';
 import type {
   AnswerItem,
+  ApiException,
+  ErrorResponse400,
   QuestionAnswerItem,
+  QuestionAnswerResultItem,
   TicketItem,
 } from '@/src/lib/api/generated';
 import { IndustryCode, QuestionTypeCode } from '@/src/lib/api/generated';
 import { JobTypeCodeMapping } from '@/src/constant/code.constant';
 import { RadioGroup, RadioGroupItem } from '@/src/component/common/RadioGroup';
 import Checkbox from '@/src/component/common/Input/Checkbox';
+import { useApplyEventMutation } from '@/src/api/application.api';
+import toast from 'react-hot-toast';
+import { useSession } from 'next-auth/react';
 
 interface EventApplicationFormProps {
   slug: string;
@@ -45,29 +51,60 @@ export default function EventApplicationForm({
   // const [showPassword, setShowPassword] = useState(false);
   // const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { data: event } = useGetEventDetailQuery({ slug });
+  const { data: auth, status } = useSession();
 
   const form = useForm<EventApplicationFormSchema>({
     mode: 'all',
     defaultValues: {
-      email: '',
+      email: auth?.user?.email || '',
       ticketId: undefined,
-      firstName: '',
-      lastName: '',
-      workplaceName: '',
-      phoneNumber: '',
-      industryCode: undefined,
-      jobTypeCode: undefined,
+      firstName: auth?.user?.firstName || '',
+      lastName: auth?.user?.lastName || '',
+      workplaceName: auth?.user?.workplaceName || '',
+      phoneNumber: auth?.user?.phone || '',
+      industryCode: auth?.user?.industryCode || undefined,
+      jobTypeCode: auth?.user?.jobTypeCode || undefined,
       questionAnswerResults: [],
-      isAccepted: false,
+      isAgreed: false,
     },
     resolver: zodResolver(eventApplicationFormSchema),
   });
 
-  function handleApplyEvent(data: EventApplicationFormSchema) {
-    console.log(data);
-  }
+  const { trigger, isMutating: isApplying } = useApplyEventMutation({
+    onSuccess() {
+      toast.success('Apply event successfully!');
+      form.reset();
+      // router.push('/login');
+    },
+    onError(error: ApiException<unknown>) {
+      toast.error(
+        (error.body as ErrorResponse400)?.message ??
+          (error.body as ErrorResponse400)?.errorCode ??
+          'Unknown Error 😵',
+      );
+    },
+  });
 
-  console.log(form.getValues());
+  function handleApplyEvent(data: EventApplicationFormSchema) {
+    trigger({
+      eventId: event.id,
+      createApplicationRequest: {
+        email: data.email,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        workplaceName: data.workplaceName,
+        phone: data.phoneNumber,
+        industryCode: data.industryCode,
+        jobTypeCode: data.jobTypeCode,
+        questionAnswerResults:
+          data.questionAnswerResults as QuestionAnswerResultItem[],
+        ticketId: +data.ticketId,
+        isAgreed: data.isAgreed,
+        password: '',
+        confirmPassword: '',
+      },
+    });
+  }
 
   return (
     <Form {...form}>
@@ -203,7 +240,9 @@ export default function EventApplicationForm({
                     form.formState.errors.email &&
                       form.formState.touchedFields.email &&
                       'border-error-main',
+                    status === 'authenticated' && 'bg-slate-100 text-gray-500',
                   )}
+                  disabled={status === 'authenticated'}
                 />
               </div>
               &nbsp;
@@ -224,7 +263,9 @@ export default function EventApplicationForm({
                     form.formState.errors.firstName &&
                       form.formState.touchedFields.firstName &&
                       'border-error-main',
+                    status === 'authenticated' && 'bg-slate-100 text-gray-500',
                   )}
+                  disabled={status === 'authenticated'}
                   control={form.control}
                   isDisplayError={true}
                 />
@@ -246,7 +287,9 @@ export default function EventApplicationForm({
                     form.formState.errors.lastName &&
                       form.formState.touchedFields.lastName &&
                       'border-error-main',
+                    status === 'authenticated' && 'bg-slate-100 text-gray-500',
                   )}
+                  disabled={status === 'authenticated'}
                   control={form.control}
                   isDisplayError={true}
                 />
@@ -268,7 +311,9 @@ export default function EventApplicationForm({
                     form.formState.errors.firstName &&
                       form.formState.touchedFields.firstName &&
                       'border-error-main',
+                    status === 'authenticated' && 'bg-slate-100 text-gray-500',
                   )}
+                  disabled={status === 'authenticated'}
                   control={form.control}
                   isDisplayError={true}
                 />
@@ -290,7 +335,9 @@ export default function EventApplicationForm({
                     form.formState.errors.firstName &&
                       form.formState.touchedFields.firstName &&
                       'border-error-main',
+                    status === 'authenticated' && 'bg-slate-100 text-gray-500',
                   )}
+                  disabled={status === 'authenticated'}
                   control={form.control}
                   isDisplayError={true}
                 />
@@ -313,7 +360,11 @@ export default function EventApplicationForm({
                   control={form.control}
                   title='type job'
                   multiple={false}
-                  className='w-full'
+                  className={clsx(
+                    'w-full',
+                    status === 'authenticated' &&
+                      'bg-slate-100 text-gray-500 pointer-events-none',
+                  )}
                 />
               </div>
               <div>
@@ -334,7 +385,11 @@ export default function EventApplicationForm({
                   control={form.control}
                   title='industry'
                   multiple={false}
-                  className='w-full'
+                  className={clsx(
+                    'w-full',
+                    status === 'authenticated' &&
+                      'bg-slate-100 text-gray-500 pointer-events-none',
+                  )}
                 />
               </div>
             </div>
@@ -493,7 +548,7 @@ export default function EventApplicationForm({
           <div className={clsx(styles.center, 'mt-5')}>
             <FormCheckBox
               control={form.control}
-              name='isAccepted'
+              name='isAgreed'
             >
               <p className='text-sm text-gray-600 font-light'>
                 Please agree to the
@@ -520,8 +575,8 @@ export default function EventApplicationForm({
             title='Apply Event'
             type='submit'
             className='w-80 mt-5 mx-auto'
-            // disabled={!form.formState.isValid}
-            isLoading={false}
+            disabled={!form.formState.isValid}
+            isLoading={isApplying}
           />
         </div>
       </form>

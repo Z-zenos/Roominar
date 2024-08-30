@@ -2,7 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { AiOutlineEye, AiOutlineEyeInvisible, AiFillFacebook } from 'react-icons/ai';
+import {
+  AiOutlineEye,
+  AiOutlineEyeInvisible,
+  AiFillFacebook,
+} from 'react-icons/ai';
 import { FcGoogle } from 'react-icons/fc';
 import { toast } from 'react-hot-toast';
 import { getSession, signIn } from 'next-auth/react';
@@ -85,7 +89,10 @@ export default function LoginAudienceForm() {
       >
         <div className='w-full'>
           <div className='mb-2 block'>
-            <Label htmlFor='email' className={clsx(styles.label)}>
+            <Label
+              htmlFor='email'
+              className={clsx(styles.label)}
+            >
               Your email
             </Label>
           </div>
@@ -93,9 +100,18 @@ export default function LoginAudienceForm() {
             id='email'
             name='email'
             type='email'
-            rightIcon={<HiMail size={20} className='text-primary' />}
+            rightIcon={
+              <HiMail
+                size={20}
+                className='text-primary'
+              />
+            }
             placeholder='loginmail@gmail.com'
-            className={clsx(form.formState.errors.email && form.formState.touchedFields.email && 'border-error-main')}
+            className={clsx(
+              form.formState.errors.email &&
+                form.formState.touchedFields.email &&
+                'border-error-main',
+            )}
             control={form.control}
             isDisplayError={true}
           />
@@ -103,7 +119,10 @@ export default function LoginAudienceForm() {
 
         <div className='w-full mt-5 relative mb-1'>
           <div className='mb-2 block'>
-            <Label htmlFor='password' className={clsx(styles.label)}>
+            <Label
+              htmlFor='password'
+              className={clsx(styles.label)}
+            >
               Enter your password
             </Label>
           </div>
@@ -113,22 +132,41 @@ export default function LoginAudienceForm() {
             type={!showPassword ? 'password' : 'text'}
             rightIcon={
               !showPassword ? (
-                <AiOutlineEyeInvisible className='text-primary' size={20} onClick={() => setShowPassword(true)} />
+                <AiOutlineEyeInvisible
+                  className='text-primary'
+                  size={20}
+                  onClick={() => setShowPassword(true)}
+                />
               ) : (
-                <AiOutlineEye className='text-primary' size={20} onClick={() => setShowPassword(false)} />
+                <AiOutlineEye
+                  className='text-primary'
+                  size={20}
+                  onClick={() => setShowPassword(false)}
+                />
               )
             }
             placeholder='password!@%'
             className={clsx(
-              form.formState.errors.password && form.formState.touchedFields.password && 'border-error-main',
+              form.formState.errors.password &&
+                form.formState.touchedFields.password &&
+                'border-error-main',
             )}
             control={form.control}
             isDisplayError={true}
           />
         </div>
         <div className='w-full mt-5 relative mb-1 flex justify-between items-center'>
-          <FormCheckBox id='remember-me' title='Remember me' name='rememberMe' control={form.control} />
-          <Link href='#' className='text-primary' underline='hover'>
+          <FormCheckBox
+            id='remember-me'
+            title='Remember me'
+            name='rememberMe'
+            control={form.control}
+          />
+          <Link
+            href='#'
+            className='text-primary'
+            underline='hover'
+          >
             Forgot password ?
           </Link>
         </div>
@@ -137,16 +175,30 @@ export default function LoginAudienceForm() {
           type='submit'
           className='w-full mt-5'
           disabled={!form.formState.isValid || !form.formState.isDirty}
+          isLoading={isLoading}
         />
         <br />
-        <h5 className='text-center pt-4 font-Poppins text-[14px] text-black dark:text-white'>Or join with</h5>
+        <h5 className='text-center pt-4 font-Poppins text-[14px] text-black dark:text-white'>
+          Or join with
+        </h5>
         <div className='flex items-center justify-center mt-3'>
-          <FcGoogle size={30} className='cursor-pointer mr-2' onClick={() => signIn('google')} />
-          <AiFillFacebook size={30} className='cursor-pointer ml-2 text-[#1877F2]' onClick={() => signIn('facebook')} />
+          <FcGoogle
+            size={30}
+            className='cursor-pointer mr-2'
+            onClick={() => signIn('google')}
+          />
+          <AiFillFacebook
+            size={30}
+            className='cursor-pointer ml-2 text-[#1877F2]'
+            onClick={() => signIn('facebook')}
+          />
         </div>
         <h5 className='text-center pt-4 font-Poppins text-nm font-light'>
           Not have any account?
-          <Link href='/register' className='text-primary font-semibold pl-1 cursor-pointer'>
+          <Link
+            href='/register'
+            className='text-primary font-semibold pl-1 cursor-pointer'
+          >
             Sign up
           </Link>
         </h5>

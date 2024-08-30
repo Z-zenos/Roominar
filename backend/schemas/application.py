@@ -8,7 +8,7 @@ from backend.schemas.common import (
     job_type_code_validator,
     password_validator,
 )
-from backend.schemas.question_answer_result import QuestionAnswerResult
+from backend.schemas.question_answer_result import QuestionAnswerResultItem
 
 
 class CreateApplicationRequest(BaseModel):
@@ -19,7 +19,7 @@ class CreateApplicationRequest(BaseModel):
     phone: str = Field(max_length=20)
     industry_code: str = Field(max_length=50)
     job_type_code: str = Field(max_length=20)
-    question_answer_results: list[QuestionAnswerResult] = Field([])
+    question_answer_results: list[QuestionAnswerResultItem] = Field([])
     ticket_id: int
     is_agreed: bool
     password: Optional[str]
