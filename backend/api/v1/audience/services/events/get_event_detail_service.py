@@ -153,7 +153,9 @@ def _get_questionnaire_detail(
     db: Session, questionnaire_id: int, questionnaire_name: str
 ):
     questions = db.exec(
-        select(Question).where(Question.questionnaire_id == questionnaire_id)
+        select(Question)
+        .where(Question.questionnaire_id == questionnaire_id)
+        .order_by(Question.order_number)
     ).fetchall()
 
     question_answer = _get_questions_answer(db, questions)
@@ -172,7 +174,9 @@ def _get_questions_answer(db: Session, questions: list[Question]):
     question_ids = list(question_answers.keys())
 
     answers = db.exec(
-        select(Answer).where(Answer.question_id.in_(question_ids))
+        select(Answer)
+        .where(Answer.question_id.in_(question_ids))
+        .order_by(Answer.order_number)
     ).fetchall()
 
     for answer in answers:

@@ -30,19 +30,15 @@ const eventApplicationFormSchema = z.object({
     })
     .min(1, "Phone number can't empty"),
 
-  industryCode: z
-    .nativeEnum(IndustryCode, {
-      required_error: "Industry code can't empty",
-    })
-    .nullable(),
+  industryCode: z.nativeEnum(IndustryCode, {
+    required_error: "Industry code can't empty",
+  }),
 
-  jobTypeCode: z
-    .nativeEnum(JobTypeCode, {
-      required_error: "Job type code can't empty",
-    })
-    .nullable(),
+  jobTypeCode: z.nativeEnum(JobTypeCode, {
+    required_error: "Job type code can't empty",
+  }),
 
-  answerResults: z
+  questionAnswerResults: z
     .array(
       z.object({
         questionId: z.number(),

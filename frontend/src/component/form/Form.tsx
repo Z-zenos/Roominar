@@ -733,7 +733,7 @@ function FormRadioBoxList({
             <RadioGroup
               onValueChange={(value) => {
                 field.onChange(value);
-                onSearch({ averageRatings: value });
+                if (onSearch) onSearch();
               }}
               defaultValue={field.value}
               className='flex flex-col space-y-1'
