@@ -4,7 +4,7 @@
     "name": "Roominar",
     "dockerComposeFile": "docker-compose.yml",
     "service": "app",
-    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+    "workspaceFolder": "/workspace/${localWorkspaceFolderBasename}",
     // Features to add to the dev container. More info: https://containers.dev/features.
     "features": {
         "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
@@ -24,6 +24,7 @@
     "forwardPorts": [
         5432,
         3000,
+        8000
     ],
     // Use 'postCreateCommand' to run commands after the container is created.
     "postCreateCommand": "poetry install && pre-commit install && cd frontend && pnpm install",

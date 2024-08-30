@@ -16,6 +16,7 @@ class ErrorCode:
     ERR_EVENT_NO_LONGER_OPEN_APPLY = "ERR_EVENT_NO_LONGER_OPEN_APPLY"
     ERR_APPLICATION_ALREADY_EXISTED = "ERR_APPLICATION_ALREADY_EXISTED"
     ERR_TICKET_SOLD_OUT = "ERR_TICKET_SOLD_OUT"
+    ERR_USER_NOT_VERIFIED = "ERR_USER_NOT_VERIFIED"
 
 
 class ErrorMessage:
@@ -34,3 +35,4 @@ class ErrorMessage:
     ERR_EVENT_NO_LONGER_OPEN_APPLY = "The event was no longer open apply."
     ERR_APPLICATION_ALREADY_EXISTED = "The application has already existed."
     ERR_TICKET_SOLD_OUT = "Ticket sold out."
+    ERR_USER_NOT_VERIFIED = "The user has not verified."
