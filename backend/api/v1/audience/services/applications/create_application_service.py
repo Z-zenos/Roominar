@@ -7,7 +7,7 @@ from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.mails.mail import Email
 from backend.models.application import Application
-from backend.models.event import Event, EventMeetingToolCode
+from backend.models.event import Event
 from backend.models.organization import Organization
 from backend.models.question_answer_result import QuestionAnswerResult
 from backend.models.ticket import Ticket
@@ -63,21 +63,6 @@ async def create_application(
                 ErrorMessage.ERR_TICKET_SOLD_OUT,
             )
 
-        application_order_number = db.scalar(
-            select(func.count(Application.id))
-            .where(Application.event_id == event_id)
-            .group_by(Application.event_id)
-        )
-
-        if application_order_number is None:
-            application_order_number = 1
-        else:
-            application_order_number = int(application_order_number) + 1
-
-        event_id_str = f"{event_id:06d}"
-        app_order_num_str = f"{application_order_number:07d}"
-        display_id = event_id_str + app_order_num_str
-
         application = Application(
             event_id=event_id,
             event_name=event.name,
@@ -87,26 +72,23 @@ async def create_application(
             last_name=request.last_name,
             workplace_name=request.workplace_name,
             phone=request.phone,
-            industry_code=request.industry_code,
-            job_type_code=request.job_type_code,
             ticket_id=request.ticket_id,
-            display_id=display_id,
         )
 
         save(db, application)
 
-        if request.question_results:
-            question_results = []
-            for question_result in request.question_results:
+        if request.question_answer_results:
+            question_answer_results = []
+            for qar in request.question_answer_results:
                 result = QuestionAnswerResult(
                     event_id=event_id,
                     application_id=application.id,
-                    question_id=question_result.question_id,
-                    answers_ids=question_result.answers_ids,
+                    question_id=qar.question_id,
+                    answers_ids=qar.answers_ids,
                 )
-                question_results.append(result)
+                question_answer_results.append(result)
 
-            db.bulk_insert_mappings(QuestionAnswerResult, question_results)
+            db.bulk_insert_mappings(QuestionAnswerResult, question_answer_results)
             db.flush()
             db.commit()
 
@@ -118,71 +100,53 @@ async def create_application(
         organization = db.exec(
             select(Organization).where(Organization.id == event.organization_id)
         ).first()
-        organization_emails = db.exec(
-            select(User.email).where(
-                User.organization_id == event.organization_id, User.deleted_at.is_(None)
-            )
-        ).all()
-        ticket_name = db.exec(
-            select(Ticket.name).where(Ticket.id == request.ticket_id)
-        ).first()
 
-        meeting_tool_display = {
-            EventMeetingToolCode.Zoom: "Zoom",
-            EventMeetingToolCode.Meet: "Meet",
-            EventMeetingToolCode.Discord: "Discord",
-            EventMeetingToolCode.Other: "その他",
-            EventMeetingToolCode.ContactLater: "後日連絡",
-        }
-        ticket = db.get(Ticket, application.ticket_id)
+        # organization_emails = db.exec(
+        #     select(User.email).where(
+        #         User.organization_id == event.organization_id,
+        #         User.deleted_at.is_(None),
+        #     )
+        # ).all()
+
+        ticket = db.get(Ticket, request.ticket_id)
         audience_context = {
-            "username": current_user.first_name_kanji + current_user.last_name_kanji,
+            "username": current_user.first_name + current_user.last_name,
             "event_name": event.name,
             "ticket_name": ticket.name,
-            "ticket_url": "",
-            "organization_name": organization.display_name,
+            "ticket_url": ticket.access_link_url,
+            "organization_name": organization.name,
             "contact_email": organization.contact_email,
             "datetime": f"{event.start_at}, {event.end_at}",
             "address": event.organize_address,
-            "detail_event_url": f"{settings.FRONTEND_AUD_URL}/events/{event.slug}",
-            "mypage_url": f"{settings.FRONTEND_AUD_URL}/mypage",
+            "meeting_tool": event.meeting_tool_code,
+            "detail_event_url": f"{settings.AUD_FRONTEND_URL}/events/{event.slug}",
+            "mypage_url": f"{settings.AUD_FRONTEND_URL}/mypage",
             "message": event.comment,
         }
-        organizer_context = {
-            "name_org_company": organization.name,
-            "name_aud_company": current_user.company_name,
-            "event_name": event.name,
-            "ticket_name": ticket_name,
-            "list_apply_event_url": f"{settings.FRONTEND_ORG_URL}/applications",
-            "event_detail_url": f"{settings.FRONTEND_AUD_URL}/events/{event.slug}",
-        }
+        # organizer_context = {
+        #     "name_org_company": organization.name,
+        #     "name_aud_company": current_user.company_name,
+        #     "event_name": event.name,
+        #     "ticket_name": ticket.name,
+        #     "list_apply_event_url": f"{settings.FRONTEND_ORG_URL}/applications",
+        #     "event_detail_url": f"{settings.FRONTEND_AUD_URL}/events/{event.slug}",
+        # }
         # Add the meeting_tool_code to the context
-        meeting_tool_code = event.meeting_tool_code
-        meeting_tool_display_value = meeting_tool_display.get(meeting_tool_code, "後日連絡")
-
-        if meeting_tool_code != EventMeetingToolCode.ContactLater:
-            online_meeting = (
-                f"オンライン会場（{meeting_tool_display_value}）：{event.meeting_url}"
-            )
-        else:
-            online_meeting = "オンライン会場：視聴用URLに関しては開催日が近づいてまいりましたら主催者より改めてメールでご連絡致しま"
-
-        audience_context["online_meeting"] = online_meeting
 
         mailer = Email()
         mailer.send_email(
-            request.apply_email,
-            "to_audience_event_apply_success.html",
-            "イベント申込みを受付いたしました",
+            request.email,
+            "apply_event_success.html",
+            "Thanks to apply our event.",
             audience_context,
         )
 
-        mailer.send_bulk_organization_email(
-            organization_emails,
-            "to_organizer_event_apply_success.html",
-            "【ehaco！】主催イベントへの参加申込みがありました！",
-            organizer_context,
-        )
+        # mailer.send_bulk_organization_email(
+        #     organization_emails,
+        #     "to_organizer_event_apply_success.html",
+        #     "【ehaco！】主催イベントへの参加申込みがありました！",
+        #     organizer_context,
+        # )
 
         return application.id
 

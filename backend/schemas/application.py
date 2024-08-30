@@ -19,7 +19,7 @@ class CreateApplicationRequest(BaseModel):
     phone: str = Field(max_length=20)
     industry_code: str = Field(max_length=50)
     job_type_code: str = Field(max_length=20)
-    question_results: list[QuestionAnswerResult] = Field([])
+    question_answer_results: list[QuestionAnswerResult] = Field([])
     ticket_id: int
     is_agreed: bool
     password: Optional[str]
