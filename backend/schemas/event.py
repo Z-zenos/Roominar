@@ -12,6 +12,7 @@ from backend.core.constants import (
     JobTypeCode,
 )
 from backend.schemas.common import PaginationResponse
+from backend.schemas.questionnaire import QuestionnaireDetail
 from backend.schemas.tag import TagItem
 from backend.schemas.ticket import TicketItem
 
@@ -102,3 +103,4 @@ class GetEventDetailResponse(BaseModel):
     status: EventStatusCode
     application_form_url: str | None
     tags: list[TagItem] = Field([])
+    questionnaire: QuestionnaireDetail | None

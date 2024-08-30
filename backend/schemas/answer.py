@@ -1,12 +1,8 @@
-# from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
-# class AnswerBase(BaseModel):
-#     id: int = Field(default=None, nullable=True)
-#     question_id: int = Field(default=None, nullable=True)
-#     answer: str = Field(default=None, max_length=1024, nullable=True)
-#     order_number: int = Field(default=None, nullable=True)
-
-
-# class AnswerDetail(AnswerBase):
-#     pass
+class AnswerItem(BaseModel):
+    id: int
+    question_id: int
+    answer: str
+    order_number: int

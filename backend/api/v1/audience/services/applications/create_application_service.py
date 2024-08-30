@@ -40,7 +40,7 @@ async def create_application(
                 Application.event_id == event_id,
                 Application.email == request.email,
                 Application.ticket_id == request.ticket_id,
-                Application.deleted_at.is_(None),
+                Application.canceled_at.is_(None),
             )
         ).one_or_none()
 
@@ -53,7 +53,7 @@ async def create_application(
         remain_ticket_number = db.scalar(
             select(func.greatest((Ticket.quantity - func.count(Application.id)), 0))
             .outerjoin(Application, Application.ticket_id == Ticket.id)
-            .where(Ticket.id == request.ticket_id, Application.deleted_at.is_(None))
+            .where(Ticket.id == request.ticket_id, Application.canceled_at.is_(None))
             .group_by(Ticket.id)
         )
 

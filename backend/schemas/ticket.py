@@ -23,5 +23,4 @@ class TicketItem(BaseModel):
     sales_start_at: Optional[datetime]
     sales_end_at: Optional[datetime]
     delivery_method: Optional[TicketDeliveryMethodCode]
-    access_link_url: Optional[str]
     is_refundable: Optional[bool]

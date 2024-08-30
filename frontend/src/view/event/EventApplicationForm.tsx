@@ -12,7 +12,11 @@ import {
   FormCheckBox,
   FormCheckBoxList,
   FormCombobox,
+  FormControl,
+  FormField,
   FormInput,
+  FormItem,
+  FormLabel,
   FormRadioBoxList,
 } from '@/src/component/form/Form';
 import { Label } from '@/src/component/common/Label';
@@ -23,8 +27,12 @@ import { MdOutlineAccessTime, MdOutlineOnlinePrediction } from 'react-icons/md';
 import Chip from '@/src/component/common/Chip';
 import { FaUserFriends } from 'react-icons/fa';
 import { Image, Link } from '@nextui-org/react';
-import { IndustryCode } from '@/src/lib/api/generated';
+import type { TicketItem } from '@/src/lib/api/generated';
+import { IndustryCode, QuestionTypeCode } from '@/src/lib/api/generated';
 import { JobTypeCodeMapping } from '@/src/constant/code.constant';
+import type { SelectItem } from '@/src/type/SelectItem';
+import Checkbox from '@/src/component/common/Input/Checkbox';
+import { RadioGroup, RadioGroupItem } from '@/src/component/common/RadioGroup';
 
 interface EventApplicationFormProps {
   slug: string;
@@ -54,9 +62,11 @@ export default function EventApplicationForm({
     resolver: zodResolver(eventApplicationFormSchema),
   });
 
-  function handleApplyEvent(data) {
+  function handleApplyEvent(data: EventApplicationFormSchema) {
     console.log(data);
   }
+
+  console.log(form.getValues());
 
   return (
     <Form {...form}>
@@ -112,32 +122,49 @@ export default function EventApplicationForm({
             </div>
           )}
           <div className='rounded-md py-5 shadow-[rgba(0,_0,_0,_0.02)_0px_1px_3px_0px,_rgba(27,_31,_35,_0.15)_0px_0px_0px_1px] my-6 bg-white'>
-            <h3 className='text-md font-semibold px-5 text-orange-500'>
-              Ticket 🎟
-            </h3>
-            <p className='font-light text-sm my-3 opacity-80 px-5'>
-              Check description to see which ticket type is right for you.
-            </p>
-            {Array.from({ length: 10 }, (v, k) => (
-              <div
-                className={clsx(
-                  styles.between,
-                  'gap-3 border-t border-t-gray-200 py-3 cursor-pointer transition-all px-5 hover:bg-emerald-50 hover:border-emerald-100',
-                )}
-                key={`t-${k}`}
-              >
-                <div>
-                  <h4 className='text-nm'>Title</h4>
-                  <p className='font-light opacity-80 text-sm'>
-                    Description of ticket
+            <FormField
+              control={form.control}
+              name='ticketId'
+              render={({ field }) => (
+                <FormItem className='space-y-3'>
+                  <h3 className='text-md font-semibold px-5 text-orange-500'>
+                    Ticket 🎟
+                  </h3>
+                  <p className='font-light text-sm my-3 opacity-80 px-5'>
+                    Check description to see which ticket type is right for you.
                   </p>
-                </div>
-                <FormCheckBox
-                  control={form.control}
-                  name='ticketId'
-                />
-              </div>
-            ))}
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      defaultValue={field.value + ''}
+                      className='flex flex-col space-y-1'
+                    >
+                      {event &&
+                        event.tickets.map((ticket: TicketItem) => (
+                          <FormItem
+                            className={clsx(
+                              styles.between,
+                              'gap-3 border-t border-t-gray-200 py-3 cursor-pointer transition-all px-5 hover:bg-emerald-50 hover:border-emerald-100',
+                            )}
+                            key={`t-${ticket.id}`}
+                          >
+                            <FormLabel className='font-normal cursor-pointer'>
+                              <h4 className='text-nm'>{ticket.name}</h4>
+                              <p className='font-light opacity-80 text-sm mt-2'>
+                                {ticket.description}
+                              </p>
+                            </FormLabel>
+                            <FormControl>
+                              <RadioGroupItem value={ticket.id + ''} />
+                            </FormControl>
+                          </FormItem>
+                        ))}
+                    </RadioGroup>
+                  </FormControl>
+                  {/* <FormMessage /> */}
+                </FormItem>
+              )}
+            />
           </div>
         </div>
 
@@ -309,46 +336,57 @@ export default function EventApplicationForm({
               </div>
             </div>
           </div>
-          <div className='w-full shadow-[rgba(0,_0,_0,_0.16)_0px_1px_4px] border border-gray-200 px-10 py-6 rounded-md mt-6 bg-white'>
-            <h2 className='text-md font-semibold text-secondary'>
-              Answer some questions
-            </h2>
-            <p className='font-light opacity-80 text-sm'>
-              Your answers will be an extremely useful and valuable source of
-              information to help us survey, analyze and improve the quality of
-              future events.
-            </p>
-            <div className='mt-4 bg-emerald-50 p-5'>
-              <h3 className='text-nm font-semibold text-slate-800'>
-                1. Oh this is question.
-              </h3>
-              <FormCheckBoxList
-                name='answerResults'
-                control={form.control}
-                title='Test'
-                data={[
-                  { value: '1', label: 'This is test answer' },
-                  { value: '2', label: 'This is test answer' },
-                  { value: '3', label: 'This is test answer' },
-                ]}
-              />
-            </div>
+          {event && (
+            <div className='w-full shadow-[rgba(0,_0,_0,_0.16)_0px_1px_4px] border border-gray-200 px-10 py-6 rounded-md mt-6 bg-white'>
+              <h2 className='text-md font-semibold text-secondary'>
+                Answer some questions
+              </h2>
+              <p className='font-light opacity-80 text-sm'>
+                Your answers will be an extremely useful and valuable source of
+                information to help us survey, analyze and improve the quality
+                of future events.
+              </p>
+              {event.questionnaire.questionAnwers.map((questionAnswer) => (
+                <div
+                  className='mt-4 bg-emerald-50 p-5'
+                  key={`qa-${questionAnswer.id}`}
+                >
+                  <h3 className='text-nm font-semibold text-slate-800'>
+                    {questionAnswer.orderNumber}. {questionAnswer.question}
+                  </h3>
+                  {questionAnswer.typeCode === QuestionTypeCode.Multiple && (
+                    <FormCheckBoxList
+                      name='answerResults'
+                      control={form.control}
+                      data={
+                        questionAnswer.answers
+                          .sort((a1, a2) => a1.orderNumber - a2.orderNumber)
+                          .map((answer) => ({
+                            value: answer.id + '',
+                            label: answer.answer,
+                          })) as SelectItem[]
+                      }
+                    />
+                  )}
 
-            <div className='mt-4 bg-emerald-50 p-5'>
-              <h3 className='text-nm font-semibold text-slate-800'>
-                1. Oh this is question.
-              </h3>
-              <FormRadioBoxList
-                name='answerResults'
-                control={form.control}
-                data={[
-                  { value: '1', label: 'This is test answer' },
-                  { value: '2', label: 'This is test answer' },
-                  { value: '3', label: 'This is test answer' },
-                ]}
-              />
+                  {questionAnswer.typeCode === QuestionTypeCode.Single && (
+                    <FormRadioBoxList
+                      name='answerResults'
+                      control={form.control}
+                      data={
+                        questionAnswer.answers
+                          .sort((a1, a2) => a1.orderNumber - a2.orderNumber)
+                          .map((answer) => ({
+                            value: answer.id + '',
+                            label: answer.answer,
+                          })) as SelectItem[]
+                      }
+                    />
+                  )}
+                </div>
+              ))}
             </div>
-          </div>
+          )}
           <div className={clsx(styles.center, 'mt-5')}>
             <FormCheckBox
               control={form.control}
@@ -379,7 +417,7 @@ export default function EventApplicationForm({
             title='Apply Event'
             type='submit'
             className='w-80 mt-5 mx-auto'
-            disabled={!form.formState.isValid}
+            // disabled={!form.formState.isValid}
             isLoading={false}
           />
         </div>

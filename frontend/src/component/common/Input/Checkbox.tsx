@@ -13,7 +13,15 @@ export interface CheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 function CustomCheckbox(
-  { id, title, link, helperText, onCheckedChange, children, ...props }: CheckboxProps,
+  {
+    id,
+    title,
+    link,
+    helperText,
+    onCheckedChange,
+    children,
+    ...props
+  }: CheckboxProps,
   ref: LegacyRef<HTMLInputElement>,
 ) {
   return (
@@ -23,25 +31,38 @@ function CustomCheckbox(
           id={id}
           type='checkbox'
           className='custom-checkbox'
-          // eslint-disable-next-line @typescript-eslint/ban-types
-          onChange={(event) => (onCheckedChange as Function)(event.target.checked)}
+          onChange={(event) => {
+            if (onCheckedChange) onCheckedChange(event.target.checked);
+          }}
           ref={ref}
           {...props}
         />
-        <label htmlFor={id} className='checkmark cursor-pointer' />
+        <label
+          htmlFor={id}
+          className='checkmark cursor-pointer'
+        />
         <div className='text-sm'>
-          <label htmlFor={id} className='text-dark-main dark:text-gray-300 peer-checked:text-primary'>
+          <label
+            htmlFor={id}
+            className='text-dark-main dark:text-gray-300 peer-checked:text-primary'
+          >
             {title}
             {children}
 
             {link && (
-              <Link href='#' className='text-blue-600 dark:text-blue-500 hover:underline'>
+              <Link
+                href='#'
+                className='text-blue-600 dark:text-blue-500 hover:underline'
+              >
                 {link}
               </Link>
             )}
           </label>
           {helperText && (
-            <p id='helper-checkbox-text' className='text-sm font-normal text-gray-500 dark:text-gray-300'>
+            <p
+              id='helper-checkbox-text'
+              className='text-sm font-normal text-gray-500 dark:text-gray-300'
+            >
               For orders shipped from $25 in books or $29 in other categories
             </p>
           )}

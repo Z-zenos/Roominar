@@ -55,7 +55,7 @@ def search_events(
         .join(Target, Event.target_id == Target.id)
         .outerjoin(
             Application,
-            and_(Application.event_id == Event.id, Application.deleted_at.is_(None)),
+            and_(Application.event_id == Event.id, Application.canceled_at.is_(None)),
         )
         .outerjoin(EventTag, EventTag.event_id == Event.id)
         .group_by(
