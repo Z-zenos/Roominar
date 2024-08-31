@@ -22,17 +22,14 @@ import { signOut, useSession } from 'next-auth/react';
 import type { Session } from 'next-auth';
 import { useRouter } from 'next/navigation';
 import { RoleCode } from '@/src/constant/role_code.constant';
+import useWindowDimensions from '@/src/hook/useWindowDimension';
 
 const menuItems = [
-  'Profile',
-  'Dashboard',
-  'Activity',
-  'Analytics',
-  'System',
-  'Deployments',
-  'My Settings',
-  'Team Settings',
-  'Help & Feedback',
+  'My Profile',
+  'My Events',
+  'Host Event',
+  'Account Settings',
+  'Help Center',
   'Log Out',
 ];
 
@@ -40,6 +37,7 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const { data: auth, status } = useSession();
   const router = useRouter();
+  const { width } = useWindowDimensions();
 
   const handleLogout = (auth: Session) => {
     localStorage.setItem('rememberMe', 'false');
@@ -81,66 +79,108 @@ export default function Navbar() {
       onMenuOpenChange={setIsMenuOpen}
     >
       <NavbarContent>
-        <NavbarMenuToggle aria-label={isMenuOpen ? 'Close menu' : 'Open menu'} className='sm:hidden' />
+        <NavbarMenuToggle
+          aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+          className='sm:hidden'
+        />
         <NavbarBrand>
           <Logo />
         </NavbarBrand>
       </NavbarContent>
 
-      <NavbarContent className='hidden sm:flex gap-4' justify='center'>
-        <NavbarItem isActive aria-current='page'>
+      <NavbarContent
+        className='hidden sm:flex gap-4'
+        justify='center'
+      >
+        <NavbarItem
+          isActive
+          aria-current='page'
+        >
           <Link href='/home'>Home</Link>
         </NavbarItem>
         <NavbarItem>
-          <Link color='foreground' href='/search'>
+          <Link
+            color='foreground'
+            href='/search'
+          >
             Search
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link color='foreground' href='#'>
-            Create Event
+          <Link
+            color='foreground'
+            href='#'
+          >
+            Host your Event
           </Link>
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify='end'>
         {status === 'authenticated' ? (
-          <Dropdown placement='bottom-end'>
-            <DropdownTrigger>
-              <Avatar
-                isBordered
-                as='button'
-                className='transition-transform'
-                color='secondary'
-                name='Jason Hughes'
-                size='sm'
-                src={auth?.user?.avatarUrl}
-              />
-            </DropdownTrigger>
-            <DropdownMenu aria-label='Profile Actions' variant='flat'>
-              <DropdownItem key='profile' className='h-14 gap-2'>
-                <p className='font-semibold'>Signed in as</p>
-                <p className='font-semibold'>zoey@example.com</p>
-              </DropdownItem>
-              <DropdownItem key='settings'>My Settings</DropdownItem>
-              <DropdownItem key='team_settings'>Team Settings</DropdownItem>
-              <DropdownItem key='analytics'>Analytics</DropdownItem>
-              <DropdownItem key='system'>System</DropdownItem>
-              <DropdownItem key='configurations'>Configurations</DropdownItem>
-              <DropdownItem key='help_and_feedback'>Help & Feedback</DropdownItem>
-              <DropdownItem key='logout' color='danger' onClick={() => handleLogout(auth)}>
-                Log Out
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
+          <div className='flex justify-end items-center gap-x-4'>
+            {width > 800 && (
+              <span className='text-primary'>
+                {auth.user.firstName + ' ' + auth.user.lastName}
+              </span>
+            )}
+            <Dropdown placement='bottom-end'>
+              <DropdownTrigger>
+                <Avatar
+                  isBordered
+                  as='button'
+                  className='transition-transform'
+                  color='secondary'
+                  name={auth.user.firstName + ' ' + auth.user.lastName}
+                  size='sm'
+                  src={auth?.user?.avatarUrl}
+                />
+              </DropdownTrigger>
+              <DropdownMenu
+                aria-label='Profile Actions'
+                variant='flat'
+              >
+                <DropdownItem
+                  key='profile'
+                  className='h-14 gap-2'
+                >
+                  <p className='font-semibold'>Signed in as</p>
+                  <p className='font-semibold'>{auth.user?.email}</p>
+                </DropdownItem>
+                <DropdownItem key='my_profile'>My Profile</DropdownItem>
+                <DropdownItem key='my_events'>My Events</DropdownItem>
+                <DropdownItem key='host_my_event'>Host Event</DropdownItem>
+                <DropdownItem key='account_settings'>
+                  Account Settings
+                </DropdownItem>
+                <DropdownItem key='help_center'>Help Center</DropdownItem>
+                <DropdownItem
+                  key='logout'
+                  color='danger'
+                  onClick={() => handleLogout(auth)}
+                >
+                  Log Out
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          </div>
         ) : (
           <>
             <NavbarItem className='hidden lg:flex'>
-              <Link href='/login' underline='hover'>
+              <Link
+                href='/login'
+                underline='hover'
+              >
                 Login
               </Link>
             </NavbarItem>
             <NavbarItem>
-              <Button as={Link} color='primary' href='/register' variant='flat' radius='sm'>
+              <Button
+                as={Link}
+                color='primary'
+                href='/register'
+                variant='flat'
+                radius='sm'
+              >
                 Sign Up
               </Button>
             </NavbarItem>
@@ -152,7 +192,13 @@ export default function Navbar() {
           <NavbarMenuItem key={`${item}-${index}`}>
             <Link
               className='w-full'
-              color={index === 2 ? 'primary' : index === menuItems.length - 1 ? 'danger' : 'foreground'}
+              color={
+                index === 2
+                  ? 'primary'
+                  : index === menuItems.length - 1
+                    ? 'danger'
+                    : 'foreground'
+              }
               href='#'
               size='lg'
             >
