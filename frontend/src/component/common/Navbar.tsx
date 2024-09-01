@@ -100,7 +100,7 @@ export default function Navbar() {
           className='sm:hidden'
         />
         <NavbarBrand>
-          <Logo />
+          <Logo className='scale-120' />
         </NavbarBrand>
       </NavbarContent>
 

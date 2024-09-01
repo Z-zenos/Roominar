@@ -1,11 +1,24 @@
 'use client';
 
-import { Link } from '@nextui-org/link';
+import { Link, Image } from '@nextui-org/react';
+import clsx from 'clsx';
 
-function Logo() {
+interface LogoProps {
+  className?: string;
+}
+
+function Logo({ className }: LogoProps) {
   return (
-    <Link href='/home' className='font-bold text-md text-gradient'>
-      Roominar
+    <Link
+      href='/home'
+      className={clsx('rounded-lg', className)}
+    >
+      <Image
+        className='w-auto translate-y-3'
+        alt='Roominar Footer Logo'
+        width={200}
+        src='logo/logo.png'
+      />
     </Link>
   );
 }
