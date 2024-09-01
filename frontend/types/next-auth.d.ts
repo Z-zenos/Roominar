@@ -1,9 +1,9 @@
-import type { MeResponse, TokenResponse } from '@/src/lib/api/generated';
+import type { GetMeResponse, TokenResponse } from '@/src/lib/api/generated';
 
 declare module 'next-auth' {
   interface Session {
     token: TokenResponse;
-    user: MeResponse;
+    user: GetMeResponse;
   }
 
   interface User extends TokenResponse {
@@ -12,11 +12,11 @@ declare module 'next-auth' {
 }
 
 declare module 'next-auth/adapters' {
-  type AdapterUser = MgLoginResponse;
+  type AdapterUser = User;
 }
 
 declare module 'next-auth/jwt' {
   interface JWT extends TokenResponse {
-    user: MeResponse;
+    user: GetMeResponse;
   }
 }

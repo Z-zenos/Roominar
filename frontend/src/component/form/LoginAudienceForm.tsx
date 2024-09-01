@@ -18,7 +18,7 @@ import { Form, FormCheckBox, FormInput } from './Form';
 import { Label } from '../common/Label';
 import { styles } from '@/src/constant/styles.constant';
 import Button from '../common/Button/Button';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { getCookie, setCookie } from 'cookies-next';
 import { RoleCode } from '@/src/constant/role_code.constant';
 import { toCamelCase } from '@/src/util/app.util';
@@ -34,13 +34,14 @@ export default function LoginAudienceForm() {
     defaultValues: {
       email: '',
       password: '',
-      rememberMe: false,
+      rememberMe: true,
     },
     resolver: zodResolver(loginAudienceFormSchema),
   });
 
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     form.setValue('rememberMe', getCookie('rememberMe') === 'true');
@@ -61,8 +62,14 @@ export default function LoginAudienceForm() {
       }).then(async (value) => {
         if (value.status == 200) {
           const session = await getSession();
-          router.push(initialScreen?.[toCamelCase(session.user).roleCode]);
-          router.refresh();
+          setIsLoading(false);
+          if (searchParams.has('callback')) {
+            router.back();
+          } else {
+            router.push(initialScreen?.[toCamelCase(session.user).roleCode]);
+            router.refresh();
+          }
+          return;
         }
         if (value.status == 401) {
           setIsLoading(false);

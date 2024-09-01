@@ -1,7 +1,6 @@
 import type { MutableSnapshot } from 'recoil';
 import type { NextFetchEvent, NextRequest, NextResponse } from 'next/server';
 import type routers from '@/src/constant/router.constant';
-import type { UserType } from './enum/app.enum';
 
 export type InitializeStateRecoilType = (params: MutableSnapshot) => void;
 
@@ -14,8 +13,12 @@ export interface IRouter {
   private?: boolean;
   redirectUrl?: string;
   router: string | ((...params) => string);
-  handler?: (props: { req: NextRequest; res: NextResponse; event?: NextFetchEvent }) => NextResponse | void;
-  role?: UserType[];
+  handler?: (props: {
+    req: NextRequest;
+    res: NextResponse;
+    event?: NextFetchEvent;
+  }) => NextResponse | void;
+  role?: string[];
 }
 
 export type EmptyFunc = (...params) => void;

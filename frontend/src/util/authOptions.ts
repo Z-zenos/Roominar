@@ -1,4 +1,8 @@
-import { AuthApi, createConfiguration, ServerConfiguration } from '@/src/lib/api/generated';
+import {
+  AuthApi,
+  createConfiguration,
+  ServerConfiguration,
+} from '@/src/lib/api/generated';
 import { getRouter } from '@/src/util/app.util';
 import { getCookie } from 'cookies-next';
 import dayjs from 'dayjs';
@@ -19,7 +23,10 @@ function makeAuthApi(accessToken?: string) {
           accessToken,
         },
       },
-      baseServer: new ServerConfiguration(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000', {}),
+      baseServer: new ServerConfiguration(
+        process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
+        {},
+      ),
     }),
   );
 }
@@ -33,7 +40,7 @@ const authOptions: AuthOptions = {
       credentials: {
         email: {
           label: 'email',
-          type: 'email',
+          type: 'text',
         },
         password: {
           label: 'password',
@@ -46,7 +53,7 @@ const authOptions: AuthOptions = {
         },
         roleCode: {
           label: 'roleCode',
-          type: 'text',
+          type: 'string',
         },
       },
       async authorize({ email, password, rememberMe, roleCode }) {
@@ -67,7 +74,9 @@ const authOptions: AuthOptions = {
   callbacks: {
     async jwt({ token, user, session, trigger }) {
       const compareTime = <T extends Date | number>(value: T) => {
-        const now = dayjs(dayjs().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD HH:mm:ss')).unix();
+        const now = dayjs(
+          dayjs().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD HH:mm:ss'),
+        ).unix();
         const exp = dayjs(value).unix();
         return now > exp;
       };
@@ -102,6 +111,7 @@ const authOptions: AuthOptions = {
   pages: {
     error: getRouter('login'),
     signIn: getRouter('login'),
+    signOut: getRouter('home'),
   },
 };
 

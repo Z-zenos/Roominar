@@ -20,7 +20,7 @@ import {
 import Logo from './Logo';
 import { signOut, useSession } from 'next-auth/react';
 import type { Session } from 'next-auth';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { RoleCode } from '@/src/constant/role_code.constant';
 import useWindowDimensions from '@/src/hook/useWindowDimension';
 
@@ -33,11 +33,27 @@ const menuItems = [
   'Log Out',
 ];
 
+const navbarItems = [
+  {
+    label: 'Home',
+    pathname: '/home',
+  },
+  {
+    label: 'Search',
+    pathname: '/search',
+  },
+  {
+    label: 'Host your event',
+    pathname: '/organization/login',
+  },
+];
+
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const { data: auth, status } = useSession();
   const router = useRouter();
   const { width } = useWindowDimensions();
+  const pathname = usePathname();
 
   const handleLogout = (auth: Session) => {
     localStorage.setItem('rememberMe', 'false');
@@ -92,28 +108,20 @@ export default function Navbar() {
         className='hidden sm:flex gap-4'
         justify='center'
       >
-        <NavbarItem
-          isActive
-          aria-current='page'
-        >
-          <Link href='/home'>Home</Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link
-            color='foreground'
-            href='/search'
+        {navbarItems.map((ni, i) => (
+          <NavbarItem
+            isActive={pathname.includes(ni.pathname)}
+            aria-current='page'
+            key={`nbi-${i}`}
           >
-            Search
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link
-            color='foreground'
-            href='#'
-          >
-            Host your Event
-          </Link>
-        </NavbarItem>
+            <Link
+              href={ni.pathname}
+              color={pathname.includes(ni.pathname) ? 'primary' : 'foreground'}
+            >
+              {ni.label}
+            </Link>
+          </NavbarItem>
+        ))}
       </NavbarContent>
       <NavbarContent justify='end'>
         {status === 'authenticated' ? (

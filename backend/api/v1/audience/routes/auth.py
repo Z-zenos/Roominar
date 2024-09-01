@@ -12,11 +12,7 @@ from backend.core.exception import BadRequestException, UnauthorizedException
 from backend.core.response import authenticated_api_responses, public_api_responses
 from backend.db.database import get_read_db
 from backend.models.user import User
-from backend.schemas.auth import (
-    GetMeResponse,
-    TokenResponse,
-    UserLoginRequest,
-)
+from backend.schemas.auth import GetMeResponse, TokenResponse, UserLoginRequest
 
 router = APIRouter()
 
@@ -51,8 +47,7 @@ async def login(
 
 @router.get("/me", response_model=GetMeResponse, responses=authenticated_api_responses)
 async def me(
-    current_user: Annotated[User, Depends(get_user_if_logged_in)],
-    db: Session = Depends(get_read_db),
+    current_user: Annotated[User | None, Depends(get_user_if_logged_in)],
 ):
     return (
         GetMeResponse()

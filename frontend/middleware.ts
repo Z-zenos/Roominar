@@ -1,60 +1,118 @@
+import type { NextRequestWithAuth } from 'next-auth/middleware';
 import { withAuth } from 'next-auth/middleware';
-import type { NextRequest } from 'next/server';
-import { NextResponse, URLPattern } from 'next/server';
-import type { JWT } from 'next-auth/jwt';
-import type { IRouter, RoutersType } from '@/src/type/app';
-import authOptions from '@/src/util/authOptions';
-import routers from './src/constant/router.constant';
+import type { NextFetchEvent, NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+import { initialScreen } from './src/constant/app.constant';
 
-const routesPattern = Object.keys(routers).map((name) => {
-  const router = routers[name as RoutersType] as IRouter;
+export const pathPermissionMaster = {
+  AUDIENCE: [
+    '/register',
+    // '/register/registration',
+    // '/register/success',
+    // '/forgit-password',
+    // '/reset-password',
+    // '/mypage',
+    // '/applied-upcoming',
+    // '/applied-ended',
+    // '/bookmark',
+    // '/update-information',
+    // '/public-information',
+    // '/change-email',
+    '/home',
+    '/search',
+    '/events/[slug]',
+    '/events/[slug]/apply',
+    // '/organization/login',
+    // '/change-email/[token]',
+  ],
+  SPEAKER: ['/login', '/organization/login'],
+  ORGANIZER: [
+    '/login',
+    // '/organization/register',
+    // '/organization/register/success',
+    // '/organization/events',
+    // '/organization/events/[id]',
+    // '/organization/applications',
+    // '/organization/members',
+    // '/organization/setting/member/[id]',
+    // '/organization/create-questionaire',
+    // '/organization/questionnaire/[id]',
+    // '/organization/applications',
+    // '/organization/setting/member',
+    // '/organization/questionnaires-management',
+    // '/organization/event-register',
+    // '/organization/register-member',
+    // '/organization/create-target',
+    // '/organization/targets',
+    // '/organization/targets/[id]',
+    // '/organization/information',
+  ],
+  ADMIN: ['/admin/users', '/admin/organizers', '/login', '/organization/login'],
+  GUEST: [
+    '/login',
+    '/register',
+    '/register/registration',
+    // '/register/success',
+    '/home',
+    '/search',
+    '/events/[slug]',
+    // '/events/[slug]/apply',
+    // '/change-email/[token]',
+  ],
+};
 
-  return {
-    name,
-    ...router,
-    pattern: new URLPattern({ pathname: router.pattern }),
-  };
+const nextResponseRedirectUrl = (
+  roleCode: string,
+  pathName: string,
+  url: string,
+) => {
+  if (
+    !pathPermissionMaster?.[roleCode]?.find((item: string) =>
+      pathName.includes(item),
+    ) ||
+    pathName === '/'
+  ) {
+    return NextResponse.redirect(new URL(initialScreen?.[roleCode], url));
+  }
+};
+
+const nextAuthMiddleware = withAuth(async function middleware(req) {
+  const { pathname: pathName, href: url } = req.nextUrl;
+  const { token } = req.nextauth;
+  if (token) {
+    return nextResponseRedirectUrl(token.user.roleCode, pathName, url);
+  }
 });
 
-export default withAuth(
-  (req: NextRequest & { nextauth: { token: JWT | null } }) => {
-    const { pathname } = req.nextUrl;
-    const pattern = routesPattern.find((item) => item.pattern.test({ pathname }));
-    const url = req.nextUrl.clone();
-    const { token } = req.nextauth;
-    if (pattern?.private && !token) {
-      if (url.pathname === routers.login.router) {
-        return NextResponse.next();
-      }
-      url.pathname = routers.login.router;
-      url.searchParams.set('callbackUrl', pathname);
-      return NextResponse.redirect(url);
-    }
-
-    if (token && url.pathname === routers.login.router) {
-      url.pathname = routers.home.router;
-      return NextResponse.redirect(url);
-    }
-
+export default async function middleware(
+  request: NextRequest & NextRequestWithAuth,
+  event: NextFetchEvent,
+) {
+  if (
+    request.nextUrl.pathname === '/healthcheck' ||
+    request.nextUrl.pathname.startsWith('/_next/') ||
+    request.nextUrl.pathname.startsWith('/api/')
+  ) {
     return NextResponse.next();
-  },
-  {
-    callbacks: {
-      authorized: ({ token, req }) => {
-        const { pathname } = req.nextUrl;
-        const pattern = routesPattern.find((item) => item.pattern.test({ pathname }));
-        if (typeof pattern?.private === 'undefined' || pattern?.private === false || pattern?.private) {
-          return true;
-        }
+  }
+  if ('nextauth' in request) {
+    const resp = await nextAuthMiddleware(
+      request as NextRequestWithAuth,
+      event,
+    );
+    const url = (resp as NextResponse)?.headers.get('location');
+    if (url) {
+      const baseUrl = new URL(url);
+      if (baseUrl.pathname === '/api/auth/signin')
+        return NextResponse.redirect(new URL('/login', request.url));
+    }
 
-        return !!token;
-      },
-    },
-    pages: authOptions.pages,
-    secret: authOptions.secret,
-  },
-);
+    return resp;
+  }
+}
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|static|icons|images|svg).*)'],
+  matcher: [
+    '/((?!api|_next/static|_next/image|favicon.ico|static|icons|images|svg).*)',
+  ],
 };

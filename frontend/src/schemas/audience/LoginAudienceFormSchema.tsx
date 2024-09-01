@@ -1,7 +1,9 @@
 import z from 'zod';
 
 const loginAudienceFormSchema = z.object({
-  email: z.string({ required_error: "Email can't empty." }).email({ message: 'Invalid email.' }),
+  email: z
+    .string({ required_error: "Email can't empty." })
+    .email({ message: 'Invalid email.' }),
 
   password: z
     .string({ required_error: 'Please enter password.' })
@@ -14,7 +16,7 @@ const loginAudienceFormSchema = z.object({
     })
     .max(100, 'Password must be less than 100 characters.'),
 
-  rememberMe: z.boolean().optional(),
+  rememberMe: z.boolean().default(true).optional(),
 });
 
 type LoginAudienceFormSchema = z.infer<typeof loginAudienceFormSchema>;
