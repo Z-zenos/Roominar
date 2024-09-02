@@ -106,7 +106,13 @@ function EventCard({
             )}
             {direction === 'horizontal' && (
               <div className='flex flex-col justify-start gap-y-2 mt-3'>
-                <div className={clsx(styles.flexStart, 'gap-2 flex-wrap h-16')}>
+                <div
+                  className={clsx(
+                    styles.flexStart,
+                    'gap-2 flex-wrap',
+                    variant === 'simple' && 'h-16',
+                  )}
+                >
                   <Chip
                     content={
                       event.applicationStartAt > new Date(Date.now())
@@ -220,7 +226,7 @@ function EventCard({
               key={`event-card-tag-${tag.id}`}
               className={clsx(
                 'text-sm font-light text-gray-700 hover:text-primary',
-                searchParams.getAll('tags').includes(tag.id + '') &&
+                searchParams.getAll('tags[]').includes(tag.id + '') &&
                   'text-primary font-semibold',
               )}
             >

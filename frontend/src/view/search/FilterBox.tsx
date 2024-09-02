@@ -1,7 +1,12 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../../component/common/Accordion';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '../../component/common/Accordion';
 
 interface FilterBoxProps {
   title: string;
@@ -11,13 +16,25 @@ interface FilterBoxProps {
   open?: boolean;
 }
 
-function FilterBox({ title, collapsible = true, content, children, open = true }: FilterBoxProps) {
+function FilterBox({
+  title,
+  collapsible = true,
+  content,
+  children,
+  open = true,
+}: FilterBoxProps) {
   return (
-    <div className='px-4'>
-      <Accordion type='single' defaultValue={open ? title : undefined} collapsible={collapsible}>
+    <div className=''>
+      <Accordion
+        type='single'
+        defaultValue={open ? title : undefined}
+        collapsible={collapsible}
+      >
         <AccordionItem value={title}>
-          <AccordionTrigger className='font-normal'>{title}</AccordionTrigger>
-          <AccordionContent className='px-1 flex flex-col gap-3 justify-start'>
+          <AccordionTrigger className='font-normal bg-slate-50 px-4 py-2'>
+            {title}
+          </AccordionTrigger>
+          <AccordionContent className='px-5 flex flex-col gap-3 pt-4 justify-start'>
             {content}
             {children}
           </AccordionContent>

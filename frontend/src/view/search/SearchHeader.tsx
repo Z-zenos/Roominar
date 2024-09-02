@@ -61,6 +61,12 @@ function SearchHeader({
                 industryCodes: [],
                 tags: [],
                 cityCodes: [],
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
+                start_at_range: {
+                  from: null,
+                  to: null,
+                },
               });
               router.push('/search');
             }}
