@@ -148,19 +148,19 @@ function EventCard({
               : 'w-[45%] flex justify-end items-start h-full',
           )}
         >
-          <Image
-            src={
-              event.coverImageUrl ??
-              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVoYkFRN0wzDRnM7OwHq7yINArQLe5UJKV9A&s'
-            }
-            alt='event image'
-            width={400}
-            height={200}
-            className={clsx(
-              'w-full h-full',
-              direction === 'horizontal' ? 'rounded-md' : 'rounded-none',
-            )}
-          />
+          <div className='w-full h-auto'>
+            <Image
+              src={event.coverImageUrl}
+              alt={event.name}
+              height={200}
+              className={clsx(
+                'object-cover aspect-video',
+                direction === 'horizontal'
+                  ? 'rounded-md max-h-[200px]'
+                  : 'rounded-none',
+              )}
+            />
+          </div>
           <div
             className={clsx(
               'flex items-center gap-3 px-3',
