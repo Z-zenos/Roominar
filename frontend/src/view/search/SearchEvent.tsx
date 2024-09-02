@@ -15,19 +15,27 @@ import { searchQuery } from '@/src/util/app.util';
 import { useSearchEventsQuery } from '@/src/api/event.api';
 import queryString from 'query-string';
 import DotLoader from '@/src/component/common/Loader/DotLoader';
-import type { EventsApiSearchEventsRequest, EventSortByCode, IndustryCode, JobTypeCode } from '@/src/lib/api/generated';
+import type {
+  EventsApiSearchEventsRequest,
+  EventSortByCode,
+  IndustryCode,
+  JobTypeCode,
+} from '@/src/lib/api/generated';
 import dayjs from 'dayjs';
 
 function SearchEvent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { data, isLoading } = useSearchEventsQuery({
+  const { data, isLoading, isFetching } = useSearchEventsQuery({
     ...queryString.parse(searchParams.toString()),
   });
 
   const [page, setPage] = useState<number>(data?.page || 1);
   const { width } = useWindowDimensions();
-  const FilterContainer = useMemo(() => (width > 1000 ? Fragment : Drawer), [width]);
+  const FilterContainer = useMemo(
+    () => (width > 1000 ? Fragment : Drawer),
+    [width],
+  );
 
   const filterContainerProps = useMemo(
     () =>
@@ -46,14 +54,21 @@ function SearchEvent() {
       keyword: searchParams.get('keyword') || '',
       isOnline: Boolean(searchParams.get('is_online')) ?? undefined,
       isOffline: Boolean(searchParams.get('is_offline')) ?? undefined,
-      isApplyOngoing: Boolean(searchParams.get('is_apply_ongoing')) ?? undefined,
+      isApplyOngoing:
+        Boolean(searchParams.get('is_apply_ongoing')) ?? undefined,
       isApplyEnded: Boolean(searchParams.get('is_apply_ended')) ?? undefined,
-      jobTypeCodes: (searchParams.getAll('job_type_codes') as JobTypeCode[]) || undefined,
-      industryCodes: (searchParams.getAll('industry_codes') as IndustryCode[]) || undefined,
+      jobTypeCodes:
+        (searchParams.getAll('job_type_codes') as JobTypeCode[]) || undefined,
+      industryCodes:
+        (searchParams.getAll('industry_codes') as IndustryCode[]) || undefined,
       cityCodes: searchParams.getAll('city_codes') || undefined,
       tags: (searchParams.getAll('tags') as unknown as number[]) || undefined,
-      startStartAt: searchParams.get('start_start_at') ? dayjs(searchParams.get('start_start_at')).toDate() : null,
-      endStartAt: searchParams.get('end_start_at') ? dayjs(searchParams.get('end_start_at')).toDate() : null,
+      startStartAt: searchParams.get('start_start_at')
+        ? dayjs(searchParams.get('start_start_at')).toDate()
+        : null,
+      endStartAt: searchParams.get('end_start_at')
+        ? dayjs(searchParams.get('end_start_at')).toDate()
+        : null,
       sortBy: (searchParams.get('sort_by') as EventSortByCode) ?? undefined,
     },
   });
@@ -76,8 +91,16 @@ function SearchEvent() {
 
   return (
     <Form {...form}>
-      <form className={clsx(styles.section, 'mt-8')} onSubmit={form.handleSubmit(handleSearch)}>
-        <SearchHeader total={data?.total} form={form} onSearch={handleSearch} />
+      <form
+        className={clsx(styles.section, 'mt-8')}
+        onSubmit={form.handleSubmit(handleSearch)}
+      >
+        <SearchHeader
+          total={data?.total}
+          form={form}
+          onSearch={handleSearch}
+          isFetching={isFetching}
+        />
         <div className='py-10 flex 1000px:flex-row 1000px:justify-between 1000px:items-start flex-col items-center justify-center gap-3'>
           {!data && isLoading ? (
             <div className='mx-auto'>

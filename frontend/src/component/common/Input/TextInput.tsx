@@ -12,7 +12,13 @@ export interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 function CustomInput(
-  { leftIcon, rightIcon, leftIconClassName, className, ...props }: TextInputProps,
+  {
+    leftIcon,
+    rightIcon,
+    leftIconClassName,
+    className,
+    ...props
+  }: TextInputProps,
   ref: LegacyRef<HTMLInputElement>,
 ) {
   return (
@@ -26,15 +32,21 @@ function CustomInput(
       '
     >
       {leftIcon && (
-        <span className={clsx(' w-1/5 mx-auto dark:text-dark-main ', styles.center, leftIconClassName)}>
+        <span
+          className={clsx(
+            'w-1/6 mx-auto dark:text-dark-main ',
+            styles.center,
+            leftIconClassName,
+          )}
+        >
           {leftIcon}
         </span>
       )}
       <input
         className={clsx(
           'w-full border-none focus:ring-0 rounded-lg h-full outline-none py-3px-0 transition-all caret-primary text-sm dark:bg-white dark:text-darma',
-          leftIcon && rightIcon && 'w-4/5',
-          (!leftIcon || !rightIcon) && 'w-5/6',
+          (leftIcon || rightIcon) && 'w-5/6',
+          leftIcon && rightIcon && 'w-2/3',
           !leftIcon && !rightIcon && 'w-full px-2',
           rightIcon && '!px-2',
           className,
@@ -43,7 +55,12 @@ function CustomInput(
         {...props}
       />
       {rightIcon && (
-        <span className={clsx('w-1/5 mx-auto h-full hover:bg-[#DFF0D8] transition-all', styles.center)}>
+        <span
+          className={clsx(
+            'w-1/6 mx-auto h-full hover:bg-emerald-50 transition-all',
+            styles.center,
+          )}
+        >
           {rightIcon}
         </span>
       )}

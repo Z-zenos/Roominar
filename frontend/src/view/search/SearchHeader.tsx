@@ -11,16 +11,25 @@ import { HiOutlineAdjustmentsHorizontal } from 'react-icons/hi2';
 import { FormCombobox, FormInput, FormSelect } from '@/src/component/form/Form';
 import { type EventsApiSearchEventsRequest } from '@/src/lib/api/generated';
 import { useRouter } from 'next/navigation';
-import { EventSortByCodeMappings, JobTypeCodeMapping } from '@/src/constant/code.constant';
+import {
+  EventSortByCodeMappings,
+  JobTypeCodeMapping,
+} from '@/src/constant/code.constant';
 import { toSelectItem } from '@/src/util/app.util';
 
 interface SearchHeaderProps {
   total?: number;
   onSearch: (data: any) => void;
   form: UseFormReturn<EventsApiSearchEventsRequest, any, undefined>;
+  isFetching?: boolean;
 }
 
-function SearchHeader({ total, form, onSearch }: SearchHeaderProps) {
+function SearchHeader({
+  total,
+  form,
+  onSearch,
+  isFetching,
+}: SearchHeaderProps) {
   const { control, getValues, reset } = form;
   const filters: { [key: string]: any } = getValues();
   const router = useRouter();
@@ -36,6 +45,7 @@ function SearchHeader({ total, form, onSearch }: SearchHeaderProps) {
             radius='sm'
             size='md'
             startContent={<HiOutlineAdjustmentsHorizontal size={25} />}
+            isLoading={isFetching}
           >
             Search
           </Button>
@@ -74,7 +84,10 @@ function SearchHeader({ total, form, onSearch }: SearchHeaderProps) {
           />
         </div>
         <div className='flex items-center justify-start gap-4 400px:mt-3'>
-          <Text content='Sort by:' className='font-light text-gray-500' />
+          <Text
+            content='Sort by:'
+            className='font-light text-gray-500'
+          />
           <FormSelect
             data={toSelectItem(EventSortByCodeMappings)}
             control={control}
@@ -87,7 +100,10 @@ function SearchHeader({ total, form, onSearch }: SearchHeaderProps) {
 
       <div className='flex justify-between items-center mt-4 flex-wrap gap-2'>
         <div className='flex justify-end items-center gap-4'>
-          <Text content='Suggestion: ' className='font-light' />
+          <Text
+            content='Suggestion: '
+            className='font-light'
+          />
           {/* <div className='flex justify-start gap-2'>
             {['english', 'hat', 'TOEIC', 'JLPT'].map((sgt) => (
               <Text
@@ -103,12 +119,24 @@ function SearchHeader({ total, form, onSearch }: SearchHeaderProps) {
           </div> */}
         </div>
         <div className='flex justify-end items-center gap-2'>
-          <Text content={total} className='text-primary font-semibold' />
-          <Text content='results' className='font-light text-gray-500' />
+          <Text
+            content={total}
+            className='text-primary font-semibold'
+          />
+          <Text
+            content='results'
+            className='font-light text-gray-500'
+          />
           {filters['keyword'] && (
             <>
-              <Text content='find for' className='font-light text-gray-500' />
-              <Text content={`"${getValues('keyword')}"`} className='text-gradient' />
+              <Text
+                content='find for'
+                className='font-light text-gray-500'
+              />
+              <Text
+                content={`"${getValues('keyword')}"`}
+                className='text-gradient'
+              />
             </>
           )}
         </div>
