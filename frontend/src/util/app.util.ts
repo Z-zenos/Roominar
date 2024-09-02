@@ -16,7 +16,9 @@ export const getRouter = (name?: RoutersType, ...rest: Array<any>) => {
   if (!name) return '#';
 
   const router = routers[name].router;
-  return typeof router === 'function' ? (router as GetRouterFunc)(...rest) : router;
+  return typeof router === 'function'
+    ? (router as GetRouterFunc)(...rest)
+    : router;
 };
 
 export const parseErrorMessage = (errorMessage?: string) => {
@@ -37,7 +39,9 @@ export const parseErrorMessage = (errorMessage?: string) => {
     } else if (part?.startsWith('Body:')) {
       errorObject.body = JSON.parse(part?.substring('Body:'.length).trim());
     } else if (part.startsWith('Headers:')) {
-      errorObject.headers = JSON.parse(part?.substring('Headers:'.length).trim());
+      errorObject.headers = JSON.parse(
+        part?.substring('Headers:'.length).trim(),
+      );
     }
   });
 
@@ -68,7 +72,10 @@ export function camelToSnake(obj) {
 
   for (const key in obj) {
     // Convert camelCase key to snake_case
-    const snakeKey = key.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
+    const snakeKey = key.replace(
+      /[A-Z]/g,
+      (letter) => `_${letter.toLowerCase()}`,
+    );
 
     // Assign the value to the new key
     newObj[snakeKey] = obj[key];
@@ -76,30 +83,30 @@ export function camelToSnake(obj) {
   return newObj;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function searchQuery(
   router: AppRouterInstance,
   filters: EventsApiSearchEventsRequest,
   searchParams: ReadonlyURLSearchParams,
   exclude_queries: string[],
 ) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let refineQuery: { [key: string]: any } = {
-    ...queryString.parse(searchParams.toString()),
+  let refineQuery: { [key: string]: unknown } = {
+    ...queryString.parse(searchParams.toString(), { arrayFormat: 'bracket' }),
     ...filters,
   };
   for (const query of exclude_queries) {
     delete refineQuery[query];
   }
-
   refineQuery = camelToSnake(refineQuery);
 
   for (const key in refineQuery) {
-    if (!refineQuery[key] || (Array.isArray(refineQuery[key]) && refineQuery[key].length === 0)) {
+    if (
+      !refineQuery[key] ||
+      (Array.isArray(refineQuery[key]) && refineQuery[key].length === 0)
+    ) {
       delete refineQuery[key];
     }
   }
-  const query = queryString.stringify(refineQuery);
+  const query = queryString.stringify(refineQuery, { arrayFormat: 'bracket' });
   router.push(`?${query}`);
 }
 
@@ -108,7 +115,9 @@ export function toCamelCase(obj: { [key: string]: any }) {
     return obj.map((item) => toCamelCase(item));
   } else if (obj !== null && typeof obj === 'object') {
     return Object.keys(obj).reduce((acc, key) => {
-      const camelKey = key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+      const camelKey = key.replace(/_([a-z])/g, (_, letter) =>
+        letter.toUpperCase(),
+      );
       acc[camelKey] = toCamelCase(obj[key]);
       return acc;
     }, {});
@@ -122,7 +131,9 @@ export function formatEventDate(datetime: Date) {
 
 export function parseCode(code: string) {
   const words = code.toLowerCase().split('_');
-  const capitalizedWords = words.map((word) => word.charAt(0).toUpperCase() + word.slice(1));
+  const capitalizedWords = words.map(
+    (word) => word.charAt(0).toUpperCase() + word.slice(1),
+  );
   return capitalizedWords.join(' ');
 }
 

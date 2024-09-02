@@ -205,7 +205,7 @@ function EventCard({
         <div
           className={clsx(
             styles.flexStart,
-            'flex-wrap gap-x-2 mt-2 border-t border-t-slate-300',
+            'flex-wrap gap-x-2 mt-2 pt-2 border-t border-t-slate-300',
             direction === 'vertical' && 'px-3',
           )}
         >

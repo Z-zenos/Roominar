@@ -27,7 +27,7 @@ function SearchEvent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { data, isLoading, isFetching } = useSearchEventsQuery({
-    ...queryString.parse(searchParams.toString()),
+    ...queryString.parse(searchParams.toString(), { arrayFormat: 'bracket' }),
   });
 
   const [page, setPage] = useState<number>(data?.page || 1);
@@ -58,11 +58,12 @@ function SearchEvent() {
         Boolean(searchParams.get('is_apply_ongoing')) ?? undefined,
       isApplyEnded: Boolean(searchParams.get('is_apply_ended')) ?? undefined,
       jobTypeCodes:
-        (searchParams.getAll('job_type_codes') as JobTypeCode[]) || undefined,
+        (searchParams.getAll('job_type_codes[]') as JobTypeCode[]) || undefined,
       industryCodes:
-        (searchParams.getAll('industry_codes') as IndustryCode[]) || undefined,
-      cityCodes: searchParams.getAll('city_codes') || undefined,
-      tags: (searchParams.getAll('tags') as unknown as number[]) || undefined,
+        (searchParams.getAll('industry_codes[]') as IndustryCode[]) ||
+        undefined,
+      cityCodes: searchParams.getAll('city_codes[]') || undefined,
+      tags: (searchParams.getAll('tags[]') as unknown as number[]) || undefined,
       startStartAt: searchParams.get('start_start_at')
         ? dayjs(searchParams.get('start_start_at')).toDate()
         : null,
