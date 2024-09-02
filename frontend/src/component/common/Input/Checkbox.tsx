@@ -44,7 +44,7 @@ function CustomCheckbox(
         <div className='text-sm'>
           <label
             htmlFor={id}
-            className='text-dark-main dark:text-gray-300 peer-checked:text-primary'
+            className='text-dark-main dark:text-gray-300 peer-checked:text-primary checkbox-title'
           >
             {title}
             {children}

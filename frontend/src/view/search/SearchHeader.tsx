@@ -47,7 +47,7 @@ function SearchHeader({
             startContent={<HiOutlineAdjustmentsHorizontal size={25} />}
             isLoading={isFetching}
           >
-            Search
+            {isFetching ? 'Searching...' : 'Search'}
           </Button>
           <Button
             className={clsx(

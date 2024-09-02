@@ -655,14 +655,13 @@ const FormTagsInput = ({
                             </h3>
                             <div
                               className={clsx(
-                                styles.flexStart,
-                                'gap-2 flex-wrap my-2',
+                                'grid grid-cols-4 gap-2 my-2 [&_.checkbox-title]:text-s',
                               )}
                             >
                               {tagGroup.tags.map((tag: TagItem) => (
                                 <Checkbox
                                   key={`modal-tag-${tag.id}`}
-                                  title={tag.name}
+                                  title={tag.name.toLowerCase()}
                                   id={tag.id + ''}
                                   onCheckedChange={() => {
                                     handleSelectTags(field, tag.id + '');
