@@ -56,7 +56,12 @@ function SearchHeader({
             radius='sm'
             size='md'
             onClick={() => {
-              reset({});
+              reset({
+                jobTypeCodes: [],
+                industryCodes: [],
+                tags: [],
+                cityCodes: [],
+              });
               router.push('/search');
             }}
             startContent={<GrPowerReset />}
