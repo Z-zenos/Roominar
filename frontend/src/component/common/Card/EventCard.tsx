@@ -76,7 +76,7 @@ function EventCard({
           </div>
 
           <div className='px-3'>
-            <h3 className='font-medium text-nm text-primary line-clamp-2'>
+            <h3 className='font-medium text-nm text-primary line-clamp-2 h-12'>
               {event.name}
             </h3>
             <p className='text-sm font-light line-clamp-1 text-gray-700'>
@@ -106,7 +106,7 @@ function EventCard({
             )}
             {direction === 'horizontal' && (
               <div className='flex flex-col justify-start gap-y-2 mt-3'>
-                <div className={clsx(styles.flexStart, 'gap-2 flex-wrap')}>
+                <div className={clsx(styles.flexStart, 'gap-2 flex-wrap h-16')}>
                   <Chip
                     content={
                       event.applicationStartAt > new Date(Date.now())
