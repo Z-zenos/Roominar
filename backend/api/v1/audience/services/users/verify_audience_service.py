@@ -63,7 +63,7 @@ async def verify_audience(
     mailer = Email()
     await mailer.send_aud_email(
         user.email,
-        "verify_audience.html",
+        "create_audience_account_success.html",
         "Thankyu",
         context,
     )

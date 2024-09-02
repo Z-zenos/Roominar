@@ -15,9 +15,9 @@ class User(BaseModel, table=True):
     role_code: RoleCode = Field(sa_type=Enum(RoleCode), default=RoleCode.AUDIENCE)
 
     email: str = Field(sa_type=String(255))
-    password: str = Field(sa_type=String(255))
+    password: Optional[str] = Field(sa_type=String(255))
     first_name: str = Field(sa_type=String(255))
-    last_name: str = Field(sa_type=String(255))
+    last_name: Optional[str] = Field(sa_type=String(255))
 
     workplace_name: Optional[str] = Field(sa_type=String(255))
 

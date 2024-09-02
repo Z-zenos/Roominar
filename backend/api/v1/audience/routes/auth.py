@@ -12,12 +12,17 @@ from backend.core.exception import BadRequestException, UnauthorizedException
 from backend.core.response import authenticated_api_responses, public_api_responses
 from backend.db.database import get_read_db
 from backend.models.user import User
-from backend.schemas.auth import GetMeResponse, TokenResponse, UserLoginRequest
+from backend.schemas.auth import (
+    GetMeResponse,
+    SocialAuthRequest,
+    TokenResponse,
+    UserLoginRequest,
+)
 
 router = APIRouter()
 
 
-@router.post("/login", responses=public_api_responses)
+@router.post("/login", responses=public_api_responses, response_model=TokenResponse)
 async def login(
     request: UserLoginRequest,
     db: Session = Depends(get_read_db),
@@ -43,6 +48,17 @@ async def login(
         refresh_token=refresh_token,
         refresh_expire_at=refresh_expire_at,
     )
+
+
+@router.post(
+    "/social-auth", responses=public_api_responses, response_model=TokenResponse
+)
+async def social_auth(
+    request: SocialAuthRequest,
+    db: Session = Depends(get_read_db),
+) -> TokenResponse:
+    token = await auth_service.social_auth(db, request)
+    return token
 
 
 @router.get("/me", response_model=GetMeResponse, responses=authenticated_api_responses)
@@ -71,7 +87,11 @@ async def me(
     )
 
 
-@router.get("/refresh-token/{token}", responses=public_api_responses)
+@router.get(
+    "/refresh-token/{token}",
+    responses=public_api_responses,
+    response_model=TokenResponse,
+)
 async def refresh_token(
     token: str,
     db: Session = Depends(get_read_db),

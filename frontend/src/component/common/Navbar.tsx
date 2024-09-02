@@ -127,9 +127,7 @@ export default function Navbar() {
         {status === 'authenticated' ? (
           <div className='flex justify-end items-center gap-x-4'>
             {width > 800 && (
-              <span className='text-primary'>
-                {auth.user.firstName + ' ' + auth.user.lastName}
-              </span>
+              <span className='text-primary'>Hi, {auth.user.firstName}</span>
             )}
             <Dropdown placement='bottom-end'>
               <DropdownTrigger>

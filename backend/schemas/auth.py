@@ -1,5 +1,7 @@
 from datetime import datetime
+
 from pydantic import BaseModel, EmailStr
+
 from backend.schemas.user import UserBase
 
 
@@ -20,6 +22,15 @@ class TokenResponse(BaseModel):
 
 class GetMeResponse(UserBase):
     pass
+
+
+class SocialAuthRequest(BaseModel):
+    email: EmailStr
+    is_verified: bool
+    family_name: str | None = None
+    given_name: str | None = None
+    name: str | None = None
+    picture: str | None = None
 
 
 # class ChangePasswordRequest(BaseModel):

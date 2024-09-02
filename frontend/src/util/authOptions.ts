@@ -11,6 +11,8 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { cookies } from 'next/headers';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
+import type { GoogleProfile } from 'next-auth/providers/google';
+import GoogleProvider from 'next-auth/providers/google';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -70,9 +72,20 @@ const authOptions: AuthOptions = {
         });
       },
     }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      authorization: {
+        params: {
+          prompt: 'consent',
+          access_type: 'offline',
+          response_type: 'code',
+        },
+      },
+    }),
   ],
   callbacks: {
-    async jwt({ token, user, session, trigger }) {
+    async jwt({ token, user, session, trigger, profile }) {
       const compareTime = <T extends Date | number>(value: T) => {
         const now = dayjs(
           dayjs().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD HH:mm:ss'),
@@ -82,7 +95,6 @@ const authOptions: AuthOptions = {
       };
 
       const rememberMe = getCookie('rememberMe', { cookies }) === 'true';
-
       if (token.accessToken && compareTime(token.expireAt)) {
         if (!rememberMe) return { ...token, ...user };
 
@@ -96,6 +108,26 @@ const authOptions: AuthOptions = {
       if (trigger === 'update' && session?.token) {
         token = session.token;
       }
+
+      if (profile) {
+        const googleProfile = profile as GoogleProfile;
+        if (!googleProfile.email_verified) {
+          throw Error('Email has not verified');
+        }
+        const response = await makeAuthApi().socialAuth({
+          socialAuthRequest: {
+            email: googleProfile.email,
+            givenName: googleProfile.given_name,
+            familyName: googleProfile.family_name,
+            picture: googleProfile.picture,
+            name: googleProfile.name,
+            isVerified: googleProfile.email_verified,
+          },
+        });
+
+        return { ...token, ...user, ...response };
+      }
+
       return {
         ...token,
         ...user,
@@ -109,7 +141,7 @@ const authOptions: AuthOptions = {
     },
   },
   pages: {
-    error: getRouter('login'),
+    error: getRouter('home'),
     signIn: getRouter('login'),
     signOut: getRouter('home'),
   },

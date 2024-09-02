@@ -17,6 +17,7 @@ class ErrorCode:
     ERR_APPLICATION_ALREADY_EXISTED = "ERR_APPLICATION_ALREADY_EXISTED"
     ERR_TICKET_SOLD_OUT = "ERR_TICKET_SOLD_OUT"
     ERR_USER_NOT_VERIFIED = "ERR_USER_NOT_VERIFIED"
+    ERR_GOOGLE_ACCOUNT_NOT_VERIFIED = "ERR_GOOGLE_ACCOUNT_NOT_VERIFIED"
 
 
 class ErrorMessage:
@@ -36,3 +37,4 @@ class ErrorMessage:
     ERR_APPLICATION_ALREADY_EXISTED = "The application has already existed."
     ERR_TICKET_SOLD_OUT = "Ticket sold out."
     ERR_USER_NOT_VERIFIED = "The user has not verified."
+    ERR_GOOGLE_ACCOUNT_NOT_VERIFIED = "The google account is not verified."
