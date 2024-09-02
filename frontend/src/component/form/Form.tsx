@@ -865,8 +865,8 @@ const FormDateRangePicker = ({
               daterange={field.value}
               onDateRangeChange={(daterange: DateRange | undefined) => {
                 field.onChange(daterange);
-                if (onSearch) onSearch();
               }}
+              onDateRangeSelect={onSearch}
             />
           </FormControl>
         </FormItem>
