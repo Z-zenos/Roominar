@@ -86,29 +86,6 @@ const authOptions: AuthOptions = {
   ],
   callbacks: {
     async jwt({ token, user, session, trigger, profile }) {
-      const compareTime = <T extends Date | number>(value: T) => {
-        const now = dayjs(
-          dayjs().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD HH:mm:ss'),
-        ).unix();
-        const exp = dayjs(value).unix();
-        return now > exp;
-      };
-
-      const rememberMe = getCookie('rememberMe', { cookies }) === 'true';
-      if (token.accessToken && compareTime(token.expireAt)) {
-        if (!rememberMe) return { ...token, ...user };
-
-        const refreshToken = token.refreshToken;
-        const response = await makeAuthApi().refreshToken({
-          token: refreshToken,
-        });
-        return { ...token, ...user, ...response };
-      }
-
-      if (trigger === 'update' && session?.token) {
-        token = session.token;
-      }
-
       if (profile) {
         const googleProfile = profile as GoogleProfile;
         if (!googleProfile.email_verified) {
@@ -124,6 +101,29 @@ const authOptions: AuthOptions = {
             isVerified: googleProfile.email_verified,
           },
         });
+
+        const compareTime = <T extends Date | number>(value: T) => {
+          const now = dayjs(
+            dayjs().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD HH:mm:ss'),
+          ).unix();
+          const exp = dayjs(value).unix();
+          return now > exp;
+        };
+
+        const rememberMe = getCookie('rememberMe', { cookies }) === 'true';
+        if (token.accessToken && compareTime(token.expireAt)) {
+          if (!rememberMe) return { ...token, ...user };
+
+          const refreshToken = token.refreshToken;
+          const response = await makeAuthApi().refreshToken({
+            token: refreshToken,
+          });
+          return { ...token, ...user, ...response };
+        }
+
+        if (trigger === 'update' && session?.token) {
+          token = session.token;
+        }
 
         return { ...token, ...user, ...response };
       }

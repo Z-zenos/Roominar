@@ -2,7 +2,11 @@
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { AiOutlineEye, AiOutlineEyeInvisible, AiFillFacebook } from 'react-icons/ai';
+import {
+  AiOutlineEye,
+  AiOutlineEyeInvisible,
+  AiFillFacebook,
+} from 'react-icons/ai';
 import { FcGoogle } from 'react-icons/fc';
 import { toast } from 'react-hot-toast';
 import { signIn } from 'next-auth/react';
@@ -48,7 +52,9 @@ function RegisterAudienceForm() {
     },
     onError(error: ApiException<unknown>) {
       toast.error(
-        (error.body as ErrorResponse400)?.message ?? (error.body as ErrorResponse400)?.errorCode ?? 'Unknown Error 😵',
+        (error.body as ErrorResponse400)?.message ??
+          (error.body as ErrorResponse400)?.errorCode ??
+          'Unknown Error 😵',
       );
     },
   });
@@ -68,15 +74,24 @@ function RegisterAudienceForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleRegister)} className={clsx('flex items-center justify-center flex-col')}>
+      <form
+        onSubmit={form.handleSubmit(handleRegister)}
+        className={clsx('flex items-center justify-center flex-col')}
+      >
         {isRegisterSuccess ? (
-          <SuccessRegistration email={data.email} expireAt={data.expireAt} />
+          <SuccessRegistration
+            email={data.email}
+            expireAt={data.expireAt}
+          />
         ) : (
           <>
             <div className='w-full'>
               <div className='w-full'>
                 <div className='mb-2 block'>
-                  <Label htmlFor='email' className={clsx(styles.label)}>
+                  <Label
+                    htmlFor='email'
+                    className={clsx(styles.label)}
+                  >
                     Your email
                   </Label>
                 </div>
@@ -84,12 +99,19 @@ function RegisterAudienceForm() {
                   id='email'
                   name='email'
                   type='email'
-                  rightIcon={<HiMail size={20} className='text-primary' />}
+                  rightIcon={
+                    <HiMail
+                      size={20}
+                      className='text-primary'
+                    />
+                  }
                   placeholder='registermail@gmail.com'
                   control={form.control}
                   isDisplayError={true}
                   className={clsx(
-                    form.formState.errors.email && form.formState.touchedFields.email && 'border-error-main',
+                    form.formState.errors.email &&
+                      form.formState.touchedFields.email &&
+                      'border-error-main',
                   )}
                 />
               </div>
@@ -97,7 +119,10 @@ function RegisterAudienceForm() {
               <div className='flex w-full mt-5 mb-1 items-start justify-between gap-2'>
                 <div className='w-full'>
                   <div className='mb-2 block'>
-                    <Label htmlFor='firstName' className={clsx(styles.label)}>
+                    <Label
+                      htmlFor='firstName'
+                      className={clsx(styles.label)}
+                    >
                       First name
                     </Label>
                   </div>
@@ -106,7 +131,9 @@ function RegisterAudienceForm() {
                     name='firstName'
                     placeholder='Kevin'
                     className={clsx(
-                      form.formState.errors.firstName && form.formState.touchedFields.firstName && 'border-error-main',
+                      form.formState.errors.firstName &&
+                        form.formState.touchedFields.firstName &&
+                        'border-error-main',
                     )}
                     control={form.control}
                     isDisplayError={true}
@@ -115,7 +142,10 @@ function RegisterAudienceForm() {
 
                 <div className='w-full'>
                   <div className='mb-2 block'>
-                    <Label htmlFor='lastName' className={clsx(styles.label)}>
+                    <Label
+                      htmlFor='lastName'
+                      className={clsx(styles.label)}
+                    >
                       Last name
                     </Label>
                   </div>
@@ -124,7 +154,9 @@ function RegisterAudienceForm() {
                     name='lastName'
                     placeholder='De Bruyne'
                     className={clsx(
-                      form.formState.errors.lastName && form.formState.touchedFields.lastName && 'border-error-main',
+                      form.formState.errors.lastName &&
+                        form.formState.touchedFields.lastName &&
+                        'border-error-main',
                     )}
                     control={form.control}
                     isDisplayError={true}
@@ -133,7 +165,10 @@ function RegisterAudienceForm() {
               </div>
               <div className='w-full mt-5 relative mb-1'>
                 <div className='mb-2 block'>
-                  <Label htmlFor='password' className={clsx(styles.label)}>
+                  <Label
+                    htmlFor='password'
+                    className={clsx(styles.label)}
+                  >
                     Enter your password
                   </Label>
                 </div>
@@ -143,14 +178,24 @@ function RegisterAudienceForm() {
                   type={!showPassword ? 'password' : 'text'}
                   rightIcon={
                     !showPassword ? (
-                      <AiOutlineEyeInvisible className='text-primary' size={20} onClick={() => setShowPassword(true)} />
+                      <AiOutlineEyeInvisible
+                        className='text-primary'
+                        size={20}
+                        onClick={() => setShowPassword(true)}
+                      />
                     ) : (
-                      <AiOutlineEye className='text-primary' size={20} onClick={() => setShowPassword(false)} />
+                      <AiOutlineEye
+                        className='text-primary'
+                        size={20}
+                        onClick={() => setShowPassword(false)}
+                      />
                     )
                   }
                   placeholder='password!@%'
                   className={clsx(
-                    form.formState.errors.password && form.formState.touchedFields.password && 'border-error-main',
+                    form.formState.errors.password &&
+                      form.formState.touchedFields.password &&
+                      'border-error-main',
                   )}
                   control={form.control}
                   isDisplayError={true}
@@ -159,7 +204,10 @@ function RegisterAudienceForm() {
 
               <div className='w-full mt-5 relative mb-1'>
                 <div className='mb-2 block'>
-                  <Label htmlFor='confirm-password' className={clsx(styles.label)}>
+                  <Label
+                    htmlFor='confirm-password'
+                    className={clsx(styles.label)}
+                  >
                     Confirm password
                   </Label>
                 </div>
@@ -175,7 +223,11 @@ function RegisterAudienceForm() {
                         onClick={() => setShowConfirmPassword(true)}
                       />
                     ) : (
-                      <AiOutlineEye className='text-primary' size={20} onClick={() => setShowConfirmPassword(false)} />
+                      <AiOutlineEye
+                        className='text-primary'
+                        size={20}
+                        onClick={() => setShowConfirmPassword(false)}
+                      />
                     )
                   }
                   placeholder='password!@%'
@@ -191,11 +243,19 @@ function RegisterAudienceForm() {
             </div>
             <p className='text-sm text-gray-600 font-light mt-3'>
               Please agree to the
-              <Link href='#' underline='hover' className='text-primary mx-1'>
+              <Link
+                href='#'
+                underline='hover'
+                className='text-primary mx-1'
+              >
                 Terms of Use
               </Link>{' '}
               and{' '}
-              <Link href='#' underline='hover' className='text-primary mx-1'>
+              <Link
+                href='#'
+                underline='hover'
+                className='text-primary mx-1'
+              >
                 Personal Information Handling
               </Link>{' '}
               before registering.
@@ -208,26 +268,37 @@ function RegisterAudienceForm() {
               isLoading={isLoading}
             />
             <br />
-            <h5 className='text-center pt-4 font-Poppins text-[14px] text-black dark:text-white'>Or join with</h5>
+            <h5 className='text-center pt-4 font-Poppins text-[14px] text-black dark:text-white'>
+              Or join with
+            </h5>
             <div className='flex items-center justify-center mt-3'>
-              <FcGoogle size={30} className='cursor-pointer mr-2' onClick={() => signIn('google')} />
+              <FcGoogle
+                size={30}
+                className='cursor-pointer mr-2'
+                onClick={() => signIn('google', { callbackUrl: '/home' })}
+              />
               <AiFillFacebook
                 size={30}
                 className='cursor-pointer ml-2 text-[#1877F2]'
-                onClick={() => signIn('github')}
+                onClick={() => signIn('facebook')}
               />
             </div>
 
             <h5 className='text-center pt-4 font-Poppins text-nm font-light'>
               Already have account?
-              <Link href='/login' className='text-primary font-semibold pl-1 cursor-pointer'>
+              <Link
+                href='/login'
+                className='text-primary font-semibold pl-1 cursor-pointer'
+              >
                 Login
               </Link>
             </h5>
 
             <p className={clsx('mt-4 gap-2 font-light', styles.center)}>
               Want to host your own event?
-              <Button className='outline-none'>Navigate to organization </Button>
+              <Button className='outline-none'>
+                Navigate to organization{' '}
+              </Button>
             </p>
           </>
         )}

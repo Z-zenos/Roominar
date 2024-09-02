@@ -192,7 +192,7 @@ export default function LoginAudienceForm() {
           <FcGoogle
             size={30}
             className='cursor-pointer mr-2'
-            onClick={() => signIn('google')}
+            onClick={() => signIn('google', { callbackUrl: '/home' })}
           />
           <AiFillFacebook
             size={30}
