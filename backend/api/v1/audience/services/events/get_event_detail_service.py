@@ -23,13 +23,16 @@ def get_event_detail(db: Session, current_user: User, slug: str):
     query = (
         select(
             Event,
+            Organization.id,
             Organization.name,
             Organization.address,
             Organization.hp_url,
             Organization.contact_email,
-            Questionnaire.name,
-            Questionnaire.id,
             Organization.contact_url,
+            Organization.avatar_url,
+            Organization.description,
+            Questionnaire.id,
+            Questionnaire.name,
         )
         .where(
             Event.slug == slug,
@@ -49,22 +52,28 @@ def get_event_detail(db: Session, current_user: User, slug: str):
 
     (
         event,
+        organization_id,
         organization_name,
         organization_address,
         organization_hp_url,
         organization_contact_email,
-        questionnaire_name,
-        questionnaire_id,
         organization_contact_url,
+        organization_avatar_url,
+        organization_description,
+        questionnaire_id,
+        questionnaire_name,
     ) = result
     event_detail = event.__dict__
 
     event_detail.update(
         {
+            "organization_id": organization_id,
             "organization_name": organization_name,
             "organization_address": organization_address,
             "organization_url": organization_hp_url,
             "organization_contact_email": organization_contact_email,
+            "organization_avatar_url": organization_avatar_url,
+            "organization_description": organization_description,
             "questionnaire": _get_questionnaire_detail(
                 db, questionnaire_id, questionnaire_name
             ),

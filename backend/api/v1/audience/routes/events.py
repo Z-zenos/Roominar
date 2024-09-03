@@ -37,6 +37,18 @@ def search_events(
 
 
 # @router.get(
+#     "/{event_id}",
+#     response_model=ListingTopOrganizationEventsResponse,
+#     responses=public_api_responses,
+# )
+# def listing_related_events(
+#     event_id: int = None,
+#     db: Session = Depends(get_read_db),
+# ):
+#     return events_service.listing_related_events(db, event_id)
+
+
+# @router.get(
 #     "/recommend", response_model=ListingEventResponse, responses=public_api_responses
 # )
 # def listing_recommend_events(
@@ -73,6 +85,16 @@ def get_event_detail(
     current_user: Annotated[User | None, Depends(get_user_if_logged_in)] = None,
 ):
     return events_service.get_event_detail(db, current_user, slug)
+
+
+@router.patch(
+    "/{event_id}/count-view", response_model=int, responses=public_api_responses
+)
+def count_event_view(
+    event_id: int,
+    db: Session = Depends(get_read_db),
+):
+    return events_service.count_view(db, event_id)
 
 
 # @router.post(

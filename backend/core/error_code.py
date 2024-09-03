@@ -18,6 +18,7 @@ class ErrorCode:
     ERR_TICKET_SOLD_OUT = "ERR_TICKET_SOLD_OUT"
     ERR_USER_NOT_VERIFIED = "ERR_USER_NOT_VERIFIED"
     ERR_GOOGLE_ACCOUNT_NOT_VERIFIED = "ERR_GOOGLE_ACCOUNT_NOT_VERIFIED"
+    ERR_ORGANIZATION_NOT_FOUND = "ERR_ORGANIZATION_NOT_FOUND"
 
 
 class ErrorMessage:
@@ -38,3 +39,4 @@ class ErrorMessage:
     ERR_TICKET_SOLD_OUT = "Ticket sold out."
     ERR_USER_NOT_VERIFIED = "The user has not verified."
     ERR_GOOGLE_ACCOUNT_NOT_VERIFIED = "The google account is not verified."
+    ERR_ORGANIZATION_NOT_FOUND = "The organization doesn't exist."

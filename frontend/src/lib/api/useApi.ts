@@ -4,6 +4,7 @@ import {
   ApplicationsApi,
   AuthApi,
   EventsApi,
+  OrganizationsApi,
   TagsApi,
   UsersApi,
 } from '@/src/lib/api/generated';
@@ -16,6 +17,7 @@ function useApi() {
     users: new UsersApi(config),
     tags: new TagsApi(config),
     applications: new ApplicationsApi(config),
+    organizations: new OrganizationsApi(config),
   };
 }
 

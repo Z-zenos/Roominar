@@ -152,7 +152,6 @@ def _build_recommendation_targets(targets_list: list):
 def _build_filters(db: Session, user: User, query_params: SearchEventsQueryParams):
     filters = [
         Event.public_at.isnot(None),
-        Event.application_start_at <= datetime.now(),
         Event.status == EventStatusCode.PUBLIC,
     ]
     sort_by = Event.public_at

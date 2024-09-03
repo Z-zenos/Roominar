@@ -94,8 +94,11 @@ class GetEventDetailResponse(BaseModel):
     organization_name: str
     meeting_url: str | None = None
     meeting_tool_code: EventMeetingToolCode
+    organization_id: int | None = None
     organization_url: str | None = None
     organization_address: str | None = None
+    organization_avatar_url: str | None = None
+    organization_description: str | None = None
     tickets: list[TicketItem]
     organization_contact_url: str | None = None
     application_number: int
@@ -104,3 +107,16 @@ class GetEventDetailResponse(BaseModel):
     application_form_url: str | None
     tags: list[TagItem] = Field([])
     questionnaire: QuestionnaireDetail | None
+
+
+class ListingTopOrganizationEventsItem(BaseModel):
+    id: int
+    slug: str
+    cover_image_url: str | None = None
+    name: str
+    rank: int | None = None
+    start_at: datetime
+
+
+class ListingTopOrganizationEventsResponse(BaseModel):
+    events: list[ListingTopOrganizationEventsItem] = Field([])

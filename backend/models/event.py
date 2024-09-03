@@ -65,3 +65,4 @@ class Event(BaseModel, table=True):
 
     public_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
     application_form_url: Optional[str] = Field(sa_type=String(2048))
+    view_number: Optional[int]

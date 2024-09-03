@@ -3,6 +3,7 @@ from fastapi import APIRouter
 from .applications import router as application_router
 from .auth import router as auth_router
 from .events import router as event_router
+from .organizations import router as organization_router
 from .tags import router as tag_router
 
 # from .tags import router as tag_router
@@ -19,4 +20,7 @@ audience_routers.include_router(
     application_router, prefix="/applications", tags=["applications"]
 )
 audience_routers.include_router(user_router, prefix="/users", tags=["users"])
+audience_routers.include_router(
+    organization_router, prefix="/organizations", tags=["organizations"]
+)
 # audience_routers.include_router(ticket_router, prefix="/tickets", tags=["tickets"])

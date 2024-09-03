@@ -51,10 +51,14 @@ import useWindowDimensions from '@/src/hook/useWindowDimension';
 import Timeline from '@/src/component/common/Timeline';
 import Badge from '@/src/component/common/Badge';
 import SpeakerCard from '@/src/component/common/Card/SpeakerCard';
-import { useGetEventDetailQuery } from '@/src/api/event.api';
+import {
+  useGetEventDetailQuery,
+  useListingTopOrganizationEventsQuery,
+} from '@/src/api/event.api';
 import type { TagItem } from '@/src/lib/api/generated';
 import { usePathname, useRouter } from 'next/navigation';
 import Head from '@/src/component/common/Head';
+import { formatEventDate } from '@/src/util/app.util';
 
 const rows = [
   {
@@ -100,6 +104,14 @@ interface EventDetailProps {
 
 function EventDetail({ slug }: EventDetailProps) {
   const { data: event, isLoading } = useGetEventDetailQuery({ slug });
+  const { data: topOrganizationEventsData } =
+    useListingTopOrganizationEventsQuery(
+      {
+        organizationId: event?.organizationId,
+      },
+      !isLoading,
+    );
+
   const { width } = useWindowDimensions();
 
   const [showMore, setShowMore] = useState<boolean>(false);
@@ -160,7 +172,7 @@ function EventDetail({ slug }: EventDetailProps) {
       <Head
         description='Detail information about specific event'
         keywords='Foreign Language,Webinar,Event,Sharing,Seminar,Ticket'
-        title={event.name}
+        title={event?.name}
       />
       <div
         className={clsx(
@@ -351,10 +363,10 @@ function EventDetail({ slug }: EventDetailProps) {
             <div className='mt-3'>
               <p
                 className={clsx(
-                  'font-light',
+                  'font-light line-clamp-6',
                   showMore
-                    ? 'h-auto'
-                    : 'h-[400px] overflow-hidden gradient-mask-b-0',
+                    ? 'line-clamp-none'
+                    : ' overflow-hidden gradient-mask-b-0',
                 )}
               >
                 {event?.description}
@@ -439,23 +451,19 @@ function EventDetail({ slug }: EventDetailProps) {
               Organization
             </h3>
             <div className='mt-3 border border-gray-200 shadow-sm'>
-              <div className='h-[100px] overflow-hidden'>
-                <Image
-                  src='https://s3.techplay.jp/tp-images/event/325af0ba401e01b931e280d2c9bf4030d7c9e718.png?w=600'
-                  className='w-full h-[200px]'
-                  alt='Organization banner image'
-                />
-              </div>
-              <div className={clsx(styles.between, 'px-5')}>
-                <div className='border p-1 border-blue-500 rounded-sm -mt-10'>
+              {event?.organizationAvatarUrl && (
+                <div className='h-[100px] overflow-hidden'>
                   <Image
-                    src='https://avatars.githubusercontent.com/u/168013536?s=400&u=70bb0e54fe8f64dc89004de4370d33a25016a1ec&v=4'
-                    width={80}
-                    height={80}
-                    className='rounded-sm'
-                    alt='Organization avatar image'
+                    src={event?.organizationAvatarUrl}
+                    className='w-full h-[200px] aspect-video'
+                    alt='Organization banner image'
                   />
                 </div>
+              )}
+              <div className={clsx(styles.between, 'px-5')}>
+                <h3 className='font-semibold text-primary text-xm  cursor-pointer'>
+                  {event?.organizationName}
+                </h3>
                 <div className='text-right mt-3'>
                   <Button
                     className={
@@ -482,69 +490,39 @@ function EventDetail({ slug }: EventDetailProps) {
                 </div>
               </div>
               <div className='my-3 px-5'>
-                <h3 className='font-semibold text-primary text-md cursor-pointer'>
-                  {event?.organizationName}
-                </h3>
                 <p className='opacity-70 text-ss line-clamp-3'>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Cumque exercitationem illum veritatis quis dicta. Laboriosam a
-                  minus aliquam amet, iure velit sunt nemo voluptatem labore
-                  dolores quo incidunt fugiat in!
+                  {event?.organizationDescription}
                 </p>
 
                 <h3 className='font-semibold text-gray-700 text-nm cursor-pointer my-3'>
                   Events
                 </h3>
-                <div className='flex justify-start gap-3 items-start'>
-                  <Image
-                    src='https://avatars.githubusercontent.com/u/168013536?s=400&u=70bb0e54fe8f64dc89004de4370d33a25016a1ec&v=4'
-                    className='min-w-[100px] rounded-md h-[70px]'
-                    alt='organization event image'
-                  />
-                  <div>
-                    <h3 className='font-medium text-sm'>
-                      This is event title of AI conferenece of win champion if
-                      asf.
-                    </h3>
-                    <p className='text-ss font-light opacity-65'>
-                      Start at 2024/12/12
-                    </p>
-                  </div>
-                </div>
-
-                <div className='flex justify-start gap-3 items-start my-3'>
-                  <Image
-                    src='https://avatars.githubusercontent.com/u/168013536?s=400&u=70bb0e54fe8f64dc89004de4370d33a25016a1ec&v=4'
-                    className='min-w-[100px] rounded-md h-[70px]'
-                    alt='organization event image'
-                  />
-                  <div>
-                    <h3 className='font-medium text-sm'>
-                      This is event title of AI conferenece of win champion if
-                      asf.
-                    </h3>
-                    <p className='text-ss font-light opacity-65'>
-                      Start at 2024/12/12
-                    </p>
-                  </div>
-                </div>
-
-                <div className='flex justify-start gap-3 items-start'>
-                  <Image
-                    src='https://avatars.githubusercontent.com/u/168013536?s=400&u=70bb0e54fe8f64dc89004de4370d33a25016a1ec&v=4'
-                    className='min-w-[100px] rounded-md h-[70px]'
-                    alt='organization event image'
-                  />
-                  <div>
-                    <h3 className='font-medium text-sm'>
-                      This is event title of AI conferenece of win champion if
-                      asf.
-                    </h3>
-                    <p className='text-ss font-light opacity-65'>
-                      Start at 2024/12/12
-                    </p>
-                  </div>
-                </div>
+                {topOrganizationEventsData &&
+                  topOrganizationEventsData.events.map(
+                    (topOrganizationEvent) => (
+                      <div
+                        key={`toe-${topOrganizationEvent.id}`}
+                        className='flex justify-start gap-3 my-6 items-start'
+                      >
+                        <Image
+                          src={topOrganizationEvent.coverImageUrl}
+                          width={100}
+                          height={70}
+                          className='rounded-md min-w-[100px] aspect-video'
+                          alt='organization top organizationEvent image'
+                        />
+                        <div>
+                          <h3 className='font-medium text-sm'>
+                            {topOrganizationEvent.name}
+                          </h3>
+                          <p className='text-ss font-light opacity-65'>
+                            Start at{' '}
+                            {formatEventDate(topOrganizationEvent.startAt)}
+                          </p>
+                        </div>
+                      </div>
+                    ),
+                  )}
               </div>
             </div>
           </div>
