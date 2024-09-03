@@ -221,7 +221,7 @@ function EventCard({
           />
           {event.tags.map((tag: TagItem, i: number) => (
             <Link
-              href={`?${searchParams.toString() ? searchParams.toString() + '&' : ''}tags=${tag.id}`}
+              href={`?${searchParams.toString() ? searchParams.toString() + '&' : ''}tags[]=${tag.id}`}
               underline='hover'
               key={`event-card-tag-${tag.id}`}
               className={clsx(

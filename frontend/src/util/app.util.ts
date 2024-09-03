@@ -89,7 +89,7 @@ export function searchQuery(
   searchParams: ReadonlyURLSearchParams,
   exclude_queries: string[],
 ) {
-  let refineQuery: { [key: string]: unknown } = {
+  let refineQuery: { [key: string]: any } = {
     ...queryString.parse(searchParams.toString(), { arrayFormat: 'bracket' }),
     ...filters,
   };

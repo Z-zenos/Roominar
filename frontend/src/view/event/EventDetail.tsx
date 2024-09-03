@@ -54,6 +54,7 @@ import SpeakerCard from '@/src/component/common/Card/SpeakerCard';
 import { useGetEventDetailQuery } from '@/src/api/event.api';
 import type { TagItem } from '@/src/lib/api/generated';
 import { usePathname, useRouter } from 'next/navigation';
+import Head from '@/src/component/common/Head';
 
 const rows = [
   {
@@ -156,6 +157,11 @@ function EventDetail({ slug }: EventDetailProps) {
     <DotLoader />
   ) : (
     <div className='w-full'>
+      <Head
+        description='Detail information about specific event'
+        keywords='Foreign Language,Webinar,Event,Sharing,Seminar,Ticket'
+        title={event.name}
+      />
       <div
         className={clsx(
           'bg-emerald-50 dark:bg-dark-sub w-full py-14 px-[15%] relative flex-wrap',
@@ -187,18 +193,18 @@ function EventDetail({ slug }: EventDetailProps) {
           </div>
           <Image
             src={event?.coverImageUrl}
-            className='w-full'
+            className={clsx(width > 1200 ? 'w-[90%]' : 'w-full')}
             classNames={{ wrapper: '!max-w-full' }}
             alt='Event banner image'
           />
-          <h2 className='text-primary font-bold text-lg'>{event?.name}</h2>
+          <h2 className='text-primary font-bold text-xl'>{event?.name}</h2>
           <div className={clsx(styles.flexStart)}>
             {event?.tags.map((tag: TagItem) => (
               <Badge
                 title={tag.name}
                 key={`badge-tag-${tag.id}`}
                 className='cursor-pointer hover:underline'
-                onClick={() => router.push(`/search?tags=${tag.id}`)}
+                onClick={() => router.push(`/search?tags[]=${tag.id}`)}
               />
             ))}
           </div>
@@ -206,7 +212,7 @@ function EventDetail({ slug }: EventDetailProps) {
         <div className={clsx(width > 1200 ? 'w-[25%]' : 'w-full')}>
           <div
             className={clsx(
-              'bg-white shadow-sm border p-4 border-gray-100 rounded-md flex items-center gap-6',
+              'bg-white shadow-[rgba(0,_0,_0,_0.05)_0px_6px_24px_0px,_rgba(0,_0,_0,_0.08)_0px_0px_0px_1px] border p-4 border-gray-100 rounded-md flex items-center gap-6',
               width > 1200 ? 'flex-col' : 'flex-row justify-between',
             )}
           >

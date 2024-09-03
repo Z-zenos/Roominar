@@ -22,7 +22,6 @@ import type {
   JobTypeCode,
 } from '@/src/lib/api/generated';
 import dayjs from 'dayjs';
-import { DateRange } from 'react-day-picker';
 
 function SearchEvent() {
   const searchParams = useSearchParams();
@@ -90,8 +89,6 @@ function SearchEvent() {
 
     searchQuery(router, filters, searchParams, exclude_queries);
   }
-
-  console.log(form.getValues());
 
   return (
     <Form {...form}>

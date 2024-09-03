@@ -1,6 +1,10 @@
 'use client';
 
 import { formatEventDate } from '@/src/util/app.util';
+import { SlNote } from 'react-icons/sl';
+import { RiFileCloseLine } from 'react-icons/ri';
+import { PiShootingStarThin } from 'react-icons/pi';
+import { CiLogout } from 'react-icons/ci';
 
 interface TimelineProps {
   applicationStartAt?: Date;
@@ -9,58 +13,128 @@ interface TimelineProps {
   endAt?: Date;
 }
 
-function Timeline({ applicationStartAt, applicationEndAt, startAt, endAt }: TimelineProps) {
+function Timeline({
+  applicationStartAt,
+  applicationEndAt,
+  startAt,
+  endAt,
+}: TimelineProps) {
   return (
     <div className='w-full max-w-6xl mx-auto bg-emerald-50'>
-      <div className='flex flex-col justify-center divide-y divide-slate-200 [&>*]:py-16'>
-        <div className='w-full max-w-3xl px-16'>
-          <div className='-my-6'>
-            <div className='relative pl-8 sm:pl-32 py-2 group'>
-              <div className='font-caveat font-medium text-2xl text-indigo-500 mb-1 sm:mb-0 ml-[6rem]'>
-                Application Start At
-              </div>
-
-              <div className='flex flex-col sm:flex-row items-start mb-1 group-last:before:hidden before:absolute before:left-2 sm:before:left-0 before:h-full before:px-px before:bg-slate-300 sm:before:ml-[13rem] before:self-start before:-translate-x-1/2 before:translate-y-3 after:absolute after:left-2 sm:after:left-0 after:w-2 after:h-2 after:bg-indigo-600 after:border-4 after:box-content after:border-slate-50 after:rounded-full sm:after:ml-[13rem] after:-translate-x-1/2 after:translate-y-1.5'>
-                <time className='sm:absolute left-0 translate-y-0.5 inline-flex items-center justify-center text-xs font-semibold uppercase w-48 h-6 mb-3 sm:mb-0 text-emerald-600 bg-emerald-100 rounded-full'>
-                  {formatEventDate(applicationStartAt)}
-                </time>
-                <div className='text-nm ml-[6rem] font-light text-slate-900'>Acme was founded in Milan, Italy</div>
+      <div className='w-full py-6'>
+        <div className='flex'>
+          <div className='w-1/4'>
+            <div className='relative mb-2'>
+              <div className='w-10 h-10 mx-auto bg-green-500 rounded-full text-lg text-white flex items-center'>
+                <span className='text-center text-white w-full'>
+                  <SlNote
+                    size={20}
+                    className='w-full fill-current'
+                  />
+                </span>
               </div>
             </div>
 
-            <div className='relative pl-8 sm:pl-32 py-2 group'>
-              <div className='font-caveat font-medium text-2xl text-indigo-500 mb-1 sm:mb-0 ml-[6rem]'>
-                Application End At
+            <div className='text-xs text-center md:text-base'>
+              <p>Start apply at</p>
+              <p className='mt-1 font-semibold'>
+                {formatEventDate(applicationStartAt)}
+              </p>
+            </div>
+          </div>
+
+          <div className='w-1/4'>
+            <div className='relative mb-2'>
+              <div
+                className='absolute flex align-center items-center align-middle content-center'
+                style={{
+                  width: 'calc(100% - 2.5rem - 1rem)',
+                  top: '50%',
+                  transform: 'translate(-50%, -50%)',
+                }}
+              >
+                <div className='w-full bg-gray-200 rounded items-center align-middle align-center flex-1'>
+                  <div className='w-full bg-green-300 py-1 rounded'></div>
+                </div>
               </div>
 
-              <div className='flex flex-col sm:flex-row items-start mb-1 group-last:before:hidden before:absolute before:left-2 sm:before:left-0 before:h-full before:px-px before:bg-slate-300 sm:before:ml-[13rem] before:self-start before:-translate-x-1/2 before:translate-y-3 after:absolute after:left-2 sm:after:left-0 after:w-2 after:h-2 after:bg-indigo-600 after:border-4 after:box-content after:border-slate-50 after:rounded-full sm:after:ml-[13rem] after:-translate-x-1/2 after:translate-y-1.5'>
-                <time className='sm:absolute left-0 translate-y-0.5 inline-flex items-center justify-center text-xs font-semibold uppercase w-48 h-6 mb-3 sm:mb-0 text-emerald-600 bg-emerald-100 rounded-full'>
-                  {formatEventDate(applicationEndAt)}
-                </time>
-                <div className='text-nm ml-[6rem] font-light text-slate-900'>Acme was founded in Milan, Italy</div>
+              <div className='w-10 h-10 mx-auto bg-green-500 rounded-full text-lg text-white flex items-center'>
+                <span className='text-center text-white w-full'>
+                  <RiFileCloseLine
+                    size={20}
+                    className='w-full fill-current'
+                  />
+                </span>
               </div>
             </div>
 
-            <div className='relative pl-8 sm:pl-32 py-2 group'>
-              <div className='font-caveat font-medium text-2xl text-indigo-500 mb-1 sm:mb-0 ml-[6rem]'>Start At</div>
+            <div className='text-xs text-center md:text-base'>
+              <p>Finish apply at</p>
+              <p className='mt-1 font-semibold'>
+                {formatEventDate(applicationEndAt)}
+              </p>
+            </div>
+          </div>
 
-              <div className='flex flex-col sm:flex-row items-start mb-1 group-last:before:hidden before:absolute before:left-2 sm:before:left-0 before:h-full before:px-px before:bg-slate-300 sm:before:ml-[13rem] before:self-start before:-translate-x-1/2 before:translate-y-3 after:absolute after:left-2 sm:after:left-0 after:w-2 after:h-2 after:bg-indigo-600 after:border-4 after:box-content after:border-slate-50 after:rounded-full sm:after:ml-[13rem] after:-translate-x-1/2 after:translate-y-1.5'>
-                <time className='sm:absolute left-0 translate-y-0.5 inline-flex items-center justify-center text-xs font-semibold uppercase w-48 h-6 mb-3 sm:mb-0 text-emerald-600 bg-emerald-100 rounded-full'>
-                  {formatEventDate(startAt)}
-                </time>
-                <div className='text-nm ml-[6rem] font-light text-slate-900'>Acme was founded in Milan, Italy</div>
+          <div className='w-1/4'>
+            <div className='relative mb-2'>
+              <div
+                className='absolute flex align-center items-center align-middle content-center'
+                style={{
+                  width: 'calc(100% - 2.5rem - 1rem)',
+                  top: '50%',
+                  transform: 'translate(-50%, -50%)',
+                }}
+              >
+                <div className='w-full bg-gray-200 rounded items-center align-middle align-center flex-1'>
+                  <div className='w-[33%] bg-green-300 py-1 rounded'></div>
+                </div>
+              </div>
+
+              <div className='w-10 h-10 mx-auto bg-white border-2 border-gray-200 rounded-full text-lg text-white flex items-center'>
+                <span className='text-center text-gray-600 w-full'>
+                  <PiShootingStarThin
+                    size={20}
+                    className='w-full fill-current'
+                  />
+                </span>
               </div>
             </div>
 
-            <div className='relative pl-8 sm:pl-32 py-2 group'>
-              <div className='font-caveat font-medium text-2xl text-indigo-500 mb-1 sm:mb-0 ml-[6rem]'>End At</div>
+            <div className='text-xs text-center md:text-base'>
+              <p>Start event at</p>
+              <p className='mt-1 font-semibold'>{formatEventDate(startAt)}</p>
+            </div>
+          </div>
 
-              <div className='flex flex-col sm:flex-row items-start mb-1 group-last:before:hidden before:absolute before:left-2 sm:before:left-0 before:h-full before:px-px before:bg-slate-300 sm:before:ml-[13rem] before:self-start before:-translate-x-1/2 before:translate-y-3 after:absolute after:left-2 sm:after:left-0 after:w-2 after:h-2 after:bg-indigo-600 after:border-4 after:box-content after:border-slate-50 after:rounded-full sm:after:ml-[13rem] after:-translate-x-1/2 after:translate-y-1.5'>
-                <time className='sm:absolute left-0 translate-y-0.5 inline-flex items-center justify-center text-xs font-semibold uppercase w-48 h-6 mb-3 sm:mb-0 text-emerald-600 bg-emerald-100 rounded-full'>
-                  {formatEventDate(endAt)}
-                </time>
-                <div className='text-nm ml-[6rem] font-light text-slate-900'>Acme was founded in Milan, Italy</div>
+          <div className='w-1/4'>
+            <div className='relative mb-2'>
+              <div
+                className='absolute flex align-center items-center align-middle content-center'
+                style={{
+                  width: 'calc(100% - 2.5rem - 1rem)',
+                  top: '50%',
+                  transform: 'translate(-50%, -50%)',
+                }}
+              >
+                <div className='w-full bg-gray-200 rounded items-center align-middle align-center flex-1'>
+                  <div className='w-0 bg-green-300 py-1 rounded'></div>
+                </div>
               </div>
+
+              <div className='w-10 h-10 mx-auto bg-white border-2 border-gray-200 rounded-full text-lg text-white flex items-center'>
+                <span className='text-center text-gray-600 w-full'>
+                  <CiLogout
+                    size={20}
+                    className='w-full fill-current'
+                  />
+                </span>
+              </div>
+            </div>
+
+            <div className='text-xs text-center md:text-base'>
+              <p>Finish at</p>
+              <p className='mt-1 font-semibold'>{formatEventDate(endAt)}</p>
             </div>
           </div>
         </div>
