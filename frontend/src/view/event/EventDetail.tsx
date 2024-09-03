@@ -24,6 +24,7 @@ import {
   FaInstagram,
   FaLinkedin,
   FaRegCopy,
+  FaRegEye,
 } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 import { BsFillPeopleFill } from 'react-icons/bs';
@@ -52,6 +53,7 @@ import Timeline from '@/src/component/common/Timeline';
 import Badge from '@/src/component/common/Badge';
 import SpeakerCard from '@/src/component/common/Card/SpeakerCard';
 import {
+  useCountEventViewMutation,
   useGetEventDetailQuery,
   useListingTopOrganizationEventsQuery,
 } from '@/src/api/event.api';
@@ -59,6 +61,7 @@ import type { TagItem } from '@/src/lib/api/generated';
 import { usePathname, useRouter } from 'next/navigation';
 import Head from '@/src/component/common/Head';
 import { formatEventDate } from '@/src/util/app.util';
+import Chip from '@/src/component/common/Chip';
 
 const rows = [
   {
@@ -111,6 +114,8 @@ function EventDetail({ slug }: EventDetailProps) {
       },
       !isLoading,
     );
+
+  const { data: viewNumber, isSuccess } = useCountEventViewMutation({ slug });
 
   const { width } = useWindowDimensions();
 
@@ -186,7 +191,7 @@ function EventDetail({ slug }: EventDetailProps) {
             width > 1200 ? 'w-[70%]' : 'w-full mb-8',
           )}
         >
-          <div className='flex flex-col flex-wrap gap-4 '>
+          <div className='flex justify-between flex-wrap gap-4 '>
             <Breadcrumbs color='primary'>
               <BreadcrumbItem
                 className='hover:underline'
@@ -202,6 +207,12 @@ function EventDetail({ slug }: EventDetailProps) {
               </BreadcrumbItem>
               <BreadcrumbItem>{event?.name}</BreadcrumbItem>
             </Breadcrumbs>
+            <Chip
+              content={isSuccess ? viewNumber + '' : event?.viewNumber + ''}
+              leftIcon={<FaRegEye className='text-sm' />}
+              type='info'
+              className='border border-primary-500'
+            />
           </div>
           <Image
             src={event?.coverImageUrl}

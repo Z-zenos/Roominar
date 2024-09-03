@@ -107,6 +107,7 @@ class GetEventDetailResponse(BaseModel):
     application_form_url: str | None
     tags: list[TagItem] = Field([])
     questionnaire: QuestionnaireDetail | None
+    view_number: int | None = None
 
 
 class ListingTopOrganizationEventsItem(BaseModel):

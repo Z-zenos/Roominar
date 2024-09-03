@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import type {
+  EventsApiCountEventViewRequest,
   EventsApiGetEventDetailRequest,
   EventsApiSearchEventsRequest,
   OrganizationsApiListingTopOrganizationEventsRequest,
@@ -36,5 +37,15 @@ export const useListingTopOrganizationEventsQuery = (
     queryFn: async () =>
       await api.organizations.listingTopOrganizationEvents(params),
     enabled,
+  });
+};
+
+export const useCountEventViewMutation = (
+  params?: EventsApiCountEventViewRequest,
+) => {
+  const api = useApi();
+  return useQuery({
+    queryKey: ['count-event-view'],
+    queryFn: async () => await api.events.countEventView(params),
   });
 };

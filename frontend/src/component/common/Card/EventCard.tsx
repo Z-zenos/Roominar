@@ -100,6 +100,7 @@ function EventCard({
                     content={event.meetingToolCode}
                     leftIcon={<MdOutlineOnlinePrediction className='text-sm' />}
                     type='success'
+                    className='border border-primary'
                   />
                 )}
               </div>

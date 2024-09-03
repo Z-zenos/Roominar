@@ -87,14 +87,12 @@ def get_event_detail(
     return events_service.get_event_detail(db, current_user, slug)
 
 
-@router.patch(
-    "/{event_id}/count-view", response_model=int, responses=public_api_responses
-)
+@router.get("/{slug}/count-view", response_model=int, responses=public_api_responses)
 def count_event_view(
-    event_id: int,
+    slug: str,
     db: Session = Depends(get_read_db),
 ):
-    return events_service.count_view(db, event_id)
+    return events_service.count_view(db, slug)
 
 
 # @router.post(
