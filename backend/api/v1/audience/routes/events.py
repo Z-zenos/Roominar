@@ -10,6 +10,7 @@ from backend.db.database import get_read_db
 from backend.models import User
 from backend.schemas.event import (
     GetEventDetailResponse,
+    ListingRelatedEventsResponse,
     SearchEventsQueryParams,
     SearchEventsResponse,
 )
@@ -34,18 +35,6 @@ def search_events(
     return SearchEventsResponse(
         page=query_params.page, per_page=query_params.per_page, total=total, data=events
     )
-
-
-# @router.get(
-#     "/{event_id}",
-#     response_model=ListingTopOrganizationEventsResponse,
-#     responses=public_api_responses,
-# )
-# def listing_related_events(
-#     event_id: int = None,
-#     db: Session = Depends(get_read_db),
-# ):
-#     return events_service.listing_related_events(db, event_id)
 
 
 # @router.get(
@@ -93,6 +82,19 @@ def count_event_view(
     db: Session = Depends(get_read_db),
 ):
     return events_service.count_view(db, slug)
+
+
+@router.get(
+    "/{slug}/related-events",
+    response_model=ListingRelatedEventsResponse,
+    responses=public_api_responses,
+)
+def listing_related_events(
+    slug: str = None,
+    db: Session = Depends(get_read_db),
+):
+    events = events_service.listing_related_events(db, slug)
+    return ListingRelatedEventsResponse(events=events)
 
 
 # @router.post(

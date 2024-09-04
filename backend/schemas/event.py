@@ -121,3 +121,15 @@ class ListingTopOrganizationEventsItem(BaseModel):
 
 class ListingTopOrganizationEventsResponse(BaseModel):
     events: list[ListingTopOrganizationEventsItem] = Field([])
+
+
+class ListingRelatedEventsItem(BaseModel):
+    id: int
+    slug: str
+    cover_image_url: str | None = None
+    name: str
+    start_at: datetime
+
+
+class ListingRelatedEventsResponse(BaseModel):
+    events: list[ListingRelatedEventsItem] = Field([])

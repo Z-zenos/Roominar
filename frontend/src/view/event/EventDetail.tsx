@@ -191,7 +191,7 @@ function EventDetail({ slug }: EventDetailProps) {
             width > 1200 ? 'w-[70%]' : 'w-full mb-8',
           )}
         >
-          <div className='flex justify-between flex-wrap gap-4 '>
+          <div className='flex justify-between flex-wrap gap-4 w-[90%]'>
             <Breadcrumbs color='primary'>
               <BreadcrumbItem
                 className='hover:underline'
