@@ -19,10 +19,11 @@ from backend.utils.database import save
 async def create_application(
     db: Session,
     request: CreateApplicationRequest,
-    current_user: User | None,
+    current_user: User,
     event_id: int,
 ):
     try:
+        # VERIFY APPLICATION
         event = db.exec(
             select(Event).where(
                 Event.id == event_id, Event.application_end_at >= datetime.now()
@@ -63,6 +64,7 @@ async def create_application(
                 ErrorMessage.ERR_TICKET_SOLD_OUT,
             )
 
+        # CREATE NEW APPLICATION
         application = Application(
             event_id=event_id,
             event_name=event.name,

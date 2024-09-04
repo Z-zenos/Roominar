@@ -5,12 +5,14 @@ import { SlNote } from 'react-icons/sl';
 import { RiFileCloseLine } from 'react-icons/ri';
 import { PiShootingStarThin } from 'react-icons/pi';
 import { CiLogout } from 'react-icons/ci';
+import clsx from 'clsx';
 
 interface TimelineProps {
   applicationStartAt?: Date;
   applicationEndAt?: Date;
   startAt?: Date;
   endAt?: Date;
+  className?: string;
 }
 
 function Timeline({
@@ -18,9 +20,10 @@ function Timeline({
   applicationEndAt,
   startAt,
   endAt,
+  className,
 }: TimelineProps) {
   return (
-    <div className='w-full max-w-6xl mx-auto bg-emerald-50'>
+    <div className={clsx('w-full max-w-6xl mx-auto bg-emerald-50', className)}>
       <div className='w-full py-6'>
         <div className='flex'>
           <div className='w-1/4'>

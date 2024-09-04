@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends
 from sqlmodel import Session
 
 import backend.api.v1.audience.services.applications as application_service
-from backend.api.v1.dependencies.authentication import get_user_if_logged_in
+from backend.api.v1.dependencies.authentication import authorize_role
+from backend.core.constants import RoleCode
 from backend.core.response import public_api_responses
 from backend.db.database import get_read_db
 from backend.models.user import User
@@ -15,7 +16,7 @@ router = APIRouter()
 async def create_application(
     event_id: int,
     request: CreateApplicationRequest,
-    current_user: User | None = Depends(get_user_if_logged_in),
+    current_user: User = Depends(authorize_role(RoleCode.AUDIENCE)),
     db: Session = Depends(get_read_db),
 ):
     return await application_service.create_application(

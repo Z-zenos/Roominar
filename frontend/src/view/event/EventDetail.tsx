@@ -62,6 +62,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import Head from '@/src/component/common/Head';
 import { formatEventDate, groupIntoPairs } from '@/src/util/app.util';
 import Chip from '@/src/component/common/Chip';
+import { useSession } from 'next-auth/react';
 
 const rows = [
   {
@@ -126,6 +127,7 @@ function EventDetail({ slug }: EventDetailProps) {
   const sectionNavigationMenuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const pathname = usePathname();
+  const { data: auth } = useSession();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -307,7 +309,9 @@ function EventDetail({ slug }: EventDetailProps) {
                 color='primary'
                 className='my-3 mx-auto w-[160px] font-semibold'
                 radius='none'
-                onClick={() => router.push(`${pathname}/apply`)}
+                onClick={() =>
+                  router.push(auth?.user ? `${pathname}/apply` : '/login')
+                }
               >
                 Apply Now
               </Button>

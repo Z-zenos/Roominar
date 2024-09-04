@@ -20,8 +20,8 @@ import {
 } from '@/src/component/form/Form';
 import Button from '@/src/component/common/Button/Button';
 import { useGetEventDetailQuery } from '@/src/api/event.api';
-import { formatEventDate, parseCode } from '@/src/util/app.util';
-import { MdOutlineAccessTime, MdOutlineOnlinePrediction } from 'react-icons/md';
+import { parseCode } from '@/src/util/app.util';
+import { MdOutlineOnlinePrediction } from 'react-icons/md';
 import Chip from '@/src/component/common/Chip';
 import { FaUserFriends } from 'react-icons/fa';
 import { Image, Link } from '@nextui-org/react';
@@ -42,10 +42,10 @@ import { useApplyEventMutation } from '@/src/api/application.api';
 import toast from 'react-hot-toast';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
-import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import { BiSolidSchool } from 'react-icons/bi';
 import { FaPhone } from 'react-icons/fa6';
 import useWindowDimensions from '@/src/hook/useWindowDimension';
+import Timeline from '@/src/component/common/Timeline';
 
 interface EventApplicationFormProps {
   slug: string;
@@ -54,9 +54,7 @@ interface EventApplicationFormProps {
 export default function EventApplicationForm({
   slug,
 }: EventApplicationFormProps) {
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [showConfirmPassword, setShowConfirmPassword] =
-    useState<boolean>(false);
+  useState<boolean>(false);
   const { data: event } = useGetEventDetailQuery({ slug });
   const { data: auth, status } = useSession();
   const { width } = useWindowDimensions();
@@ -74,8 +72,6 @@ export default function EventApplicationForm({
       jobTypeCode: (auth?.user?.jobTypeCode as JobTypeCode) || undefined,
       questionAnswerResults: [],
       isAgreed: false,
-      password: '',
-      confirmPassword: '',
     },
     resolver: zodResolver(eventApplicationFormSchema),
   });
@@ -84,7 +80,6 @@ export default function EventApplicationForm({
     onSuccess() {
       toast.success('Apply event successfully!');
       form.reset();
-      // router.push('/login');
     },
     onError(error: ApiException<unknown>) {
       toast.error(
@@ -110,8 +105,6 @@ export default function EventApplicationForm({
           data.questionAnswerResults as QuestionAnswerResultItem[],
         ticketId: +data.ticketId,
         isAgreed: data.isAgreed,
-        password: data.password ?? '',
-        confirmPassword: data.confirmPassword ?? '',
       },
     });
   }
@@ -148,12 +141,7 @@ export default function EventApplicationForm({
               <p className='text-sm font-light line-clamp-1 text-gray-700'>
                 {event.organizationAddress}
               </p>
-              <span className='flex items-center text-ss gap-1 my-2'>
-                <MdOutlineAccessTime className='text-nm' />
-                {formatEventDate(event.startAt) +
-                  '〜' +
-                  formatEventDate(event.endAt)}
-              </span>
+
               <div className={clsx(styles.between)}>
                 <Chip
                   content={
@@ -226,6 +214,16 @@ export default function EventApplicationForm({
             <h2 className='text-lg font-semibold text-primary'>
               Enter your detail information ✍
             </h2>
+
+            {event && (
+              <Timeline
+                applicationStartAt={event.applicationStartAt}
+                applicationEndAt={event.applicationEndAt}
+                startAt={event.startAt}
+                endAt={event.endAt}
+                className='my-3'
+              />
+            )}
             <div
               className={clsx(
                 'grid gap-8 items-center',
@@ -261,80 +259,6 @@ export default function EventApplicationForm({
                 />
               </div>
               {width < 600 ? <></> : <>&nbsp;</>}
-              {!auth?.user && (
-                <>
-                  <div className='self-start'>
-                    <FormCustomLabel
-                      htmlFor='password'
-                      title='Enter your password'
-                      required
-                    />
-                    <FormInput
-                      id='password'
-                      name='password'
-                      type={!showPassword ? 'password' : 'text'}
-                      rightIcon={
-                        !showPassword ? (
-                          <AiOutlineEyeInvisible
-                            className='text-primary'
-                            size={20}
-                            onClick={() => setShowPassword(true)}
-                          />
-                        ) : (
-                          <AiOutlineEye
-                            className='text-primary'
-                            size={20}
-                            onClick={() => setShowPassword(false)}
-                          />
-                        )
-                      }
-                      placeholder='password!@%'
-                      className={clsx(
-                        form.formState.errors.password &&
-                          form.formState.touchedFields.password &&
-                          'border-error-main',
-                      )}
-                      control={form.control}
-                      isDisplayError={true}
-                    />
-                  </div>
-                  <div className='self-start'>
-                    <FormCustomLabel
-                      htmlFor='confirm-password'
-                      title='Confirm password'
-                      required
-                    />
-                    <FormInput
-                      id='confirm-password'
-                      name='confirmPassword'
-                      type={!showConfirmPassword ? 'password' : 'text'}
-                      rightIcon={
-                        !showConfirmPassword ? (
-                          <AiOutlineEyeInvisible
-                            className='text-primary'
-                            size={20}
-                            onClick={() => setShowConfirmPassword(true)}
-                          />
-                        ) : (
-                          <AiOutlineEye
-                            className='text-primary'
-                            size={20}
-                            onClick={() => setShowConfirmPassword(false)}
-                          />
-                        )
-                      }
-                      placeholder='password!@%'
-                      className={clsx(
-                        form.formState.errors.confirmPassword &&
-                          form.formState.touchedFields.confirmPassword &&
-                          'border-error-main',
-                      )}
-                      control={form.control}
-                      isDisplayError={true}
-                    />
-                  </div>
-                </>
-              )}
               <div className='self-start'>
                 <FormCustomLabel
                   htmlFor='firstName'
@@ -655,7 +579,7 @@ export default function EventApplicationForm({
             </FormCheckBox>
           </div>
           <Button
-            title={auth?.user ? 'Apply Event' : 'Apply with New Account'}
+            title='Apply Event'
             type='submit'
             className='w-80 mt-5 mx-auto'
             disabled={!form.formState.isValid}

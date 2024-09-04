@@ -58,7 +58,7 @@ export default function Navbar() {
   const handleLogout = (auth: Session) => {
     localStorage.setItem('rememberMe', 'false');
     if (process.env.NODE_ENV === 'development') {
-      signOut({ redirect: false }).then(() => router.push('/home'));
+      signOut({ redirect: false });
     } else {
       signOut(
         auth.user.roleCode == RoleCode.ORGANIZER
