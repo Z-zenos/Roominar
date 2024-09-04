@@ -3,13 +3,14 @@ import { withAuth } from 'next-auth/middleware';
 import type { NextFetchEvent, NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { initialScreen } from './src/constant/app.constant';
+// import { getToken } from 'next-auth/jwt';
 
 export const pathPermissionMaster = {
   AUDIENCE: [
     '/register',
     // '/register/registration',
     // '/register/success',
-    // '/forgit-password',
+    // '/forget-password',
     // '/reset-password',
     // '/mypage',
     // '/applied-upcoming',
@@ -76,18 +77,31 @@ const nextResponseRedirectUrl = (
   }
 };
 
-const nextAuthMiddleware = withAuth(async function middleware(req) {
-  const { pathname: pathName, href: url } = req.nextUrl;
-  const { token } = req.nextauth;
-  if (token) {
-    return nextResponseRedirectUrl(token.user.roleCode, pathName, url);
-  }
-});
+const nextAuthMiddleware = withAuth(
+  async function middleware(req) {
+    const { pathname: pathName, href: url } = req.nextUrl;
+    const { token } = req.nextauth;
+    if (token) {
+      return nextResponseRedirectUrl(token.user.roleCode, pathName, url);
+    }
+  },
+  // {
+  //   pages: {
+  //     signIn: `/login`,
+  //   },
+  // },
+);
 
 export default async function middleware(
   request: NextRequest & NextRequestWithAuth,
   event: NextFetchEvent,
 ) {
+  // Return role in token for check path master
+  // const token = await getToken({ req: request });
+  // const isAuthenticated = !!token;
+  // console.log(token);
+  // https://stackoverflow.com/questions/76175812/prevent-authenticated-users-to-access-custom-sign-in-page-with-next-auth-middlew
+
   if (
     request.nextUrl.pathname === '/healthcheck' ||
     request.nextUrl.pathname.startsWith('/_next/') ||

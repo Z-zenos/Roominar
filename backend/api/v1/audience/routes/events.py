@@ -68,7 +68,7 @@ def search_events(
 @router.get(
     "/{slug}", response_model=GetEventDetailResponse, responses=public_api_responses
 )
-def get_event_detail(
+async def get_event_detail(
     slug: str,
     db: Session = Depends(get_read_db),
     current_user: Annotated[User | None, Depends(get_user_if_logged_in)] = None,
@@ -81,7 +81,7 @@ def get_event_detail(
     response_model=ListingRelatedEventsResponse,
     responses=public_api_responses,
 )
-def listing_related_events(
+async def listing_related_events(
     slug: str = None,
     db: Session = Depends(get_read_db),
 ):
