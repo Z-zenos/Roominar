@@ -41,7 +41,8 @@ def listing_related_events(db: Session, slug: str):
                         FROM unnest(t.job_type_codes) AS job_type_code
                         WHERE job_type_code = ANY(ARRAY{targets.job_type_codes})
                     )
-                ) DESC;
+                ) DESC
+                LIMIT 6;
             """
             )
         )

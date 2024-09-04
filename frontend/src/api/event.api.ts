@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import type {
   EventsApiCountEventViewRequest,
   EventsApiGetEventDetailRequest,
+  EventsApiListingRelatedEventsRequest,
   EventsApiSearchEventsRequest,
   OrganizationsApiListingTopOrganizationEventsRequest,
 } from '../lib/api/generated';
@@ -47,5 +48,15 @@ export const useCountEventViewMutation = (
   return useQuery({
     queryKey: ['count-event-view'],
     queryFn: async () => await api.events.countEventView(params),
+  });
+};
+
+export const useListingRelatedEventsQuery = (
+  params?: EventsApiListingRelatedEventsRequest,
+) => {
+  const api = useApi();
+  return useQuery({
+    queryKey: ['listing-related-events'],
+    queryFn: async () => await api.events.listingRelatedEvents(params),
   });
 };

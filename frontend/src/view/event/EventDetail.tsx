@@ -55,12 +55,13 @@ import SpeakerCard from '@/src/component/common/Card/SpeakerCard';
 import {
   useCountEventViewMutation,
   useGetEventDetailQuery,
+  useListingRelatedEventsQuery,
   useListingTopOrganizationEventsQuery,
 } from '@/src/api/event.api';
 import type { TagItem } from '@/src/lib/api/generated';
 import { usePathname, useRouter } from 'next/navigation';
 import Head from '@/src/component/common/Head';
-import { formatEventDate } from '@/src/util/app.util';
+import { formatEventDate, groupIntoPairs } from '@/src/util/app.util';
 import Chip from '@/src/component/common/Chip';
 
 const rows = [
@@ -116,6 +117,7 @@ function EventDetail({ slug }: EventDetailProps) {
     );
 
   const { data: viewNumber, isSuccess } = useCountEventViewMutation({ slug });
+  const { data: relatedEventsData } = useListingRelatedEventsQuery({ slug });
 
   const { width } = useWindowDimensions();
 
@@ -564,40 +566,49 @@ function EventDetail({ slug }: EventDetailProps) {
               spaceBetween={30}
               wrapperClass='pb-2'
             >
-              {[1, 2, 3].map((i, index) => (
-                <SwiperSlide
-                  key={index}
-                  className={clsx('dark:rounded-lg dark:p-0')}
-                >
-                  <div className='mt-3 border border-gray-200 shadow-sm p-2'>
-                    <Image
-                      src='https://s3.techplay.jp/tp-images/event/325af0ba401e01b931e280d2c9bf4030d7c9e718.png?w=600'
-                      className='w-full h-[200px]'
-                      alt='More event image'
-                    />
-                    <div className='pt-3 px-1'>
-                      <h3 className='text-md'>Careeror Feaasfh Pas 12312</h3>
-                      <p className='text-ss font-light opacity-65'>
-                        Start at 2012/12/12
-                      </p>
-                    </div>
-                  </div>
+              {relatedEventsData &&
+                groupIntoPairs(relatedEventsData.events).map(
+                  (relatedEventPair) => (
+                    <SwiperSlide
+                      key={`re-${relatedEventPair[0]?.id}`}
+                      className={clsx('dark:rounded-lg dark:p-0')}
+                    >
+                      <div className='mt-3 border border-gray-200 shadow-sm p-2'>
+                        <Image
+                          src={relatedEventPair[0]?.coverImageUrl}
+                          className='w-full h-[200px]'
+                          alt='More event image'
+                        />
+                        <div className='pt-3 px-1'>
+                          <h3 className='text-nm'>
+                            {relatedEventPair[0]?.name}
+                          </h3>
+                          <p className='text-ss font-light opacity-65'>
+                            Start at{' '}
+                            {formatEventDate(relatedEventPair[0]?.startAt)}
+                          </p>
+                        </div>
+                      </div>
 
-                  <div className='mt-3 border border-gray-200 shadow-sm p-2'>
-                    <Image
-                      src='https://s3.techplay.jp/tp-images/event/325af0ba401e01b931e280d2c9bf4030d7c9e718.png?w=600'
-                      className='w-full h-[200px]'
-                      alt='More event image'
-                    />
-                    <div className='pt-3 px-1'>
-                      <h3 className='text-md'>Careeror Feaasfh Pas 12312</h3>
-                      <p className='text-ss font-light opacity-65'>
-                        Start at 2012/12/12
-                      </p>
-                    </div>
-                  </div>
-                </SwiperSlide>
-              ))}
+                      <div className='mt-3 border border-gray-200 shadow-sm p-2'>
+                        <Image
+                          src={relatedEventPair[1]?.coverImageUrl}
+                          className='w-full h-[200px]'
+                          alt='More event image'
+                        />
+                        <div className='pt-3 px-1'>
+                          <h3 className='text-nm'>
+                            {relatedEventPair[1]?.name}
+                          </h3>
+                          <p className='text-ss font-light opacity-65'>
+                            Start at{' '}
+                            {formatEventDate(relatedEventPair[1]?.startAt)}
+                          </p>
+                        </div>
+                      </div>
+                    </SwiperSlide>
+                  ),
+                )}
             </Swiper>
           </div>
         </div>
