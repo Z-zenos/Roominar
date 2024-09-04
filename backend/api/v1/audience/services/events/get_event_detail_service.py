@@ -1,4 +1,4 @@
-from sqlmodel import Session, and_, exists, func, select
+from sqlmodel import Session, and_, exists, func, select, update
 
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
@@ -20,67 +20,45 @@ from backend.schemas.questionnaire import QuestionnaireDetail
 
 
 def get_event_detail(db: Session, current_user: User, slug: str):
-    query = (
-        select(
-            Event,
-            Organization.id,
-            Organization.name,
-            Organization.address,
-            Organization.hp_url,
-            Organization.contact_email,
-            Organization.contact_url,
-            Organization.avatar_url,
-            Organization.description,
-            Questionnaire.id,
-            Questionnaire.name,
+    event = (
+        db.exec(
+            select(
+                *Event.__table__.columns,
+                Organization.name.label("organization_name"),
+                Organization.address.label("organization_address"),
+                Organization.hp_url.label("organization_url"),
+                Organization.contact_email.label("organization_contact_email"),
+                Organization.contact_url.label("organization_contact_url"),
+                Organization.avatar_url.label("organization_avatar_url"),
+                Organization.description.label("organization_description"),
+                Questionnaire.name.label("questionnaire_name"),
+            )
+            .where(
+                Event.slug == slug,
+                Event.public_at.isnot(None),
+            )
+            .join(Organization, Event.organization_id == Organization.id)
+            .outerjoin(Questionnaire, Event.questionnaire_id == Questionnaire.id)
         )
-        .where(
-            Event.slug == slug,
-            Event.public_at.isnot(None),
-        )
-        .join(Organization, Event.organization_id == Organization.id)
-        .outerjoin(Questionnaire, Event.questionnaire_id == Questionnaire.id)
+        .mappings()
+        .one_or_none()
     )
-    result = db.exec(query).first()
 
-    if not result:
+    if not event:
         raise BadRequestException(
             ErrorCode.ERR_EVENT_NOT_FOUND, ErrorMessage.ERR_EVENT_NOT_FOUND
         )
+    event = dict(event)
 
-    event_id = result[0].id
-
-    (
-        event,
-        organization_id,
-        organization_name,
-        organization_address,
-        organization_hp_url,
-        organization_contact_email,
-        organization_contact_url,
-        organization_avatar_url,
-        organization_description,
-        questionnaire_id,
-        questionnaire_name,
-    ) = result
-    event_detail = event.__dict__
-
-    event_detail.update(
+    event.update(
         {
-            "organization_id": organization_id,
-            "organization_name": organization_name,
-            "organization_address": organization_address,
-            "organization_url": organization_hp_url,
-            "organization_contact_email": organization_contact_email,
-            "organization_avatar_url": organization_avatar_url,
-            "organization_description": organization_description,
             "questionnaire": _get_questionnaire_detail(
-                db, questionnaire_id, questionnaire_name
+                db, event["questionnaire_id"], event["questionnaire_name"]
             ),
-            "tickets": _get_tickets(db, event_id),
-            "organization_contact_url": organization_contact_url,
-            "applied_number": _get_applied_number(db, event_id),
-            "tags": _get_event_tags(db, event_id),
+            "tickets": _get_tickets(db, event["id"]),
+            "organization_contact_url": event["organization_contact_url"],
+            "applied_number": _get_applied_number(db, event["id"]),
+            "tags": _get_event_tags(db, event["id"]),
         }
     )
 
@@ -89,12 +67,25 @@ def get_event_detail(db: Session, current_user: User, slug: str):
             select(
                 exists().where(
                     Bookmark.user_id == current_user.id,
-                    Bookmark.event_id == event_id,
+                    Bookmark.event_id == event["id"],
                 )
             )
         ).first()
-        event_detail["is_bookmarked"] = is_bookmarked
-    return event_detail
+        event["is_bookmarked"] = is_bookmarked
+
+    try:
+        db.exec(
+            update(Event)
+            .where(Event.id == event["id"])
+            .values(view_number=event["view_number"] + 1)
+        )
+        db.commit()
+        event["view_number"] += 1
+        return event
+
+    except Exception as e:
+        db.rollback()
+        raise e
 
 
 def _get_tickets(db: Session, event_id: int):

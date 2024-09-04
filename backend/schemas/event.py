@@ -104,7 +104,7 @@ class GetEventDetailResponse(BaseModel):
     application_number: int
     applied_number: int
     status: EventStatusCode
-    application_form_url: str | None
+    application_form_url: str | None = None
     tags: list[TagItem] = Field([])
     questionnaire: QuestionnaireDetail | None
     view_number: int | None = None

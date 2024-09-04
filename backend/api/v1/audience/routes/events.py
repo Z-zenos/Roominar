@@ -76,14 +76,6 @@ def get_event_detail(
     return events_service.get_event_detail(db, current_user, slug)
 
 
-@router.get("/{slug}/count-view", response_model=int, responses=public_api_responses)
-def count_event_view(
-    slug: str,
-    db: Session = Depends(get_read_db),
-):
-    return events_service.count_view(db, slug)
-
-
 @router.get(
     "/{slug}/related-events",
     response_model=ListingRelatedEventsResponse,

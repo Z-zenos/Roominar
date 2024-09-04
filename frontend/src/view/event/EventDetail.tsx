@@ -53,7 +53,6 @@ import Timeline from '@/src/component/common/Timeline';
 import Badge from '@/src/component/common/Badge';
 import SpeakerCard from '@/src/component/common/Card/SpeakerCard';
 import {
-  useCountEventViewMutation,
   useGetEventDetailQuery,
   useListingRelatedEventsQuery,
   useListingTopOrganizationEventsQuery,
@@ -116,7 +115,6 @@ function EventDetail({ slug }: EventDetailProps) {
       !isLoading,
     );
 
-  const { data: viewNumber, isSuccess } = useCountEventViewMutation({ slug });
   const { data: relatedEventsData } = useListingRelatedEventsQuery({ slug });
 
   const { width } = useWindowDimensions();
@@ -210,7 +208,7 @@ function EventDetail({ slug }: EventDetailProps) {
               <BreadcrumbItem>{event?.name}</BreadcrumbItem>
             </Breadcrumbs>
             <Chip
-              content={isSuccess ? viewNumber + '' : event?.viewNumber + ''}
+              content={event?.viewNumber + ''}
               leftIcon={<FaRegEye className='text-sm' />}
               type='info'
               className='border border-primary-500'
