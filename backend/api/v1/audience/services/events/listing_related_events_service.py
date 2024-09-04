@@ -30,6 +30,7 @@ def listing_related_events(db: Session, slug: str):
                 SELECT e.id, e.slug, e.cover_image_url, e.name, e.start_at
                 FROM events e
                 JOIN targets t ON t.id = e.target_id
+                WHERE e.slug != '{slug}'
                 ORDER BY (
                     (
                         SELECT COUNT(*)

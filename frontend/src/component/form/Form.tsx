@@ -409,7 +409,13 @@ const FormCombobox = ({
                     className,
                   )}
                 >
-                  <span className='text-gray-500 font-medium line-clamp-1'>
+                  <span
+                    className={clsx(
+                      (!field.value || !field.value?.length) &&
+                        'text-[#a3a9b5] font-normal',
+                      'font-medium line-clamp-1',
+                    )}
+                  >
                     {multiple &&
                       field.value &&
                       (field.value as string[])
@@ -877,6 +883,34 @@ const FormDateRangePicker = ({
 
 FormDateRangePicker.displayName = 'FormDateRangePicker';
 
+interface FormCustomLabelProps {
+  htmlFor: string;
+  className?: string;
+  title: string;
+  required?: boolean;
+}
+
+const FormCustomLabel = ({
+  htmlFor,
+  className,
+  title,
+  required,
+}: FormCustomLabelProps) => {
+  return (
+    <div className='mb-2 block'>
+      <Label
+        htmlFor={htmlFor}
+        className={clsx(styles.label, className)}
+      >
+        {title}
+        {required && <span className='text-red-500 ml-2'>*</span>}
+      </Label>
+    </div>
+  );
+};
+
+FormCustomLabel.displayName = 'FormCustomLabel';
+
 // interface FormTextareaProps extends TextareaProps {
 // 	name: string;
 // 	control: Control<any>;
@@ -1027,4 +1061,5 @@ export {
   FormCombobox,
   FormTagsInput,
   FormRadioBoxList,
+  FormCustomLabel,
 };

@@ -12,12 +12,12 @@ import {
   FormCheckBox,
   FormCombobox,
   FormControl,
+  FormCustomLabel,
   FormField,
   FormInput,
   FormItem,
   FormLabel,
 } from '@/src/component/form/Form';
-import { Label } from '@/src/component/common/Label';
 import Button from '@/src/component/common/Button/Button';
 import { useGetEventDetailQuery } from '@/src/api/event.api';
 import { formatEventDate, parseCode } from '@/src/util/app.util';
@@ -41,6 +41,11 @@ import Checkbox from '@/src/component/common/Input/Checkbox';
 import { useApplyEventMutation } from '@/src/api/application.api';
 import toast from 'react-hot-toast';
 import { useSession } from 'next-auth/react';
+import { useState } from 'react';
+import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
+import { BiSolidSchool } from 'react-icons/bi';
+import { FaPhone } from 'react-icons/fa6';
+import useWindowDimensions from '@/src/hook/useWindowDimension';
 
 interface EventApplicationFormProps {
   slug: string;
@@ -49,10 +54,12 @@ interface EventApplicationFormProps {
 export default function EventApplicationForm({
   slug,
 }: EventApplicationFormProps) {
-  // const [showPassword, setShowPassword] = useState(false);
-  // const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] =
+    useState<boolean>(false);
   const { data: event } = useGetEventDetailQuery({ slug });
   const { data: auth, status } = useSession();
+  const { width } = useWindowDimensions();
 
   const form = useForm<EventApplicationFormSchema>({
     mode: 'all',
@@ -67,6 +74,8 @@ export default function EventApplicationForm({
       jobTypeCode: (auth?.user?.jobTypeCode as JobTypeCode) || undefined,
       questionAnswerResults: [],
       isAgreed: false,
+      password: '',
+      confirmPassword: '',
     },
     resolver: zodResolver(eventApplicationFormSchema),
   });
@@ -101,8 +110,8 @@ export default function EventApplicationForm({
           data.questionAnswerResults as QuestionAnswerResultItem[],
         ticketId: +data.ticketId,
         isAgreed: data.isAgreed,
-        password: '',
-        confirmPassword: '',
+        password: data.password ?? '',
+        confirmPassword: data.confirmPassword ?? '',
       },
     });
   }
@@ -112,10 +121,13 @@ export default function EventApplicationForm({
       <form
         onSubmit={form.handleSubmit(handleApplyEvent)}
         className={clsx(
-          'grid grid-cols-7 w-full items-start gap-10 mx-auto px-[15%] py-20',
+          'grid grid-cols-7 w-full items-start gap-10 mx-auto  py-20',
+          width < 1000 && 'px-[5%]',
+          width > 1400 && 'px-[15%]',
+          width < 1400 && width > 1000 && 'px-[10%]',
         )}
       >
-        <div className='col-span-2'>
+        <div className={clsx(width > 1200 ? 'col-span-2' : 'col-span-7')}>
           {event && (
             <div className='rounded-md p-5 shadow-[rgba(0,_0,_0,_0.02)_0px_1px_3px_0px,_rgba(27,_31,_35,_0.15)_0px_0px_0px_1px] bg-white'>
               <div className={'flex justify-between gap-2 items-start mb-3'}>
@@ -209,21 +221,23 @@ export default function EventApplicationForm({
           </div>
         </div>
 
-        <div className='col-span-5'>
+        <div className={clsx(width > 1200 ? 'col-span-5' : 'col-span-7')}>
           <div className='w-full shadow-[rgba(0,_0,_0,_0.16)_0px_1px_4px] border border-gray-200 px-10 py-6 rounded-md bg-white'>
             <h2 className='text-lg font-semibold text-primary'>
               Enter your detail information ✍
             </h2>
-            <div className='grid grid-cols-2 gap-8 items-center'>
+            <div
+              className={clsx(
+                'grid gap-8 items-center',
+                width < 600 ? 'grid-cols-1' : 'grid-cols-2',
+              )}
+            >
               <div>
-                <div className='mb-2 block'>
-                  <Label
-                    htmlFor='email'
-                    className={clsx(styles.label)}
-                  >
-                    Your email
-                  </Label>
-                </div>
+                <FormCustomLabel
+                  htmlFor='email'
+                  title='Your email'
+                  required
+                />
                 <FormInput
                   id='email'
                   name='email'
@@ -246,16 +260,87 @@ export default function EventApplicationForm({
                   disabled={status === 'authenticated'}
                 />
               </div>
-              &nbsp;
-              <div>
-                <div className='mb-2 block'>
-                  <Label
-                    htmlFor='firstName'
-                    className={clsx(styles.label)}
-                  >
-                    First name
-                  </Label>
-                </div>
+              {width < 600 ? <></> : <>&nbsp;</>}
+              {!auth?.user && (
+                <>
+                  <div className='self-start'>
+                    <FormCustomLabel
+                      htmlFor='password'
+                      title='Enter your password'
+                      required
+                    />
+                    <FormInput
+                      id='password'
+                      name='password'
+                      type={!showPassword ? 'password' : 'text'}
+                      rightIcon={
+                        !showPassword ? (
+                          <AiOutlineEyeInvisible
+                            className='text-primary'
+                            size={20}
+                            onClick={() => setShowPassword(true)}
+                          />
+                        ) : (
+                          <AiOutlineEye
+                            className='text-primary'
+                            size={20}
+                            onClick={() => setShowPassword(false)}
+                          />
+                        )
+                      }
+                      placeholder='password!@%'
+                      className={clsx(
+                        form.formState.errors.password &&
+                          form.formState.touchedFields.password &&
+                          'border-error-main',
+                      )}
+                      control={form.control}
+                      isDisplayError={true}
+                    />
+                  </div>
+                  <div className='self-start'>
+                    <FormCustomLabel
+                      htmlFor='confirm-password'
+                      title='Confirm password'
+                      required
+                    />
+                    <FormInput
+                      id='confirm-password'
+                      name='confirmPassword'
+                      type={!showConfirmPassword ? 'password' : 'text'}
+                      rightIcon={
+                        !showConfirmPassword ? (
+                          <AiOutlineEyeInvisible
+                            className='text-primary'
+                            size={20}
+                            onClick={() => setShowConfirmPassword(true)}
+                          />
+                        ) : (
+                          <AiOutlineEye
+                            className='text-primary'
+                            size={20}
+                            onClick={() => setShowConfirmPassword(false)}
+                          />
+                        )
+                      }
+                      placeholder='password!@%'
+                      className={clsx(
+                        form.formState.errors.confirmPassword &&
+                          form.formState.touchedFields.confirmPassword &&
+                          'border-error-main',
+                      )}
+                      control={form.control}
+                      isDisplayError={true}
+                    />
+                  </div>
+                </>
+              )}
+              <div className='self-start'>
+                <FormCustomLabel
+                  htmlFor='firstName'
+                  title='First name'
+                  required
+                />
                 <FormInput
                   id='firstName'
                   name='firstName'
@@ -271,15 +356,12 @@ export default function EventApplicationForm({
                   isDisplayError={true}
                 />
               </div>
-              <div>
-                <div className='mb-2 block'>
-                  <Label
-                    htmlFor='lastName'
-                    className={clsx(styles.label)}
-                  >
-                    Last name
-                  </Label>
-                </div>
+              <div className='self-start'>
+                <FormCustomLabel
+                  htmlFor='lastName'
+                  title='Last name'
+                  required
+                />
                 <FormInput
                   id='lastName'
                   name='lastName'
@@ -295,19 +377,16 @@ export default function EventApplicationForm({
                   isDisplayError={true}
                 />
               </div>
-              <div>
-                <div className='mb-2 block'>
-                  <Label
-                    htmlFor='workplaceName'
-                    className={clsx(styles.label)}
-                  >
-                    Workplace name
-                  </Label>
-                </div>
+              <div className='self-start'>
+                <FormCustomLabel
+                  htmlFor='workplaceName'
+                  title='Workplace name'
+                  required
+                />
                 <FormInput
                   id='workplaceName'
                   name='workplaceName'
-                  placeholder='Kevin'
+                  placeholder='Place you work or learn'
                   className={clsx(
                     form.formState.errors.firstName &&
                       form.formState.touchedFields.firstName &&
@@ -317,17 +396,20 @@ export default function EventApplicationForm({
                   disabled={status === 'authenticated'}
                   control={form.control}
                   isDisplayError={true}
+                  rightIcon={
+                    <BiSolidSchool
+                      className='text-primary'
+                      size={20}
+                    />
+                  }
                 />
               </div>
-              <div>
-                <div className='mb-2 block'>
-                  <Label
-                    htmlFor='phoneNumber'
-                    className={clsx(styles.label)}
-                  >
-                    Phone number
-                  </Label>
-                </div>
+              <div className='self-start'>
+                <FormCustomLabel
+                  htmlFor='phoneNumber'
+                  title='Phone number'
+                  required
+                />
                 <FormInput
                   id='phoneNumber'
                   name='phoneNumber'
@@ -341,17 +423,20 @@ export default function EventApplicationForm({
                   disabled={status === 'authenticated'}
                   control={form.control}
                   isDisplayError={true}
+                  rightIcon={
+                    <FaPhone
+                      className='text-primary'
+                      size={20}
+                    />
+                  }
                 />
               </div>
-              <div>
-                <div className='mb-2 block'>
-                  <Label
-                    htmlFor='email'
-                    className={clsx(styles.label)}
-                  >
-                    Job Type
-                  </Label>
-                </div>
+              <div className='self-start'>
+                <FormCustomLabel
+                  htmlFor='jobTypeCode'
+                  title='Job type'
+                  required
+                />
                 <FormCombobox
                   data={Object.keys(JobTypeCodeMapping).map((key: string) => ({
                     value: key,
@@ -368,15 +453,12 @@ export default function EventApplicationForm({
                   )}
                 />
               </div>
-              <div>
-                <div className='mb-2 block'>
-                  <Label
-                    htmlFor='email'
-                    className={clsx(styles.label)}
-                  >
-                    Industry
-                  </Label>
-                </div>
+              <div className='self-start'>
+                <FormCustomLabel
+                  htmlFor='industryCode'
+                  title='Industry'
+                  required
+                />
                 <FormCombobox
                   data={Object.keys(IndustryCode).map((ic: string) => ({
                     value: IndustryCode[ic],
@@ -573,7 +655,7 @@ export default function EventApplicationForm({
             </FormCheckBox>
           </div>
           <Button
-            title='Apply Event'
+            title={auth?.user ? 'Apply Event' : 'Apply with New Account'}
             type='submit'
             className='w-80 mt-5 mx-auto'
             disabled={!form.formState.isValid}

@@ -1,4 +1,4 @@
-from sqlmodel import Session, and_, exists, func, select, update
+from sqlmodel import Session, exists, func, select, update
 
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
@@ -110,12 +110,12 @@ def _get_tickets(db: Session, event_id: int):
             )
             .outerjoin(
                 Application,
-                and_(
-                    Application.ticket_id == Ticket.id,
-                    Application.canceled_at.is_(None),
-                ),
+                Application.ticket_id == Ticket.id,
             )
-            .where(Ticket.event_id == event_id)
+            .where(
+                Ticket.event_id == event_id,
+                Application.canceled_at.is_(None),
+            )
             .order_by(Ticket.id)
             .group_by(Ticket.id)
         )
