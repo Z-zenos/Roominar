@@ -15,3 +15,7 @@ class TagGroup(BaseModel):
 
 class ListingTagsResponse(BaseModel):
     data: list[TagGroup] = Field([])
+
+
+class ListingTagRankResponse(BaseModel):
+    tags: list[TagItem] = Field([])
