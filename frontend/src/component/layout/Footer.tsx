@@ -9,7 +9,7 @@ const Footer = () => {
     <footer className='bg-gray-900 z-[5] sticky'>
       <div className='mx-auto max-w-screen-xl px-4 py-8 sm:px-6 lg:px-8'>
         <div className='lg:flex lg:items-start lg:gap-8'>
-          <Logo className='bg-white scale-110 pb-4' />
+          <Logo className='bg-white scale-110 pb-4 min-w-[120px]' />
 
           <div className='mt-8 grid grid-cols-2 gap-8 lg:mt-0 lg:grid-cols-5 lg:gap-y-16'>
             <div className='col-span-2'>
@@ -19,8 +19,9 @@ const Footer = () => {
                 </h2>
 
                 <p className='mt-4 text-gray-400'>
-                  Don&apos;t be shy. Say hi 👋. Do you have a project or an idea
-                  that could use some help? Let&apos;s work together.
+                  Receive reminders about upcoming sessions, event highlights,
+                  expert speaker announcements, and post-event summaries
+                  directly to your inbox.
                 </p>
               </div>
             </div>
@@ -74,7 +75,7 @@ const Footer = () => {
                     href='https://www.Roominar.com/about-us'
                     className='transition hover:opacity-75 text-gray-200'
                   >
-                    About Us
+                    Search
                   </Link>
                 </li>
 
@@ -83,7 +84,7 @@ const Footer = () => {
                     href='https://www.Roominar.com/blog'
                     className='transition hover:opacity-75 text-gray-200'
                   >
-                    Blogs
+                    Host your event
                   </Link>
                 </li>
 
@@ -95,19 +96,10 @@ const Footer = () => {
                     Contact Us
                   </Link>
                 </li>
-
-                <li>
-                  <Link
-                    href='https://www.Roominar.com/write-for-us'
-                    className='transition hover:opacity-75 text-gray-200'
-                  >
-                    Write For Us
-                  </Link>
-                </li>
               </ul>
             </div>
 
-            <div className='col-span-2 sm:col-span-1'>
+            {/* <div className='col-span-2 sm:col-span-1'>
               <p className='relative font-medium text-white '>Components</p>
 
               <ul
@@ -294,7 +286,7 @@ const Footer = () => {
                   </Link>
                 </li>
               </ul>
-            </div>
+            </div> */}
 
             <ul
               style={{ listStyle: 'none' }}

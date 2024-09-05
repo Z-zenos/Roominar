@@ -19,7 +19,7 @@ import 'swiper/css/navigation';
 
 import { Autoplay, FreeMode, Navigation } from 'swiper/modules';
 import { Button } from '@nextui-org/button';
-import { Image, Kbd } from '@nextui-org/react';
+import { Kbd } from '@nextui-org/react';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -127,8 +127,8 @@ export default function Home() {
         />
       </section>
 
-      {/* === CATOGORY SECTION === */}
-      <section className='px-[15%] pt-[20px]'>
+      {/* === RECOMMENDATION SECTION === */}
+      {/* <section className='px-[15%] pt-[20px]'>
         <div className='flex justify-between items-end gap-2 flex-wrap-reverse'>
           <div
             className={clsx(
@@ -167,7 +167,7 @@ export default function Home() {
             </Swiper>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* === EVENT SECTION === */}
       <section className='py-[40px] px-[15%]'>
