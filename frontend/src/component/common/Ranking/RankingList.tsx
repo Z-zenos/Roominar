@@ -2,49 +2,47 @@ import clsx from 'clsx';
 import { FaCaretRight } from 'react-icons/fa';
 import { MdKeyboardDoubleArrowRight } from 'react-icons/md';
 
-export interface Rank {
-  rank: number;
-  title: string;
-}
-
 interface RankingListProps {
   title: string;
   className?: string;
-  data?: Rank[];
+  data?: any[];
+  onClick?(item: any): void;
 }
 
-function RankingList({ title, className, data }: RankingListProps) {
+function RankingList({ title, className, data, onClick }: RankingListProps) {
   return (
     <div className={clsx('w-full border-b border-b-gray-300 pb-4', className)}>
       <h3 className='text-md border-b border-b-gray-500 pb-1 text-dark-main font-semibold inline-flex justify-start items-center gap-1 cursor-pointer mb-2'>
         {title} <MdKeyboardDoubleArrowRight size={16} />
       </h3>
       <ul className='flex flex-col justify-start gap-2 w-full'>
-        {data?.length &&
-          data.map((v) => (
+        {data &&
+          data?.length &&
+          data.map((item, i) => (
             <div
-              key={`rank-${v.title}`}
-              className='flex justify-end items-center gap-3 cursor-pointer hover:bg-gray-100'
+              key={`rank-${item.id}`}
+              className='flex justify-end items-center gap-3 cursor-pointer hover:font-semibold'
+              onClick={() => onClick(item)}
             >
               <p
                 className={clsx(
-                  'text-nm px-2 line-clamp-1',
-                  v.rank === 1 && 'bg-success-sub text-success-main',
-                  v.rank === 2 && 'bg-info-sub text-info-main',
-                  v.rank === 3 && 'bg-warning-sub text-warning-main',
+                  'text-sm px-2 line-clamp-1',
+                  i === 0 && 'bg-success-sub text-success-main',
+                  i === 1 && 'bg-info-sub text-info-main',
+                  i === 2 && 'bg-warning-sub text-warning-main',
                 )}
               >
-                {v.title}
+                {item.name}
               </p>
               <p
                 className={clsx(
                   'rounded-full text-ss px-[10px] py-1 bg-default-sub',
-                  v.rank === 1 && 'bg-success-sub text-success-main',
-                  v.rank === 2 && 'bg-info-sub text-info-main',
-                  v.rank === 3 && 'bg-warning-sub text-warning-main',
+                  i === 0 && 'bg-success-sub text-success-main',
+                  i === 1 && 'bg-info-sub text-info-main',
+                  i === 2 && 'bg-warning-sub text-warning-main',
                 )}
               >
-                {v.rank}
+                {i + 1}
               </p>
             </div>
           ))}

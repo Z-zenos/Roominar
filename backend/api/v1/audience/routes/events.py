@@ -10,6 +10,7 @@ from backend.db.database import get_read_db
 from backend.models import User
 from backend.schemas.event import (
     GetEventDetailResponse,
+    ListingEventRankResponse,
     ListingRelatedEventsResponse,
     SearchEventsQueryParams,
     SearchEventsResponse,
@@ -35,6 +36,16 @@ def search_events(
     return SearchEventsResponse(
         page=query_params.page, per_page=query_params.per_page, total=total, data=events
     )
+
+
+@router.get(
+    "/rank",
+    response_model=ListingEventRankResponse,
+    responses=public_api_responses,
+)
+def listing_event_rank(db: Session = Depends(get_read_db)):
+    events = events_service.listing_event_rank(db)
+    return ListingEventRankResponse(events=events)
 
 
 # @router.get(
@@ -81,10 +92,7 @@ async def get_event_detail(
     response_model=ListingRelatedEventsResponse,
     responses=public_api_responses,
 )
-async def listing_related_events(
-    slug: str = None,
-    db: Session = Depends(get_read_db),
-):
+async def listing_related_events(slug: str = None, db: Session = Depends(get_read_db)):
     events = events_service.listing_related_events(db, slug)
     return ListingRelatedEventsResponse(events=events)
 

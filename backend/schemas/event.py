@@ -115,7 +115,6 @@ class ListingTopOrganizationEventsItem(BaseModel):
     slug: str
     cover_image_url: str | None = None
     name: str
-    rank: int | None = None
     start_at: datetime
 
 
@@ -133,3 +132,13 @@ class ListingRelatedEventsItem(BaseModel):
 
 class ListingRelatedEventsResponse(BaseModel):
     events: list[ListingRelatedEventsItem] = Field([])
+
+
+class ListingEventRankItem(BaseModel):
+    id: int
+    slug: str
+    name: str
+
+
+class ListingEventRankResponse(BaseModel):
+    events: list[ListingEventRankItem]

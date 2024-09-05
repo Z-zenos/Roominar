@@ -8,3 +8,11 @@ export const useListingTagsQuery = () => {
     queryFn: async () => await api.tags.listingTags(),
   });
 };
+
+export const useListingTagRankQuery = () => {
+  const api = useApi();
+  return useQuery({
+    queryKey: ['listing-tag-rank'],
+    queryFn: async () => await api.tags.listingTagRank(),
+  });
+};

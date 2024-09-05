@@ -49,3 +49,11 @@ export const useListingRelatedEventsQuery = (
     queryFn: async () => await api.events.listingRelatedEvents(params),
   });
 };
+
+export const useListingEventRankQuery = () => {
+  const api = useApi();
+  return useQuery({
+    queryKey: ['listing-event-rank'],
+    queryFn: async () => await api.events.listingEventRank(),
+  });
+};
