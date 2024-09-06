@@ -13,13 +13,14 @@ import { GiMicrophone, GiPartyPopper } from 'react-icons/gi';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 import 'swiper/css';
+import 'swiper/css/effect-fade';
 import 'swiper/css/free-mode';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 
 import { Autoplay, FreeMode, Navigation } from 'swiper/modules';
 import { Button } from '@nextui-org/button';
-import { Kbd } from '@nextui-org/react';
+import { Image, Kbd } from '@nextui-org/react';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -85,89 +86,65 @@ export default function Home() {
   const { width = 800 } = useWindowDimensions();
   const router = useRouter();
   const [value, setValue] = useState<string>('');
+  const [activeEvent, setActiveEvent] = useState<number>(0);
 
   return (
     <div>
       {/* === HERO SECTION === */}
-      <section className='text-center flex items-center justify-center flex-col py-[80px]'>
-        <h2
-          className={clsx(
-            'flex justify-center items-center gap-5 italic text-lg',
-          )}
-        >
-          <span>Explore</span>
-          <MdOutlineExplore className='text-primary' />
-          <span>Connect</span>
-          <FaConnectdevelop className='text-primary' />
-          <span>Elevate</span>
-        </h2>
-        <h1 className='text-hg my-5 font-semibold'>
-          Web(<span className='text-gradient'>Sem</span>)inar &{' '}
-          <span className='text-gradient'>E</span>vent 2024 🎉
-        </h1>
-        <p className='text-primary font-semibold mb-8'>
-          Search site for business seminars focusing on digital and AI
-          utilization
-        </p>
-        <span className='border-t-1 border-gray-600 border-b-1 py-1 px-4'>
-          🚀 | YOU&apos;VE GOT PLANS?
-        </span>
-        <Input
-          className='max-w-[500px] mt-5'
-          placeholder='Search any event you want.'
-          startContent={
-            <CiSearch className='w-5 h-5 pointer-events-none flex-shrink-0' />
-          }
-          onKeyUp={(e: React.KeyboardEvent<HTMLInputElement>) =>
-            e.key === 'Enter' && router.push(`/search?name=${value}`)
-          }
-          value={value}
-          onValueChange={setValue}
-          endContent={<Kbd keys={['enter']}>Enter</Kbd>}
-        />
-      </section>
-
-      {/* === RECOMMENDATION SECTION === */}
-      {/* <section className='px-[15%] pt-[20px]'>
-        <div className='flex justify-between items-end gap-2 flex-wrap-reverse'>
-          <div
+      <section className='text-center flex items-center justify-center flex-col pt-20 pb-10 relative'>
+        <div className='z-10'>
+          <h2
             className={clsx(
-              'mt-10',
-              width > 1200 ? 'w-[40%]' : 'w-full mx-auto',
+              'flex justify-center items-center gap-5 italic text-lg',
             )}
           >
-            <Swiper
-              key={2}
-              autoplay={{
-                delay: 3500,
-                disableOnInteraction: false,
-              }}
-              freeMode={true}
-              initialSlide={2}
-              modules={[Autoplay, Navigation, FreeMode]}
-              pagination={{
-                clickable: true,
-              }}
-              slidesPerView={2}
-              spaceBetween={30}
-              wrapperClass='pb-2 mt-4'
-            >
-              {[17, 18, 19].map((_, index) => (
-                <SwiperSlide
-                  key={index}
-                  className={clsx('dark:rounded-lg dark:p-0')}
-                >
-                  <Image
-                    className='w-[300px] h-[250px]'
-                    src='https://avatars.githubusercontent.com/u/168013536?s=400&u=70bb0e54fe8f64dc89004de4370d33a25016a1ec&v=4'
-                    alt='event card'
-                  />
-                </SwiperSlide>
-              ))}
-            </Swiper>
+            <span>Explore</span>
+            <MdOutlineExplore className='text-primary' />
+            <span>Connect</span>
+            <FaConnectdevelop className='text-primary' />
+            <span>Elevate</span>
+          </h2>
+          <h1 className='text-hg my-5 font-semibold'>
+            Web(<span className='text-gradient'>Sem</span>)inar &{' '}
+            <span className='text-gradient'>E</span>vent 2024 🎉
+          </h1>
+          <p className='text-primary font-semibold mb-8'>
+            Search site for business seminars focusing on digital and AI
+            utilization
+          </p>
+          <span className='border-t-1 border-gray-600 border-b-1 py-1 px-4'>
+            🚀 | YOU&apos;VE GOT PLANS?
+          </span>
+          <Input
+            className='max-w-[500px] mt-5 mx-auto'
+            placeholder='Search any event you want.'
+            startContent={
+              <CiSearch className='w-5 h-5 pointer-events-none flex-shrink-0' />
+            }
+            onKeyUp={(e: React.KeyboardEvent<HTMLInputElement>) =>
+              e.key === 'Enter' && router.push(`/search?name=${value}`)
+            }
+            value={value}
+            onValueChange={setValue}
+            endContent={<Kbd keys={['enter']}>Enter</Kbd>}
+          />
+        </div>
+
+        <div className='bg-transparent h-[500px] w-full flex items-center justify-center absolute top-0 left-0'>
+          <div className='relative w-full '>
+            <div className='my-8 relative space-y-4 opacity-30'>
+              {upcomingEvents && (
+                <Image
+                  src={upcomingEvents.data[activeEvent].coverImageUrl}
+                  alt='Cover image'
+                  className='w-full blur-xl'
+                  classNames={{ wrapper: '!max-w-full' }}
+                />
+              )}
+            </div>
           </div>
         </div>
-      </section> */}
+      </section>
 
       {/* === EVENT SECTION === */}
       <section className='py-[40px] px-[15%]'>
@@ -190,7 +167,7 @@ export default function Home() {
           <Swiper
             key={width > 1200 ? 4 : 2}
             autoplay={{
-              delay: 3000,
+              delay: 7000,
               disableOnInteraction: false,
             }}
             freeMode={true}
@@ -201,6 +178,7 @@ export default function Home() {
             slidesPerView={width > 1200 ? 4 : 2}
             spaceBetween={30}
             wrapperClass='pb-2'
+            onSlideChange={(swipper) => setActiveEvent(swipper.activeIndex)}
           >
             {isUpcomingEventsLoading && (
               <div className='flex justify-between'>
