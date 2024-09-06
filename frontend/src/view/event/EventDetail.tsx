@@ -28,7 +28,6 @@ import {
 } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 import { BsFillPeopleFill } from 'react-icons/bs';
-import { IoBookmark, IoBookmarkOutline } from 'react-icons/io5';
 import { MdOutlineMail } from 'react-icons/md';
 import { GoOrganization } from 'react-icons/go';
 import { GiPartyPopper } from 'react-icons/gi';
@@ -63,6 +62,7 @@ import Head from '@/src/component/common/Head';
 import { formatEventDate, groupIntoPairs } from '@/src/util/app.util';
 import Chip from '@/src/component/common/Chip';
 import { useSession } from 'next-auth/react';
+import EventBookmark from './EventBookmark';
 
 const rows = [
   {
@@ -278,18 +278,10 @@ function EventDetail({ slug }: EventDetailProps) {
                 >
                   <FaRegCopy /> {isCopied ? 'Copied' : 'Copy'} URL
                 </Button>
-                <Button
-                  isIconOnly
-                  color='primary'
-                  variant='bordered'
-                  radius='sm'
-                >
-                  {event?.isBookmarked ? (
-                    <IoBookmark size={16} />
-                  ) : (
-                    <IoBookmarkOutline size={16} />
-                  )}
-                </Button>
+                <EventBookmark
+                  isBookmarked={event?.isBookmarked}
+                  eventId={event?.id}
+                />
               </div>
             </div>
 

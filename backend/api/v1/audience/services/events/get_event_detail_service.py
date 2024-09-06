@@ -19,7 +19,7 @@ from backend.schemas.answer import AnswerItem
 from backend.schemas.questionnaire import QuestionnaireDetail
 
 
-def get_event_detail(db: Session, current_user: User, slug: str):
+async def get_event_detail(db: Session, current_user: User, slug: str):
     event = (
         db.exec(
             select(

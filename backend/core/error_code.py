@@ -19,6 +19,8 @@ class ErrorCode:
     ERR_USER_NOT_VERIFIED = "ERR_USER_NOT_VERIFIED"
     ERR_GOOGLE_ACCOUNT_NOT_VERIFIED = "ERR_GOOGLE_ACCOUNT_NOT_VERIFIED"
     ERR_ORGANIZATION_NOT_FOUND = "ERR_ORGANIZATION_NOT_FOUND"
+    ERR_BOOKMARK_ALREADY_EXISTED = "ERR_BOOKMARK_ALREADY_EXISTED"
+    ERR_BOOKMARK_NOT_FOUND = "ERR_BOOKMARK_NOT_FOUND"
 
 
 class ErrorMessage:
@@ -40,3 +42,5 @@ class ErrorMessage:
     ERR_USER_NOT_VERIFIED = "The user has not verified."
     ERR_GOOGLE_ACCOUNT_NOT_VERIFIED = "The google account is not verified."
     ERR_ORGANIZATION_NOT_FOUND = "The organization doesn't exist."
+    ERR_BOOKMARK_ALREADY_EXISTED = "The bookmark already existed."
+    ERR_BOOKMARK_NOT_FOUND = "The bookmark doesn't exist."

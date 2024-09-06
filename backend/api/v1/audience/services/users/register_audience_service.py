@@ -42,35 +42,39 @@ async def register_audience(db: Session, request: RegisterAudienceRequest) -> Us
 
     token, expire = auth_service.create_email_verification_token()
 
-    # update user if existed
-    if user:
-        user.email_verify_token = token
-        user.email_verify_token_expire_at = expire
-        new_user = save(db, user)
-    else:
-        new_user = User(
-            email=email,
-            email_verify_token=token,
-            email_verify_token_expire_at=expire,
-            role_code=RoleCode.AUDIENCE,
-            password=auth_service.get_password_hash(request.password),
-            first_name=request.first_name,
-            last_name=request.last_name,
+    try:
+        if user:
+            user.email_verify_token = token
+            user.email_verify_token_expire_at = expire
+            new_user = save(db, user)
+        else:
+            new_user = User(
+                email=email,
+                email_verify_token=token,
+                email_verify_token_expire_at=expire,
+                role_code=RoleCode.AUDIENCE,
+                password=auth_service.get_password_hash(request.password),
+                first_name=request.first_name,
+                last_name=request.last_name,
+            )
+            new_user = save(db, new_user)
+
+        context = {
+            "url": f"{settings.AUD_FRONTEND_URL}/verify/{new_user.email_verify_token}",
+            "expire_at": expire.strftime("%Y/%m/%d %H:%M"),
+            "first_name": new_user.first_name,
+        }
+
+        mailer = Email()
+        await mailer.send_aud_email(
+            email,
+            "register_audience.html",
+            "Account Verification",
+            context,
         )
-        new_user = save(db, new_user)
 
-    context = {
-        "url": f"{settings.AUD_FRONTEND_URL}/verify/{new_user.email_verify_token}",
-        "expire_at": expire.strftime("%Y/%m/%d %H:%M"),
-        "first_name": new_user.first_name,
-    }
+        return new_user
 
-    mailer = Email()
-    await mailer.send_aud_email(
-        email,
-        "register_audience.html",
-        "Account Verification",
-        context,
-    )
-
-    return new_user
+    except Exception as e:
+        db.rollback()
+        raise e

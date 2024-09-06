@@ -6,7 +6,7 @@ from backend.models.event import Event
 from backend.models.target import Target
 
 
-def listing_related_events(db: Session, slug: str):
+async def listing_related_events(db: Session, slug: str):
     targets = (
         db.exec(
             select(Target.industry_codes, Target.job_type_codes)

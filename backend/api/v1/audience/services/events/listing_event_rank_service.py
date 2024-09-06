@@ -6,7 +6,7 @@ from backend.models.bookmark import Bookmark
 from backend.models.event import Event
 
 
-def listing_event_rank(db: Session):
+async def listing_event_rank(db: Session):
     top_events = (
         db.exec(
             select(

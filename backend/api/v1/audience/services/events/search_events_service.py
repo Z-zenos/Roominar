@@ -16,7 +16,7 @@ from backend.models.user import User
 from backend.schemas.event import SearchEventsQueryParams
 
 
-def search_events(
+async def search_events(
     db: Session,
     user: User | None,
     query_params: SearchEventsQueryParams,

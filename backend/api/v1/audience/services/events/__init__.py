@@ -1,3 +1,5 @@
+from .create_event_bookmark_service import create_event_bookmark
+from .delete_event_bookmark_service import delete_event_bookmark
 from .get_event_detail_service import get_event_detail
 from .listing_event_rank_service import listing_event_rank
 from .listing_related_events_service import listing_related_events
@@ -10,4 +12,6 @@ all = (
     listing_related_events,
     listing_top_organization_events,
     listing_event_rank,
+    create_event_bookmark,
+    delete_event_bookmark,
 )

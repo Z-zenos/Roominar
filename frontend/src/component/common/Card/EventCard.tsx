@@ -4,7 +4,6 @@ import clsx from 'clsx';
 import Chip from '../Chip';
 import { MdOutlineAccessTime, MdOutlineOnlinePrediction } from 'react-icons/md';
 import { Button } from '@nextui-org/button';
-import { IoBookmarkOutline } from 'react-icons/io5';
 import { FaRegShareSquare, FaTags, FaUserFriends } from 'react-icons/fa';
 import { BsThreeDots } from 'react-icons/bs';
 import { Image, Link } from '@nextui-org/react';
@@ -14,6 +13,7 @@ import { styles } from '@/src/constant/styles.constant';
 import type { SearchEventsItem, TagItem } from '@/src/lib/api/generated';
 import { formatEventDate } from '@/src/util/app.util';
 import dayjs from 'dayjs';
+import EventBookmark from '@/src/view/event/EventBookmark';
 
 interface EventCardProps {
   className?: string;
@@ -183,13 +183,10 @@ function EventCard({
             >
               <SlNote size={16} />
             </Button>
-            <Button
-              isIconOnly
-              color='primary'
-              variant='flat'
-            >
-              <IoBookmarkOutline size={16} />
-            </Button>
+            <EventBookmark
+              isBookmarked={event?.isBookmarked}
+              eventId={event?.id}
+            />
             <Button
               isIconOnly
               color='warning'

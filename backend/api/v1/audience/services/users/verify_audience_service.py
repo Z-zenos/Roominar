@@ -40,31 +40,37 @@ async def verify_audience(
 
     user.industry_code = request.industry_code
     user.job_type_code = request.job_type_code
-    if request.tags:
-        request_tags = db.exec(select(Tag.id).where(Tag.id.in_(request.tags))).all()
-        if (not request_tags) or (len(request.tags) != len(request_tags)):
-            raise BadRequestException(
-                ErrorCode.ERR_TAG_NOT_FOUND, ErrorMessage.ERR_TAG_NOT_FOUND
-            )
-        user_tags = [UserTag(user_id=user.id, tag_id=tag) for tag in request.tags]
-        db.add_all(user_tags)
 
-    user.email_verify_at = datetime.now()
-    user.email_verify_token = None
-    user.email_verify_token_expire_at = None
-    user = save(db, user)
+    try:
+        if request.tags:
+            request_tags = db.exec(select(Tag.id).where(Tag.id.in_(request.tags))).all()
+            if (not request_tags) or (len(request.tags) != len(request_tags)):
+                raise BadRequestException(
+                    ErrorCode.ERR_TAG_NOT_FOUND, ErrorMessage.ERR_TAG_NOT_FOUND
+                )
+            user_tags = [UserTag(user_id=user.id, tag_id=tag) for tag in request.tags]
+            db.add_all(user_tags)
 
-    context = {
-        "first_name": user.first_name,
-        "search_page_url": f"{settings.AUD_FRONTEND_URL}/search",
-        "my_profile_page_url": f"{settings.AUD_FRONTEND_URL}/profiles",
-    }
+        user.email_verify_at = datetime.now()
+        user.email_verify_token = None
+        user.email_verify_token_expire_at = None
+        user = save(db, user)
 
-    mailer = Email()
-    await mailer.send_aud_email(
-        user.email,
-        "create_audience_account_success.html",
-        "Thankyu",
-        context,
-    )
-    return user.id
+        context = {
+            "first_name": user.first_name,
+            "search_page_url": f"{settings.AUD_FRONTEND_URL}/search",
+            "my_profile_page_url": f"{settings.AUD_FRONTEND_URL}/profiles",
+        }
+
+        mailer = Email()
+        await mailer.send_aud_email(
+            user.email,
+            "create_audience_account_success.html",
+            "Thankyu",
+            context,
+        )
+        return user.id
+
+    except Exception as e:
+        db.rollback()
+        raise e

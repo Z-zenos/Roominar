@@ -1,5 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import type {
+  EventsApiCreateEventBookmarkRequest,
+  EventsApiDeleteEventBookmarkRequest,
   EventsApiGetEventDetailRequest,
   EventsApiListingRelatedEventsRequest,
   EventsApiSearchEventsRequest,
@@ -7,6 +9,8 @@ import type {
 } from '../lib/api/generated';
 import useApi from '../lib/api/useApi';
 import { toCamelCase } from '../util/app.util';
+import type { SWRMutationConfiguration } from 'swr/mutation';
+import useSWRMutation from 'swr/mutation';
 
 export const useSearchEventsQuery = (params?: EventsApiSearchEventsRequest) => {
   params = toCamelCase(params);
@@ -56,4 +60,38 @@ export const useListingEventRankQuery = () => {
     queryKey: ['listing-event-rank'],
     queryFn: async () => await api.events.listingEventRank(),
   });
+};
+
+export const useCreateEventBookmarkMutation = <T>(
+  options?: SWRMutationConfiguration<number, T>,
+) => {
+  const api = useApi();
+  const key = 'create-event-bookmark';
+  return useSWRMutation<
+    number,
+    T,
+    typeof key,
+    EventsApiCreateEventBookmarkRequest
+  >(
+    key,
+    async (_: string, { arg }) => await api.events.createEventBookmark(arg),
+    options,
+  );
+};
+
+export const useDeleteEventBookmarkMutation = <T>(
+  options?: SWRMutationConfiguration<void, T>,
+) => {
+  const api = useApi();
+  const key = 'delete-event-bookmark';
+  return useSWRMutation<
+    void,
+    T,
+    typeof key,
+    EventsApiDeleteEventBookmarkRequest
+  >(
+    key,
+    async (_: string, { arg }) => await api.events.deleteEventBookmark(arg),
+    options,
+  );
 };
