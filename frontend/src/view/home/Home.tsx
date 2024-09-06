@@ -90,9 +90,9 @@ export default function Home() {
   const [activeEvent, setActiveEvent] = useState<number>(0);
 
   return (
-    <div>
+    <div className='overflow-x-hidden'>
       {/* === HERO SECTION === */}
-      <section className='text-center flex items-center justify-center flex-col pt-20 pb-10 relative'>
+      <section className='text-center flex items-center justify-center flex-col pt-20 pb-10 relative '>
         <div className='z-10'>
           <h2
             className={clsx(
