@@ -37,6 +37,7 @@ import { EventSortByCode } from '@/src/lib/api/generated';
 import EventCard from '@/src/component/common/Card/EventCard';
 import EventCardSkeleton from '@/src/component/common/Card/EventCardSkeleton';
 import { useListingTagRankQuery } from '@/src/api/tag.api';
+import Marquee from 'react-fast-marquee';
 
 interface HeadingGroupProps {
   heading: string | ReactNode;
@@ -143,6 +144,12 @@ export default function Home() {
               )}
             </div>
           </div>
+        </div>
+
+        <div className='absolute top-[300px] left-0 z-0'>
+          <Marquee className='opacity-5 text-[300px] strokeme'>
+            ROOMINAR
+          </Marquee>
         </div>
       </section>
 
