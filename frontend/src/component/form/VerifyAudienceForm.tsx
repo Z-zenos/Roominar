@@ -7,7 +7,11 @@ import { Label } from '../common/Label';
 import clsx from 'clsx';
 import { styles } from '@/src/constant/styles.constant';
 import { JobTypeCodeMapping } from '@/src/constant/code.constant';
-import type { ApiException, ErrorResponse400, TagItem } from '@/src/lib/api/generated';
+import type {
+  ApiException,
+  ErrorResponse400,
+  TagItem,
+} from '@/src/lib/api/generated';
 import { IndustryCode } from '@/src/lib/api/generated';
 import { parseCode } from '@/src/util/app.util';
 import Tag from '../common/Tag/Tag';
@@ -15,8 +19,8 @@ import { useListingTagsQuery } from '@/src/api/tag.api';
 import TagSkeleton from '../common/Tag/TagSkeleton';
 import { useState } from 'react';
 import { Button } from '@nextui-org/button';
-import type { VerifyAudienceFormSchema } from '@/src/schemas/audience/VerifyAudienceFormSchema';
-import { verifyAudienceFormSchema } from '@/src/schemas/audience/VerifyAudienceFormSchema';
+import type { VerifyAudienceFormSchema } from '@/src/schemas/auth/VerifyAudienceFormSchema';
+import { verifyAudienceFormSchema } from '@/src/schemas/auth/VerifyAudienceFormSchema';
 import { useVerifyAudienceMutation } from '@/src/api/user.api';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
@@ -26,7 +30,8 @@ interface VerifyAudienceFormProps {
 }
 
 function VerifyAudienceForm({ token }: VerifyAudienceFormProps) {
-  const { data: tagData, isLoading: isListingTagsLoading } = useListingTagsQuery();
+  const { data: tagData, isLoading: isListingTagsLoading } =
+    useListingTagsQuery();
   const router = useRouter();
 
   const form = useForm<VerifyAudienceFormSchema>({
@@ -47,7 +52,9 @@ function VerifyAudienceForm({ token }: VerifyAudienceFormProps) {
     },
     onError(error: ApiException<unknown>) {
       toast.error(
-        (error.body as ErrorResponse400)?.message ?? (error.body as ErrorResponse400)?.errorCode ?? 'Unknown Error 😵',
+        (error.body as ErrorResponse400)?.message ??
+          (error.body as ErrorResponse400)?.errorCode ??
+          'Unknown Error 😵',
       );
     },
   });
@@ -91,7 +98,8 @@ function VerifyAudienceForm({ token }: VerifyAudienceFormProps) {
           <Button
             className={clsx(
               ' text-info-main bg-transparent border-info-main border px-10 font-bold',
-              !form.formState.isValid && 'bg-slate-400, border-slate-400 text-slate-500',
+              !form.formState.isValid &&
+                'bg-slate-400, border-slate-400 text-slate-500',
             )}
             radius='sm'
             variant='flat'
@@ -105,7 +113,10 @@ function VerifyAudienceForm({ token }: VerifyAudienceFormProps) {
         <div className={clsx(styles.between, 'flex-wrap gap-20 mt-8')}>
           <div>
             <div className='mb-6 block'>
-              <Label htmlFor='email' className={clsx(styles.label, 'font-medium text-xm')}>
+              <Label
+                htmlFor='email'
+                className={clsx(styles.label, 'font-medium text-xm')}
+              >
                 Job Type
               </Label>
               <h4 className='font-light opacity-80 text-sm'>
@@ -128,7 +139,10 @@ function VerifyAudienceForm({ token }: VerifyAudienceFormProps) {
 
           <div>
             <div className='mb-6 block'>
-              <Label htmlFor='email' className={clsx(styles.label, 'font-medium text-xm')}>
+              <Label
+                htmlFor='email'
+                className={clsx(styles.label, 'font-medium text-xm')}
+              >
                 Industry
               </Label>
               <h4 className='font-light opacity-80 text-sm'>
@@ -151,12 +165,17 @@ function VerifyAudienceForm({ token }: VerifyAudienceFormProps) {
         </div>
 
         <div className='py-20'>
-          <Label htmlFor='email' className={clsx(styles.label, 'font-medium text-xm')}>
+          <Label
+            htmlFor='email'
+            className={clsx(styles.label, 'font-medium text-xm')}
+          >
             Tags
           </Label>
           <h4 className='font-light opacity-80 text-sm'>
-            Customize your experience by choosing tags that align with your goals. <br />
-            These tags allow us to tailor content that fits your unique professional profile and interests.
+            Customize your experience by choosing tags that align with your
+            goals. <br />
+            These tags allow us to tailor content that fits your unique
+            professional profile and interests.
           </h4>
 
           <div className='flex justify-center gap-3 items-center py-8 flex-wrap'>
@@ -172,7 +191,8 @@ function VerifyAudienceForm({ token }: VerifyAudienceFormProps) {
                     active={selectedTags.includes(tag.id)}
                   />
                 ))}
-            {isListingTagsLoading && Array.from({ length: 10 }, (_, k) => <TagSkeleton key={k} />)}
+            {isListingTagsLoading &&
+              Array.from({ length: 10 }, (_, k) => <TagSkeleton key={k} />)}
           </div>
         </div>
       </form>

@@ -4,7 +4,8 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 from sqlmodel import Session
 
-import backend.api.v1.audience.services.auth as auth_service
+import backend.api.v1.services.auth as auth_service
+import backend.api.v1.services.users as users_service
 from backend.api.v1.dependencies.authentication import get_user_if_logged_in
 from backend.core.config import settings
 from backend.core.error_code import ErrorCode
@@ -17,6 +18,14 @@ from backend.schemas.auth import (
     SocialAuthRequest,
     TokenResponse,
     UserLoginRequest,
+)
+from backend.schemas.user import (
+    ForgotPasswordRequest,
+    ForgotPasswordResponse,
+    RegisterAudienceRequest,
+    RegisterAudienceResponse,
+    VerifyAudienceRequest,
+    VerifyAudienceResponse,
 )
 
 router = APIRouter()
@@ -48,6 +57,32 @@ async def login(
         refresh_token=refresh_token,
         refresh_expire_at=refresh_expire_at,
     )
+
+
+@router.post(
+    "/register", response_model=RegisterAudienceResponse, responses=public_api_responses
+)
+async def register_audience(
+    db: Session = Depends(get_read_db),
+    request: RegisterAudienceRequest = None,
+):
+    new_user = await users_service.register_audience(db, request)
+    return RegisterAudienceResponse(
+        email=new_user.email, expire_at=new_user.email_verify_token_expire_at
+    )
+
+
+@router.post(
+    "/verify/{token}",
+    response_model=VerifyAudienceResponse,
+    responses=public_api_responses,
+)
+async def verify_audience(
+    db: Session = Depends(get_read_db),
+    request: VerifyAudienceRequest = None,
+    token: str = None,
+):
+    return await users_service.verify_audience(db, request, token)
 
 
 @router.post(
@@ -121,22 +156,31 @@ async def refresh_token(
     )
 
 
-# @router.post(
-#     "/forgot-password",
-#     response_model=ForgotPasswordResponse,
+# @router.get(
+#     "/reset-password/check-token/{reset_token}",
 #     responses=public_api_responses,
+#     response_model=ResetPasswordTokenResponse,
 # )
-#     async def forgot_password(
-#         db: Annotated[Session, Depends(get_db)],
-#         request: Annotated[
-#             ForgotPasswordRequest,
-#             Body(
-#                 title="Recovery password - Step 1: Forgot Password",
-#                 description="Provide user email",
-#             ),
-#         ],
-#     ):
-#     return await auth_service.forgot_password(db, request)
+# async def check_reset_password_token(
+#     db: Annotated[Session, Depends(get_db)],
+#     reset_token: Annotated[str, Path(description="Token recovery password")],
+# ):
+#     return auth_service.check_valid_reset_password_token(db, reset_token)
+
+
+@router.post(
+    "/forgot-password",
+    response_model=ForgotPasswordResponse,
+    responses=public_api_responses,
+)
+async def forgot_password(
+    request: ForgotPasswordRequest = None,
+    db: Session = Depends(get_read_db),
+):
+    user = await users_service.forgot_password(db, request)
+    return ForgotPasswordResponse(
+        email=user.email, expire_at=user.reset_password_token_expire_at
+    )
 
 
 # @router.post(
@@ -157,15 +201,3 @@ async def refresh_token(
 # ):
 #     await auth_service.reset_password(db, request, reset_token)
 #     return ResetPasswordResponse(status="success", message="パスワードの再設定が完了しました。")
-
-
-# @router.get(
-#     "/reset-password/check-token/{reset_token}",
-#     responses=public_api_responses,
-#     response_model=ResetPasswordTokenResponse,
-# )
-# async def check_reset_password_token(
-#     db: Annotated[Session, Depends(get_db)],
-#     reset_token: Annotated[str, Path(description="Token recovery password")],
-# ):
-#     return auth_service.check_valid_reset_password_token(db, reset_token)

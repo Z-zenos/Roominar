@@ -1,3 +1,4 @@
+import hashlib
 import secrets
 import string
 from datetime import datetime, timedelta, timezone
@@ -67,15 +68,15 @@ def verify_refresh_token(token: str):
         raise BadRequestException(ErrorCode.ERR_INVALID_TOKEN)
 
 
-# def create_reset_password_token():
-#     expire_at = datetime.now() + timedelta(
-#         minutes=settings.RESET_PASSWORD_TOKEN_EXPIRE_MINUTES
-#     )
+def create_reset_password_token():
+    expire_at = datetime.now() + timedelta(
+        minutes=settings.RESET_PASSWORD_TOKEN_EXPIRE_MINUTES
+    )
 
-#     reset_token = create_token(settings.RESET_PASSWORD_TOKEN_LENGTH)
-#     encrypted_token = hashlib.sha256(reset_token.encode("utf-8")).hexdigest()
+    reset_token = create_token(settings.RESET_PASSWORD_TOKEN_LENGTH)
+    encrypted_token = hashlib.sha256(reset_token.encode("utf-8")).hexdigest()
 
-#     return reset_token, encrypted_token, expire_at
+    return reset_token, encrypted_token, expire_at
 
 
 # def check_valid_token(token: str, db: Session):

@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from sqlmodel import Session
 
-import backend.api.v1.audience.services.auth as auth_service
+import backend.api.v1.services.auth as auth_service
 from backend.core.config import settings
 from backend.core.constants import RoleCode
 from backend.core.error_code import ErrorCode, ErrorMessage

@@ -3,8 +3,7 @@ from datetime import datetime
 import pytz
 from sqlmodel import Session
 
-import backend.api.v1.audience.services.auth as auth_service
-from backend.api.v1.audience.services.auth.auth_service import get_user_by_email
+import backend.api.v1.services.auth as auth_service
 from backend.core.config import settings
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
@@ -16,7 +15,7 @@ from backend.utils.database import save
 
 async def register_audience(db: Session, request: RegisterAudienceRequest) -> User:
     email = request.email
-    user = get_user_by_email(db, email, RoleCode.AUDIENCE)
+    user = auth_service.get_user_by_email(db, email, RoleCode.AUDIENCE)
 
     if user and user.email_verify_at:
         raise BadRequestException(

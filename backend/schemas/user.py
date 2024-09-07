@@ -76,3 +76,13 @@ class UpdateUserRequest(BaseModel):
         if v is not None and len(v) > 10:
             raise ValueError("Tags can have at most 10 items")
         return v
+
+
+class ForgotPasswordRequest(BaseModel):
+    email: EmailStr
+    role_code: str
+
+
+class ForgotPasswordResponse(BaseModel):
+    email: EmailStr
+    expire_at: datetime

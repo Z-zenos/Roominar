@@ -1,11 +1,24 @@
-// import { useQuery } from '@tanstack/react-query';
-// import useApi from '@/src/lib/api/useApi';
+import type {
+  AuthApiForgotPasswordRequest,
+  ForgotPasswordResponse,
+} from '../lib/api/generated';
+import useApi from '../lib/api/useApi';
+import type { SWRMutationConfiguration } from 'swr/mutation';
+import useSWRMutation from 'swr/mutation';
 
-// export const useQueryGetProfile = () => {
-//   const api = useApi();
-//   return useQuery({
-//     queryKey: ['get-user-profile'],
-//     queryFn: async () => await api.auth.me(),
-//     enabled: true,
-//   });
-// };
+export const useForgotPasswordMutation = <T>(
+  options?: SWRMutationConfiguration<ForgotPasswordResponse, T>,
+) => {
+  const api = useApi();
+  const key = 'forgot-password';
+  return useSWRMutation<
+    ForgotPasswordResponse,
+    T,
+    typeof key,
+    AuthApiForgotPasswordRequest
+  >(
+    key,
+    async (_: string, { arg }) => await api.auth.forgotPassword(arg),
+    options,
+  );
+};

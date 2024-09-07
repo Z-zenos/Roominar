@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from sqlmodel import Session
 
-from backend.api.v1.audience.services.auth.auth_service import get_user_by_email
+from backend.api.v1.services.auth.auth_service import get_user_by_email
 from backend.core.config import settings
 from backend.core.constants import RoleCode
 from backend.core.error_code import ErrorCode
@@ -45,8 +45,8 @@ def get_current_user(
         return user
     else:
         raise UnauthorizedException(error_code=ErrorCode.ERR_UNAUTHORIZED)
-    
-    
+
+
 def get_user_if_logged_in(
     db: Annotated[Session, Depends(get_read_db)],
     token: Annotated[str, Depends(oauth2_scheme)],

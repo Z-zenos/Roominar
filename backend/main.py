@@ -2,9 +2,11 @@ import os
 import time
 
 from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
-from backend.api.v1.router import api_router
+from backend.api.v1.routes.router import api_router
 from backend.core.exception import (
     AccessDeniedException,
     BadRequestException,
@@ -54,6 +56,9 @@ def access_denied_exception_handler(request: Request, exc: UnauthorizedException
     return AccessDeniedResponse(exc.message, exc.debug_info)
 
 
-@app.exception_handler(ValueError)
-async def value_error_exception_handler(request: Request, exc: ValueError):
-    return BadRequestResponse(400, str(exc))
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    return JSONResponse(
+        status_code=422,
+        content={"detail": exc.errors(), "body": exc.body},
+    )

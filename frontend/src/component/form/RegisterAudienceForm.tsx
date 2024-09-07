@@ -20,8 +20,8 @@ import { styles } from '@/src/constant/styles.constant';
 import Button from '../common/Button/Button';
 import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
 import SuccessRegistration from '@/src/view/audience/SuccessRegistration';
-import type { RegisterAudienceFormSchema } from '@/src/schemas/audience/RegisterAudienceFormSchema';
-import { registerAudienceFormSchema } from '@/src/schemas/audience/RegisterAudienceFormSchema';
+import type { RegisterAudienceFormSchema } from '@/src/schemas/auth/RegisterAudienceFormSchema';
+import { registerAudienceFormSchema } from '@/src/schemas/auth/RegisterAudienceFormSchema';
 import { useRegisterAudienceMutation } from '@/src/api/user.api';
 
 function RegisterAudienceForm() {

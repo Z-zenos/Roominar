@@ -4,7 +4,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 from sqlmodel import Session
 
-import backend.api.v1.audience.services.events as events_service
+import backend.api.v1.services.events as events_service
 from backend.api.v1.dependencies.authentication import (
     get_current_user,
     get_user_if_logged_in,

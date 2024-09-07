@@ -147,7 +147,6 @@ async def create_application(
         # mailer.send_bulk_organization_email(
         #     organization_emails,
         #     "to_organizer_event_apply_success.html",
-        #     "【ehaco！】主催イベントへの参加申込みがありました！",
         #     organizer_context,
         # )
 

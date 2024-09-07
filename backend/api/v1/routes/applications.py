@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlmodel import Session
 
-import backend.api.v1.audience.services.applications as application_service
+import backend.api.v1.services.applications as application_service
 from backend.api.v1.dependencies.authentication import authorize_role
 from backend.core.constants import RoleCode
 from backend.core.response import public_api_responses

@@ -21,6 +21,8 @@ class ErrorCode:
     ERR_ORGANIZATION_NOT_FOUND = "ERR_ORGANIZATION_NOT_FOUND"
     ERR_BOOKMARK_ALREADY_EXISTED = "ERR_BOOKMARK_ALREADY_EXISTED"
     ERR_BOOKMARK_NOT_FOUND = "ERR_BOOKMARK_NOT_FOUND"
+    ERR_USER_NOT_FOUND = "ERR_USER_NOT_FOUND"
+    ERR_LOGGED_IN_BY_GOOGLE = "ERR_LOGGED_IN_BY_GOOGLE"
 
 
 class ErrorMessage:
@@ -44,3 +46,5 @@ class ErrorMessage:
     ERR_ORGANIZATION_NOT_FOUND = "The organization doesn't exist."
     ERR_BOOKMARK_ALREADY_EXISTED = "The bookmark already existed."
     ERR_BOOKMARK_NOT_FOUND = "The bookmark doesn't exist."
+    ERR_USER_NOT_FOUND = "The user doesn't exist."
+    ERR_LOGGED_IN_BY_GOOGLE = "The email used google for login."

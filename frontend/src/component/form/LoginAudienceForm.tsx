@@ -23,8 +23,8 @@ import { getCookie, setCookie } from 'cookies-next';
 import { RoleCode } from '@/src/constant/role_code.constant';
 import { toCamelCase } from '@/src/util/app.util';
 import { initialScreen } from '@/src/constant/app.constant';
-import type { LoginAudienceFormSchema } from '@/src/schemas/audience/LoginAudienceFormSchema';
-import { loginAudienceFormSchema } from '@/src/schemas/audience/LoginAudienceFormSchema';
+import type { LoginAudienceFormSchema } from '@/src/schemas/auth/LoginAudienceFormSchema';
+import { loginAudienceFormSchema } from '@/src/schemas/auth/LoginAudienceFormSchema';
 
 export default function LoginAudienceForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -170,7 +170,7 @@ export default function LoginAudienceForm() {
             control={form.control}
           />
           <Link
-            href='#'
+            href='/forgot-password'
             className='text-primary'
             underline='hover'
           >

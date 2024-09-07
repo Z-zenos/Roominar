@@ -1,6 +1,6 @@
 from sqlmodel import Session, select
 
-from backend.api.v1.audience.services.auth.password_service import verify_password
+from backend.api.v1.services.auth.password_service import verify_password
 from backend.models.user import User
 from backend.utils.database import fetch_one
 
