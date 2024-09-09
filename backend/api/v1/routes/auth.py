@@ -177,7 +177,7 @@ async def forgot_password(
     request: ForgotPasswordRequest = None,
     db: Session = Depends(get_read_db),
 ):
-    user = await users_service.forgot_password(db, request)
+    user = await auth_service.forgot_password(db, request)
     return ForgotPasswordResponse(
         email=user.email, expire_at=user.reset_password_token_expire_at
     )

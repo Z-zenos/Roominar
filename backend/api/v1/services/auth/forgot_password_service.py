@@ -45,20 +45,20 @@ async def forgot_password(db: Session, request: ForgotPasswordRequest):
 
         context = {
             "expire_at": user.reset_password_token_expire_at.strftime("%Y/%m/%d %H:%M"),
-            "name": f"{user.first_name}",
+            "first_name": f"{user.first_name}",
             "url": f"{settings.AUD_FRONTEND_URL}/reset-password/{reset_token}",
         }
 
         mailer = Email()
         if user.role_code == RoleCode.ORGANIZER:
-            mailer.send_organization_email(
+            await mailer.send_aud_email(
                 request.email,
-                "organization_reset_password.html",
+                "reset_organization_password.html",
                 "Reset password",
                 context,
             )
         else:
-            mailer.send_email(
+            await mailer.send_aud_email(
                 request.email,
                 "reset_audience_password.html",
                 "Reset password",

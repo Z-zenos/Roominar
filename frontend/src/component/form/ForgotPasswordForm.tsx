@@ -17,8 +17,13 @@ import { useForgotPasswordMutation } from '@/src/api/auth.api';
 import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
 import toast from 'react-hot-toast';
 import { RoleCode } from '@/src/constant/role_code.constant';
+import { FaArrowLeft } from 'react-icons/fa6';
+import { useState } from 'react';
+import { Image } from '@nextui-org/react';
 
 export default function ForgotPasswordForm() {
+  const [isSuccess, setIsSuccess] = useState<boolean>(false);
+
   const form = useForm<ForgotPasswordFormSchema>({
     mode: 'all',
     defaultValues: {
@@ -29,7 +34,7 @@ export default function ForgotPasswordForm() {
 
   const { trigger, isMutating } = useForgotPasswordMutation({
     onSuccess() {
-      toast.success('One reset password link sent to your email.');
+      setIsSuccess(true);
     },
     onError(error: ApiException<unknown>) {
       toast.error(
@@ -61,40 +66,55 @@ export default function ForgotPasswordForm() {
         }}
         className={clsx('flex items-center justify-center flex-col')}
       >
-        <div className='w-full'>
-          <FormCustomLabel
-            htmlFor='email'
-            title='Email'
-            required
-          />
-          <FormInput
-            id='email'
-            name='email'
-            type='email'
-            rightIcon={
-              <HiMail
-                size={20}
-                className='text-primary'
+        {isSuccess ? (
+          <div className='border rounded-md text-info-main border-info-main p-6'>
+            <Image
+              width={100}
+              height={100}
+              src='/images/mail-truck.gif'
+              alt='mail truck'
+              classNames={{ wrapper: 'mx-auto' }}
+            />
+            Please check reset password instructions we sent to your email.
+          </div>
+        ) : (
+          <>
+            <div className='w-full'>
+              <FormCustomLabel
+                htmlFor='email'
+                title='Email'
+                required
               />
-            }
-            placeholder='youremail@gmail.com'
-            className={clsx(
-              form.formState.errors.email &&
-                form.formState.touchedFields.email &&
-                'border-error-main',
-            )}
-            control={form.control}
-            isDisplayError={true}
-          />
-        </div>
+              <FormInput
+                id='email'
+                name='email'
+                type='email'
+                rightIcon={
+                  <HiMail
+                    size={20}
+                    className='text-primary'
+                  />
+                }
+                placeholder='youremail@gmail.com'
+                className={clsx(
+                  form.formState.errors.email &&
+                    form.formState.touchedFields.email &&
+                    'border-error-main',
+                )}
+                control={form.control}
+                isDisplayError={true}
+              />
+            </div>
 
-        <Button
-          title='Require reset password'
-          type='submit'
-          className='w-full mt-5'
-          disabled={!form.formState.isValid || !form.formState.isDirty}
-          isLoading={isMutating}
-        />
+            <Button
+              title='Require reset password'
+              type='submit'
+              className='w-full mt-5'
+              disabled={!form.formState.isValid || !form.formState.isDirty}
+              isLoading={isMutating}
+            />
+          </>
+        )}
         <br />
         <h5 className='text-center pt-4 font-Poppins text-[14px] text-black dark:text-white'>
           Or join with
@@ -121,10 +141,19 @@ export default function ForgotPasswordForm() {
           </Link>
         </h5>
 
-        <p className={clsx('mt-4 gap-2 font-light', styles.center)}>
-          Want to host your own event?
-          <Button className='outline-none'>Navigate to organization </Button>
-        </p>
+        <Link
+          className={clsx(
+            styles.flexStart,
+            'gap-2 opacity-60 mb-5 cursor-pointer hover:bg-slate-100 transition-all py-3 px-5 pl-2 inline-flex group text-black mx-auto',
+          )}
+          href='/login'
+        >
+          <FaArrowLeft
+            size={16}
+            className='group-hover:-translate-x-2 transition-all'
+          />
+          <span>Back to login</span>
+        </Link>
       </form>
     </Form>
   );
