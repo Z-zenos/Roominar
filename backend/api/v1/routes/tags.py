@@ -10,12 +10,14 @@ router = APIRouter()
 
 
 @router.get("", response_model=ListingTagsResponse, responses=public_api_responses)
-def listing_tags(db: Session = Depends(get_read_db)):
-    return ListingTagsResponse(data=tags_service.listing_tags(db))
+async def listing_tags(db: Session = Depends(get_read_db)):
+    data = await tags_service.listing_tags(db)
+    return ListingTagsResponse(data=data)
 
 
 @router.get(
     "/rank", response_model=ListingTagRankResponse, responses=public_api_responses
 )
-def listing_tag_rank(db: Session = Depends(get_read_db)):
-    return ListingTagRankResponse(tags=tags_service.listing_tag_rank(db))
+async def listing_tag_rank(db: Session = Depends(get_read_db)):
+    tags = await tags_service.listing_tag_rank(db)
+    return ListingTagRankResponse(tags=tags)

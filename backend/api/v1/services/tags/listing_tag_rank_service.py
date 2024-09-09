@@ -5,7 +5,7 @@ from backend.models.tag import Tag
 from backend.models.user_tag import UserTag
 
 
-def listing_tag_rank(db: Session):
+async def listing_tag_rank(db: Session):
     UsedTag = select(EventTag.tag_id).union_all(select(UserTag.tag_id))
     tags = (
         db.exec(

@@ -5,7 +5,7 @@ from backend.models.tag_group import TagGroup
 from backend.schemas.tag import TagItem
 
 
-def listing_tags(db: Session):
+async def listing_tags(db: Session):
     tag_groups = db.exec(select(TagGroup.id, TagGroup.name)).all()
     result = {
         group.id: {"group_id": group.id, "group_name": group.name, "tags": []}

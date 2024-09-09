@@ -48,8 +48,8 @@ def get_current_user(
 
 
 def get_user_if_logged_in(
-    db: Annotated[Session, Depends(get_read_db)],
-    token: Annotated[str, Depends(oauth2_scheme)],
+    db: DBDep,
+    token: TokenDep,
 ):
     if token:
         return get_current_user(db, token)
