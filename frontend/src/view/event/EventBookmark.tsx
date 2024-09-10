@@ -23,33 +23,31 @@ function EventBookmark({ eventId, isBookmarked }: EventBookmarkProps) {
   const { status } = useSession();
   const [bookmark, setBookmark] = useState<boolean>(isBookmarked);
 
-  const { trigger: createEventBookmark, isMutating: isCreating } =
-    useCreateEventBookmarkMutation({
-      onSuccess() {
-        setBookmark(true);
-      },
-      onError(error: ApiException<unknown>) {
-        toast.error(
-          (error.body as ErrorResponse400)?.message ??
-            (error.body as ErrorResponse400)?.errorCode ??
-            'Unknown Error 😵',
-        );
-      },
-    });
+  const { trigger: createEventBookmark } = useCreateEventBookmarkMutation({
+    onSuccess() {
+      setBookmark(true);
+    },
+    onError(error: ApiException<unknown>) {
+      toast.error(
+        (error.body as ErrorResponse400)?.message ??
+          (error.body as ErrorResponse400)?.errorCode ??
+          'Unknown Error 😵',
+      );
+    },
+  });
 
-  const { trigger: deleteEventBookmark, isMutating: isDeleting } =
-    useDeleteEventBookmarkMutation({
-      onSuccess() {
-        setBookmark(false);
-      },
-      onError(error: ApiException<unknown>) {
-        toast.error(
-          (error.body as ErrorResponse400)?.message ??
-            (error.body as ErrorResponse400)?.errorCode ??
-            'Unknown Error 😵',
-        );
-      },
-    });
+  const { trigger: deleteEventBookmark } = useDeleteEventBookmarkMutation({
+    onSuccess() {
+      setBookmark(false);
+    },
+    onError(error: ApiException<unknown>) {
+      toast.error(
+        (error.body as ErrorResponse400)?.message ??
+          (error.body as ErrorResponse400)?.errorCode ??
+          'Unknown Error 😵',
+      );
+    },
+  });
 
   return (
     <Button

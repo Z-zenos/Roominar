@@ -14,6 +14,9 @@ import type { SearchEventsItem, TagItem } from '@/src/lib/api/generated';
 import { formatEventDate } from '@/src/util/app.util';
 import dayjs from 'dayjs';
 import EventBookmark from '@/src/view/event/EventBookmark';
+import { useSession } from 'next-auth/react';
+import toast from 'react-hot-toast';
+import { IoMdLogIn } from 'react-icons/io';
 
 interface EventCardProps {
   className?: string;
@@ -30,6 +33,7 @@ function EventCard({
 }: EventCardProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { status } = useSession();
 
   return (
     <div
@@ -179,6 +183,25 @@ function EventCard({
               isIconOnly
               color='success'
               variant='flat'
+              onClick={() => {
+                if (status === 'authenticated') {
+                  router.push(`/events/${event.slug}/apply`);
+                } else {
+                  toast(
+                    () => (
+                      <span className={clsx(styles.between, 'gap-2')}>
+                        <span>
+                          You need to <b>login</b> for apply event
+                        </span>
+                        <IoMdLogIn size={16} />
+                      </span>
+                    ),
+                    {
+                      icon: '⚠️',
+                    },
+                  );
+                }
+              }}
             >
               <SlNote size={16} />
             </Button>

@@ -587,7 +587,7 @@ function EventDetail({ slug }: EventDetailProps) {
                       <div className='mt-3 border border-gray-200 shadow-sm p-2'>
                         <Image
                           src={relatedEventPair[1]?.coverImageUrl}
-                          className='w-full h-[200px]'
+                          className='w-full h-[200px] aspect-video'
                           alt='More event image'
                         />
                         <div className='pt-3 px-1'>

@@ -59,6 +59,7 @@ export default function Navbar() {
     localStorage.setItem('rememberMe', 'false');
     if (process.env.NODE_ENV === 'development') {
       signOut({ redirect: false });
+      location.reload();
     } else {
       signOut(
         auth.user.roleCode == RoleCode.ORGANIZER
@@ -68,6 +69,7 @@ export default function Navbar() {
             },
       ).then(() => {
         router.refresh();
+        location.reload();
       });
     }
   };
