@@ -14,8 +14,8 @@ def authenticate_user(db: Session, **kwargs):
     user = get_user_by_email(db, kwargs.get("email"), kwargs.get("role_code"))
 
     if not user:
-        return False
+        return None
 
     if not verify_password(kwargs.get("password"), user.password):
-        return False
+        return None
     return user

@@ -13,16 +13,15 @@ import { signIn } from 'next-auth/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { HiMail } from 'react-icons/hi';
 import clsx from 'clsx';
-import { Form, FormInput } from './Form';
+import { Form, FormCustomLabel, FormInput } from './Form';
 import { Link } from '@nextui-org/link';
-import { Label } from '../common/Label';
 import { styles } from '@/src/constant/styles.constant';
 import Button from '../common/Button/Button';
 import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
 import SuccessRegistration from '@/src/view/audience/SuccessRegistration';
 import type { RegisterAudienceFormSchema } from '@/src/schemas/auth/RegisterAudienceFormSchema';
 import { registerAudienceFormSchema } from '@/src/schemas/auth/RegisterAudienceFormSchema';
-import { useRegisterAudienceMutation } from '@/src/api/user.api';
+import { useRegisterAudienceMutation } from '@/src/api/auth.api';
 
 function RegisterAudienceForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -87,14 +86,11 @@ function RegisterAudienceForm() {
           <>
             <div className='w-full'>
               <div className='w-full'>
-                <div className='mb-2 block'>
-                  <Label
-                    htmlFor='email'
-                    className={clsx(styles.label)}
-                  >
-                    Your email
-                  </Label>
-                </div>
+                <FormCustomLabel
+                  title='Your email'
+                  htmlFor='email'
+                  required
+                />
                 <FormInput
                   id='email'
                   name='email'
@@ -118,14 +114,11 @@ function RegisterAudienceForm() {
 
               <div className='flex w-full mt-5 mb-1 items-start justify-between gap-2'>
                 <div className='w-full'>
-                  <div className='mb-2 block'>
-                    <Label
-                      htmlFor='firstName'
-                      className={clsx(styles.label)}
-                    >
-                      First name
-                    </Label>
-                  </div>
+                  <FormCustomLabel
+                    title='First name'
+                    htmlFor='firstName'
+                    required
+                  />
                   <FormInput
                     id='firstName'
                     name='firstName'
@@ -141,14 +134,11 @@ function RegisterAudienceForm() {
                 </div>
 
                 <div className='w-full'>
-                  <div className='mb-2 block'>
-                    <Label
-                      htmlFor='lastName'
-                      className={clsx(styles.label)}
-                    >
-                      Last name
-                    </Label>
-                  </div>
+                  <FormCustomLabel
+                    title='Last name'
+                    htmlFor='lastName'
+                    required
+                  />
                   <FormInput
                     id='lastName'
                     name='lastName'
@@ -164,14 +154,11 @@ function RegisterAudienceForm() {
                 </div>
               </div>
               <div className='w-full mt-5 relative mb-1'>
-                <div className='mb-2 block'>
-                  <Label
-                    htmlFor='password'
-                    className={clsx(styles.label)}
-                  >
-                    Enter your password
-                  </Label>
-                </div>
+                <FormCustomLabel
+                  title='Enter your password'
+                  htmlFor='password'
+                  required
+                />
                 <FormInput
                   id='password'
                   name='password'
@@ -203,16 +190,13 @@ function RegisterAudienceForm() {
               </div>
 
               <div className='w-full mt-5 relative mb-1'>
-                <div className='mb-2 block'>
-                  <Label
-                    htmlFor='confirm-password'
-                    className={clsx(styles.label)}
-                  >
-                    Confirm password
-                  </Label>
-                </div>
+                <FormCustomLabel
+                  title='Confirm password'
+                  htmlFor='confirmPassword'
+                  required
+                />
                 <FormInput
-                  id='confirm-password'
+                  id='confirmPassword'
                   name='confirmPassword'
                   type={!showConfirmPassword ? 'password' : 'text'}
                   rightIcon={

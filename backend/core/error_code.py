@@ -23,6 +23,8 @@ class ErrorCode:
     ERR_BOOKMARK_NOT_FOUND = "ERR_BOOKMARK_NOT_FOUND"
     ERR_USER_NOT_FOUND = "ERR_USER_NOT_FOUND"
     ERR_LOGGED_IN_BY_GOOGLE = "ERR_LOGGED_IN_BY_GOOGLE"
+    ERR_INVALID_RESET_PASSWORD_TOKEN = "ERR_INVALID_RESET_PASSWORD_TOKEN"
+    ERR_INVALID_EMAIL = "ERR_INVALID_EMAIL"
 
 
 class ErrorMessage:
@@ -48,3 +50,5 @@ class ErrorMessage:
     ERR_BOOKMARK_NOT_FOUND = "The bookmark doesn't exist."
     ERR_USER_NOT_FOUND = "The user doesn't exist."
     ERR_LOGGED_IN_BY_GOOGLE = "The email used google for login."
+    ERR_INVALID_RESET_PASSWORD_TOKEN = "Invalid reset password token."
+    ERR_INVALID_EMAIL = "Invalid email."

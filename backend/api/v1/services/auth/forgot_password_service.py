@@ -6,23 +6,16 @@ from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.mails.mail import Email
 from backend.models.user import RoleCode
-from backend.schemas.user import ForgotPasswordRequest
+from backend.schemas.auth import ForgotPasswordRequest
 
 
 async def forgot_password(db: Session, request: ForgotPasswordRequest):
     # Get user based on POSTed email
     user = auth_service.get_user_by_email(db, request.email, request.role_code)
 
-    # Verify user if exist
     if not user:
         raise BadRequestException(
-            ErrorCode.ERR_USER_NOT_FOUND, ErrorMessage.ERR_USER_NOT_FOUND
-        )
-
-    if not user.email_verify_at:
-        raise BadRequestException(
-            ErrorCode.ERR_USER_NOT_VERIFIED,
-            ErrorMessage.ERR_USER_NOT_VERIFIED,
+            ErrorCode.ERR_INVALID_EMAIL, ErrorMessage.ERR_INVALID_EMAIL
         )
 
     if user and user.email and not user.password:
@@ -53,14 +46,14 @@ async def forgot_password(db: Session, request: ForgotPasswordRequest):
         if user.role_code == RoleCode.ORGANIZER:
             await mailer.send_aud_email(
                 request.email,
-                "reset_organization_password.html",
+                "require_reset_organization_password.html",
                 "Reset password",
                 context,
             )
         else:
             await mailer.send_aud_email(
                 request.email,
-                "reset_audience_password.html",
+                "require_reset_audience_password.html",
                 "Reset password",
                 context,
             )

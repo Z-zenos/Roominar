@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from http import HTTPStatus
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
@@ -14,16 +15,15 @@ from backend.core.response import authenticated_api_responses, public_api_respon
 from backend.db.database import get_read_db
 from backend.models.user import User
 from backend.schemas.auth import (
+    ForgotPasswordRequest,
+    ForgotPasswordResponse,
     GetMeResponse,
+    RegisterAudienceRequest,
+    RegisterAudienceResponse,
+    ResetPasswordRequest,
     SocialAuthRequest,
     TokenResponse,
     UserLoginRequest,
-)
-from backend.schemas.user import (
-    ForgotPasswordRequest,
-    ForgotPasswordResponse,
-    RegisterAudienceRequest,
-    RegisterAudienceResponse,
     VerifyAudienceRequest,
     VerifyAudienceResponse,
 )
@@ -156,18 +156,6 @@ async def refresh_token(
     )
 
 
-# @router.get(
-#     "/reset-password/check-token/{reset_token}",
-#     responses=public_api_responses,
-#     response_model=ResetPasswordTokenResponse,
-# )
-# async def check_reset_password_token(
-#     db: Annotated[Session, Depends(get_db)],
-#     reset_token: Annotated[str, Path(description="Token recovery password")],
-# ):
-#     return auth_service.check_valid_reset_password_token(db, reset_token)
-
-
 @router.post(
     "/forgot-password",
     response_model=ForgotPasswordResponse,
@@ -183,21 +171,14 @@ async def forgot_password(
     )
 
 
-# @router.post(
-#     "/reset-password/{reset_token}",
-#     response_model=ResetPasswordResponse,
-#     responses=public_api_responses,
-# )
-# async def reset_password(
-#     db: Annotated[Session, Depends(get_db)],
-#     request: Annotated[
-#         ResetPasswordRequest,
-#         Body(
-#             title="Recovery password - Step 2: Reset Password",
-#             description="Provide new password and confirm password.",
-#         ),
-#     ],
-#     reset_token: Annotated[str, Path(description="Token recovery password")],
-# ):
-#     await auth_service.reset_password(db, request, reset_token)
-#     return ResetPasswordResponse(status="success", message="パスワードの再設定が完了しました。")
+@router.post(
+    "/reset-password/{reset_token}",
+    status_code=HTTPStatus.OK,
+    responses=public_api_responses,
+)
+async def reset_password(
+    db: Session = Depends(get_read_db),
+    request: ResetPasswordRequest = None,
+    reset_token: str = None,
+):
+    return await auth_service.reset_password(db, request, reset_token)

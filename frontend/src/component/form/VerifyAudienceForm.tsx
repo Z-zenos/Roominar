@@ -21,7 +21,7 @@ import { useState } from 'react';
 import { Button } from '@nextui-org/button';
 import type { VerifyAudienceFormSchema } from '@/src/schemas/auth/VerifyAudienceFormSchema';
 import { verifyAudienceFormSchema } from '@/src/schemas/auth/VerifyAudienceFormSchema';
-import { useVerifyAudienceMutation } from '@/src/api/user.api';
+import { useVerifyAudienceMutation } from '@/src/api/auth.api';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 
