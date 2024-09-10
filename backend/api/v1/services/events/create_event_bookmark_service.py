@@ -5,7 +5,7 @@ from backend.core.exception import BadRequestException
 from backend.models import Bookmark, User
 
 
-def create_event_bookmark(db: Session, current_user: User, event_id: int):
+async def create_event_bookmark(db: Session, current_user: User, event_id: int):
     bookmark = db.scalar(
         exists()
         .where(Bookmark.user_id == current_user.id, Bookmark.event_id == event_id)

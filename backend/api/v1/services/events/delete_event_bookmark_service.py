@@ -5,7 +5,7 @@ from backend.core.exception import BadRequestException
 from backend.models import Bookmark, User
 
 
-def delete_event_bookmark(db: Session, current_user: User, event_id: int):
+async def delete_event_bookmark(db: Session, current_user: User, event_id: int):
     bookmark = db.exec(
         select(Bookmark).where(
             Bookmark.user_id == current_user.id, Bookmark.event_id == event_id

@@ -9,6 +9,7 @@ import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
 import { Button } from '@nextui-org/button';
 import clsx from 'clsx';
 import { useSession } from 'next-auth/react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { IoMdLogIn } from 'react-icons/io';
 import { IoBookmarkOutline, IoBookmark } from 'react-icons/io5';
@@ -20,9 +21,13 @@ interface EventBookmarkProps {
 
 function EventBookmark({ eventId, isBookmarked }: EventBookmarkProps) {
   const { status } = useSession();
+  const [bookmark, setBookmark] = useState<boolean>(isBookmarked);
 
   const { trigger: createEventBookmark, isMutating: isCreating } =
     useCreateEventBookmarkMutation({
+      onSuccess() {
+        setBookmark(true);
+      },
       onError(error: ApiException<unknown>) {
         toast.error(
           (error.body as ErrorResponse400)?.message ??
@@ -34,6 +39,9 @@ function EventBookmark({ eventId, isBookmarked }: EventBookmarkProps) {
 
   const { trigger: deleteEventBookmark, isMutating: isDeleting } =
     useDeleteEventBookmarkMutation({
+      onSuccess() {
+        setBookmark(false);
+      },
       onError(error: ApiException<unknown>) {
         toast.error(
           (error.body as ErrorResponse400)?.message ??
@@ -65,18 +73,13 @@ function EventBookmark({ eventId, isBookmarked }: EventBookmarkProps) {
           );
         }
         if (status === 'authenticated') {
-          isBookmarked
+          bookmark
             ? deleteEventBookmark({ eventId })
             : createEventBookmark({ eventId });
         }
       }}
-      isLoading={isBookmarked ? isDeleting : isCreating}
     >
-      {isBookmarked ? (
-        <IoBookmark size={16} />
-      ) : (
-        <IoBookmarkOutline size={16} />
-      )}
+      {bookmark ? <IoBookmark size={16} /> : <IoBookmarkOutline size={16} />}
     </Button>
   );
 }
