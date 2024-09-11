@@ -7,6 +7,7 @@ import {
   Form,
   FormCombobox,
   FormCustomLabel,
+  FormImageUploader,
   FormInput,
 } from '@/src/component/form/Form';
 import Button from '@/src/component/common/Button/Button';
@@ -62,22 +63,18 @@ export default function UpdateMyProfileForm() {
   });
 
   function handleUpdateMyProfile(data: UpdateMyProfileFormSchema) {
-    // trigger({
-    //   eventId: event.id,
-    //   createApplicationRequest: {
-    //     email: data.email,
-    //     firstName: data.firstName,
-    //     lastName: data.lastName,
-    //     workplaceName: data.workplaceName,
-    //     phone: data.phoneNumber,
-    //     industryCode: data.industryCode,
-    //     jobTypeCode: data.jobTypeCode,
-    //     questionAnswerResults:
-    //       data.questionAnswerResults as QuestionAnswerResultItem[],
-    //     ticketId: +data.ticketId,
-    //     isAgreed: data.isAgreed,
-    //   },
-    // });
+    trigger({
+      updateUserRequest: {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        address: data.address,
+        // avatarUrl: data.avatarUrl,
+        workplaceName: data.workplaceName,
+        phone: data.phoneNumber,
+        industryCode: data.industryCode,
+        jobTypeCode: data.jobTypeCode,
+      },
+    });
 
     console.log(data);
   }
@@ -206,9 +203,19 @@ export default function UpdateMyProfileForm() {
             </div>
             <div className='self-start'>
               <FormCustomLabel
+                htmlFor='avatarUrl'
+                title='Avatar'
+              />
+              <FormImageUploader
+                control={form.control}
+                name='avatarUrl'
+              />
+            </div>
+            &nbsp;
+            <div className='self-start'>
+              <FormCustomLabel
                 htmlFor='jobTypeCode'
                 title='Job type'
-                required
               />
               <FormCombobox
                 data={Object.keys(JobTypeCodeMapping).map((key: string) => ({

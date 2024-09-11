@@ -1,4 +1,10 @@
-import { type ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
+import {
+  type ChangeEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import type { DropzoneOptions } from 'react-dropzone';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
@@ -24,14 +30,19 @@ type UploadFileProps = {
   onUploadProgress: (progress: number) => void;
 };
 
-export const uploadFile = async ({ formData, onUploadProgress }: UploadFileProps): Promise<CDNImage> => {
+export const uploadFile = async ({
+  formData,
+  onUploadProgress,
+}: UploadFileProps): Promise<CDNImage> => {
   const { data } = await axios.request<CDNImage>({
     method: 'POST',
     headers: { 'Content-Type': 'multipart/form-data' },
-    url: process.env.NEXT_PUBLIC_CDN_URL || '',
+    url: process.env.NEXT_PUBLIC_CLOUDINARY_URL || '',
     data: formData,
     onUploadProgress(progressEvent) {
-      const completedPercent = Math.round((progressEvent.loaded * 100) / progressEvent.total!);
+      const completedPercent = Math.round(
+        (progressEvent.loaded * 100) / progressEvent.total!,
+      );
 
       onUploadProgress(completedPercent);
     },
@@ -59,20 +70,24 @@ export const useUpload = (
     const formData = new FormData();
 
     formData.append('file', acceptedFiles[0]);
-    formData.append('upload_preset', process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET as string);
+    formData.append(
+      'upload_preset',
+      process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET as string,
+    );
 
     setFormatImage(formData);
   }, []);
 
-  const { getRootProps, getInputProps, fileRejections, isDragActive } = useDropzone({
-    ...DROPZONE_OPTIONS,
-    maxFiles: maxFiles,
-    maxSize: maxSize,
-    accept: {
-      'image/*': formats,
-    },
-    onDrop,
-  });
+  const { getRootProps, getInputProps, fileRejections, isDragActive } =
+    useDropzone({
+      ...DROPZONE_OPTIONS,
+      maxFiles: maxFiles,
+      maxSize: maxSize,
+      accept: {
+        'image/*': formats,
+      },
+      onDrop,
+    });
 
   const onFileChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const files = e.target?.files;
@@ -83,7 +98,10 @@ export const useUpload = (
     if (!formats.includes(file?.type)) return;
 
     formData.append('file', file);
-    formData.append('upload_preset', process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET as string);
+    formData.append(
+      'upload_preset',
+      process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET as string,
+    );
 
     setFormatImage(formData);
   };
@@ -95,7 +113,9 @@ export const useUpload = (
         .map((err) => {
           err.map((el) => {
             if (el.code.includes('file-invalid-type')) {
-              toast.error(`File type must be ${formats?.map((f) => `.${f}`).join(', ')}`);
+              toast.error(
+                `File type must be ${formats?.map((f) => `.${f}`).join(', ')}`,
+              );
 
               return;
             }

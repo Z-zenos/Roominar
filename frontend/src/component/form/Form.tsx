@@ -67,6 +67,8 @@ import {
 } from '@nextui-org/react';
 import { Button as UIButton } from '@nextui-org/button';
 import { RadioGroup, RadioGroupItem } from '../common/RadioGroup';
+import type { ImageUploaderProps } from '../common/Upload/ImageUploader';
+import ImageUploader from '../common/Upload/ImageUploader';
 
 const Form = FormProvider;
 
@@ -1004,42 +1006,42 @@ const FormSelect = ({
 
 FormSelect.displayName = 'FormSelect';
 
-// interface FormImageUploaderProps extends ImageUploaderProps {
-// 	name: string;
-// 	control: Control<any>;
-// 	isDisplayError?: boolean;
-// }
+interface FormImageUploaderProps extends ImageUploaderProps {
+  name: string;
+  control: Control<any>;
+  isDisplayError?: boolean;
+}
 
-// const FormImageUploader = ({
-// 	name,
-// 	control,
-// 	isDisplayError,
-// 	className,
-// 	formats,
-// 	onGetImageUrl,
-// }: FormImageUploaderProps) => {
-// 	return (
-// 		<FormField
-// 			control={control}
-// 			name={name}
-// 			render={({ field }) => (
-// 				<FormItem>
-// 					<FormControl>
-// 						<ImageUploader
-// 							className={className}
-// 							formats={formats}
-// 							onGetImageUrl={onGetImageUrl}
-// 							{...field}
-// 						/>
-// 					</FormControl>
-// 					{isDisplayError && <FormMessage />}
-// 				</FormItem>
-// 			)}
-// 		/>
-// 	);
-// };
+const FormImageUploader = ({
+  name,
+  control,
+  isDisplayError,
+  className,
+  formats,
+  onGetImageUrl,
+}: FormImageUploaderProps) => {
+  return (
+    <FormField
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <FormItem>
+          <FormControl>
+            <ImageUploader
+              className={className}
+              formats={formats}
+              onGetImageUrl={onGetImageUrl}
+              {...field}
+            />
+          </FormControl>
+          {isDisplayError && <FormMessage />}
+        </FormItem>
+      )}
+    />
+  );
+};
 
-// FormImageUploader.displayName = 'FormImageUploader';
+FormImageUploader.displayName = 'FormImageUploader';
 
 export {
   useFormField,
@@ -1057,7 +1059,7 @@ export {
   FormDateRangePicker,
   // FormTextarea,
   FormSelect,
-  // FormImageUploader,
+  FormImageUploader,
   FormCombobox,
   FormTagsInput,
   FormRadioBoxList,

@@ -16,8 +16,6 @@ import NotificationIcon from '@/public/icons/notification.svg';
 import AccountSettingIcon from '@/public/icons/account-settings.svg';
 import PaymentIcon from '@/public/icons/payment.svg';
 
-type Theme = 'light' | 'dark';
-
 const themes = {
   light: {
     sidebar: {
@@ -92,12 +90,10 @@ const sidebarMenu = [
   },
 ];
 
+const theme = 'light';
+
 export default function Sidebar() {
-  const [collapsed, setCollapsed] = React.useState(false);
   const [toggled, setToggled] = React.useState(false);
-  const [broken, setBroken] = React.useState(false);
-  const [hasImage, setHasImage] = React.useState(false);
-  const [theme, setTheme] = React.useState<Theme>('light');
 
   const menuItemStyles: MenuItemStyles = {
     root: {
@@ -116,10 +112,7 @@ export default function Sidebar() {
     subMenuContent: ({ level }) => ({
       backgroundColor:
         level === 0
-          ? hexToRgba(
-              themes[theme].menu.menuContent,
-              hasImage && !collapsed ? 0.4 : 1,
-            )
+          ? hexToRgba(themes[theme].menu.menuContent, 1)
           : 'transparent',
     }),
     button: {
@@ -127,10 +120,7 @@ export default function Sidebar() {
         color: themes[theme].menu.disabled.color,
       },
       '&:hover': {
-        backgroundColor: hexToRgba(
-          themes[theme].menu.hover.backgroundColor,
-          hasImage ? 0.8 : 1,
-        ),
+        backgroundColor: hexToRgba(themes[theme].menu.hover.backgroundColor, 1),
         color: themes[theme].menu.hover.color,
       },
     },
@@ -144,15 +134,11 @@ export default function Sidebar() {
   return (
     <div className='flex h-screen border-r border-r-slate-100'>
       <ProSidebar
-        collapsed={collapsed}
+        collapsed={false}
         toggled={toggled}
         onBackdropClick={() => setToggled(false)}
-        onBreakPoint={setBroken}
         breakPoint='md'
-        backgroundColor={hexToRgba(
-          themes[theme].sidebar.backgroundColor,
-          hasImage ? 0.9 : 1,
-        )}
+        backgroundColor={hexToRgba(themes[theme].sidebar.backgroundColor, 1)}
         rootStyles={{
           color: themes[theme].sidebar.color,
         }}
