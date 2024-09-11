@@ -1,7 +1,7 @@
 from sqlmodel import Session, delete, select
 
-from backend.core.error_code import ErrorCode
-from backend.core.exception import BadRequestException, UnauthorizedException
+from backend.core.error_code import ErrorCode, ErrorMessage
+from backend.core.exception import BadRequestException
 from backend.models.tag import Tag
 from backend.models.user import User
 from backend.models.user_tag import UserTag
@@ -9,12 +9,9 @@ from backend.schemas.user import UpdateUserRequest
 from backend.utils.database import save
 
 
-def update_audience(
-    db: Session, current_user: User, request: UpdateUserRequest, user_id: int
+async def update_audience(
+    db: Session, current_user: User, request: UpdateUserRequest
 ) -> User:
-    if current_user.id != user_id:
-        raise UnauthorizedException(ErrorCode.ERR_UNAUTHORIZED)
-
     try:
         for attr, value in request:
             if attr != "tags" and value is not None:
@@ -25,7 +22,9 @@ def update_audience(
         if request.tags:
             tags = db.exec(select(Tag.id).where(Tag.id.in_(request.tags))).all()
             if (not tags) or (len(request.tags) != len(tags)):
-                raise BadRequestException(ErrorCode.ERR_TAG_NOT_FOUND)
+                raise BadRequestException(
+                    ErrorCode.ERR_TAG_NOT_FOUND, ErrorMessage.ERR_TAG_NOT_FOUND
+                )
             user_tags = [
                 UserTag(user_id=current_user.id, tag_id=tag) for tag in request.tags
             ]

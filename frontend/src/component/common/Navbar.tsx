@@ -48,7 +48,12 @@ const navbarItems = [
   },
 ];
 
-export default function Navbar() {
+interface NavbarProps {
+  className?: string;
+  hasLogo?: boolean;
+}
+
+export default function Navbar({ className, hasLogo = true }: NavbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const { data: auth, status } = useSession();
   const router = useRouter();
@@ -78,7 +83,7 @@ export default function Navbar() {
     <UINavbar
       isBordered
       classNames={{
-        wrapper: ['max-w-none px-[15%]'],
+        wrapper: ['max-w-none px-[15%]', className],
         item: [
           'flex',
           'relative',
@@ -101,9 +106,11 @@ export default function Navbar() {
           aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
           className='sm:hidden'
         />
-        <NavbarBrand>
-          <Logo className='scale-120' />
-        </NavbarBrand>
+        {hasLogo && (
+          <NavbarBrand>
+            <Logo className='scale-120' />
+          </NavbarBrand>
+        )}
       </NavbarContent>
 
       <NavbarContent

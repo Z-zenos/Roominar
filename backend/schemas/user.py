@@ -1,6 +1,7 @@
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
 from backend.core.constants import IndustryCode, JobTypeCode
+from backend.schemas.tag import TagItem
 
 
 class UserBase(BaseModel):
@@ -17,6 +18,7 @@ class UserBase(BaseModel):
     industry_code: str | None = None
     job_type_code: str | None = None
     avatar_url: str | None = None
+    tags: list[TagItem] = Field([])
 
 
 class UpdateUserRequest(BaseModel):
