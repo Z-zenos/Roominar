@@ -8,10 +8,13 @@ import {
   MenuItem,
   menuClasses,
 } from 'react-pro-sidebar';
-import Logo from './Logo';
-import { styles } from '@/src/constant/styles.constant';
+import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
-import { FaUserCog } from 'react-icons/fa';
+import EventIcon from '@/public/icons/event.svg';
+import ProfileIcon from '@/public/icons/profile.svg';
+import NotificationIcon from '@/public/icons/notification.svg';
+import AccountSettingIcon from '@/public/icons/account-settings.svg';
+import PaymentIcon from '@/public/icons/payment.svg';
 
 type Theme = 'light' | 'dark';
 
@@ -19,13 +22,13 @@ const themes = {
   light: {
     sidebar: {
       backgroundColor: '#ffffff',
-      color: '#607489',
+      color: '#101828',
     },
     menu: {
       menuContent: '#fbfcfd',
-      icon: '#0056D2',
+      icon: '#101828',
       hover: {
-        backgroundColor: '#c5e4ff',
+        backgroundColor: '#e8f6ff',
         color: '#0056D2',
       },
       disabled: {
@@ -35,7 +38,7 @@ const themes = {
   },
   dark: {
     sidebar: {
-      backgroundColor: '#0b2948',
+      backgroundColor: '#101828',
       color: '#8ba1b7',
     },
     menu: {
@@ -60,6 +63,34 @@ const hexToRgba = (hex: string, alpha: number) => {
 
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
+
+const sidebarMenu = [
+  {
+    title: 'Personal Info',
+    icon: <ProfileIcon width={25} />,
+    route: '/my-profile',
+  },
+  {
+    title: 'Account Setting',
+    icon: <AccountSettingIcon width={25} />,
+    route: '/account-setting',
+  },
+  {
+    title: 'My Events',
+    icon: <EventIcon width={25} />,
+    route: '/my-events',
+  },
+  {
+    title: 'Ticket & payments',
+    icon: <PaymentIcon width={25} />,
+    route: '/payments',
+  },
+  {
+    title: 'Notifications',
+    icon: <NotificationIcon width={25} />,
+    route: '/notifications',
+  },
+];
 
 export default function Sidebar() {
   const [collapsed, setCollapsed] = React.useState(false);
@@ -108,13 +139,10 @@ export default function Sidebar() {
     }),
   };
 
+  const pathname = usePathname();
+
   return (
-    <div
-      style={{
-        display: 'flex',
-        height: '100%',
-      }}
-    >
+    <div className='flex h-screen border-r border-r-slate-100'>
       <ProSidebar
         collapsed={collapsed}
         toggled={toggled}
@@ -129,32 +157,15 @@ export default function Sidebar() {
           color: themes[theme].sidebar.color,
         }}
       >
-        <div
-          style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
-        >
-          <div className={clsx(styles.center)}>
-            {collapsed ? (
-              <p
-                className='
-                  w-9 min-w-9 h-9 m-h-9 mt-6 flex items-center justify-center
-                  rounded-md text-white text-lg font-bold bg-blue-main
-                  bg-[linear-gradient(45deg,_rgb(21_87_205)_0%,_rgb(90_225_255)_100%)]'
-              >
-                R
-              </p>
-            ) : (
-              <Logo />
-            )}
-          </div>
-
+        <div className='flex flex-col h-full'>
           {/* <Switch
             id='collapse'
             checked={collapsed}
             onChange={() => setCollapsed(!collapsed)}
             title='Toggle'
           /> */}
-          <div style={{ flex: 1, marginTop: '32px' }}>
-            <div style={{ padding: '0 24px', marginBottom: '8px' }}>
+          <div className='flex-1 mt-8'>
+            <div className='py-6 '>
               {/* <Typography
                 variant='body2'
                 fontWeight={600}
@@ -164,15 +175,23 @@ export default function Sidebar() {
               </Typography> */}
             </div>
             <Menu menuItemStyles={menuItemStyles}>
-              <MenuItem
-                icon={<FaUserCog size={20} />}
-                // suffix={<Badge variant='success'>New</Badge>}
-              >
-                Profile
-              </MenuItem>
+              {sidebarMenu.map((item) => (
+                <MenuItem
+                  key={`sbmn-${item.title}`}
+                  active={pathname === item.route}
+                  className={clsx(
+                    '!text-sm',
+                    pathname === item.route
+                      ? 'bg-emerald-50 text-primary [&_svg]:fill-primary font-semibold border border-primary border-r-0'
+                      : '!text-dark-main !font-light',
+                  )}
+                  icon={item.icon}
+                >
+                  {item.title}
+                </MenuItem>
+              ))}
             </Menu>
           </div>
-          {/* <SidebarFooter collapsed={collapsed} /> */}
         </div>
       </ProSidebar>
     </div>

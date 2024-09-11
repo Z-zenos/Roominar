@@ -27,6 +27,7 @@ import type { UpdateMyProfileFormSchema } from '@/src/schemas/audience/UpdateMyP
 import updateMyProfileFormSchema from '@/src/schemas/audience/UpdateMyProfileFormSchema';
 import { useUpdateMyProfileMutation } from '@/src/api/user.api';
 import toast from 'react-hot-toast';
+import { styles } from '@/src/constant/styles.constant';
 
 export default function UpdateMyProfileForm() {
   useState<boolean>(false);
@@ -85,44 +86,32 @@ export default function UpdateMyProfileForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleUpdateMyProfile)}
-        className={clsx('mx-auto')}
+        className='lg:w-[800px] w-full mx-auto'
       >
-        <div className='w-full'>
+        <div
+          className={clsx(styles.between, 'py-5 border-b border-b-slate-300')}
+        >
+          <div>
+            <h3 className='text-xm font-semibold mb-1'>Profile</h3>
+            <p className='opacity-50 font-light text-sm'>
+              View and update your profile details
+            </p>
+          </div>
+          <Button
+            title='Save changes'
+            type='submit'
+            className='w-40'
+            disabled={!form.formState.isValid}
+            isLoading={isUpdating}
+          />
+        </div>
+        <div className='w-full mt-10'>
           <div
             className={clsx(
               'grid gap-8 items-center',
               width < 1000 ? 'grid-cols-1' : 'grid-cols-2',
             )}
           >
-            {/* <div>
-                <FormCustomLabel
-                  htmlFor='email'
-                  title='Your email'
-                  required
-                />
-                <FormInput
-                  id='email'
-                  name='email'
-                  type='email'
-                  rightIcon={
-                    <HiMail
-                      size={20}
-                      className='text-primary'
-                    />
-                  }
-                  placeholder='registermail@gmail.com'
-                  control={form.control}
-                  isDisplayError={true}
-                  className={clsx(
-                    form.formState.errors.email &&
-                      form.formState.touchedFields.email &&
-                      'border-error-main',
-                    status === 'authenticated' && 'bg-slate-100 text-gray-500',
-                  )}
-
-                />
-              </div> */}
-            {width < 600 ? <></> : <>&nbsp;</>}
             <div className='self-start'>
               <FormCustomLabel
                 htmlFor='firstName'
@@ -261,14 +250,6 @@ export default function UpdateMyProfileForm() {
             </div>
           </div>
         </div>
-
-        <Button
-          title='Update'
-          type='submit'
-          className='w-80 mt-5 mx-auto'
-          disabled={!form.formState.isValid}
-          isLoading={isUpdating}
-        />
       </form>
     </Form>
   );
