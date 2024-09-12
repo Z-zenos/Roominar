@@ -1,4 +1,4 @@
-import NextImage from 'next/image';
+'use client';
 
 import { ProgressCard } from './ProgressCard';
 import { Dropzone } from './Dropzone';
@@ -10,6 +10,7 @@ import { useUpload } from '@/src/hook/useUploadImage';
 import { RiDragMove2Fill } from 'react-icons/ri';
 import { TbHandClick } from 'react-icons/tb';
 import { styles } from '@/src/constant/styles.constant';
+import { Avatar } from '@nextui-org/react';
 
 export interface ImageUploaderProps extends HTMLAttributes<HTMLDivElement> {
   maxFiles?: number;
@@ -42,15 +43,13 @@ const ImageUploader = ({
         >
           <div className='relative w-full h-full flex gap-6 py-3 px-1 justify-start items-center'>
             {u.image ? (
-              <div className='relative h-full w-full'>
-                <NextImage
-                  src={u.image.secure_url}
-                  fill
-                  alt='avatar thumnail url image'
-                  priority
-                  className='object-cover aspect-video rounded-md'
-                />
-              </div>
+              <Avatar
+                isBordered
+                className='transition-transform w-[100px] h-[100px]'
+                color='primary'
+                name={name}
+                src={u?.image?.secure_url}
+              />
             ) : (
               <Dropzone
                 isActive={u.isDragActive}

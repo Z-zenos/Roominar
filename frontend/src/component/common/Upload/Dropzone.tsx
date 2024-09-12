@@ -1,3 +1,5 @@
+'use client';
+
 import c from 'clsx';
 import PhotoIcon from '@/public/icons/photos.svg';
 

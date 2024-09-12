@@ -7,7 +7,6 @@ import {
   Form,
   FormCombobox,
   FormCustomLabel,
-  FormImageUploader,
   FormInput,
   FormTagsInput,
 } from '@/src/component/form/Form';
@@ -31,6 +30,7 @@ import { useUpdateMyProfileMutation } from '@/src/api/user.api';
 import toast from 'react-hot-toast';
 import { styles } from '@/src/constant/styles.constant';
 import { useListingTagsQuery } from '@/src/api/tag.api';
+import ImageUploader from '../common/Upload/ImageUploader';
 
 export default function UpdateMyProfileForm() {
   useState<boolean>(false);
@@ -67,18 +67,19 @@ export default function UpdateMyProfileForm() {
   });
 
   function handleUpdateMyProfile(data: UpdateMyProfileFormSchema) {
-    trigger({
-      updateUserRequest: {
-        firstName: data.firstName,
-        lastName: data.lastName,
-        address: data.address,
-        // avatarUrl: data.avatarUrl,
-        workplaceName: data.workplaceName,
-        phone: data.phoneNumber,
-        industryCode: data.industryCode,
-        jobTypeCode: data.jobTypeCode,
-      },
-    });
+    // trigger({
+    //   updateUserRequest: {
+    //     firstName: data.firstName,
+    //     lastName: data.lastName,
+    //     address: data.address,
+    //     tags: data.tags,
+    //     // avatarUrl: data.avatarUrl,
+    //     workplaceName: data.workplaceName,
+    //     phone: data.phoneNumber,
+    //     industryCode: data.industryCode,
+    //     jobTypeCode: data.jobTypeCode,
+    //   },
+    // });
 
     console.log(data);
   }
@@ -210,9 +211,9 @@ export default function UpdateMyProfileForm() {
                 htmlFor='avatarUrl'
                 title='Avatar'
               />
-              <FormImageUploader
-                control={form.control}
+              <ImageUploader
                 name='avatarUrl'
+                onGetImageUrl={(url) => form.setValue('avatarUrl', url)}
               />
             </div>
             &nbsp;
