@@ -24,14 +24,14 @@ const ImageUploader = ({
   maxSize = 5120000,
   className,
   name,
-  formats = ['png', 'jpeg', 'jpg'],
+  formats = ['.png', '.jpeg', '.jpg'],
   onGetImageUrl,
 }: ImageUploaderProps) => {
   const u = useUpload(formats, maxFiles, maxSize);
 
   useEffect(() => {
     if (u.image) onGetImageUrl && onGetImageUrl(u.image.secure_url);
-  }, [u.image]);
+  }, [u.image, onGetImageUrl]);
 
   return (
     <div>
@@ -40,7 +40,7 @@ const ImageUploader = ({
           {...u.getRootProps({ className: 'dropzone' })}
           className={clsx('bg-white rounded-xl mx-auto', className)}
         >
-          <div className='relative w-full h-full flex gap-6  pb-3 justify-start items-center'>
+          <div className='relative w-full h-full flex gap-6 py-3 px-1 justify-start items-center'>
             {u.image ? (
               <div className='relative h-full w-full'>
                 <NextImage

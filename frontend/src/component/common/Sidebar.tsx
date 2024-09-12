@@ -132,7 +132,7 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <div className='flex h-screen border-r border-r-slate-100'>
+    <div className='flex  border-r border-r-gray-300 '>
       <ProSidebar
         collapsed={false}
         toggled={toggled}

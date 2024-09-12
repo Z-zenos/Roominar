@@ -6,7 +6,14 @@ import { Check, ChevronsUpDown } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from './Popover';
 import { cn } from '@/src/util/app.util';
 import { Button } from './Button/ShardButton';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './Command';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from './Command';
 import type { SelectItem } from '@/src/type/SelectItem';
 
 export interface ComboboxProps {
@@ -19,10 +26,20 @@ export function Combobox({ data, title }: ComboboxProps) {
   const [value, setValue] = React.useState('');
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover
+      open={open}
+      onOpenChange={setOpen}
+    >
       <PopoverTrigger asChild>
-        <Button variant='outline' role='combobox' aria-expanded={open} className='w-[200px] justify-between'>
-          {value ? data.find((item) => item.value === value)?.label : `Select ${title}...`}
+        <Button
+          variant='outline'
+          role='combobox'
+          aria-expanded={open}
+          className='w-[200px] justify-between'
+        >
+          {value
+            ? data.find((item) => item.value === value)?.label
+            : `Select ${title}...`}
           <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
         </Button>
       </PopoverTrigger>
@@ -41,7 +58,12 @@ export function Combobox({ data, title }: ComboboxProps) {
                     setOpen(false);
                   }}
                 >
-                  <Check className={cn('mr-2 h-4 w-4', value === item.value ? 'opacity-100' : 'opacity-0')} />
+                  <Check
+                    className={cn(
+                      'mr-2 h-4 w-4',
+                      value === item.value ? 'opacity-100' : 'opacity-0',
+                    )}
+                  />
                   {item.label}
                 </CommandItem>
               ))}

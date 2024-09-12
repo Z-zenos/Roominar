@@ -1,23 +1,23 @@
 import type { FC } from 'react';
 
 type ProgressCardProps = {
-	progressStatus: number;
+  progressStatus: number;
 };
 
 export const ProgressCard: FC<ProgressCardProps> = ({ progressStatus }) => {
-	const width = progressStatus.toString().concat('%');
+  const width = progressStatus.toString().concat('%');
 
-	return (
-		<div className="w-full h-[144px] px-8 flex flex-col gap-8 justify-center items-center bg-white rounded-xl shadow-lg shadow-gray-200/80">
-			<h2 className="w-full capitalize text-xl text-left text-gray-600 font-semibold">
-				Uploading...
-			</h2>
-			<div className="relative w-full h-2 bg-red-50 rounded">
-				<div
-					className="absolute inset-y-0 h-full bg-blue-500 transition-[width] rounded"
-					style={{ width }}
-				/>
-			</div>
-		</div>
-	);
+  return (
+    <div className='w-[100px] min-w-[100px] h-[100px] px-8 flex flex-col gap-8 justify-center items-center bg-white rounded-xl shadow-lg shadow-gray-200/80'>
+      <h2 className='w-full capitalize text-xl text-left text-gray-600 font-semibold'>
+        Uploading...
+      </h2>
+      <div className='relative w-full h-2 bg-red-50 rounded'>
+        <div
+          className='absolute inset-y-0 h-full bg-blue-500 transition-[width] rounded'
+          style={{ width }}
+        />
+      </div>
+    </div>
+  );
 };

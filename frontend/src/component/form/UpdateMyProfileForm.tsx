@@ -9,6 +9,7 @@ import {
   FormCustomLabel,
   FormImageUploader,
   FormInput,
+  FormTagsInput,
 } from '@/src/component/form/Form';
 import Button from '@/src/component/common/Button/Button';
 import { parseCode } from '@/src/util/app.util';
@@ -29,11 +30,13 @@ import updateMyProfileFormSchema from '@/src/schemas/audience/UpdateMyProfileFor
 import { useUpdateMyProfileMutation } from '@/src/api/user.api';
 import toast from 'react-hot-toast';
 import { styles } from '@/src/constant/styles.constant';
+import { useListingTagsQuery } from '@/src/api/tag.api';
 
 export default function UpdateMyProfileForm() {
   useState<boolean>(false);
   const { data: auth, status } = useSession();
   const { width } = useWindowDimensions();
+  const { data: tagData } = useListingTagsQuery();
 
   const form = useForm<UpdateMyProfileFormSchema>({
     mode: 'all',
@@ -44,13 +47,14 @@ export default function UpdateMyProfileForm() {
       phoneNumber: auth?.user?.phone || '',
       industryCode: (auth?.user?.industryCode as IndustryCode) || undefined,
       jobTypeCode: (auth?.user?.jobTypeCode as JobTypeCode) || undefined,
+      tags: auth?.user?.tags.map((tag) => tag.id) || undefined,
     },
     resolver: zodResolver(updateMyProfileFormSchema),
   });
 
   const { trigger, isMutating: isUpdating } = useUpdateMyProfileMutation({
     onSuccess() {
-      toast.success('Apply event successfully!');
+      toast.success('Update profile successfully!');
       form.reset();
     },
     onError(error: ApiException<unknown>) {
@@ -253,6 +257,18 @@ export default function UpdateMyProfileForm() {
                   status === 'authenticated' &&
                     'bg-slate-100 text-gray-500 pointer-events-none',
                 )}
+              />
+            </div>
+            <div className='col-span-2'>
+              <FormCustomLabel
+                htmlFor='tags'
+                title='Tags'
+              />
+              <FormTagsInput
+                title='tags'
+                name='tags'
+                control={form.control}
+                data={tagData}
               />
             </div>
           </div>

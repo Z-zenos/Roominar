@@ -52,7 +52,7 @@ export const uploadFile = async ({
 };
 
 export const useUpload = (
-  formats: string[] = ['png', 'jpg', 'jpeg'],
+  formats: string[] = ['.png', '.jpg', '.jpeg'],
   maxFiles: number = 1,
   maxSize: number = 5120000,
 ) => {
@@ -127,7 +127,7 @@ export const useUpload = (
           });
         });
     }
-  }, [fileRejections]);
+  }, [fileRejections, formats, maxSize]);
 
   useEffect(() => {
     (async () => {
