@@ -9,7 +9,9 @@ import { useUpload } from '@/src/hook/useUploadImage';
 import { RiDragMove2Fill } from 'react-icons/ri';
 import { TbHandClick } from 'react-icons/tb';
 import { styles } from '@/src/constant/styles.constant';
-import { Avatar, CircularProgress } from '@nextui-org/react';
+import { Avatar, Button, CircularProgress } from '@nextui-org/react';
+import { Label } from '../Label';
+import { GoTrash } from 'react-icons/go';
 
 export interface ImageUploaderProps extends HTMLAttributes<HTMLDivElement> {
   maxFiles?: number;
@@ -45,7 +47,7 @@ const ImageUploader = ({
             src={u?.image?.secure_url}
           />
         )}
-        {!u.isFetching ? (
+        {!u.isFetching && !u.image && (
           <div {...u.getRootProps({ className: 'dropzone' })}>
             <Dropzone
               isActive={u.isDragActive}
@@ -54,7 +56,8 @@ const ImageUploader = ({
               onClick={() => u.inputRef.current?.click()}
             />
           </div>
-        ) : (
+        )}
+        {u.isFetching && (
           <CircularProgress
             aria-label='Loading...'
             size='lg'
@@ -86,6 +89,29 @@ const ImageUploader = ({
               Click to Upload
             </span>
           </p>
+          <div className={clsx(styles.flexStart, 'gap-2 mt-2')}>
+            <Button
+              className={clsx(
+                'font-light border border-gray-600 text-gray-600',
+              )}
+              variant='bordered'
+              type='submit'
+              color='primary'
+              radius='sm'
+              size='sm'
+              as={Label}
+              htmlFor={name}
+            >
+              Change
+            </Button>
+            <Button
+              className={clsx('font-light border text-red-500 border-red-500 ')}
+              variant='bordered'
+              isIconOnly
+              size='sm'
+              startContent={<GoTrash size={16} />}
+            />
+          </div>
         </div>
 
         <input

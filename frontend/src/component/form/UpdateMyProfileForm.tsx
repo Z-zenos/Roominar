@@ -67,21 +67,19 @@ export default function UpdateMyProfileForm() {
   });
 
   function handleUpdateMyProfile(data: UpdateMyProfileFormSchema) {
-    // trigger({
-    //   updateUserRequest: {
-    //     firstName: data.firstName,
-    //     lastName: data.lastName,
-    //     address: data.address,
-    //     tags: data.tags,
-    //     // avatarUrl: data.avatarUrl,
-    //     workplaceName: data.workplaceName,
-    //     phone: data.phoneNumber,
-    //     industryCode: data.industryCode,
-    //     jobTypeCode: data.jobTypeCode,
-    //   },
-    // });
-
-    console.log(data);
+    trigger({
+      updateUserRequest: {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        address: data.address,
+        tags: data.tags,
+        // avatarUrl: data.avatarUrl,
+        workplaceName: data.workplaceName,
+        phone: data.phoneNumber,
+        industryCode: data.industryCode,
+        jobTypeCode: data.jobTypeCode,
+      },
+    });
   }
 
   return (
