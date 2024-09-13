@@ -24,7 +24,7 @@ export const Dropzone: FC<DropzoneProps> = ({
       htmlFor={htmlFor}
       onClick={onClick}
       className={c(
-        'w-[100px] min-w-[100px] group relative transition-all border-2 border-dashed rounded-full overflow-hidden p-8 cursor-pointer',
+        'block w-[100px] min-w-[100px] group relative transition-all border-2 border-dashed rounded-full overflow-hidden p-8 cursor-pointer',
         isActive
           ? 'border-pink-300 bg-pink-50'
           : 'border-gray-600 bg-slate-50 hover:border-blue-main',

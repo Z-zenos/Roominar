@@ -211,6 +211,7 @@ export default function UpdateMyProfileForm() {
                 htmlFor='avatarUrl'
                 title='Avatar'
               />
+
               <ImageUploader
                 name='avatarUrl'
                 onGetImageUrl={(url) => form.setValue('avatarUrl', url)}

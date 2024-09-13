@@ -95,7 +95,7 @@ export const useUpload = (
     const formData = new FormData();
     const file = files?.[0];
 
-    if (!formats.includes(file?.type)) return;
+    if (!formats.map((f) => f.split('.')[1]).includes(file?.type)) return;
 
     formData.append('file', file);
     formData.append(
