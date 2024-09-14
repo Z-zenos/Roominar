@@ -25,12 +25,30 @@ import { RoleCode } from '@/src/constant/role_code.constant';
 import useWindowDimensions from '@/src/hook/useWindowDimension';
 
 const menuItems = [
-  'My Profile',
-  'My Events',
-  'Host Event',
-  'Account Settings',
-  'Help Center',
-  'Log Out',
+  {
+    title: 'My Profile',
+    url: '/my-profile',
+  },
+  {
+    title: 'My Events',
+    url: '/my-events',
+  },
+  {
+    title: 'Host Event',
+    url: '/organization/login',
+  },
+  {
+    title: 'Account Settings',
+    url: '/account-settings',
+  },
+  {
+    title: 'Help Center',
+    url: '/help-center',
+  },
+  {
+    title: 'Log out',
+    url: '#',
+  },
 ];
 
 const navbarItems = [
@@ -161,7 +179,13 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
                   <p className='font-semibold'>Signed in as</p>
                   <p className='font-semibold'>{auth.user?.email}</p>
                 </DropdownItem>
-                <DropdownItem key='my_profile'>My Profile</DropdownItem>
+
+                <DropdownItem
+                  key='my_profile'
+                  href='/my-profile'
+                >
+                  My Profile
+                </DropdownItem>
                 <DropdownItem key='my_events'>My Events</DropdownItem>
                 <DropdownItem key='host_my_event'>Host Event</DropdownItem>
                 <DropdownItem key='account_settings'>
@@ -214,10 +238,10 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
                     ? 'danger'
                     : 'foreground'
               }
-              href='#'
+              href={item.url}
               size='lg'
             >
-              {item}
+              {item.title}
             </Link>
           </NavbarMenuItem>
         ))}

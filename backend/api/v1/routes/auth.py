@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends
 from sqlmodel import Session
 
 import backend.api.v1.services.auth as auth_service
+import backend.api.v1.services.tags as tags_service
 import backend.api.v1.services.users as users_service
 from backend.api.v1.dependencies.authentication import get_user_if_logged_in
 from backend.core.config import settings
@@ -117,7 +118,7 @@ async def me(
             industry_code=current_user.industry_code,
             job_type_code=current_user.job_type_code,
             avatar_url=current_user.avatar_url,
-            tags=users_service.get_user_tags(db, current_user.id),
+            tags=tags_service.get_user_tags(db, current_user.id),
         )
     )
 

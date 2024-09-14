@@ -8,6 +8,7 @@ declare module 'next-auth' {
 
   interface User extends TokenResponse {
     id?: string;
+    role?: string;
   }
 }
 
@@ -18,5 +19,6 @@ declare module 'next-auth/adapters' {
 declare module 'next-auth/jwt' {
   interface JWT extends TokenResponse {
     user: GetMeResponse;
+    role: string;
   }
 }

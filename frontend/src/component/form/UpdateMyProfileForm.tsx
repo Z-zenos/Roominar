@@ -48,6 +48,8 @@ export default function UpdateMyProfileForm() {
       industryCode: (auth?.user?.industryCode as IndustryCode) || undefined,
       jobTypeCode: (auth?.user?.jobTypeCode as JobTypeCode) || undefined,
       tags: auth?.user?.tags.map((tag) => tag.id) || undefined,
+      avatarUrl: auth?.user?.avatarUrl || '',
+      address: auth?.user?.address || '',
     },
     resolver: zodResolver(updateMyProfileFormSchema),
   });
@@ -73,7 +75,7 @@ export default function UpdateMyProfileForm() {
         lastName: data.lastName,
         address: data.address,
         tags: data.tags,
-        // avatarUrl: data.avatarUrl,
+        avatarUrl: data.avatarUrl,
         workplaceName: data.workplaceName,
         phone: data.phoneNumber,
         industryCode: data.industryCode,

@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Body, Depends
 from sqlmodel import Session
 
+import backend.api.v1.services.tags as tags_service
 import backend.api.v1.services.users as users_service
 from backend.api.v1.dependencies.authentication import authorize_role
 from backend.core.constants import RoleCode
@@ -36,5 +37,5 @@ async def update_audience(
         industry_code=updated_user.industry_code,
         job_type_code=updated_user.job_type_code,
         avatar_url=updated_user.avatar_url,
-        tags=users_service.get_user_tags(db, current_user.id),
+        tags=tags_service.get_user_tags(db, current_user.id),
     )
