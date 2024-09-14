@@ -1,4 +1,5 @@
 export const RoleCode = {
+  GUEST: 'GUEST',
   AUDIENCE: 'AUDIENCE',
   ORGANIZER: 'ORGANIZER',
   SPEAKER: 'SPEAKER',

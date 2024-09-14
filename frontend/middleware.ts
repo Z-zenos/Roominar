@@ -1,8 +1,9 @@
 import type { NextRequestWithAuth } from 'next-auth/middleware';
 import { withAuth } from 'next-auth/middleware';
-import type { NextFetchEvent, NextRequest } from 'next/server';
+import type { NextFetchEvent } from 'next/server';
 import { NextResponse } from 'next/server';
-import { initialScreen } from './src/constant/app.constant';
+import { getToken } from 'next-auth/jwt';
+import { RoleCode } from './src/constant/role_code.constant';
 // import { getToken } from 'next-auth/jwt';
 
 export const pathPermissionMaster = {
@@ -12,7 +13,7 @@ export const pathPermissionMaster = {
     // '/register/success',
     // '/forget-password',
     // '/reset-password',
-    // '/mypage',
+    '/my-profile',
     // '/applied-upcoming',
     // '/applied-ended',
     // '/bookmark',
@@ -59,6 +60,7 @@ export const pathPermissionMaster = {
     '/events/[slug]',
     // '/events/[slug]/apply',
     // '/change-email/[token]',
+    '/not-found',
   ],
 };
 
@@ -73,16 +75,16 @@ const nextResponseRedirectUrl = (
     ) ||
     pathName === '/'
   ) {
-    return NextResponse.redirect(new URL(initialScreen?.[roleCode], url));
+    return NextResponse.redirect(new URL('/not-found', url));
   }
 };
 
 const nextAuthMiddleware = withAuth(
   async function middleware(req) {
     const { pathname: pathName, href: url } = req.nextUrl;
-    const { token } = req.nextauth;
+    const token = await getToken({ req: req });
     if (token) {
-      return nextResponseRedirectUrl(token.user.roleCode, pathName, url);
+      return nextResponseRedirectUrl(token.role, pathName, url);
     }
   },
   // {
@@ -93,15 +95,11 @@ const nextAuthMiddleware = withAuth(
 );
 
 export default async function middleware(
-  request: NextRequest & NextRequestWithAuth,
+  request: NextRequestWithAuth,
   event: NextFetchEvent,
 ) {
-  // Return role in token for check path master
-  // const token = await getToken({ req: request });
-  // const isAuthenticated = !!token;
-  // console.log(token);
-  // https://stackoverflow.com/questions/76175812/prevent-authenticated-users-to-access-custom-sign-in-page-with-next-auth-middlew
-
+  const token = await getToken({ req: request });
+  const isAuthenticated = !!token;
   if (
     request.nextUrl.pathname === '/healthcheck' ||
     request.nextUrl.pathname.startsWith('/_next/') ||
@@ -109,7 +107,8 @@ export default async function middleware(
   ) {
     return NextResponse.next();
   }
-  if ('nextauth' in request) {
+
+  if (isAuthenticated) {
     const resp = await nextAuthMiddleware(
       request as NextRequestWithAuth,
       event,
@@ -122,6 +121,13 @@ export default async function middleware(
     }
 
     return resp;
+  } else {
+    const role = token?.role ?? RoleCode.GUEST;
+    return nextResponseRedirectUrl(
+      role,
+      request.nextUrl.pathname,
+      request.nextUrl.href,
+    );
   }
 }
 

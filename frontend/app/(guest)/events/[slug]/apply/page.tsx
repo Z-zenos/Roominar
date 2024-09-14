@@ -1,5 +1,5 @@
 import Head from '@/src/component/common/Head';
-import EventApplicationForm from '@/src/view/event/EventApplicationForm';
+import EventApplicationForm from '@/src/component/form/EventApplicationForm';
 
 async function Page({ params: { slug } }: { params: { slug: string } }) {
   return (

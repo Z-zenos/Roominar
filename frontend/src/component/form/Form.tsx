@@ -67,6 +67,8 @@ import {
 } from '@nextui-org/react';
 import { Button as UIButton } from '@nextui-org/button';
 import { RadioGroup, RadioGroupItem } from '../common/RadioGroup';
+import type { ImageUploaderProps } from '../common/Upload/ImageUploader';
+import ImageUploader from '../common/Upload/ImageUploader';
 
 const Form = FormProvider;
 
@@ -396,9 +398,12 @@ const FormCombobox = ({
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem className='flex flex-col'>
+        <FormItem className='flex flex-col shadow-[2px_2px_10px_rgba(0,_0,_0,_0.075)] bg-white '>
           <Popover>
-            <PopoverTrigger asChild>
+            <PopoverTrigger
+              asChild
+              className='border border-gray-main rounded-md h-11'
+            >
               <FormControl>
                 <Button
                   variant='outline'
@@ -514,7 +519,7 @@ const FormTagsInput = ({
 }: FormTagsInputProps) => {
   const tags = useMemo(
     () =>
-      data && data.data.length
+      data && data.data?.length
         ? (data.data.flatMap((group: TagGroup) =>
             group.tags
               .map((tag: TagItem) => ({
@@ -549,9 +554,10 @@ const FormTagsInput = ({
       name={name}
       render={({ field }) => (
         <FormItem className='flex flex-col'>
-          <div className='border border-gray-300 rounded-sm'>
+          <div className='border border-gray-300 rounded-sm bg-white'>
             <div className={clsx('max-h-[100px] overflow-y-scroll p-1')}>
-              {field.value.length > 0 &&
+              {field.value &&
+                field.value?.length > 0 &&
                 field.value.map((id: string) => (
                   <li
                     key={`selected-tag-${id}`}
@@ -580,7 +586,10 @@ const FormTagsInput = ({
             </div>
 
             <Popover>
-              <PopoverTrigger asChild>
+              <PopoverTrigger
+                asChild
+                className='bg-white'
+              >
                 <FormControl>
                   <Button
                     variant='outline'
@@ -634,7 +643,7 @@ const FormTagsInput = ({
             </Popover>
 
             <button
-              className='w-full px-3 py-2 transition-all hover:bg-green-sub border-t border-t-green-sub hover:text-green-main'
+              className='w-full px-3 py-2 transition-all text-dark-main font-light hover:bg-green-sub border-t border-t-green-sub hover:text-green-main'
               onClick={onOpen}
             >
               More tags +
@@ -1004,42 +1013,42 @@ const FormSelect = ({
 
 FormSelect.displayName = 'FormSelect';
 
-// interface FormImageUploaderProps extends ImageUploaderProps {
-// 	name: string;
-// 	control: Control<any>;
-// 	isDisplayError?: boolean;
-// }
+interface FormImageUploaderProps extends ImageUploaderProps {
+  name: string;
+  control: Control<any>;
+  isDisplayError?: boolean;
+}
 
-// const FormImageUploader = ({
-// 	name,
-// 	control,
-// 	isDisplayError,
-// 	className,
-// 	formats,
-// 	onGetImageUrl,
-// }: FormImageUploaderProps) => {
-// 	return (
-// 		<FormField
-// 			control={control}
-// 			name={name}
-// 			render={({ field }) => (
-// 				<FormItem>
-// 					<FormControl>
-// 						<ImageUploader
-// 							className={className}
-// 							formats={formats}
-// 							onGetImageUrl={onGetImageUrl}
-// 							{...field}
-// 						/>
-// 					</FormControl>
-// 					{isDisplayError && <FormMessage />}
-// 				</FormItem>
-// 			)}
-// 		/>
-// 	);
-// };
+const FormImageUploader = ({
+  name,
+  control,
+  isDisplayError,
+  className,
+  formats,
+  onGetImageUrl,
+}: FormImageUploaderProps) => {
+  return (
+    <FormField
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <FormItem>
+          <FormControl>
+            <ImageUploader
+              className={className}
+              formats={formats}
+              onGetImageUrl={onGetImageUrl}
+              {...field}
+            />
+          </FormControl>
+          {isDisplayError && <FormMessage />}
+        </FormItem>
+      )}
+    />
+  );
+};
 
-// FormImageUploader.displayName = 'FormImageUploader';
+FormImageUploader.displayName = 'FormImageUploader';
 
 export {
   useFormField,
@@ -1057,7 +1066,7 @@ export {
   FormDateRangePicker,
   // FormTextarea,
   FormSelect,
-  // FormImageUploader,
+  FormImageUploader,
   FormCombobox,
   FormTagsInput,
   FormRadioBoxList,

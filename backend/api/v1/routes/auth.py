@@ -1,11 +1,11 @@
 from datetime import datetime, timedelta
 from http import HTTPStatus
-from typing import Annotated
 
 from fastapi import APIRouter, Depends
 from sqlmodel import Session
 
 import backend.api.v1.services.auth as auth_service
+import backend.api.v1.services.tags as tags_service
 import backend.api.v1.services.users as users_service
 from backend.api.v1.dependencies.authentication import get_user_if_logged_in
 from backend.core.config import settings
@@ -98,7 +98,8 @@ async def social_auth(
 
 @router.get("/me", response_model=GetMeResponse, responses=authenticated_api_responses)
 async def me(
-    current_user: Annotated[User | None, Depends(get_user_if_logged_in)],
+    db: Session = Depends(get_read_db),
+    current_user: User | None = Depends(get_user_if_logged_in),
 ):
     return (
         GetMeResponse()
@@ -117,7 +118,7 @@ async def me(
             industry_code=current_user.industry_code,
             job_type_code=current_user.job_type_code,
             avatar_url=current_user.avatar_url,
-            # tags=user_service.get_user_tags(db, current_user),
+            tags=tags_service.get_user_tags(db, current_user.id),
         )
     )
 

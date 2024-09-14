@@ -25,12 +25,30 @@ import { RoleCode } from '@/src/constant/role_code.constant';
 import useWindowDimensions from '@/src/hook/useWindowDimension';
 
 const menuItems = [
-  'My Profile',
-  'My Events',
-  'Host Event',
-  'Account Settings',
-  'Help Center',
-  'Log Out',
+  {
+    title: 'My Profile',
+    url: '/my-profile',
+  },
+  {
+    title: 'My Events',
+    url: '/my-events',
+  },
+  {
+    title: 'Host Event',
+    url: '/organization/login',
+  },
+  {
+    title: 'Account Settings',
+    url: '/account-settings',
+  },
+  {
+    title: 'Help Center',
+    url: '/help-center',
+  },
+  {
+    title: 'Log out',
+    url: '#',
+  },
 ];
 
 const navbarItems = [
@@ -48,7 +66,12 @@ const navbarItems = [
   },
 ];
 
-export default function Navbar() {
+interface NavbarProps {
+  className?: string;
+  hasLogo?: boolean;
+}
+
+export default function Navbar({ className, hasLogo = true }: NavbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const { data: auth, status } = useSession();
   const router = useRouter();
@@ -78,7 +101,7 @@ export default function Navbar() {
     <UINavbar
       isBordered
       classNames={{
-        wrapper: ['max-w-none px-[15%]'],
+        wrapper: ['max-w-none px-[15%]', className],
         item: [
           'flex',
           'relative',
@@ -101,9 +124,11 @@ export default function Navbar() {
           aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
           className='sm:hidden'
         />
-        <NavbarBrand>
-          <Logo className='scale-120' />
-        </NavbarBrand>
+        {hasLogo && (
+          <NavbarBrand>
+            <Logo className='scale-120' />
+          </NavbarBrand>
+        )}
       </NavbarContent>
 
       <NavbarContent
@@ -154,7 +179,13 @@ export default function Navbar() {
                   <p className='font-semibold'>Signed in as</p>
                   <p className='font-semibold'>{auth.user?.email}</p>
                 </DropdownItem>
-                <DropdownItem key='my_profile'>My Profile</DropdownItem>
+
+                <DropdownItem
+                  key='my_profile'
+                  href='/my-profile'
+                >
+                  My Profile
+                </DropdownItem>
                 <DropdownItem key='my_events'>My Events</DropdownItem>
                 <DropdownItem key='host_my_event'>Host Event</DropdownItem>
                 <DropdownItem key='account_settings'>
@@ -207,10 +238,10 @@ export default function Navbar() {
                     ? 'danger'
                     : 'foreground'
               }
-              href='#'
+              href={item.url}
               size='lg'
             >
-              {item}
+              {item.title}
             </Link>
           </NavbarMenuItem>
         ))}

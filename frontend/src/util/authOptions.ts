@@ -6,13 +6,14 @@ import {
 import { getRouter } from '@/src/util/app.util';
 import { getCookie } from 'cookies-next';
 import dayjs from 'dayjs';
-import type { AuthOptions } from 'next-auth';
+import type { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { cookies } from 'next/headers';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import type { GoogleProfile } from 'next-auth/providers/google';
 import GoogleProvider from 'next-auth/providers/google';
+import { RoleCode } from '../constant/role_code.constant';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -33,7 +34,7 @@ function makeAuthApi(accessToken?: string) {
   );
 }
 
-const authOptions: AuthOptions = {
+const authOptions: NextAuthOptions = {
   session: { strategy: 'jwt' },
   providers: [
     CredentialsProvider({
@@ -42,7 +43,7 @@ const authOptions: AuthOptions = {
       credentials: {
         email: {
           label: 'email',
-          type: 'text',
+          type: 'email',
         },
         password: {
           label: 'password',
@@ -102,6 +103,8 @@ const authOptions: AuthOptions = {
           },
         });
 
+        token.role = RoleCode.AUDIENCE;
+
         return { ...token, ...user, ...response };
       }
 
@@ -114,6 +117,7 @@ const authOptions: AuthOptions = {
       };
 
       const rememberMe = getCookie('rememberMe', { cookies }) === 'true';
+      token.role = user?.role || RoleCode.AUDIENCE;
       if (token.accessToken && compareTime(token.expireAt)) {
         if (!rememberMe) return { ...token, ...user };
 
@@ -121,18 +125,19 @@ const authOptions: AuthOptions = {
         const response = await makeAuthApi().refreshToken({
           token: refreshToken,
         });
+
         return { ...token, ...user, ...response };
       }
 
       if (trigger === 'update' && session?.token) {
         token = session.token;
       }
-
       return {
         ...token,
         ...user,
       };
     },
+    // Access user and role in client component
     session: async ({ session, token }) => {
       const user = await makeAuthApi(token.accessToken).me();
       session.user = JSON.parse(JSON.stringify(user));

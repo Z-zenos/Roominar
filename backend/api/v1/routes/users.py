@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Body, Depends
 from sqlmodel import Session
 
+import backend.api.v1.services.tags as tags_service
 import backend.api.v1.services.users as users_service
 from backend.api.v1.dependencies.authentication import authorize_role
 from backend.core.constants import RoleCode
@@ -14,12 +15,27 @@ router = APIRouter()
 
 
 @router.patch(
-    "/{user_id}", response_model=GetMeResponse, responses=authenticated_api_responses
+    "/profile", response_model=GetMeResponse, responses=authenticated_api_responses
 )
-def update_audience(
+async def update_audience(
     db: Session = Depends(get_read_db),
     current_user: User = Depends(authorize_role(RoleCode.AUDIENCE)),
     request: UpdateUserRequest = Body(...),
-    user_id: int = None,
 ):
-    return users_service.update_audience(db, current_user, request, user_id)
+    updated_user = await users_service.update_audience(db, current_user, request)
+    return GetMeResponse(
+        id=updated_user.id,
+        organization_id=updated_user.organization_id,
+        role_code=updated_user.role_code,
+        email=updated_user.email,
+        first_name=updated_user.first_name,
+        last_name=updated_user.last_name,
+        workplace_name=updated_user.workplace_name,
+        phone=updated_user.phone,
+        city_code=updated_user.city_code,
+        address=updated_user.address,
+        industry_code=updated_user.industry_code,
+        job_type_code=updated_user.job_type_code,
+        avatar_url=updated_user.avatar_url,
+        tags=tags_service.get_user_tags(db, current_user.id),
+    )
