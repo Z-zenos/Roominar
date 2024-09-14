@@ -19,6 +19,7 @@ export interface ImageUploaderProps extends HTMLAttributes<HTMLDivElement> {
   name?: string;
   formats?: string[];
   onGetImageUrl?(url: string): void;
+  defaultImageUrl?: string;
 }
 
 const ImageUploader = ({
@@ -28,6 +29,7 @@ const ImageUploader = ({
   name,
   formats = ['.png', '.jpeg', '.jpg'],
   onGetImageUrl,
+  defaultImageUrl,
 }: ImageUploaderProps) => {
   const u = useUpload(formats, maxFiles, maxSize);
 
@@ -54,6 +56,7 @@ const ImageUploader = ({
               onInputProps={u.getInputProps}
               htmlFor={name}
               onClick={() => u.inputRef.current?.click()}
+              defaultImageUrl={defaultImageUrl}
             />
           </div>
         )}

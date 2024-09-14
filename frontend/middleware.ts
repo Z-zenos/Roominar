@@ -83,7 +83,6 @@ const nextAuthMiddleware = withAuth(
   async function middleware(req) {
     const { pathname: pathName, href: url } = req.nextUrl;
     const token = await getToken({ req: req });
-    console.dir(token);
     if (token) {
       return nextResponseRedirectUrl(token.role, pathName, url);
     }

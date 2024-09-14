@@ -47,7 +47,7 @@ export default function UpdateMyProfileForm() {
       phoneNumber: auth?.user?.phone || '',
       industryCode: (auth?.user?.industryCode as IndustryCode) || undefined,
       jobTypeCode: (auth?.user?.jobTypeCode as JobTypeCode) || undefined,
-      tags: auth?.user?.tags.map((tag) => tag.id) || undefined,
+      tags: auth?.user?.tags.map((tag) => tag.id + '') || undefined,
       avatarUrl: auth?.user?.avatarUrl || '',
       address: auth?.user?.address || '',
     },
@@ -74,7 +74,7 @@ export default function UpdateMyProfileForm() {
         firstName: data.firstName,
         lastName: data.lastName,
         address: data.address,
-        tags: data.tags,
+        tags: data.tags?.map((id) => +id),
         avatarUrl: data.avatarUrl,
         workplaceName: data.workplaceName,
         phone: data.phoneNumber,
@@ -103,7 +103,7 @@ export default function UpdateMyProfileForm() {
             title='Save changes'
             type='submit'
             className='w-40'
-            disabled={!form.formState.isValid}
+            disabled={!form.formState.isDirty}
             isLoading={isUpdating}
           />
         </div>
@@ -158,7 +158,6 @@ export default function UpdateMyProfileForm() {
               <FormCustomLabel
                 htmlFor='workplaceName'
                 title='Workplace name'
-                required
               />
               <FormInput
                 id='workplaceName'
@@ -184,7 +183,6 @@ export default function UpdateMyProfileForm() {
               <FormCustomLabel
                 htmlFor='phoneNumber'
                 title='Phone number'
-                required
               />
               <FormInput
                 id='phoneNumber'
@@ -215,6 +213,7 @@ export default function UpdateMyProfileForm() {
               <ImageUploader
                 name='avatarUrl'
                 onGetImageUrl={(url) => form.setValue('avatarUrl', url)}
+                defaultImageUrl={auth?.user?.avatarUrl}
               />
             </div>
             &nbsp;
@@ -243,7 +242,6 @@ export default function UpdateMyProfileForm() {
               <FormCustomLabel
                 htmlFor='industryCode'
                 title='Industry'
-                required
               />
               <FormCombobox
                 data={Object.keys(IndustryCode).map((ic: string) => ({

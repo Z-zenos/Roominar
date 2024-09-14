@@ -32,7 +32,7 @@ const updateMyProfileFormSchema = z.object({
   // cityCode: z.nativeEnum(CityCode),
 
   avatarUrl: z.string().nullable(),
-  tags: z.array(z.number()).nullable(),
+  tags: z.array(z.string()).nullable(),
 });
 
 type UpdateMyProfileFormSchema = z.infer<typeof updateMyProfileFormSchema>;
