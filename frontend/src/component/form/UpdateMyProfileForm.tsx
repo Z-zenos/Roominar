@@ -10,7 +10,6 @@ import {
   FormInput,
   FormTagsInput,
 } from '@/src/component/form/Form';
-import Button from '@/src/component/common/Button/Button';
 import { parseCode } from '@/src/util/app.util';
 import type {
   ApiException,
@@ -31,12 +30,15 @@ import toast from 'react-hot-toast';
 import { styles } from '@/src/constant/styles.constant';
 import { useListingTagsQuery } from '@/src/api/tag.api';
 import ImageUploader from '../common/Upload/ImageUploader';
+import { Button } from '@nextui-org/button';
+import { useRouter } from 'next/navigation';
 
 export default function UpdateMyProfileForm() {
   useState<boolean>(false);
   const { data: auth, status } = useSession();
   const { width } = useWindowDimensions();
   const { data: tagData } = useListingTagsQuery();
+  const router = useRouter();
 
   const form = useForm<UpdateMyProfileFormSchema>({
     mode: 'all',
@@ -58,6 +60,7 @@ export default function UpdateMyProfileForm() {
     onSuccess() {
       toast.success('Update profile successfully!');
       form.reset();
+      router.refresh();
     },
     onError(error: ApiException<unknown>) {
       toast.error(
@@ -100,12 +103,13 @@ export default function UpdateMyProfileForm() {
             </p>
           </div>
           <Button
-            title='Save changes'
             type='submit'
-            className='w-40'
-            disabled={!form.formState.isDirty}
+            isDisabled={!form.formState.isDirty}
             isLoading={isUpdating}
-          />
+            color='primary'
+          >
+            Save changes
+          </Button>
         </div>
         <div className='w-full mt-10'>
           <div
