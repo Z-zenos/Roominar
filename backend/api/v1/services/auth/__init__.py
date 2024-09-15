@@ -1,4 +1,5 @@
 from .auth_service import authenticate_user, get_user_by_email
+from .change_password_service import change_password
 from .forgot_password_service import forgot_password
 from .password_service import get_password_hash, verify_password
 from .register_audience_service import register_audience
@@ -28,4 +29,5 @@ all = (
     reset_password,
     register_audience,
     verify_audience,
+    change_password,
 )

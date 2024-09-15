@@ -6,7 +6,10 @@ from sqlmodel import Session
 
 import backend.api.v1.services.auth as auth_service
 import backend.api.v1.services.tags as tags_service
-from backend.api.v1.dependencies.authentication import get_user_if_logged_in
+from backend.api.v1.dependencies.authentication import (
+    get_current_user,
+    get_user_if_logged_in,
+)
 from backend.core.config import settings
 from backend.core.error_code import ErrorCode
 from backend.core.exception import BadRequestException, UnauthorizedException
@@ -14,6 +17,7 @@ from backend.core.response import authenticated_api_responses, public_api_respon
 from backend.db.database import get_read_db
 from backend.models.user import User
 from backend.schemas.auth import (
+    ChangePasswordRequest,
     ForgotPasswordRequest,
     ForgotPasswordResponse,
     GetMeResponse,
@@ -124,8 +128,8 @@ async def me(
 
 @router.get(
     "/refresh-token/{token}",
-    responses=public_api_responses,
     response_model=TokenResponse,
+    responses=public_api_responses,
 )
 async def refresh_token(
     token: str,
@@ -182,3 +186,16 @@ async def reset_password(
     reset_token: str = None,
 ):
     return await auth_service.reset_password(db, request, reset_token)
+
+
+@router.patch(
+    "/change-password",
+    status_code=HTTPStatus.OK,
+    responses=authenticated_api_responses,
+)
+async def change_password(
+    db: Session = Depends(get_read_db),
+    current_user: User = Depends(get_current_user),
+    request: ChangePasswordRequest = None,
+):
+    return await auth_service.change_password(db, current_user, request)

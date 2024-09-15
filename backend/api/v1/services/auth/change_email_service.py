@@ -13,7 +13,7 @@ from backend.schemas.auth import ResetPasswordRequest
 from backend.utils.database import save
 
 
-async def reset_password(db: Session, request: ResetPasswordRequest, reset_token: str):
+async def change_email(db: Session, request: ResetPasswordRequest, reset_token: str):
     """
     Verify user based on reset token and reset user password
     """

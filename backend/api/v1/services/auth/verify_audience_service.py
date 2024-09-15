@@ -10,7 +10,7 @@ from backend.mails.mail import Email
 from backend.models.tag import Tag
 from backend.models.user import User
 from backend.models.user_tag import UserTag
-from backend.schemas.user import VerifyAudienceRequest
+from backend.schemas.auth import VerifyAudienceRequest
 from backend.utils.database import save
 
 

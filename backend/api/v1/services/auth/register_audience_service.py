@@ -10,7 +10,7 @@ from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.mails.mail import Email
 from backend.models.user import RoleCode, User
-from backend.schemas.user import RegisterAudienceRequest
+from backend.schemas.auth import RegisterAudienceRequest
 from backend.utils.database import save
 
 
