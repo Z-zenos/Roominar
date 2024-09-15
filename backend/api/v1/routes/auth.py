@@ -6,7 +6,6 @@ from sqlmodel import Session
 
 import backend.api.v1.services.auth as auth_service
 import backend.api.v1.services.tags as tags_service
-import backend.api.v1.services.users as users_service
 from backend.api.v1.dependencies.authentication import get_user_if_logged_in
 from backend.core.config import settings
 from backend.core.error_code import ErrorCode
@@ -66,7 +65,7 @@ async def register_audience(
     db: Session = Depends(get_read_db),
     request: RegisterAudienceRequest = None,
 ):
-    new_user = await users_service.register_audience(db, request)
+    new_user = await auth_service.register_audience(db, request)
     return RegisterAudienceResponse(
         email=new_user.email, expire_at=new_user.email_verify_token_expire_at
     )
@@ -82,7 +81,7 @@ async def verify_audience(
     request: VerifyAudienceRequest = None,
     token: str = None,
 ):
-    return await users_service.verify_audience(db, request, token)
+    return await auth_service.verify_audience(db, request, token)
 
 
 @router.post(

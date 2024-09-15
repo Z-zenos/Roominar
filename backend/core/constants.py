@@ -173,3 +173,11 @@ class ApplicationPaymentStatusCode(str, Enum):
     PENDING = "PENDING"
     PAID = "PAID"
     FAILED = "FAILED"
+
+
+class LoginMethodCode(str, Enum):
+    NORMAL = "NORMAL"
+    GOOGLE = "GOOGLE"
+    GITHUB = "GITHUB"
+    FACEBOOK = "FACEBOOK"
+    X = "X"

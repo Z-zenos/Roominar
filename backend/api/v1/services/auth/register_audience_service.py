@@ -5,6 +5,7 @@ from sqlmodel import Session
 
 import backend.api.v1.services.auth as auth_service
 from backend.core.config import settings
+from backend.core.constants import LoginMethodCode
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.mails.mail import Email
@@ -55,6 +56,7 @@ async def register_audience(db: Session, request: RegisterAudienceRequest) -> Us
                 password=auth_service.get_password_hash(request.password),
                 first_name=request.first_name,
                 last_name=request.last_name,
+                login_method_code=LoginMethodCode.NORMAL,
             )
             new_user = save(db, new_user)
 

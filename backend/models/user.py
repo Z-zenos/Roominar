@@ -3,7 +3,7 @@ from typing import Optional
 
 from sqlmodel import DateTime, Enum, Field, String, Text
 
-from backend.core.constants import IndustryCode, JobTypeCode, RoleCode
+from backend.core.constants import IndustryCode, JobTypeCode, LoginMethodCode, RoleCode
 from backend.models.base_model import BaseModel
 
 
@@ -47,3 +47,4 @@ class User(BaseModel, table=True):
         sa_type=DateTime(timezone=True)
     )
     deleted_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
+    login_method_code: Optional[LoginMethodCode] = Field(sa_type=Enum(LoginMethodCode))

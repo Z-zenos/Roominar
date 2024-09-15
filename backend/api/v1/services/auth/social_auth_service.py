@@ -4,7 +4,7 @@ from sqlmodel import Session
 
 import backend.api.v1.services.auth as auth_service
 from backend.core.config import settings
-from backend.core.constants import RoleCode
+from backend.core.constants import LoginMethodCode, RoleCode
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.mails.mail import Email
@@ -37,6 +37,7 @@ async def social_auth(db: Session, request: SocialAuthRequest):
             avatar_url=request.picture,
             email_verify_token=None,
             email_verify_token_expire_at=None,
+            login_method_code=LoginMethodCode.GOOGLE,
         )
         user = save(db, user)
 
