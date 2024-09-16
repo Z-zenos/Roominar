@@ -25,14 +25,14 @@ async def change_password(
 
     try:
         current_user.password = get_password_hash(request.new_password)
-        current_user.change_password_at = datetime.now()
+        current_user.password_change_at = datetime.now()
         current_user.updated_by = current_user.id
 
         current_user = save(db, current_user)
 
         context = {
             "first_name": f"{current_user.first_name}",
-            "password_change_at": current_user.change_password_at.strftime(
+            "password_change_at": current_user.password_change_at.strftime(
                 "%Y/%m/%d %H:%M"
             ),
         }

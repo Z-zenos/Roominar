@@ -118,3 +118,17 @@ class ChangePasswordRequest(BaseModel):
                 ErrorMessage.ERR_PASSWORD_NOT_MATCHING,
             )
         return v
+
+
+class ChangeEmailRequest(BaseModel):
+    new_email: EmailStr
+    password: str
+
+    @field_validator("password")
+    def password_validator(cls, v):
+        return password_validator(v)
+
+
+class RequestChangeEmailResponse(BaseModel):
+    email: str
+    expire_at: datetime

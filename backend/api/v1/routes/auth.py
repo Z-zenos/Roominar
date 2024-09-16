@@ -1,4 +1,3 @@
-from datetime import datetime, timedelta
 from http import HTTPStatus
 
 from fastapi import APIRouter, Depends
@@ -7,22 +6,25 @@ from sqlmodel import Session
 import backend.api.v1.services.auth as auth_service
 import backend.api.v1.services.tags as tags_service
 from backend.api.v1.dependencies.authentication import (
+    authorize_role,
     get_current_user,
     get_user_if_logged_in,
 )
-from backend.core.config import settings
+from backend.core.constants import RoleCode
 from backend.core.error_code import ErrorCode
 from backend.core.exception import BadRequestException, UnauthorizedException
 from backend.core.response import authenticated_api_responses, public_api_responses
 from backend.db.database import get_read_db
 from backend.models.user import User
 from backend.schemas.auth import (
+    ChangeEmailRequest,
     ChangePasswordRequest,
     ForgotPasswordRequest,
     ForgotPasswordResponse,
     GetMeResponse,
     RegisterAudienceRequest,
     RegisterAudienceResponse,
+    RequestChangeEmailResponse,
     ResetPasswordRequest,
     SocialAuthRequest,
     TokenResponse,
@@ -44,22 +46,8 @@ async def login(
         raise UnauthorizedException(ErrorCode.ERR_UNAUTHORIZED)
     if not user.email_verify_at:
         raise BadRequestException(ErrorCode.ERR_USER_NOT_VERIFIED)
-    access_token_expires = datetime.now() + timedelta(
-        minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
-    )
-    access_token = auth_service.create_access_token(
-        data={"sub": user.email, "role": user.role_code}, expire=access_token_expires
-    )
-    refresh_token, refresh_expire_at = auth_service.create_refresh_token(
-        {"sub": user.email, "role": user.role_code}, remember_me=request.remember_me
-    )
-    return TokenResponse(
-        access_token=access_token,
-        token_type="bearer",
-        expire_at=access_token_expires,
-        refresh_token=refresh_token,
-        refresh_expire_at=refresh_expire_at,
-    )
+
+    return auth_service.gen_auth_token(user, remember_me=True)
 
 
 @router.post(
@@ -141,23 +129,7 @@ async def refresh_token(
     if not user:
         raise UnauthorizedException(ErrorCode.ERR_UNAUTHORIZED)
 
-    access_token_expires = datetime.now() + timedelta(
-        minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
-    )
-    access_token = auth_service.create_access_token(
-        data={"sub": user.email, "role": user.role_code}, expire=access_token_expires
-    )
-
-    new_refresh_token, refresh_expire_at = auth_service.create_refresh_token(
-        {"sub": user.email, "role": user.role_code}, remember_me=True
-    )
-    return TokenResponse(
-        token_type="bearer",
-        access_token=access_token,
-        expire_at=access_token_expires,
-        refresh_token=new_refresh_token,
-        refresh_expire_at=refresh_expire_at,
-    )
+    return auth_service.gen_auth_token(user)
 
 
 @router.post(
@@ -188,7 +160,7 @@ async def reset_password(
     return await auth_service.reset_password(db, request, reset_token)
 
 
-@router.patch(
+@router.post(
     "/change-password",
     status_code=HTTPStatus.OK,
     responses=authenticated_api_responses,
@@ -199,3 +171,31 @@ async def change_password(
     request: ChangePasswordRequest = None,
 ):
     return await auth_service.change_password(db, current_user, request)
+
+
+@router.post(
+    "/change-email",
+    response_model=ChangeEmailRequest,
+    responses=authenticated_api_responses,
+)
+async def request_change_email(
+    db: Session = Depends(get_read_db),
+    current_user: User = Depends(authorize_role(RoleCode.AUDIENCE)),
+    request: ChangeEmailRequest = None,
+):
+    user = await auth_service.request_change_email(db, current_user, request)
+    return RequestChangeEmailResponse(
+        email=user.new_email, expire_at=user.verify_change_email_token_expire_at
+    )
+
+
+@router.patch(
+    "/change-email/{token}",
+    response_model=TokenResponse,
+    responses=public_api_responses,
+)
+async def verify_change_email(
+    db: Session = Depends(get_read_db),
+    token: str = None,
+):
+    return await auth_service.verify_new_email(db, token)

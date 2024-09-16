@@ -1,60 +1,123 @@
-import hashlib
 from datetime import datetime
 
 from sqlmodel import Session, select
 
-from backend.api.v1.services.auth.password_service import get_password_hash
-from backend.core.constants import RoleCode
+import backend.api.v1.services.auth as auth_service
+from backend.core.config import settings
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.mails.mail import Email
-from backend.models.user import User
-from backend.schemas.auth import ResetPasswordRequest
+from backend.models.user import RoleCode, User
+from backend.schemas.auth import ChangeEmailRequest
 from backend.utils.database import save
 
 
-async def change_email(db: Session, request: ResetPasswordRequest, reset_token: str):
-    """
-    Verify user based on reset token and reset user password
-    """
-    # Get encrypted token based on the reset token sent in email
-    hashed_token = hashlib.sha256(reset_token.encode("utf-8")).hexdigest()
-    # Find user based on reset token.
-    user = db.scalar(
-        select(User).where(
-            User.reset_password_token == hashed_token,
-            User.reset_password_token_expire_at > datetime.now(),
+async def request_change_email(
+    db: Session, current_user: User, request: ChangeEmailRequest
+):
+    email = request.email
+    is_user_existed = auth_service.get_user_by_email(db, email, RoleCode.AUDIENCE)
+
+    if is_user_existed:
+        raise BadRequestException(
+            ErrorCode.ERR_EMAIL_ALREADY_EXISTED, ErrorMessage.ERR_EMAIL_ALREADY_EXISTED
         )
+
+    if current_user.email == email:
+        raise BadRequestException(
+            ErrorCode.ERR_INVALID_EMAIL, ErrorMessage.ERR_INVALID_EMAIL
+        )
+
+    if not auth_service.verify_password(
+        request.current_password, current_user.password
+    ):
+        raise BadRequestException(
+            ErrorCode.ERR_INVALID_PASSWORD, ErrorMessage.ERR_INVALID_PASSWORD
+        )
+
+    token, expire = auth_service.create_request_change_email_token()
+
+    current_user.old_email = current_user.email
+    current_user.new_email = email
+    current_user.verify_change_email_token = token
+    current_user.verify_change_email_token_expire_at = expire
+
+    save(db, current_user)
+
+    context = {
+        "first_name": f"{current_user.first_name}",
+        "email_changed_at": current_user.email_changed_at.strftime("%Y/%m/%d %H:%M"),
+        "verify_change_email_url": f"{settings.APP_URL}/change-email/{token}",
+    }
+
+    mailer = Email()
+    await mailer.send_aud_email(
+        current_user.new_email,
+        "request_change_email.html",
+        "Request change email",
+        context,
     )
 
-    if not user:
+    await mailer.send_aud_email(
+        current_user.old_email,
+        "alert_change_email.html",
+        "Alert change email",
+        context,
+    )
+
+    return current_user
+
+
+async def verify_new_email(db: Session, token: str):
+    user = db.exec(
+        select(User).where(User.verify_change_email_token == token)
+    ).one_or_none()
+
+    if not user or user.email_change_verify_token != token:
         raise BadRequestException(
-            ErrorCode.ERR_INVALID_RESET_PASSWORD_TOKEN,
-            ErrorMessage.ERR_INVALID_RESET_PASSWORD_TOKEN,
+            ErrorCode.ERR_INVALID_VERIFY_CHANGE_EMAIL_TOKEN,
+            ErrorMessage.ERR_INVALID_VERIFY_CHANGE_EMAIL_TOKEN,
         )
 
+    if user.email_change_verify_token_expire_at < datetime.now():
+        raise BadRequestException(ErrorCode.ERR_TOKEN_EXPIRED)
+
     try:
-        # Update user
-        user.reset_password_token = user.reset_password_token_expire_at = None
-        user.password = get_password_hash(request.new_password)
-        user.change_password_at = datetime.now()
-        user.updated_by = user.id
+        user.email = user.new_email
+        user.new_email = None
+        user.verify_change_email_token = None
+        user.verify_change_email_token_expire_at = None
+        user.email_verified_at = user.email_changed_at = datetime.now()
 
-        user = save(db, user)
+        save(db, user)
 
-        context = {"first_name": f"{user.first_name}", "email": user.email}
+        context = {
+            "first_name": f"{user.first_name}",
+            "email_changed_at": user.email_changed_at.strftime("%Y/%m/%d %H:%M"),
+            "verify_change_email_url": f"{settings.APP_URL}/change-email/{token}",
+        }
 
         mailer = Email()
-        if user.role_code == RoleCode.AUDIENCE:
-            await mailer.send_aud_email(
-                user.email,
-                "reset_audience_password_success.html",
-                "Reset password success",
-                context,
-            )
+        await mailer.send_aud_email(
+            user.email,
+            "change_email_success.html",
+            "Change email success",
+            context,
+        )
 
-        return user
+        await mailer.send_aud_email(
+            user.old_email,
+            "alert_change_email.html",
+            "Alert change email",
+            context,
+        )
+
+        return auth_service.gen_auth_token(user)
 
     except Exception as e:
         db.rollback()
         raise e
+
+
+def revert_change_email(db: Session):
+    pass

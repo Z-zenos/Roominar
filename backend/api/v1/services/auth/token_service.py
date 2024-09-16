@@ -9,6 +9,27 @@ from jose import ExpiredSignatureError, JWTError, jwt
 from backend.core.config import settings
 from backend.core.error_code import ErrorCode
 from backend.core.exception import BadRequestException, UnauthorizedException
+from backend.models.user import User
+
+
+def gen_auth_token(user: User, remember_me: bool = False):
+    access_token_expire_at = datetime.now() + timedelta(
+        minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
+    )
+    access_token = create_access_token(
+        data={"sub": user.email, "role": user.role_code}, expire=access_token_expire_at
+    )
+    refresh_token, refresh_expire_at = create_refresh_token(
+        {"sub": user.email, "role": user.role_code}, remember_me=remember_me
+    )
+
+    return {
+        "token_type": "bearer",
+        "access_token": access_token,
+        "expire_at": access_token_expire_at,
+        "refresh_token": refresh_token,
+        "refresh_expire_at": refresh_expire_at,
+    }
 
 
 def create_token(token_length: int):
@@ -103,3 +124,10 @@ def create_reset_password_token():
 # def get_email_by_token(token: str, db: Session):
 #     user = db.exec(select(User).where(User.email_verify_token == token)).first()
 #     return user.email
+
+
+def create_request_change_email_token():
+    expire = datetime.now() + timedelta(
+        minutes=settings.VERIFY_CHANGE_EMAIL_EXPIRE_MINUTES
+    )
+    return create_token(settings.VERIFY_CHANGE_EMAIL_TOKEN_LENGTH), expire

@@ -63,6 +63,6 @@ class Event(BaseModel, table=True):
 
     tags: Optional[list[str]] = Field(sa_type=ARRAY(String(255)))
 
-    public_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
+    published_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
     application_form_url: Optional[str] = Field(sa_type=String(2048))
     view_number: Optional[int]

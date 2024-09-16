@@ -29,22 +29,24 @@ class User(BaseModel, table=True):
     job_type_code: Optional[JobTypeCode] = Field(sa_type=Enum(JobTypeCode))
     avatar_url: Optional[str] = Field(sa_type=String(2048))
 
-    email_verify_token: Optional[str] = Field(sa_type=String(2048))
-    email_verify_token_expire_at: Optional[datetime] = Field(
+    verify_email_token: Optional[str] = Field(sa_type=String(2048))
+    verify_email_token_expire_at: Optional[datetime] = Field(
         sa_type=DateTime(timezone=True)
     )
-    email_verify_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
+    email_verified_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
 
     reset_password_token: Optional[str] = Field(sa_type=String(2048))
     reset_password_token_expire_at: Optional[datetime] = Field(
         sa_type=DateTime(timezone=True)
     )
-    change_password_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
+    password_changed_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
 
     new_email: Optional[str] = Field(sa_type=String(255))
-    new_email_verify_token: Optional[str] = Field(sa_type=String(2048))
-    new_email_verify_token_expire_at: Optional[datetime] = Field(
+    old_email: Optional[str] = Field(sa_type=String(255))
+    verify_change_email_token: Optional[str] = Field(sa_type=String(2048))
+    verify_change_email_token_expire_at: Optional[datetime] = Field(
         sa_type=DateTime(timezone=True)
     )
+    email_changed_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
     deleted_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
     login_method_code: Optional[LoginMethodCode] = Field(sa_type=Enum(LoginMethodCode))
