@@ -28,44 +28,64 @@ async def request_change_email(
             ErrorCode.ERR_INVALID_EMAIL, ErrorMessage.ERR_INVALID_EMAIL
         )
 
-    if not auth_service.verify_password(
-        request.current_password, current_user.password
-    ):
+    if not auth_service.verify_password(request.password, current_user.password):
         raise BadRequestException(
             ErrorCode.ERR_INVALID_PASSWORD, ErrorMessage.ERR_INVALID_PASSWORD
         )
 
-    token, expire = auth_service.create_request_change_email_token()
+    verify_token, verify_expire = auth_service.create_verify_change_email_token()
+    revert_token, revert_expire = auth_service.create_revert_email_token()
+    try:
+        current_user.old_email = current_user.email
+        current_user.new_email = email
+        current_user.verify_change_email_token = verify_token
+        current_user.verify_change_email_token_expire_at = verify_expire
+        current_user.revert_email_token = revert_token
+        current_user.revert_email_token_expire_at = revert_expire
 
-    current_user.old_email = current_user.email
-    current_user.new_email = email
-    current_user.verify_change_email_token = token
-    current_user.verify_change_email_token_expire_at = expire
+        save(db, current_user)
 
-    save(db, current_user)
+        request_context = {
+            "first_name": f"{current_user.first_name}",
+            "email_changed_at": current_user.email_changed_at.strftime(
+                "%Y/%m/%d %H:%M"
+            ),
+            "verify_change_email_url": f"""
+            {settings.APP_URL}/change-email/{verify_token}""",
+            "expire_at": current_user.verify_change_email_token_expire_at.strftime(
+                "%Y/%m/%d %H:%M"
+            ),
+        }
 
-    context = {
-        "first_name": f"{current_user.first_name}",
-        "email_changed_at": current_user.email_changed_at.strftime("%Y/%m/%d %H:%M"),
-        "verify_change_email_url": f"{settings.APP_URL}/change-email/{token}",
-    }
+        mailer = Email()
+        await mailer.send_aud_email(
+            current_user.new_email,
+            "request_change_email.html",
+            "Confirm Your Email Change Request",
+            request_context,
+        )
 
-    mailer = Email()
-    await mailer.send_aud_email(
-        current_user.new_email,
-        "request_change_email.html",
-        "Request change email",
-        context,
-    )
+        alert_context = {
+            "email_changed_at": current_user.email_changed_at.strftime(
+                "%Y/%m/%d %H:%M"
+            ),
+            "revert_email_url": f"{settings.APP_URL}/revert-email/{revert_token}",
+            "expire_at": current_user.revert_email_token_expire_at.strftime(
+                "%Y/%m/%d %H:%M"
+            ),
+        }
 
-    await mailer.send_aud_email(
-        current_user.old_email,
-        "alert_change_email.html",
-        "Alert change email",
-        context,
-    )
+        await mailer.send_aud_email(
+            current_user.old_email,
+            "alert_change_email.html",
+            "Alert Change Email",
+            alert_context,
+        )
 
-    return current_user
+        return current_user
+    except Exception as e:
+        db.rollback()
+        raise e
 
 
 async def verify_new_email(db: Session, token: str):
@@ -80,7 +100,9 @@ async def verify_new_email(db: Session, token: str):
         )
 
     if user.email_change_verify_token_expire_at < datetime.now():
-        raise BadRequestException(ErrorCode.ERR_TOKEN_EXPIRED)
+        raise BadRequestException(
+            ErrorCode.ERR_TOKEN_EXPIRED, ErrorMessage.ERR_TOKEN_EXPIRED
+        )
 
     try:
         user.email = user.new_email
@@ -105,11 +127,18 @@ async def verify_new_email(db: Session, token: str):
             context,
         )
 
+        alert_context = {
+            "email_changed_at": user.email_changed_at.strftime("%Y/%m/%d %H:%M"),
+            "revert_email_url": f"""
+            {settings.APP_URL}/revert-email/{user.revert_email_token}""",
+            "expire_at": user.revert_email_token_expire_at.strftime("%Y/%m/%d %H:%M"),
+        }
+
         await mailer.send_aud_email(
             user.old_email,
             "alert_change_email.html",
-            "Alert change email",
-            context,
+            "Alert Change Email",
+            alert_context,
         )
 
         return auth_service.gen_auth_token(user)
@@ -117,7 +146,3 @@ async def verify_new_email(db: Session, token: str):
     except Exception as e:
         db.rollback()
         raise e
-
-
-def revert_change_email(db: Session):
-    pass

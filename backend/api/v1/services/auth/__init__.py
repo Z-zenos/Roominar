@@ -10,8 +10,9 @@ from .token_service import (
     create_access_token,
     create_email_verification_token,
     create_refresh_token,
-    create_request_change_email_token,
     create_reset_password_token,
+    create_revert_email_token,
+    create_verify_change_email_token,
     gen_auth_token,
     verify_refresh_token,
 )
@@ -33,8 +34,9 @@ all = (
     register_audience,
     verify_audience,
     change_password,
-    create_request_change_email_token,
+    create_verify_change_email_token,
     request_change_email,
     verify_new_email,
     gen_auth_token,
+    create_revert_email_token,
 )

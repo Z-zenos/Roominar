@@ -100,8 +100,13 @@ def create_reset_password_token():
     return reset_token, encrypted_token, expire_at
 
 
-def create_request_change_email_token():
+def create_verify_change_email_token():
     expire = datetime.now() + timedelta(
         minutes=settings.VERIFY_CHANGE_EMAIL_EXPIRE_MINUTES
     )
     return create_token(settings.VERIFY_CHANGE_EMAIL_TOKEN_LENGTH), expire
+
+
+def create_revert_email_token():
+    expire = datetime.now() + timedelta(minutes=settings.REVERT_EMAIL_EXPIRE_MINUTES)
+    return create_token(settings.REVERT_EMAIL_TOKEN_LENGTH), expire

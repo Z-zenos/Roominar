@@ -47,6 +47,12 @@ class User(BaseModel, table=True):
     verify_change_email_token_expire_at: Optional[datetime] = Field(
         sa_type=DateTime(timezone=True)
     )
+
+    revert_email_token: Optional[str] = Field(sa_type=String(2048))
+    revert_email_token_expire_at: Optional[datetime] = Field(
+        sa_type=DateTime(timezone=True)
+    )
+
     email_changed_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
     deleted_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
     login_method_code: Optional[LoginMethodCode] = Field(sa_type=Enum(LoginMethodCode))

@@ -199,3 +199,13 @@ async def verify_change_email(
     token: str = None,
 ):
     return await auth_service.verify_new_email(db, token)
+
+
+@router.patch(
+    "/revert-email/{token}", status_code=HTTPStatus.OK, responses=public_api_responses
+)
+async def revert_email(
+    db: Session = Depends(get_read_db),
+    token: str = None,
+):
+    return await auth_service.revert_email(db, token)
