@@ -100,32 +100,6 @@ def create_reset_password_token():
     return reset_token, encrypted_token, expire_at
 
 
-# def check_valid_token(token: str, db: Session):
-#     user = db.exec(select(User).where(User.email_verify_token == token)).first()
-#     if not user:
-#         raise BadRequestException(
-#             error_code=ErrorCode.ERR_TOKEN_INVALID,
-#             message="トークンの有効期限が切れました。",
-#         )
-
-#     if user and user.email_verify_at:
-#         raise BadRequestException(
-#             error_code=ErrorCode.ERR_USER_ALREADY_EXISTS,
-#             message="URLの有効期限が切れています。",
-#         )
-
-#     if user and user.email_verify_token_expire_at < datetime.now():
-#         raise BadRequestException(
-#             error_code=ErrorCode.ERR_TOKEN_EXPIRED,
-#             message="URLの有効期限が切れています。",
-#         )
-
-
-# def get_email_by_token(token: str, db: Session):
-#     user = db.exec(select(User).where(User.email_verify_token == token)).first()
-#     return user.email
-
-
 def create_request_change_email_token():
     expire = datetime.now() + timedelta(
         minutes=settings.VERIFY_CHANGE_EMAIL_EXPIRE_MINUTES

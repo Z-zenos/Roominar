@@ -44,7 +44,7 @@ async def login(
     user = auth_service.authenticate_user(db, **request.model_dump())
     if not user:
         raise UnauthorizedException(ErrorCode.ERR_UNAUTHORIZED)
-    if not user.email_verify_at:
+    if not user.email_verified_at:
         raise BadRequestException(ErrorCode.ERR_USER_NOT_VERIFIED)
 
     return auth_service.gen_auth_token(user, remember_me=True)

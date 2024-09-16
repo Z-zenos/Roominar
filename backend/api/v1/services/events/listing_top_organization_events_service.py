@@ -28,7 +28,7 @@ def listing_top_organization_events(db: Session, organization_id: int):
             .outerjoin(Application, Event.id == Application.event_id)
             .outerjoin(Bookmark, Event.id == Bookmark.event_id)
             .where(
-                Event.public_at.isnot(None),
+                Event.published_at.isnot(None),
                 Event.organization_id == organization_id,
                 Event.status == EventStatusCode.PUBLIC,
                 Application.canceled_at.is_(None),

@@ -35,7 +35,7 @@ async def get_event_detail(db: Session, current_user: User, slug: str):
             )
             .where(
                 Event.slug == slug,
-                Event.public_at.isnot(None),
+                Event.published_at.isnot(None),
             )
             .join(Organization, Event.organization_id == Organization.id)
             .outerjoin(Questionnaire, Event.questionnaire_id == Questionnaire.id)

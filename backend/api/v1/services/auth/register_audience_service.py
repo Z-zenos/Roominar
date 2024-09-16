@@ -18,7 +18,7 @@ async def register_audience(db: Session, request: RegisterAudienceRequest) -> Us
     email = request.email
     user = auth_service.get_user_by_email(db, email, RoleCode.AUDIENCE)
 
-    if user and user.email_verify_at:
+    if user and user.email_verified_at:
         raise BadRequestException(
             ErrorCode.ERR_USER_ALREADY_EXISTED, ErrorMessage.ERR_USER_ALREADY_EXISTED
         )

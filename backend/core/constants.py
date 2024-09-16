@@ -129,7 +129,7 @@ class QuestionnaireStatusCode(str, Enum):
 
 class EventSortByCode(str, Enum):
     START_AT = "START_AT"
-    PUBLIC_AT = "PUBLIC_AT"
+    PUBLISHED_AT = "PUBLISHED_AT"
     APPLICATION_END_AT = "APPLICATION_END_AT"
     RECOMMEDATION = "RECOMMEDATION"
 

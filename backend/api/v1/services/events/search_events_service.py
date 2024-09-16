@@ -41,7 +41,7 @@ async def search_events(
             Event.is_online,
             Event.is_offline,
             Event.meeting_tool_code,
-            Event.public_at,
+            Event.published_at,
             func.count(Application.id).label("applied_number"),
             case(
                 (
@@ -151,10 +151,10 @@ def _build_recommendation_targets(targets_list: list):
 
 def _build_filters(db: Session, user: User, query_params: SearchEventsQueryParams):
     filters = [
-        Event.public_at.isnot(None),
+        Event.published_at.isnot(None),
         Event.status == EventStatusCode.PUBLIC,
     ]
-    sort_by = Event.public_at
+    sort_by = Event.published_at
     recommendation_targets = []
 
     if user:
@@ -226,7 +226,7 @@ def _build_filters(db: Session, user: User, query_params: SearchEventsQueryParam
     if query_params.end_start_at:
         filters.append(Event.start_at.cast(Date) <= query_params.end_start_at.date())
 
-    if query_params.sort_by == EventSortByCode.PUBLIC_AT:
+    if query_params.sort_by == EventSortByCode.PUBLISHED_AT:
         filters.append(Event.end_at > datetime.now())
 
     if query_params.sort_by == EventSortByCode.START_AT:

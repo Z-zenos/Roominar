@@ -26,7 +26,7 @@ async def verify_audience(
             message=ErrorMessage.ERR_INVALID_TOKEN,
         )
 
-    if user and user.email_verify_at:
+    if user and user.email_verified_at:
         raise BadRequestException(
             error_code=ErrorCode.ERR_USER_ALREADY_EXISTED,
             message=ErrorMessage.ERR_USER_ALREADY_EXISTED,
@@ -51,7 +51,7 @@ async def verify_audience(
             user_tags = [UserTag(user_id=user.id, tag_id=tag) for tag in request.tags]
             db.add_all(user_tags)
 
-        user.email_verify_at = datetime.now()
+        user.email_verified_at = datetime.now()
         user.email_verify_token = None
         user.email_verify_token_expire_at = None
         user = save(db, user)

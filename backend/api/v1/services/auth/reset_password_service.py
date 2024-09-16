@@ -37,7 +37,7 @@ async def reset_password(db: Session, request: ResetPasswordRequest, reset_token
         # Update user
         user.reset_password_token = user.reset_password_token_expire_at = None
         user.password = get_password_hash(request.new_password)
-        user.password_change_at = datetime.now()
+        user.password_changed_at = datetime.now()
         user.updated_by = user.id
 
         user = save(db, user)
