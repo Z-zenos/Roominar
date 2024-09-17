@@ -223,7 +223,11 @@ export default function ChangePasswordForm() {
               </div>
             </div>
 
-            <div className='flex justify-end mt-4 gap-3'>
+            <div className='flex justify-between mt-4 gap-3'>
+              <p className='opacity-60 font-light text-sm w-[400px]'>
+                (＊) Enter your current password followed by your new password
+                to securely update your credentials.
+              </p>
               <Button
                 type='submit'
                 color='primary'

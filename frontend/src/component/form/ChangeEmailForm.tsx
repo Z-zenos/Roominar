@@ -16,6 +16,7 @@ import { useRequestChangeEmailMutation } from '@/src/api/auth.api';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import { Button } from '@nextui-org/button';
 import { styles } from '@/src/constant/styles.constant';
+import { maskEmail } from '@/src/util/app.util';
 
 export default function ChangeEmailForm() {
   useState<boolean>(false);
@@ -71,7 +72,7 @@ export default function ChangeEmailForm() {
             <FormInput
               id='email'
               name='email'
-              value={auth?.user?.email}
+              value={maskEmail(auth?.user?.email)}
               type='email'
               control={form.control}
               disabled
@@ -91,6 +92,10 @@ export default function ChangeEmailForm() {
             {showForm ? 'Close' : 'Change Email'}
           </Button>
         </div>
+        <p className='opacity-60 font-light text-sm mt-3'>
+          (＊) Enter your new email address and confirm the change via the link
+          sent to your inbox.
+        </p>
         {showForm && (
           <div className='w-full mt-4 bg-emerald-50 p-5 rounded-md animate-appearance-in'>
             <div
