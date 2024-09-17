@@ -224,10 +224,15 @@ export default function ChangePasswordForm() {
             </div>
 
             <div className='flex justify-between mt-4 gap-3'>
-              <p className='opacity-60 font-light text-sm w-[400px]'>
-                (＊) Enter your current password followed by your new password
-                to securely update your credentials.
-              </p>
+              <ul className='list-disc pl-2'>
+                <li className='opacity-60 font-light text-sm w-[400px]'>
+                  Password must contain at least 1 letter, 1 number and 1
+                  symbol.
+                </li>
+                <li className='opacity-60 font-light text-sm w-[400px]'>
+                  Min length is 8 characters.
+                </li>
+              </ul>
               <Button
                 type='submit'
                 color='primary'

@@ -133,7 +133,7 @@ export default function ChangeEmailForm() {
               <div className='w-full relative mb-1'>
                 <FormCustomLabel
                   htmlFor='password'
-                  title='Password'
+                  title='Your password'
                   required
                 />
                 <FormInput
