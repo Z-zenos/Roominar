@@ -175,7 +175,7 @@ async def change_password(
 
 @router.post(
     "/change-email",
-    response_model=ChangeEmailRequest,
+    response_model=RequestChangeEmailResponse,
     responses=authenticated_api_responses,
 )
 async def request_change_email(

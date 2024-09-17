@@ -306,7 +306,7 @@ const FormCheckBoxList = ({
                   >
                     <FormControl>
                       <Checkbox
-                        checked={field.value?.includes(item.value)}
+                        checked={field?.value?.includes(item.value)}
                         {...props}
                         onCheckedChange={(checked) => {
                           let newItems = null;
@@ -316,7 +316,7 @@ const FormCheckBoxList = ({
                               ? [...field.value, item.value]
                               : [item.value];
                           } else {
-                            newItems = field.value?.filter(
+                            newItems = field?.value?.filter(
                               (value: any) => value !== item.value,
                             );
                           }
@@ -360,7 +360,7 @@ const FormCheckBox = ({
         <FormItem className='flex flex-row items-center justify-start space-x-1'>
           <FormControl>
             <Checkbox
-              checked={field.value}
+              checked={field?.value}
               {...props}
               onCheckedChange={(checked) => {
                 field.onChange(checked);
@@ -410,20 +410,20 @@ const FormCombobox = ({
                   role='combobox'
                   className={cn(
                     'w-[200px] justify-between px-2',
-                    !field.value && 'text-muted-foreground',
+                    !field?.value && 'text-muted-foreground',
                     className,
                   )}
                 >
                   <span
                     className={clsx(
-                      (!field.value || !field.value?.length) &&
+                      (!field?.value || !field?.value?.length) &&
                         'text-[#a3a9b5] font-normal',
                       'font-medium line-clamp-1',
                     )}
                   >
                     {multiple &&
-                      field.value &&
-                      (field.value as string[])
+                      field?.value &&
+                      (field?.value as string[])
                         .map(
                           (selectedItem: string) =>
                             data.find((item) => item.value === selectedItem)
@@ -432,10 +432,10 @@ const FormCombobox = ({
                         .join(', ')}
 
                     {!multiple &&
-                      field.value &&
-                      data.find((item) => item.value === field.value)?.label}
+                      field?.value &&
+                      data.find((item) => item.value === field?.value)?.label}
 
-                    {(!field.value || !field.value?.length) &&
+                    {(!field?.value || !field?.value?.length) &&
                       `Select ${title}`}
                   </span>
                   <ChevronsUpDown className='h-4 w-4 shrink-0 opacity-50' />
@@ -457,7 +457,7 @@ const FormCombobox = ({
 
                           if (multiple) {
                             if (field?.value.includes(item.value)) {
-                              newItems = field.value?.filter(
+                              newItems = field?.value?.filter(
                                 (value: string) => value !== item.value,
                               );
                             } else {
@@ -476,10 +476,10 @@ const FormCombobox = ({
                           className={cn(
                             'mr-2 h-4 w-4',
                             multiple
-                              ? field.value.includes(item.value)
+                              ? field?.value.includes(item.value)
                                 ? 'opacity-100'
                                 : 'opacity-0'
-                              : field.value === item.value
+                              : field?.value === item.value
                                 ? 'opacity-100'
                                 : 'opacity-0',
                           )}
@@ -541,7 +541,7 @@ const FormTagsInput = ({
     let newItems = null;
 
     if (field?.value.includes(id)) {
-      newItems = field.value?.filter((value: string) => value !== id);
+      newItems = field?.value?.filter((value: string) => value !== id);
     } else {
       newItems = field?.value ? [...field.value, id] : [id];
     }
@@ -556,9 +556,9 @@ const FormTagsInput = ({
         <FormItem className='flex flex-col'>
           <div className='border border-gray-300 rounded-sm bg-white'>
             <div className={clsx('max-h-[100px] overflow-y-scroll p-1')}>
-              {field.value &&
-                field.value?.length > 0 &&
-                field.value.map((id: string) => (
+              {field?.value &&
+                field?.value?.length > 0 &&
+                field?.value.map((id: string) => (
                   <li
                     key={`selected-tag-${id}`}
                     className={clsx(
@@ -575,7 +575,7 @@ const FormTagsInput = ({
                     <IoClose
                       onClick={() => {
                         field.onChange(
-                          field.value?.filter((value: string) => value !== id),
+                          field?.value?.filter((value: string) => value !== id),
                         );
                         if (onSearch) onSearch();
                       }}
@@ -596,7 +596,7 @@ const FormTagsInput = ({
                     role='combobox'
                     className={cn(
                       'w-full rounded-none border-t border-b-0 border-l-0 border-r-0 justify-between px-2',
-                      !field.value && 'text-muted-foreground',
+                      !field?.value && 'text-muted-foreground',
                       className,
                     )}
                   >
@@ -628,7 +628,7 @@ const FormTagsInput = ({
                           <Check
                             className={cn(
                               'mr-2 h-4 w-4',
-                              field.value.includes(item.value)
+                              field?.value.includes(item.value)
                                 ? 'opacity-100'
                                 : 'opacity-0',
                             )}
@@ -681,7 +681,7 @@ const FormTagsInput = ({
                                   onCheckedChange={() => {
                                     handleSelectTags(field, tag.id + '');
                                   }}
-                                  defaultChecked={field.value.includes(
+                                  defaultChecked={field?.value.includes(
                                     tag.id + '',
                                   )}
                                 />
@@ -749,7 +749,7 @@ function FormRadioBoxList({
                 field.onChange(value);
                 if (onSearch) onSearch();
               }}
-              defaultValue={field.value}
+              defaultValue={field?.value}
               className='flex flex-col space-y-1'
             >
               {data &&
@@ -805,7 +805,7 @@ FormRadioBoxList.displayName = 'FormRadioBoxList';
 // 								min={min}
 // 								defaultValue={[1, 1000]}
 // 								{...field}
-// 								value={field.value || [1, 1000]}
+// 								value={field?.value || [1, 1000]}
 // 								onChange={(values) => {
 // 									field.onChange(values);
 // 									(onSearch as Function)({ price: values });
@@ -822,11 +822,11 @@ FormRadioBoxList.displayName = 'FormRadioBoxList';
 // 									type="number"
 // 									leftIconClassName="col-span-2"
 // 									className="col-span-8"
-// 									value={field.value ? field.value[0] : 1}
+// 									value={field?.value ? field?.value[0] : 1}
 // 									onChange={(ev) => {
-// 										field.onChange([+ev.target.value, field.value[1]]);
+// 										field.onChange([+ev.target.value, field?.value[1]]);
 // 										(onSearch as Function)({
-// 											price: [+ev.target.value, field.value[1]],
+// 											price: [+ev.target.value, field?.value[1]],
 // 										});
 // 									}}
 // 								/>
@@ -836,11 +836,11 @@ FormRadioBoxList.displayName = 'FormRadioBoxList';
 // 									type="number"
 // 									leftIconClassName="col-span-2"
 // 									className="col-span-8"
-// 									value={field.value ? field.value[1] : 1000}
+// 									value={field?.value ? field?.value[1] : 1000}
 // 									onChange={(ev) => {
-// 										field.onChange([field.value[0], +ev.target.value]);
+// 										field.onChange([field?.value[0], +ev.target.value]);
 // 										(onSearch as Function)({
-// 											price: [field.value[0], +ev.target.value],
+// 											price: [field?.value[0], +ev.target.value],
 // 										});
 // 									}}
 // 								/>
@@ -877,7 +877,7 @@ const FormDateRangePicker = ({
           <FormControl>
             <DateRangePicker
               className={className}
-              daterange={field.value}
+              daterange={field?.value}
               onDateRangeChange={(daterange: DateRange | undefined) => {
                 field.onChange(daterange);
               }}

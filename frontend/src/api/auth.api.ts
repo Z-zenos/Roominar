@@ -6,6 +6,9 @@ import type {
   AuthApiRegisterAudienceRequest,
   VerifyAudienceResponse,
   AuthApiVerifyAudienceRequest,
+  RequestChangeEmailResponse,
+  AuthApiRequestChangeEmailRequest,
+  AuthApiChangePasswordRequest,
 } from '../lib/api/generated';
 import useApi from '../lib/api/useApi';
 import type { SWRMutationConfiguration } from 'swr/mutation';
@@ -61,7 +64,7 @@ export const useVerifyAudienceMutation = <T>(
   options?: SWRMutationConfiguration<VerifyAudienceResponse, T>,
 ) => {
   const api = useApi();
-  const key = `/api/v1/users/verify`;
+  const key = `verify-user`;
   return useSWRMutation<
     VerifyAudienceResponse,
     T,
@@ -70,6 +73,35 @@ export const useVerifyAudienceMutation = <T>(
   >(
     key,
     async (_: string, { arg }) => await api.auth.verifyAudience(arg),
+    options,
+  );
+};
+
+export const useRequestChangeEmailMutation = <T>(
+  options?: SWRMutationConfiguration<RequestChangeEmailResponse, T>,
+) => {
+  const api = useApi();
+  const key = `request-change-email`;
+  return useSWRMutation<
+    RequestChangeEmailResponse,
+    T,
+    typeof key,
+    AuthApiRequestChangeEmailRequest
+  >(
+    key,
+    async (_: string, { arg }) => await api.auth.requestChangeEmail(arg),
+    options,
+  );
+};
+
+export const useChangePasswordMutation = <T>(
+  options?: SWRMutationConfiguration<void, T>,
+) => {
+  const api = useApi();
+  const key = `change-password`;
+  return useSWRMutation<void, T, typeof key, AuthApiChangePasswordRequest>(
+    key,
+    async (_: string, { arg }) => await api.auth.changePassword(arg),
     options,
   );
 };

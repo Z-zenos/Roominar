@@ -61,6 +61,7 @@ export const pathPermissionMaster = {
     // '/events/[slug]/apply',
     // '/change-email/[token]',
     '/not-found',
+    '/account-settings',
   ],
 };
 
