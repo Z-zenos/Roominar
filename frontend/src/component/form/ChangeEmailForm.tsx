@@ -64,7 +64,7 @@ export default function ChangeEmailForm() {
         <div className={clsx(styles.flexStart, 'gap-4 !items-end mt-8')}>
           <div className='self-start'>
             <FormCustomLabel
-              title='Email'
+              title='Email ( Last changed 9 month(s) ago.)'
               htmlFor='email'
               className='font-medium text-nm'
             />

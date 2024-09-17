@@ -15,6 +15,7 @@ import { styles } from '@/src/constant/styles.constant';
 import type { ChangePasswordFormSchema } from '@/src/schemas/auth/ChangePasswordFormSchema';
 import { changePasswordFormSchema } from '@/src/schemas/auth/ChangePasswordFormSchema';
 import { useChangePasswordMutation } from '@/src/api/auth.api';
+import { Link } from '@nextui-org/link';
 
 export default function ChangePasswordForm() {
   useState<boolean>(false);
@@ -135,8 +136,14 @@ export default function ChangePasswordForm() {
                   }
                 />
               </div>
-
-              <div className='w-full relative mb-1'>
+              <Link
+                href='/forgot-password'
+                className='self-center text-primary'
+                underline='hover'
+              >
+                Forgot password ?
+              </Link>
+              <div className='w-full relative mb-1 self-start'>
                 <FormCustomLabel
                   htmlFor='newPassword'
                   title='New Password'
@@ -175,7 +182,6 @@ export default function ChangePasswordForm() {
                   }
                 />
               </div>
-
               <div className='w-full relative mb-1'>
                 <FormCustomLabel
                   htmlFor='confirmNewPassword'
