@@ -27,6 +27,7 @@ class ErrorCode:
     ERR_INVALID_EMAIL = "ERR_INVALID_EMAIL"
     ERR_EMAIL_ALREADY_EXISTED = "ERR_EMAIL_ALREADY_EXISTED"
     ERR_INVALID_VERIFY_CHANGE_EMAIL_TOKEN = "ERR_INVALID_VERIFY_CHANGE_EMAIL_TOKEN"
+    ERR_INVALID_REVERT_EMAIL_TOKEN = "ERR_INVALID_REVERT_EMAIL_TOKEN"
 
 
 class ErrorMessage:
@@ -56,3 +57,4 @@ class ErrorMessage:
     ERR_INVALID_EMAIL = "Invalid email."
     ERR_EMAIL_ALREADY_EXISTED = "The email already existed."
     ERR_INVALID_VERIFY_CHANGE_EMAIL_TOKEN = "Invalid verify change email token."
+    ERR_INVALID_REVERT_EMAIL_TOKEN = "Invalid revert email token."

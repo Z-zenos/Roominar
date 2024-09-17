@@ -189,7 +189,7 @@ async def request_change_email(
     )
 
 
-@router.patch(
+@router.get(
     "/change-email/{token}",
     response_model=TokenResponse,
     responses=public_api_responses,
@@ -201,7 +201,7 @@ async def verify_change_email(
     return await auth_service.verify_new_email(db, token)
 
 
-@router.patch(
+@router.get(
     "/revert-email/{token}", status_code=HTTPStatus.OK, responses=public_api_responses
 )
 async def revert_email(

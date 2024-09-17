@@ -116,7 +116,6 @@ async def verify_new_email(db: Session, token: str):
         context = {
             "first_name": f"{user.first_name}",
             "email_changed_at": user.email_changed_at.strftime("%Y/%m/%d %H:%M"),
-            "verify_change_email_url": f"{settings.APP_URL}/change-email/{token}",
         }
 
         mailer = Email()
