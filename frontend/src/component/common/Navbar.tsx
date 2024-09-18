@@ -23,6 +23,7 @@ import type { Session } from 'next-auth';
 import { usePathname, useRouter } from 'next/navigation';
 import { RoleCode } from '@/src/constant/role_code.constant';
 import useWindowDimensions from '@/src/hook/useWindowDimension';
+import { maskEmail } from '@/src/util/app.util';
 
 const menuItems = [
   {
@@ -177,7 +178,9 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
                   className='h-14 gap-2'
                 >
                   <p className='font-semibold'>Signed in as</p>
-                  <p className='font-semibold'>{auth.user?.email}</p>
+                  <p className='font-semibold'>
+                    {maskEmail(auth?.user?.email)}
+                  </p>
                 </DropdownItem>
 
                 <DropdownItem

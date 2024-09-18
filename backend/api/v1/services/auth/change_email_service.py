@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import pytz
 from sqlmodel import Session, select
 
 import backend.api.v1.services.auth as auth_service
@@ -15,7 +16,7 @@ from backend.utils.database import save
 async def request_change_email(
     db: Session, current_user: User, request: ChangeEmailRequest
 ):
-    email = request.email
+    email = request.new_email
     is_user_existed = auth_service.get_user_by_email(db, email, RoleCode.AUDIENCE)
 
     if is_user_existed:
@@ -47,11 +48,9 @@ async def request_change_email(
 
         request_context = {
             "first_name": f"{current_user.first_name}",
-            "email_changed_at": current_user.email_changed_at.strftime(
-                "%Y/%m/%d %H:%M"
-            ),
+            "email_changed_at": datetime.now().strftime("%Y/%m/%d %H:%M"),
             "verify_change_email_url": f"""
-            {settings.APP_URL}/change-email/{verify_token}""",
+            {settings.APP_URL}/api/v1/auth/change-email/{verify_token}""",
             "expire_at": current_user.verify_change_email_token_expire_at.strftime(
                 "%Y/%m/%d %H:%M"
             ),
@@ -66,10 +65,10 @@ async def request_change_email(
         )
 
         alert_context = {
-            "email_changed_at": current_user.email_changed_at.strftime(
-                "%Y/%m/%d %H:%M"
-            ),
-            "revert_email_url": f"{settings.APP_URL}/revert-email/{revert_token}",
+            "email_changed_at": datetime.now().strftime("%Y/%m/%d %H:%M"),
+            "revert_email_url": f"""
+                {settings.APP_URL}/api/v1/auth/revert-email/{revert_token}
+            """,
             "expire_at": current_user.revert_email_token_expire_at.strftime(
                 "%Y/%m/%d %H:%M"
             ),
@@ -93,13 +92,13 @@ async def verify_new_email(db: Session, token: str):
         select(User).where(User.verify_change_email_token == token)
     ).one_or_none()
 
-    if not user or user.email_change_verify_token != token:
+    if not user or user.verify_change_email_token != token:
         raise BadRequestException(
             ErrorCode.ERR_INVALID_VERIFY_CHANGE_EMAIL_TOKEN,
             ErrorMessage.ERR_INVALID_VERIFY_CHANGE_EMAIL_TOKEN,
         )
 
-    if user.email_change_verify_token_expire_at < datetime.now():
+    if user.verify_change_email_token_expire_at < datetime.now(pytz.utc):
         raise BadRequestException(
             ErrorCode.ERR_TOKEN_EXPIRED, ErrorMessage.ERR_TOKEN_EXPIRED
         )
@@ -129,7 +128,7 @@ async def verify_new_email(db: Session, token: str):
         alert_context = {
             "email_changed_at": user.email_changed_at.strftime("%Y/%m/%d %H:%M"),
             "revert_email_url": f"""
-            {settings.APP_URL}/revert-email/{user.revert_email_token}""",
+            {settings.APP_URL}/api/v1/auth/revert-email/{user.revert_email_token}""",
             "expire_at": user.revert_email_token_expire_at.strftime("%Y/%m/%d %H:%M"),
         }
 
