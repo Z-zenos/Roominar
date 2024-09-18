@@ -1,6 +1,7 @@
 from http import HTTPStatus
 
 from fastapi import APIRouter, Depends
+from fastapi.responses import RedirectResponse
 from sqlmodel import Session
 
 import backend.api.v1.services.auth as auth_service
@@ -9,7 +10,9 @@ from backend.api.v1.dependencies.authentication import (
     authorize_role,
     get_current_user,
     get_user_if_logged_in,
+    validate_encrypted_token,
 )
+from backend.core.config import settings
 from backend.core.constants import RoleCode
 from backend.core.error_code import ErrorCode
 from backend.core.exception import BadRequestException, UnauthorizedException
@@ -70,10 +73,10 @@ async def register_audience(
 )
 async def verify_audience(
     db: Session = Depends(get_read_db),
+    user: User = Depends(validate_encrypted_token("email_verification_token")),
     request: VerifyAudienceRequest = None,
-    token: str = None,
 ):
-    return await auth_service.verify_audience(db, request, token)
+    return await auth_service.verify_audience(db, user, request)
 
 
 @router.post(
@@ -154,10 +157,10 @@ async def forgot_password(
 )
 async def reset_password(
     db: Session = Depends(get_read_db),
+    user: User = Depends(validate_encrypted_token("reset_password_token")),
     request: ResetPasswordRequest = None,
-    reset_token: str = None,
 ):
-    return await auth_service.reset_password(db, request, reset_token)
+    return await auth_service.reset_password(db, user, request)
 
 
 @router.post(
@@ -191,14 +194,15 @@ async def request_change_email(
 
 @router.get(
     "/change-email/{token}",
-    response_model=TokenResponse,
+    response_class=RedirectResponse,
     responses=public_api_responses,
 )
 async def verify_change_email(
     db: Session = Depends(get_read_db),
-    token: str = None,
+    user: User = Depends(validate_encrypted_token("verify_change_email_token")),
 ):
-    return await auth_service.verify_new_email(db, token)
+    await auth_service.verify_new_email(db, user)
+    return f"{settings.AUD_FRONTEND_URL}/login"
 
 
 @router.get(
@@ -206,6 +210,6 @@ async def verify_change_email(
 )
 async def revert_email(
     db: Session = Depends(get_read_db),
-    token: str = None,
+    user: User = Depends(validate_encrypted_token("revert_email_token")),
 ):
-    return await auth_service.revert_email(db, token)
+    return await auth_service.revert_email(db, user)

@@ -52,10 +52,10 @@ class Settings(BaseSettings):
     RESET_PASSWORD_TOKEN_EXPIRE_MINUTES: Optional[int]
 
     VERIFY_CHANGE_EMAIL_TOKEN_LENGTH: Optional[int]
-    VERIFY_CHANGE_EMAIL_EXPIRE_MINUTES: Optional[int]
+    VERIFY_CHANGE_EMAIL_TOKEN_EXPIRE_MINUTES: Optional[int]
 
     REVERT_EMAIL_TOKEN_LENGTH: Optional[int]
-    REVERT_EMAIL_EXPIRE_MINUTES: Optional[int]
+    REVERT_EMAIL_TOKEN_EXPIRE_MINUTES: Optional[int]
 
     EMAIL_ADMIN: Optional[str]
 

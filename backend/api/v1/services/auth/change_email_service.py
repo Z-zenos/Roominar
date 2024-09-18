@@ -1,7 +1,6 @@
 from datetime import datetime
 
-import pytz
-from sqlmodel import Session, select
+from sqlmodel import Session
 
 import backend.api.v1.services.auth as auth_service
 from backend.core.config import settings
@@ -34,15 +33,31 @@ async def request_change_email(
             ErrorCode.ERR_INVALID_PASSWORD, ErrorMessage.ERR_INVALID_PASSWORD
         )
 
-    verify_token, verify_expire = auth_service.create_verify_change_email_token()
-    revert_token, revert_expire = auth_service.create_revert_email_token()
+    (
+        verify_token,
+        encrypted_verify_token,
+        verify_expire_at,
+    ) = auth_service.gen_encrypted_token(
+        settings.VERIFY_CHANGE_EMAIL_TOKEN_EXPIRE_MINUTES,
+        settings.RESET_PASSWORD_TOKEN_LENGTH,
+    )
+
+    (
+        revert_token,
+        encrypted_revert_token,
+        revert_expire_at,
+    ) = auth_service.gen_encrypted_token(
+        settings.REVERT_EMAIL_TOKEN_EXPIRE_MINUTES,
+        settings.REVERT_EMAIL_TOKEN_LENGTH,
+    )
+
     try:
         current_user.old_email = current_user.email
         current_user.new_email = email
-        current_user.verify_change_email_token = verify_token
-        current_user.verify_change_email_token_expire_at = verify_expire
-        current_user.revert_email_token = revert_token
-        current_user.revert_email_token_expire_at = revert_expire
+        current_user.verify_change_email_token = encrypted_verify_token
+        current_user.verify_change_email_token_expire_at = verify_expire_at
+        current_user.revert_email_token = encrypted_revert_token
+        current_user.revert_email_token_expire_at = revert_expire_at
 
         save(db, current_user)
 
@@ -50,7 +65,7 @@ async def request_change_email(
             "first_name": f"{current_user.first_name}",
             "email_changed_at": datetime.now().strftime("%Y/%m/%d %H:%M"),
             "verify_change_email_url": f"""
-            {settings.AUD_FRONTEND_URL}/change-email/{verify_token}""",
+            {settings.APP_URL}/api/v1/auth/change-email/{verify_token}""",
             "expire_at": current_user.verify_change_email_token_expire_at.strftime(
                 "%Y/%m/%d %H:%M"
             ),
@@ -67,7 +82,7 @@ async def request_change_email(
         alert_context = {
             "email_changed_at": datetime.now().strftime("%Y/%m/%d %H:%M"),
             "revert_email_url": f"""
-                {settings.AUD_FRONTEND_URL}/revert-email/{revert_token}
+                {settings.APP_URL}/api/v1/auth/revert-email/{revert_token}
             """,
             "expire_at": current_user.revert_email_token_expire_at.strftime(
                 "%Y/%m/%d %H:%M"
@@ -87,22 +102,7 @@ async def request_change_email(
         raise e
 
 
-async def verify_new_email(db: Session, token: str):
-    user = db.exec(
-        select(User).where(User.verify_change_email_token == token)
-    ).one_or_none()
-
-    if not user or user.verify_change_email_token != token:
-        raise BadRequestException(
-            ErrorCode.ERR_INVALID_VERIFY_CHANGE_EMAIL_TOKEN,
-            ErrorMessage.ERR_INVALID_VERIFY_CHANGE_EMAIL_TOKEN,
-        )
-
-    if user.verify_change_email_token_expire_at < datetime.now(pytz.utc):
-        raise BadRequestException(
-            ErrorCode.ERR_TOKEN_EXPIRED, ErrorMessage.ERR_TOKEN_EXPIRED
-        )
-
+async def verify_new_email(db: Session, user: User):
     try:
         user.email = user.new_email
         user.new_email = None
@@ -128,8 +128,7 @@ async def verify_new_email(db: Session, token: str):
         alert_context = {
             "email_changed_at": user.email_changed_at.strftime("%Y/%m/%d %H:%M"),
             "revert_email_url": f"""
-            {settings.AUD_FRONTEND_URL}/revert-email/{user.revert_email_token}
-            """,
+            {settings.APP_URL}/api/v1/auth/revert-email/{user.revert_email_token}""",
             "expire_at": user.revert_email_token_expire_at.strftime("%Y/%m/%d %H:%M"),
         }
 
@@ -139,8 +138,6 @@ async def verify_new_email(db: Session, token: str):
             "Alert Change Email",
             alert_context,
         )
-
-        return auth_service.gen_auth_token(user)
 
     except Exception as e:
         db.rollback()

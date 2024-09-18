@@ -1,16 +1,22 @@
+import hashlib
 from datetime import datetime
 from typing import Annotated
 
+import pytz
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
-from sqlmodel import Session
+from sqlmodel import Session, column, select
 
 from backend.api.v1.services.auth.auth_service import get_user_by_email
 from backend.core.config import settings
 from backend.core.constants import RoleCode
-from backend.core.error_code import ErrorCode
-from backend.core.exception import AccessDeniedException, UnauthorizedException
+from backend.core.error_code import ErrorCode, ErrorMessage
+from backend.core.exception import (
+    AccessDeniedException,
+    BadRequestException,
+    UnauthorizedException,
+)
 from backend.db.database import get_read_db
 from backend.models.user import User
 
@@ -62,5 +68,28 @@ def authorize_role(role: RoleCode):
         if current_user.role_code != role:
             raise AccessDeniedException(error_code=ErrorCode.ERR_ACCESS_DENIED)
         return current_user
+
+    return wrapper
+
+
+def validate_encrypted_token(token_col: str):
+    def wrapper(db: DBDep, token: str):
+        hashed_token = hashlib.sha256(token.encode("utf-8")).hexdigest()
+        # Find user based on reset token.
+        user = db.scalar(select(User).where(column(token_col) == hashed_token))
+
+        if not user:
+            raise BadRequestException(
+                ErrorCode.ERR_INVALID_TOKEN,
+                ErrorMessage.ERR_INVALID_TOKEN,
+            )
+
+        token_expire_at = getattr(user, f"{token_col}_expire_at")
+        if token_expire_at < datetime.now(pytz.utc):
+            raise BadRequestException(
+                ErrorCode.ERR_TOKEN_EXPIRED, ErrorMessage.ERR_TOKEN_EXPIRED
+            )
+
+        return user
 
     return wrapper

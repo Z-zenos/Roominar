@@ -1,6 +1,5 @@
 from datetime import datetime
 
-import pytz
 from sqlmodel import Session, select
 
 from backend.core.config import settings
@@ -16,26 +15,13 @@ from backend.utils.database import save
 
 async def verify_audience(
     db: Session,
+    user: User,
     request: VerifyAudienceRequest,
-    token: str,
 ) -> User:
-    user = db.exec(select(User).where(User.email_verify_token == token)).first()
-    if not user:
-        raise BadRequestException(
-            error_code=ErrorCode.ERR_INVALID_TOKEN,
-            message=ErrorMessage.ERR_INVALID_TOKEN,
-        )
-
     if user and user.email_verified_at:
         raise BadRequestException(
             error_code=ErrorCode.ERR_USER_ALREADY_EXISTED,
             message=ErrorMessage.ERR_USER_ALREADY_EXISTED,
-        )
-
-    if user and user.email_verify_token_expire_at < datetime.now(pytz.utc):
-        raise BadRequestException(
-            error_code=ErrorCode.ERR_TOKEN_EXPIRED,
-            message=ErrorMessage.ERR_TOKEN_EXPIRED,
         )
 
     user.industry_code = request.industry_code

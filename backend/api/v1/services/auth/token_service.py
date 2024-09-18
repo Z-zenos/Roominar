@@ -38,13 +38,6 @@ def create_token(token_length: int):
     return token
 
 
-def create_email_verification_token():
-    expire = datetime.now() + timedelta(
-        minutes=settings.EMAIL_VERIFICATION_TOKEN_EXPIRE_MINUTES
-    )
-    return create_token(settings.EMAIL_VERIFICATION_TOKEN_LENGTH), expire
-
-
 def create_refresh_token(data: dict, remember_me: bool) -> Tuple[str, datetime]:
     to_encode = data.copy()
     expire = datetime.now() + timedelta(
@@ -89,24 +82,10 @@ def verify_refresh_token(token: str):
         raise BadRequestException(ErrorCode.ERR_INVALID_TOKEN)
 
 
-def create_reset_password_token():
-    expire_at = datetime.now() + timedelta(
-        minutes=settings.RESET_PASSWORD_TOKEN_EXPIRE_MINUTES
-    )
+def gen_encrypted_token(expire_minutes: int, length: int):
+    expire_at = datetime.now() + timedelta(minutes=expire_minutes)
 
-    reset_token = create_token(settings.RESET_PASSWORD_TOKEN_LENGTH)
-    encrypted_token = hashlib.sha256(reset_token.encode("utf-8")).hexdigest()
+    token = create_token(length)
+    encrypted_token = hashlib.sha256(token.encode("utf-8")).hexdigest()
 
-    return reset_token, encrypted_token, expire_at
-
-
-def create_verify_change_email_token():
-    expire = datetime.now() + timedelta(
-        minutes=settings.VERIFY_CHANGE_EMAIL_EXPIRE_MINUTES
-    )
-    return create_token(settings.VERIFY_CHANGE_EMAIL_TOKEN_LENGTH), expire
-
-
-def create_revert_email_token():
-    expire = datetime.now() + timedelta(minutes=settings.REVERT_EMAIL_EXPIRE_MINUTES)
-    return create_token(settings.REVERT_EMAIL_TOKEN_LENGTH), expire
+    return token, encrypted_token, expire_at

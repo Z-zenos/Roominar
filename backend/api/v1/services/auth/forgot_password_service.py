@@ -34,7 +34,10 @@ async def forgot_password(db: Session, request: ForgotPasswordRequest):
         reset_token,
         encrypted_token,
         expire_at,
-    ) = auth_service.create_reset_password_token()
+    ) = auth_service.gen_encrypted_token(
+        settings.RESET_PASSWORD_TOKEN_EXPIRE_MINUTES,
+        settings.RESET_PASSWORD_TOKEN_LENGTH,
+    )
     try:
         # Update user reset password token and expire_at
         user.reset_password_token = encrypted_token
