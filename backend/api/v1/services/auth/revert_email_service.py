@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import pytz
 from sqlmodel import Session, select
 
 import backend.api.v1.services.auth as auth_service
@@ -20,7 +21,7 @@ async def revert_email(db: Session, token: str):
             ErrorMessage.ERR_INVALID_REVERT_EMAIL_TOKEN,
         )
 
-    if user.revert_email_token_expire_at < datetime.now():
+    if user.revert_email_token_expire_at < datetime.now(pytz.utc):
         raise BadRequestException(
             ErrorCode.ERR_TOKEN_EXPIRED, ErrorMessage.ERR_TOKEN_EXPIRED
         )
@@ -37,7 +38,9 @@ async def revert_email(db: Session, token: str):
         context = {
             "first_name": f"{user.first_name}",
             "email_changed_at": user.email_changed_at.strftime("%Y/%m/%d %H:%M"),
-            "verify_change_email_url": f"{settings.APP_URL}/change-email/{token}",
+            "verify_change_email_url": f"""
+                {settings.AUD_FRONTEND_URL}/change-email/{token}
+            """,
         }
 
         mailer = Email()
@@ -51,7 +54,7 @@ async def revert_email(db: Session, token: str):
         alert_context = {
             "email_changed_at": user.email_changed_at.strftime("%Y/%m/%d %H:%M"),
             "revert_email_url": f"""
-            {settings.APP_URL}/revert-email/{user.revert_email_token}""",
+            {settings.AUD_FRONTEND_URL}/revert-email/{user.revert_email_token}""",
             "expire_at": user.revert_email_token_expire_at.strftime("%Y/%m/%d %H:%M"),
         }
 

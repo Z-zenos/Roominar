@@ -1,6 +1,7 @@
 from collections import defaultdict
 from datetime import datetime
 
+import pytz
 from pydantic import BaseModel
 from sqlmodel import Date, Session, and_, asc, case, desc, func, or_, select
 
@@ -199,7 +200,7 @@ def _build_filters(db: Session, user: User, query_params: SearchEventsQueryParam
         )
 
     if query_params.is_apply_ended:
-        filters.append(Event.application_end_at < datetime.now())
+        filters.append(Event.application_end_at < datetime.now(pytz.utc))
 
     if query_params.is_today:
         filters.append(Event.start_at.date() == datetime.now().date())
