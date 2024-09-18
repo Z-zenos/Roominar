@@ -18,4 +18,5 @@ def authenticate_user(db: Session, **kwargs):
 
     if not verify_password(kwargs.get("password"), user.password):
         return None
+
     return user

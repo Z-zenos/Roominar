@@ -188,7 +188,10 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
                 </DropdownItem>
                 <DropdownItem key='my_events'>My Events</DropdownItem>
                 <DropdownItem key='host_my_event'>Host Event</DropdownItem>
-                <DropdownItem key='account_settings'>
+                <DropdownItem
+                  key='account_settings'
+                  href='/account-settings'
+                >
                   Account Settings
                 </DropdownItem>
                 <DropdownItem key='help_center'>Help Center</DropdownItem>

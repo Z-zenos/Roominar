@@ -66,7 +66,7 @@ export default function ChangePasswordForm() {
       <form onSubmit={form.handleSubmit(handleChangePassword)}>
         <div
           className={clsx(
-            styles.flexStart,
+            styles.between,
             'gap-4 !items-end mt-8 pt-6 border-t border-t-gray-300',
           )}
         >

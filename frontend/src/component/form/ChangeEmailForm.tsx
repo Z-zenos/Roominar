@@ -62,22 +62,14 @@ export default function ChangeEmailForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleChangeEmail)}>
-        <div className={clsx(styles.flexStart, 'gap-4 !items-end mt-8')}>
+        <div className={clsx(styles.between, 'gap-4 !items-end mt-8')}>
           <div className='self-start'>
             <FormCustomLabel
               title='Email ( Last changed 9 month(s) ago.)'
               htmlFor='email'
               className='font-medium text-nm'
             />
-            <FormInput
-              id='email'
-              name='email'
-              value={maskEmail(auth?.user?.email)}
-              type='email'
-              control={form.control}
-              disabled
-              className='bg-slate-100  min-w-[300px]'
-            />
+            <p className=''>{maskEmail(auth?.user?.email)}</p>
           </div>
 
           <Button

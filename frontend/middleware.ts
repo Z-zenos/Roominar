@@ -24,6 +24,8 @@ export const pathPermissionMaster = {
     '/search',
     '/events/[slug]',
     '/events/[slug]/apply',
+    '/account-settings',
+
     // '/organization/login',
     // '/change-email/[token]',
   ],
@@ -61,7 +63,7 @@ export const pathPermissionMaster = {
     // '/events/[slug]/apply',
     // '/change-email/[token]',
     '/not-found',
-    '/account-settings',
+    '/forgot-password',
   ],
 };
 

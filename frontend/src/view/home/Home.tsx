@@ -136,7 +136,7 @@ export default function Home() {
             <div className='my-8 relative space-y-4 opacity-30'>
               {upcomingEvents && (
                 <Image
-                  src={upcomingEvents.data[activeEvent].coverImageUrl}
+                  src={upcomingEvents.data[activeEvent]?.coverImageUrl}
                   alt='Cover image'
                   className='w-full blur-xl'
                   classNames={{ wrapper: '!max-w-full' }}
