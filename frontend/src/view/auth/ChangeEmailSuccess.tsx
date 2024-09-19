@@ -27,7 +27,7 @@ function ChangeEmailSuccess({ token }: ChangeEmailSuccessProps) {
       setText('Your new email changed successfully ✔');
       setIsSuccess(true);
       toast.success('Your new email has verified completely!');
-      router.push('/login');
+      setTimeout(() => router.push('/login'), 1500);
     },
     onError(error: ApiException<unknown>) {
       toast.error(
