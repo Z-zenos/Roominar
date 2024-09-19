@@ -23,6 +23,7 @@ import type { Session } from 'next-auth';
 import { usePathname, useRouter } from 'next/navigation';
 import { RoleCode } from '@/src/constant/role_code.constant';
 import useWindowDimensions from '@/src/hook/useWindowDimension';
+import { maskEmail } from '@/src/util/app.util';
 
 const menuItems = [
   {
@@ -177,7 +178,9 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
                   className='h-14 gap-2'
                 >
                   <p className='font-semibold'>Signed in as</p>
-                  <p className='font-semibold'>{auth.user?.email}</p>
+                  <p className='font-semibold'>
+                    {maskEmail(auth?.user?.email)}
+                  </p>
                 </DropdownItem>
 
                 <DropdownItem
@@ -188,7 +191,10 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
                 </DropdownItem>
                 <DropdownItem key='my_events'>My Events</DropdownItem>
                 <DropdownItem key='host_my_event'>Host Event</DropdownItem>
-                <DropdownItem key='account_settings'>
+                <DropdownItem
+                  key='account_settings'
+                  href='/account-settings'
+                >
                   Account Settings
                 </DropdownItem>
                 <DropdownItem key='help_center'>Help Center</DropdownItem>

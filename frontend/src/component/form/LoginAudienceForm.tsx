@@ -14,8 +14,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { HiMail } from 'react-icons/hi';
 import clsx from 'clsx';
 import { Link } from '@nextui-org/link';
-import { Form, FormCheckBox, FormInput } from './Form';
-import { Label } from '../common/Label';
+import { Form, FormCheckBox, FormCustomLabel, FormInput } from './Form';
 import { styles } from '@/src/constant/styles.constant';
 import Button from '../common/Button/Button';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -27,7 +26,7 @@ import type { LoginAudienceFormSchema } from '@/src/schemas/auth/LoginAudienceFo
 import { loginAudienceFormSchema } from '@/src/schemas/auth/LoginAudienceFormSchema';
 
 export default function LoginAudienceForm() {
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const form = useForm<LoginAudienceFormSchema>({
     mode: 'all',
@@ -95,14 +94,11 @@ export default function LoginAudienceForm() {
         className={clsx('flex items-center justify-center flex-col')}
       >
         <div className='w-full'>
-          <div className='mb-2 block'>
-            <Label
-              htmlFor='email'
-              className={clsx(styles.label)}
-            >
-              Your email
-            </Label>
-          </div>
+          <FormCustomLabel
+            htmlFor='email'
+            title='Your email'
+            required
+          />
           <FormInput
             id='email'
             name='email'
@@ -125,14 +121,11 @@ export default function LoginAudienceForm() {
         </div>
 
         <div className='w-full mt-5 relative mb-1'>
-          <div className='mb-2 block'>
-            <Label
-              htmlFor='password'
-              className={clsx(styles.label)}
-            >
-              Enter your password
-            </Label>
-          </div>
+          <FormCustomLabel
+            htmlFor='password'
+            title='Password'
+            required
+          />
           <FormInput
             id='password'
             name='password'

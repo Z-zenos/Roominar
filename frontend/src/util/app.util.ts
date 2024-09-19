@@ -151,3 +151,18 @@ export function groupIntoPairs(arr: any) {
   }
   return result;
 }
+
+export function maskEmail(email: string) {
+  if (!email) return;
+  const [localPart, domain] = email.split('@');
+
+  // Show only the first character of the local part and mask the rest
+  const maskedLocalPart = localPart[0] + '***';
+
+  return maskedLocalPart + '@' + domain;
+}
+
+export function matchRoute(route: string, pathname: string) {
+  const routeRegex = new RegExp('^' + route.replace(/\[.*?\]/g, '.*') + '$');
+  return routeRegex.test(pathname);
+}

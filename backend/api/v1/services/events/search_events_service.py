@@ -1,6 +1,7 @@
 from collections import defaultdict
 from datetime import datetime
 
+import pytz
 from pydantic import BaseModel
 from sqlmodel import Date, Session, and_, asc, case, desc, func, or_, select
 
@@ -41,7 +42,7 @@ async def search_events(
             Event.is_online,
             Event.is_offline,
             Event.meeting_tool_code,
-            Event.public_at,
+            Event.published_at,
             func.count(Application.id).label("applied_number"),
             case(
                 (
@@ -151,10 +152,10 @@ def _build_recommendation_targets(targets_list: list):
 
 def _build_filters(db: Session, user: User, query_params: SearchEventsQueryParams):
     filters = [
-        Event.public_at.isnot(None),
+        Event.published_at.isnot(None),
         Event.status == EventStatusCode.PUBLIC,
     ]
-    sort_by = Event.public_at
+    sort_by = Event.published_at
     recommendation_targets = []
 
     if user:
@@ -199,7 +200,7 @@ def _build_filters(db: Session, user: User, query_params: SearchEventsQueryParam
         )
 
     if query_params.is_apply_ended:
-        filters.append(Event.application_end_at < datetime.now())
+        filters.append(Event.application_end_at < datetime.now(pytz.utc))
 
     if query_params.is_today:
         filters.append(Event.start_at.date() == datetime.now().date())
@@ -226,7 +227,7 @@ def _build_filters(db: Session, user: User, query_params: SearchEventsQueryParam
     if query_params.end_start_at:
         filters.append(Event.start_at.cast(Date) <= query_params.end_start_at.date())
 
-    if query_params.sort_by == EventSortByCode.PUBLIC_AT:
+    if query_params.sort_by == EventSortByCode.PUBLISHED_AT:
         filters.append(Event.end_at > datetime.now())
 
     if query_params.sort_by == EventSortByCode.START_AT:

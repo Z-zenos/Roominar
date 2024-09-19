@@ -58,7 +58,7 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   const handleResetPassword = form.handleSubmit(
     (data: ResetPasswordFormSchema) => {
       trigger({
-        resetToken: token,
+        token: token,
         resetPasswordRequest: {
           newPassword: data?.newPassword,
           confirmPassword: data?.confirmPassword,

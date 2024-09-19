@@ -1,4 +1,3 @@
-from datetime import datetime, timedelta
 from http import HTTPStatus
 
 from fastapi import APIRouter, Depends
@@ -6,20 +5,27 @@ from sqlmodel import Session
 
 import backend.api.v1.services.auth as auth_service
 import backend.api.v1.services.tags as tags_service
-import backend.api.v1.services.users as users_service
-from backend.api.v1.dependencies.authentication import get_user_if_logged_in
-from backend.core.config import settings
+from backend.api.v1.dependencies.authentication import (
+    authorize_role,
+    get_current_user,
+    get_user_if_logged_in,
+    validate_encrypted_token,
+)
+from backend.core.constants import RoleCode
 from backend.core.error_code import ErrorCode
 from backend.core.exception import BadRequestException, UnauthorizedException
 from backend.core.response import authenticated_api_responses, public_api_responses
 from backend.db.database import get_read_db
 from backend.models.user import User
 from backend.schemas.auth import (
+    ChangeEmailRequest,
+    ChangePasswordRequest,
     ForgotPasswordRequest,
     ForgotPasswordResponse,
     GetMeResponse,
     RegisterAudienceRequest,
     RegisterAudienceResponse,
+    RequestChangeEmailResponse,
     ResetPasswordRequest,
     SocialAuthRequest,
     TokenResponse,
@@ -39,24 +45,10 @@ async def login(
     user = auth_service.authenticate_user(db, **request.model_dump())
     if not user:
         raise UnauthorizedException(ErrorCode.ERR_UNAUTHORIZED)
-    if not user.email_verify_at:
+    if not user.email_verified_at:
         raise BadRequestException(ErrorCode.ERR_USER_NOT_VERIFIED)
-    access_token_expires = datetime.now() + timedelta(
-        minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
-    )
-    access_token = auth_service.create_access_token(
-        data={"sub": user.email, "role": user.role_code}, expire=access_token_expires
-    )
-    refresh_token, refresh_expire_at = auth_service.create_refresh_token(
-        {"sub": user.email, "role": user.role_code}, remember_me=request.remember_me
-    )
-    return TokenResponse(
-        access_token=access_token,
-        token_type="bearer",
-        expire_at=access_token_expires,
-        refresh_token=refresh_token,
-        refresh_expire_at=refresh_expire_at,
-    )
+
+    return auth_service.gen_auth_token(user, remember_me=True)
 
 
 @router.post(
@@ -66,23 +58,23 @@ async def register_audience(
     db: Session = Depends(get_read_db),
     request: RegisterAudienceRequest = None,
 ):
-    new_user = await users_service.register_audience(db, request)
+    new_user = await auth_service.register_audience(db, request)
     return RegisterAudienceResponse(
         email=new_user.email, expire_at=new_user.email_verify_token_expire_at
     )
 
 
-@router.post(
+@router.patch(
     "/verify/{token}",
     response_model=VerifyAudienceResponse,
     responses=public_api_responses,
 )
 async def verify_audience(
     db: Session = Depends(get_read_db),
+    user: User = Depends(validate_encrypted_token("email_verification_token")),
     request: VerifyAudienceRequest = None,
-    token: str = None,
 ):
-    return await users_service.verify_audience(db, request, token)
+    return await auth_service.verify_audience(db, user, request)
 
 
 @router.post(
@@ -125,8 +117,8 @@ async def me(
 
 @router.get(
     "/refresh-token/{token}",
-    responses=public_api_responses,
     response_model=TokenResponse,
+    responses=public_api_responses,
 )
 async def refresh_token(
     token: str,
@@ -138,23 +130,7 @@ async def refresh_token(
     if not user:
         raise UnauthorizedException(ErrorCode.ERR_UNAUTHORIZED)
 
-    access_token_expires = datetime.now() + timedelta(
-        minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
-    )
-    access_token = auth_service.create_access_token(
-        data={"sub": user.email, "role": user.role_code}, expire=access_token_expires
-    )
-
-    new_refresh_token, refresh_expire_at = auth_service.create_refresh_token(
-        {"sub": user.email, "role": user.role_code}, remember_me=True
-    )
-    return TokenResponse(
-        token_type="bearer",
-        access_token=access_token,
-        expire_at=access_token_expires,
-        refresh_token=new_refresh_token,
-        refresh_expire_at=refresh_expire_at,
-    )
+    return auth_service.gen_auth_token(user)
 
 
 @router.post(
@@ -173,13 +149,64 @@ async def forgot_password(
 
 
 @router.post(
-    "/reset-password/{reset_token}",
+    "/reset-password/{token}",
     status_code=HTTPStatus.OK,
     responses=public_api_responses,
 )
 async def reset_password(
     db: Session = Depends(get_read_db),
+    user: User = Depends(validate_encrypted_token("reset_password_token")),
     request: ResetPasswordRequest = None,
-    reset_token: str = None,
 ):
-    return await auth_service.reset_password(db, request, reset_token)
+    return await auth_service.reset_password(db, user, request)
+
+
+@router.post(
+    "/change-password",
+    status_code=HTTPStatus.OK,
+    responses=authenticated_api_responses,
+)
+async def change_password(
+    db: Session = Depends(get_read_db),
+    current_user: User = Depends(get_current_user),
+    request: ChangePasswordRequest = None,
+):
+    return await auth_service.change_password(db, current_user, request)
+
+
+@router.post(
+    "/change-email",
+    response_model=RequestChangeEmailResponse,
+    responses=authenticated_api_responses,
+)
+async def request_change_email(
+    db: Session = Depends(get_read_db),
+    current_user: User = Depends(authorize_role(RoleCode.AUDIENCE)),
+    request: ChangeEmailRequest = None,
+):
+    user = await auth_service.request_change_email(db, current_user, request)
+    return RequestChangeEmailResponse(
+        email=user.new_email, expire_at=user.verify_change_email_token_expire_at
+    )
+
+
+@router.patch(
+    "/change-email/{token}",
+    status_code=HTTPStatus.OK,
+    responses=public_api_responses,
+)
+async def verify_change_email(
+    db: Session = Depends(get_read_db),
+    user: User = Depends(validate_encrypted_token("verify_change_email_token")),
+):
+    return await auth_service.verify_new_email(db, user)
+
+
+@router.patch(
+    "/revert-email/{token}", status_code=HTTPStatus.OK, responses=public_api_responses
+)
+async def revert_email(
+    db: Session = Depends(get_read_db),
+    user: User = Depends(validate_encrypted_token("revert_email_token")),
+):
+    return await auth_service.revert_email(db, user)

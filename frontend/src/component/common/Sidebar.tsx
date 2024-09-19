@@ -69,9 +69,9 @@ const sidebarMenu = [
     route: '/my-profile',
   },
   {
-    title: 'Account Setting',
+    title: 'Account Settings',
     icon: <AccountSettingIcon width={25} />,
-    route: '/account-setting',
+    route: '/account-settings',
   },
   {
     title: 'My Events',

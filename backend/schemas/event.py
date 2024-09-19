@@ -37,7 +37,7 @@ class SearchEventsItem(BaseModel):
     meeting_tool_code: str | None = None
     applied_number: int | None = None
     tags: list[TagItem] = Field([])
-    public_at: datetime
+    published_at: datetime
 
 
 class SearchEventsQueryParams(BaseModel):
@@ -61,7 +61,7 @@ class SearchEventsQueryParams(BaseModel):
     start_start_at: datetime | None = Field(Query(default=None))
     end_start_at: datetime | None = Field(Query(default=None))
 
-    sort_by: EventSortByCode | None = Field(Query(default=EventSortByCode.PUBLIC_AT))
+    sort_by: EventSortByCode | None = Field(Query(default=EventSortByCode.PUBLISHED_AT))
     per_page: int | None = Field(Query(default=10, le=100, ge=1))
     page: int | None = Field(Query(default=1, ge=1))
 

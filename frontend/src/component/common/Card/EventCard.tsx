@@ -74,7 +74,7 @@ function EventCard({
             <div>
               <p className='font-semibold text-sm'>{event.organizationName}</p>
               <p className='font-light text-xs text-gray-600'>
-                Published on {dayjs(event.publicAt).format('MMM DD, YYYY')}
+                Published on {dayjs(event.publishedAt).format('MMM DD, YYYY')}
               </p>
             </div>
           </div>

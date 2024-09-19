@@ -99,3 +99,36 @@ class VerifyAudienceRequest(BaseModel):
 
 class VerifyAudienceResponse(UserBase):
     id: int
+
+
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str
+    confirm_new_password: str
+
+    @field_validator("new_password")
+    def new_password_validator(cls, v):
+        return password_validator(v)
+
+    @field_validator("confirm_new_password")
+    def confirm_new_password_validator(cls, v: Optional[str], values: ValidationInfo):
+        if values.data.get("new_password") != v:
+            raise ValueError(
+                ErrorCode.ERR_PASSWORD_NOT_MATCHING,
+                ErrorMessage.ERR_PASSWORD_NOT_MATCHING,
+            )
+        return v
+
+
+class ChangeEmailRequest(BaseModel):
+    new_email: EmailStr
+    password: str
+
+    @field_validator("password")
+    def password_validator(cls, v):
+        return password_validator(v)
+
+
+class RequestChangeEmailResponse(BaseModel):
+    email: str
+    expire_at: datetime

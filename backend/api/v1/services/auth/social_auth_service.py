@@ -4,7 +4,7 @@ from sqlmodel import Session
 
 import backend.api.v1.services.auth as auth_service
 from backend.core.config import settings
-from backend.core.constants import RoleCode
+from backend.core.constants import LoginMethodCode, RoleCode
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.mails.mail import Email
@@ -22,7 +22,7 @@ async def social_auth(db: Session, request: SocialAuthRequest):
 
     user = auth_service.get_user_by_email(db, request.email, RoleCode.AUDIENCE)
 
-    if user and not user.email_verify_at:
+    if user and not user.email_verified_at:
         raise BadRequestException(
             ErrorCode.ERR_USER_NOT_VERIFIED, ErrorMessage.ERR_USER_NOT_VERIFIED
         )
@@ -30,13 +30,14 @@ async def social_auth(db: Session, request: SocialAuthRequest):
     if not user:
         user = User(
             email=request.email,
-            email_verify_at=datetime.now(),
+            email_verified_at=datetime.now(),
             role_code=RoleCode.AUDIENCE,
             first_name=request.family_name if request.family_name else request.name,
             last_name=request.given_name,
             avatar_url=request.picture,
             email_verify_token=None,
             email_verify_token_expire_at=None,
+            login_method_code=LoginMethodCode.GOOGLE,
         )
         user = save(db, user)
 

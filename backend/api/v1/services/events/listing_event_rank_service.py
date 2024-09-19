@@ -22,7 +22,7 @@ async def listing_event_rank(db: Session):
             .outerjoin(Application, Event.id == Application.event_id)
             .outerjoin(Bookmark, Event.id == Bookmark.event_id)
             .where(
-                Event.public_at.isnot(None),
+                Event.published_at.isnot(None),
                 Event.status == EventStatusCode.PUBLIC,
                 Application.canceled_at.is_(None),
             )
