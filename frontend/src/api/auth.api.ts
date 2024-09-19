@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import type {
   AuthApiForgotPasswordRequest,
   AuthApiResetPasswordRequest,
@@ -9,6 +10,7 @@ import type {
   RequestChangeEmailResponse,
   AuthApiRequestChangeEmailRequest,
   AuthApiChangePasswordRequest,
+  AuthApiVerifyChangeEmailRequest,
 } from '../lib/api/generated';
 import useApi from '../lib/api/useApi';
 import type { SWRMutationConfiguration } from 'swr/mutation';
@@ -102,6 +104,18 @@ export const useChangePasswordMutation = <T>(
   return useSWRMutation<void, T, typeof key, AuthApiChangePasswordRequest>(
     key,
     async (_: string, { arg }) => await api.auth.changePassword(arg),
+    options,
+  );
+};
+
+export const useVerifyChangeEmailMutation = <T>(
+  options?: SWRMutationConfiguration<void, T>,
+) => {
+  const api = useApi();
+  const key = `verify-change-email`;
+  return useSWRMutation<void, T, typeof key, AuthApiVerifyChangeEmailRequest>(
+    key,
+    async (_: string, { arg }) => await api.auth.verifyChangeEmail(arg),
     options,
   );
 };

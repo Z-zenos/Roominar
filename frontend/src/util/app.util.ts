@@ -161,3 +161,8 @@ export function maskEmail(email: string) {
 
   return maskedLocalPart + '@' + domain;
 }
+
+export function matchRoute(route: string, pathname: string) {
+  const routeRegex = new RegExp('^' + route.replace(/\[.*?\]/g, '.*') + '$');
+  return routeRegex.test(pathname);
+}

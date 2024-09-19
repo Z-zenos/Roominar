@@ -1,7 +1,6 @@
 from http import HTTPStatus
 
 from fastapi import APIRouter, Depends
-from fastapi.responses import RedirectResponse
 from sqlmodel import Session
 
 import backend.api.v1.services.auth as auth_service
@@ -12,7 +11,6 @@ from backend.api.v1.dependencies.authentication import (
     get_user_if_logged_in,
     validate_encrypted_token,
 )
-from backend.core.config import settings
 from backend.core.constants import RoleCode
 from backend.core.error_code import ErrorCode
 from backend.core.exception import BadRequestException, UnauthorizedException
@@ -66,7 +64,7 @@ async def register_audience(
     )
 
 
-@router.post(
+@router.patch(
     "/verify/{token}",
     response_model=VerifyAudienceResponse,
     responses=public_api_responses,
@@ -151,7 +149,7 @@ async def forgot_password(
 
 
 @router.post(
-    "/reset-password/{reset_token}",
+    "/reset-password/{token}",
     status_code=HTTPStatus.OK,
     responses=public_api_responses,
 )
@@ -192,20 +190,19 @@ async def request_change_email(
     )
 
 
-@router.get(
+@router.patch(
     "/change-email/{token}",
-    response_class=RedirectResponse,
+    status_code=HTTPStatus.OK,
     responses=public_api_responses,
 )
 async def verify_change_email(
     db: Session = Depends(get_read_db),
     user: User = Depends(validate_encrypted_token("verify_change_email_token")),
 ):
-    await auth_service.verify_new_email(db, user)
-    return f"{settings.AUD_FRONTEND_URL}/login"
+    return await auth_service.verify_new_email(db, user)
 
 
-@router.get(
+@router.patch(
     "/revert-email/{token}", status_code=HTTPStatus.OK, responses=public_api_responses
 )
 async def revert_email(

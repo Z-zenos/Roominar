@@ -25,7 +25,9 @@ async def register_audience(db: Session, request: RegisterAudienceRequest) -> Us
 
     if user and user.email_verify_token_expire_at > datetime.now(pytz.utc):
         context = {
-            "url": f"{settings.AUD_FRONTEND_URL}/verify/{user.email_verify_token}",
+            "url": f"""
+                {settings.AUD_FRONTEND_URL}/email/verify/{user.email_verify_token}
+            """,
             "expire_at": user.email_verify_token_expire_at.strftime("%Y/%m/%d %H:%M"),
             "first_name": user.first_name,
         }

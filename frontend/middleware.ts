@@ -4,66 +4,33 @@ import type { NextFetchEvent } from 'next/server';
 import { NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import { RoleCode } from './src/constant/role_code.constant';
-// import { getToken } from 'next-auth/jwt';
+import { matchRoute } from './src/util/app.util';
 
 export const pathPermissionMaster = {
   AUDIENCE: [
     '/register',
-    // '/register/registration',
-    // '/register/success',
-    // '/forget-password',
-    // '/reset-password',
     '/my-profile',
-    // '/applied-upcoming',
-    // '/applied-ended',
-    // '/bookmark',
-    // '/update-information',
-    // '/public-information',
-    // '/change-email',
     '/home',
     '/search',
     '/events/[slug]',
     '/events/[slug]/apply',
     '/account-settings',
-
-    // '/organization/login',
-    // '/change-email/[token]',
+    '/not-found',
   ],
   SPEAKER: ['/login', '/organization/login'],
-  ORGANIZER: [
-    '/login',
-    // '/organization/register',
-    // '/organization/register/success',
-    // '/organization/events',
-    // '/organization/events/[id]',
-    // '/organization/applications',
-    // '/organization/members',
-    // '/organization/setting/member/[id]',
-    // '/organization/create-questionaire',
-    // '/organization/questionnaire/[id]',
-    // '/organization/applications',
-    // '/organization/setting/member',
-    // '/organization/questionnaires-management',
-    // '/organization/event-register',
-    // '/organization/register-member',
-    // '/organization/create-target',
-    // '/organization/targets',
-    // '/organization/targets/[id]',
-    // '/organization/information',
-  ],
+  ORGANIZER: ['/login'],
   ADMIN: ['/admin/users', '/admin/organizers', '/login', '/organization/login'],
   GUEST: [
     '/login',
     '/register',
-    '/register/registration',
-    // '/register/success',
     '/home',
     '/search',
     '/events/[slug]',
-    // '/events/[slug]/apply',
-    // '/change-email/[token]',
     '/not-found',
     '/forgot-password',
+    '/email/verify/[token]',
+    '/email/change/[token]',
+    '/email/revert/[token]',
   ],
 };
 
@@ -73,8 +40,8 @@ const nextResponseRedirectUrl = (
   url: string,
 ) => {
   if (
-    !pathPermissionMaster?.[roleCode]?.find((item: string) =>
-      pathName.includes(item),
+    !pathPermissionMaster?.[roleCode]?.some((route: string) =>
+      matchRoute(route, pathName),
     ) ||
     pathName === '/'
   ) {

@@ -65,7 +65,7 @@ async def request_change_email(
             "first_name": f"{current_user.first_name}",
             "email_changed_at": datetime.now().strftime("%Y/%m/%d %H:%M"),
             "verify_change_email_url": f"""
-            {settings.APP_URL}/api/v1/auth/change-email/{verify_token}""",
+            {settings.AUD_FRONTEND_URL}/email/change/{verify_token}""",
             "expire_at": current_user.verify_change_email_token_expire_at.strftime(
                 "%Y/%m/%d %H:%M"
             ),
@@ -82,7 +82,7 @@ async def request_change_email(
         alert_context = {
             "email_changed_at": datetime.now().strftime("%Y/%m/%d %H:%M"),
             "revert_email_url": f"""
-                {settings.APP_URL}/api/v1/auth/revert-email/{revert_token}
+                {settings.AUD_FRONTEND_URL}/email/revert/{revert_token}
             """,
             "expire_at": current_user.revert_email_token_expire_at.strftime(
                 "%Y/%m/%d %H:%M"
@@ -128,7 +128,7 @@ async def verify_new_email(db: Session, user: User):
         alert_context = {
             "email_changed_at": user.email_changed_at.strftime("%Y/%m/%d %H:%M"),
             "revert_email_url": f"""
-            {settings.APP_URL}/api/v1/auth/revert-email/{user.revert_email_token}""",
+            {settings.AUD_FRONTEND_URL}/email/revert/{user.revert_email_token}""",
             "expire_at": user.revert_email_token_expire_at.strftime("%Y/%m/%d %H:%M"),
         }
 

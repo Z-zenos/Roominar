@@ -35,7 +35,7 @@ async def revert_email(db: Session, user: User):
         alert_context = {
             "email_changed_at": user.email_changed_at.strftime("%Y/%m/%d %H:%M"),
             "revert_email_url": f"""
-            {settings.APP_URL}/revert-email/{user.revert_email_token}""",
+            {settings.AUD_FRONTEND_URL}/email/revert/{user.revert_email_token}""",
             "expire_at": user.revert_email_token_expire_at.strftime("%Y/%m/%d %H:%M"),
         }
 
