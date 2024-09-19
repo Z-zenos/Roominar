@@ -50,15 +50,21 @@ function ChangeEmailSuccess({ token }: ChangeEmailSuccessProps) {
     <main className='grid min-h-full place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8'>
       <div className='text-center'>
         <Alert>
-          <Image
-            src={isSuccess ? '/images/change_email.png' : '/images/invalid.png'}
-            width={isSuccess ? 160 : 100}
-            alt='not found image'
-            classNames={{
-              wrapper:
-                'block mx-auto my-4 flex items-center justify-center text-gray-100',
-            }}
-          />
+          {isSuccess === null ? (
+            <></>
+          ) : (
+            <Image
+              src={
+                isSuccess ? '/images/change_email.png' : '/images/invalid.png'
+              }
+              width={isSuccess ? 160 : 100}
+              alt='not found image'
+              classNames={{
+                wrapper:
+                  'block mx-auto my-4 flex items-center justify-center text-gray-100',
+              }}
+            />
+          )}
           <AlertTitle className='text-xm font-light'>
             Change New Email
           </AlertTitle>

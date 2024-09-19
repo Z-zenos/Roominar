@@ -16,6 +16,7 @@ export const pathPermissionMaster = {
     '/events/[slug]/apply',
     '/account-settings',
     '/not-found',
+    '/email/change/[token]',
   ],
   SPEAKER: ['/login', '/organization/login'],
   ORGANIZER: ['/login'],

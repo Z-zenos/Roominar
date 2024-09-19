@@ -26,7 +26,7 @@ import type { LoginAudienceFormSchema } from '@/src/schemas/auth/LoginAudienceFo
 import { loginAudienceFormSchema } from '@/src/schemas/auth/LoginAudienceFormSchema';
 
 export default function LoginAudienceForm() {
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const form = useForm<LoginAudienceFormSchema>({
     mode: 'all',
