@@ -108,11 +108,7 @@ function MyEvents() {
             data.data?.length > 0 &&
             data?.data?.map((event: MyEventItem) => (
               <EventCard
-                direction={
-                  (width < 1200 && width > 1000) || width < 800
-                    ? 'vertical'
-                    : 'horizontal'
-                }
+                direction={width < 600 ? 'vertical' : 'horizontal'}
                 className='w-full mb-4'
                 event={event}
                 key={event.id}

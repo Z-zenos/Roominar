@@ -21,12 +21,13 @@ import EventBookmark from '@/src/view/event/EventBookmark';
 import { useSession } from 'next-auth/react';
 import toast from 'react-hot-toast';
 import { IoMdLogIn } from 'react-icons/io';
+import Ticket from './Ticket';
 
 interface EventCardProps {
   className?: string;
   direction?: 'horizontal' | 'vertical';
   variant?: 'simple' | 'complex';
-  event: SearchEventsItem & MyEventItem;
+  event: SearchEventsItem | MyEventItem;
 }
 
 function EventCard({
@@ -42,7 +43,7 @@ function EventCard({
   return (
     <div
       className={clsx(
-        'bg-white rounded-lg py-3 shadow-[rgba(60,_64,_67,_0.15)_0px_1px_1px_0px,_rgba(60,_64,_67,_0.15)_0px_2px_4px_2px] cursor-pointer active:shadow-none transition-all',
+        'bg-white rounded-lg py-3 shadow-[rgba(60,_64,_67,_0.15)_0px_1px_1px_0px,_rgba(60,_64,_67,_0.15)_0px_2px_4px_2px] active:shadow-none transition-all',
         direction === 'vertical'
           ? 'min-w-[300px] w-[300px] 600px:max-w-[400px] max-w-[300px] border-t border-t-gray-300'
           : 'border border-gray-200 items-start px-3',
@@ -51,7 +52,7 @@ function EventCard({
     >
       <div
         className={clsx(
-          'flex gap-4 justify-start ',
+          'flex gap-4 justify-start cursor-pointer ',
           direction === 'vertical'
             ? 'flex-col'
             : 'flex-row justify-between items-start flex-wrap ',
@@ -99,7 +100,11 @@ function EventCard({
             {direction === 'vertical' && (
               <div className={clsx(styles.between)}>
                 <Chip
-                  content={event.applicationNumber + ''}
+                  content={
+                    status === 'authenticated'
+                      ? `${event?.appliedNumber || 0} / ${event?.applicationNumber}`
+                      : event.applicationNumber + ''
+                  }
                   leftIcon={<FaUserFriends className='text-sm' />}
                   type='info'
                 />
@@ -145,7 +150,11 @@ function EventCard({
                     />
                   )}
                   <Chip
-                    content={event.applicationNumber + ''}
+                    content={
+                      status === 'authenticated'
+                        ? `${event?.appliedNumber || 0} / ${event?.applicationNumber}`
+                        : event.applicationNumber + ''
+                    }
                     leftIcon={<FaUserFriends className='text-sm' />}
                     type='info'
                   />
@@ -261,22 +270,26 @@ function EventCard({
             ))}
           </div>
 
-          {event?.isApplied && (
-            <div>
-              <Button
-                color='danger'
-                radius='sm'
-                variant='bordered'
-                size='sm'
-                className='mt-2 hover:text-white hover:bg-danger-500'
-
-                // isLoading={isRequesting}
-                // isDisabled={!form.formState.isValid}
+          {'isApplied' in event &&
+            status === 'authenticated' &&
+            event?.isApplied && (
+              <div
+                className={clsx('flex justify-end items-center !gap-4 mt-2')}
               >
-                Cancel Apply
-              </Button>
-            </div>
-          )}
+                {event?.ticketName && <Ticket name={event?.ticketName} />}
+                <Button
+                  color='danger'
+                  radius='sm'
+                  variant='bordered'
+                  size='sm'
+                  className=' hover:text-white hover:bg-danger-500'
+                  // isLoading={isRequesting}
+                  // isDisabled={!form.formState.isValid}
+                >
+                  Cancel Apply
+                </Button>
+              </div>
+            )}
         </div>
       )}
     </div>
