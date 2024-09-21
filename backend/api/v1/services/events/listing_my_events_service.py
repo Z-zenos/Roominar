@@ -14,7 +14,7 @@ def listing_my_events(
 ):
     filters = _build_filters(current_user, query_params)
     events = _listing_events(db, current_user, filters, query_params)
-    total = _count_events(db, filters)
+    total = _count_events(db, current_user, filters)
     return events, total
 
 
@@ -110,13 +110,25 @@ def _listing_events(
 
 def _count_events(
     db: Session,
+    current_user: User,
     filters: list,
 ):
     total = (
         db.scalar(
             select(func.count(Event.id))
-            .outerjoin(Application, Event.id == Application.event_id)
-            .outerjoin(Bookmark, Event.id == Bookmark.event_id)
+            .outerjoin(
+                Application,
+                and_(
+                    Event.id == Application.event_id,
+                    Application.user_id == current_user.id,
+                ),
+            )
+            .outerjoin(
+                Bookmark,
+                and_(
+                    Event.id == Bookmark.event_id, Bookmark.user_id == current_user.id
+                ),
+            )
             .where(*filters)
         )
         or 0
@@ -125,7 +137,13 @@ def _count_events(
 
 
 def _build_filters(current_user: User, query_params: ListingMyEventsQueryParams):
-    filters = [Event.status == EventStatusCode.PUBLIC, Event.published_at.isnot(None)]
+    filters = [
+        Event.status == EventStatusCode.PUBLIC,
+        Event.published_at.isnot(None),
+        or_(
+            Application.user_id == current_user.id, Bookmark.user_id == current_user.id
+        ),
+    ]
 
     if query_params.keyword:
         filters.append(Event.name.contains(query_params.keyword))

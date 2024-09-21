@@ -20,6 +20,8 @@ import queryString from 'query-string';
 import { useForm } from 'react-hook-form';
 import { IoSearchOutline } from 'react-icons/io5';
 import debounce from 'lodash.debounce';
+import ReactPaginate from 'react-paginate';
+import { useState } from 'react';
 
 function MyEvents() {
   const searchParams = useSearchParams();
@@ -28,7 +30,7 @@ function MyEvents() {
     ...queryString.parse(searchParams.toString(), { arrayFormat: 'bracket' }),
   });
 
-  // const [page, setPage] = useState<number>(data?.page || 1);
+  const [page, setPage] = useState<number>(data?.page || 1);
   const { width } = useWindowDimensions();
 
   const form = useForm<UsersApiListingMyEventsRequest>({
@@ -71,7 +73,7 @@ function MyEvents() {
             />
           </div>
           <BaseTabs
-            defaultValue={MyEventStatusCode.All}
+            defaultValue={form.getValues('status')}
             className={clsx('w-full mx-auto')}
           >
             <TabsList className='grid grid-cols-8'>
@@ -118,6 +120,26 @@ function MyEvents() {
 
           {data && !data.data.length && <Nodata />}
         </div>
+
+        {data && data.total > data.perPage && (
+          <ReactPaginate
+            breakLabel='...'
+            nextLabel={width > 800 ? 'next >' : '>'}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            onPageChange={({ selected }: any) => setPage(selected + 1)}
+            pageRangeDisplayed={5}
+            pageCount={Math.ceil(data.total / data.perPage) || 0}
+            previousLabel={width > 600 ? '< previous' : '<'}
+            renderOnZeroPageCount={null}
+            forcePage={page >= 1 ? page - 1 : 0}
+            className='mx-auto flex lg:gap-4 gap-1 mt-4 w-full items-center justify-center'
+            pageClassName='lg:py-2 lg:px-4 py-1 px-2'
+            nextClassName='lg:py-2 lg:px-4 py-1 px-2'
+            previousClassName='lg:py-2 lg:px-4 py-1 px-2'
+            disabledClassName='text-gray-400'
+            activeClassName='bg-primary text-white rounded-md'
+          />
+        )}
       </form>
     </Form>
   );
