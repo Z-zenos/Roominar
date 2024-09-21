@@ -1,3 +1,5 @@
+from typing import Any
+
 from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
 from jinja2 import Environment, FileSystemLoader
 
@@ -28,7 +30,7 @@ class Email:
     async def send_aud_email(
         self, receivers: str | list, template: str, subject: str, data
     ):
-        content = self.read_template(template, {**self.constant_data, **data})
+        content = self.render_template(template, {**self.constant_data, **data})
 
         if isinstance(receivers, str):
             receivers = [receivers]
@@ -41,11 +43,11 @@ class Email:
         )
         await FastMail(conf).send_message(message)
 
-    def read_template(self, template: str, data):
+    def render_template(self, template_name: str, data: dict[str, Any]) -> str:
         template_folder = settings.TEMPLATE_FOLDER
 
         env = Environment(loader=FileSystemLoader(template_folder))
-        j2template = env.get_template(template)
+        j2template = env.get_template(template_name)
 
         html = j2template.render(data)
         return html
