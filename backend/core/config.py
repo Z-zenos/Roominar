@@ -1,8 +1,23 @@
+import logging
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Literal, Optional
 
 from pydantic import DirectoryPath, PostgresDsn, ValidationInfo, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+from backend.utils.logging import CustomFormatter
+
+# create logger with 'spam_application'
+logger = logging.getLogger("Roominar")
+logger.setLevel(logging.DEBUG)
+
+# create console handler with a higher log level
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+
+ch.setFormatter(CustomFormatter())
+
+logger.addHandler(ch)
 
 
 class Settings(BaseSettings):
@@ -69,15 +84,17 @@ class Settings(BaseSettings):
 
     AUD_FRONTEND_URL: Optional[str]
 
+    ENVIRONMENT: Literal["dev", "staging", "production"] = "dev"
+
     @field_validator("MASTER_DATABASE_URI", mode="before")
     def assemble_master_db_connection(
         cls, v: Optional[str], values: ValidationInfo
     ) -> Any:
+        logger.info("Loading MASTER_DATABASE_URI from .docker.env file ...")
         if isinstance(v, str) and v:
-            print("Loading MASTER_DATABASE_URI from .docker.env file ...")
             return v
 
-        print("Creating MASTER_DATABASE_URI from .env file ...")
+        logger.info("Creating MASTER_DATABASE_URI from .env file ...")
 
         return PostgresDsn.build(
             scheme="postgresql",
@@ -93,10 +110,10 @@ class Settings(BaseSettings):
         cls, v: Optional[str], values: ValidationInfo
     ) -> Any:
         if isinstance(v, str) and v:
-            print("Loading READ_DATABASE_URI from .docker.env file ...")
+            logger.info("Loading READ_DATABASE_URI from .docker.env file ...")
             return v
 
-        print("Creating READ_DATABASE_URI from .env file ...")
+        logger.info("Creating READ_DATABASE_URI from .env file ...")
 
         return PostgresDsn.build(
             scheme="postgresql",
