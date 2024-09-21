@@ -76,7 +76,12 @@ function MyEvents() {
             defaultValue={form.getValues('status')}
             className={clsx('w-full mx-auto')}
           >
-            <TabsList className='grid grid-cols-8 auto-cols-max'>
+            <TabsList
+              className={clsx(
+                'grid grid-flow-col auto-cols-auto',
+                width > 1200 && 'grid-cols-8',
+              )}
+            >
               {Object.keys(MyEventStatusCode).map((tab) => (
                 <TabsTrigger
                   value={MyEventStatusCode[tab]}
@@ -111,7 +116,7 @@ function MyEvents() {
             data?.data?.map((event: MyEventItem) => (
               <EventCard
                 direction={width < 600 ? 'vertical' : 'horizontal'}
-                className='w-full mb-4'
+                className='w-full mb-4 mx-auto'
                 event={event}
                 key={event.id}
                 variant='complex'

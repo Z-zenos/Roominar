@@ -92,7 +92,12 @@ const sidebarMenu = [
 
 const theme = 'light';
 
-export default function Sidebar() {
+interface SidebarProps {
+  className?: string;
+  collapsed?: boolean;
+}
+
+export default function Sidebar({ className, collapsed }: SidebarProps) {
   const [toggled, setToggled] = React.useState(false);
 
   const menuItemStyles: MenuItemStyles = {
@@ -132,9 +137,9 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <div className='flex  border-r border-r-gray-300 '>
+    <div className={clsx('flex border-r border-r-gray-300', className)}>
       <ProSidebar
-        collapsed={false}
+        collapsed={collapsed}
         toggled={toggled}
         onBackdropClick={() => setToggled(false)}
         breakPoint='md'
@@ -144,13 +149,12 @@ export default function Sidebar() {
         }}
       >
         <div className='flex flex-col h-full'>
-          {/* <Switch
-            id='collapse'
-            checked={collapsed}
-            onChange={() => setCollapsed(!collapsed)}
-            title='Toggle'
-          /> */}
-          <div className='flex-1 mt-8 fixed ml-8'>
+          <div
+            className={clsx(
+              collapsed ? 'ml-0' : 'ml-8',
+              'flex-1 mt-8 fixed z-0',
+            )}
+          >
             <Menu menuItemStyles={menuItemStyles}>
               {sidebarMenu.map((item) => (
                 <MenuItem
@@ -164,7 +168,7 @@ export default function Sidebar() {
                   )}
                   icon={item.icon}
                 >
-                  {item.title}
+                  {!collapsed && item.title}
                 </MenuItem>
               ))}
             </Menu>
