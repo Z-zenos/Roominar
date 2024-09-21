@@ -150,16 +150,7 @@ export default function Sidebar() {
             onChange={() => setCollapsed(!collapsed)}
             title='Toggle'
           /> */}
-          <div className='flex-1 mt-8'>
-            <div className='py-6 '>
-              {/* <Typography
-                variant='body2'
-                fontWeight={600}
-                style={{ opacity: collapsed ? 0 : 0.7, letterSpacing: '0.5px' }}
-              >
-                General
-              </Typography> */}
-            </div>
+          <div className='flex-1 mt-8 fixed ml-8'>
             <Menu menuItemStyles={menuItemStyles}>
               {sidebarMenu.map((item) => (
                 <MenuItem

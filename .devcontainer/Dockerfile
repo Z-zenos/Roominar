@@ -1,5 +1,7 @@
 FROM python:3.11-slim as python-base
 
+LABEL version="1.0" maintainer="hoanganhtuanbk2001@gmail.com" description="Roominar"
+
 # python
 ENV PYTHONUNBUFFERED=1 \
     # prevents python creating .pyc files
@@ -70,8 +72,8 @@ USER app
 # will become mountpoint of our code
 WORKDIR /workspace
 
+# Copy files from host into image
 COPY . .
 
 
-EXPOSE 8000
-EXPOSE 3000
+EXPOSE 8000 3000

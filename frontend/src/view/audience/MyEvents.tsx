@@ -76,7 +76,7 @@ function MyEvents() {
             defaultValue={form.getValues('status')}
             className={clsx('w-full mx-auto')}
           >
-            <TabsList className='grid grid-cols-8'>
+            <TabsList className='grid grid-cols-8 auto-cols-max'>
               {Object.keys(MyEventStatusCode).map((tab) => (
                 <TabsTrigger
                   value={MyEventStatusCode[tab]}
