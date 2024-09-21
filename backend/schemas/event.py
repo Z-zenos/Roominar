@@ -153,9 +153,9 @@ class MyEventItem(BaseModel):
     end_at: datetime
     application_start_at: datetime
     application_end_at: datetime
-    applied_number: int
+    applied_number: int | None = None
     application_number: int
-    application_id: int
+    application_id: int | None = None
     cover_image_url: str
     organize_place_name: str | None = None
     organize_address: str | None = None

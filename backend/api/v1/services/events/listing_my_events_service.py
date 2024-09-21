@@ -76,7 +76,7 @@ def _listing_events(
             ).label("is_bookmarked"),
         )
         .join(Organization, Event.organization_id == Organization.id)
-        .join(AppliedNumber, Event.id == AppliedNumber.c.event_id)
+        .outerjoin(AppliedNumber, Event.id == AppliedNumber.c.event_id)
         .outerjoin(
             Application,
             and_(

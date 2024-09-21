@@ -26,7 +26,7 @@ interface EventCardProps {
   className?: string;
   direction?: 'horizontal' | 'vertical';
   variant?: 'simple' | 'complex';
-  event: SearchEventsItem | MyEventItem;
+  event: SearchEventsItem & MyEventItem;
 }
 
 function EventCard({
@@ -48,7 +48,6 @@ function EventCard({
           : 'border border-gray-200 items-start px-3',
         className,
       )}
-      onClick={() => router.push(`/events/${event.slug}`)}
     >
       <div
         className={clsx(
@@ -58,6 +57,7 @@ function EventCard({
             : 'flex-row justify-between items-start flex-wrap ',
           variant === 'complex' && 'pb-3',
         )}
+        onClick={() => router.push(`/events/${event.slug}`)}
       >
         <div
           className={clsx(
@@ -232,32 +232,51 @@ function EventCard({
       </div>
 
       {variant === 'complex' && event.tags.length > 0 && (
-        <div
-          className={clsx(
-            styles.flexStart,
-            'flex-wrap gap-x-2 mt-2 pt-2 border-t border-t-slate-300',
-            direction === 'vertical' && 'px-3',
+        <div className={clsx(styles.between, 'border-t border-t-slate-300')}>
+          <div
+            className={clsx(
+              styles.flexStart,
+              'flex-wrap gap-x-2 mt-2',
+              direction === 'vertical' && 'px-3',
+            )}
+          >
+            <FaTags
+              className='text-orange-500 '
+              size={16}
+            />
+            {event.tags.map((tag: TagItem, i: number) => (
+              <Link
+                href={`?${searchParams.toString() ? searchParams.toString() + '&' : ''}tags[]=${tag.id}`}
+                underline='hover'
+                key={`event-card-tag-${tag.id}`}
+                className={clsx(
+                  'text-sm font-light text-gray-700 hover:text-primary',
+                  searchParams.getAll('tags[]').includes(tag.id + '') &&
+                    'text-primary font-semibold',
+                )}
+              >
+                #{tag.name}
+                {i === event.tags.length - 1 ? '' : ', '}
+              </Link>
+            ))}
+          </div>
+
+          {event?.isApplied && (
+            <div>
+              <Button
+                color='danger'
+                radius='sm'
+                variant='bordered'
+                size='sm'
+                className='mt-2 hover:text-white hover:bg-danger-500'
+
+                // isLoading={isRequesting}
+                // isDisabled={!form.formState.isValid}
+              >
+                Cancel Apply
+              </Button>
+            </div>
           )}
-        >
-          <FaTags
-            className='text-orange-500 '
-            size={16}
-          />
-          {event.tags.map((tag: TagItem, i: number) => (
-            <Link
-              href={`?${searchParams.toString() ? searchParams.toString() + '&' : ''}tags[]=${tag.id}`}
-              underline='hover'
-              key={`event-card-tag-${tag.id}`}
-              className={clsx(
-                'text-sm font-light text-gray-700 hover:text-primary',
-                searchParams.getAll('tags[]').includes(tag.id + '') &&
-                  'text-primary font-semibold',
-              )}
-            >
-              #{tag.name}
-              {i === event.tags.length - 1 ? '' : ', '}
-            </Link>
-          ))}
         </div>
       )}
     </div>

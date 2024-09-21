@@ -89,6 +89,9 @@ function MyEvents() {
                   )}
                 >
                   {tab}
+                  {data &&
+                    form.getValues('status') === MyEventStatusCode[tab] &&
+                    ' [' + data.total + '] '}
                 </TabsTrigger>
               ))}
             </TabsList>
@@ -110,9 +113,10 @@ function MyEvents() {
                     ? 'vertical'
                     : 'horizontal'
                 }
-                className='w-full'
+                className='w-full mb-4'
                 event={event}
                 key={event.id}
+                variant='complex'
               />
             ))}
 
