@@ -23,7 +23,7 @@ import type { Session } from 'next-auth';
 import { usePathname, useRouter } from 'next/navigation';
 import { RoleCode } from '@/src/constant/role_code.constant';
 import useWindowDimensions from '@/src/hook/useWindowDimension';
-import { maskEmail } from '@/src/view/search/util/app.util';
+import { maskEmail } from '@/src/util/app.util';
 
 const menuItems = [
   {

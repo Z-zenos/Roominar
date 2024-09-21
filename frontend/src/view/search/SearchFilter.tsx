@@ -18,7 +18,7 @@ import {
   IndustryCode,
   type EventsApiSearchEventsRequest,
 } from '@/src/lib/api/generated';
-import { parseCode } from '@/src/view/search/util/app.util';
+import { parseCode } from '@/src/util/app.util';
 import { useListingTagsQuery } from '@/src/api/tag.api';
 
 interface SearchFilterProps {

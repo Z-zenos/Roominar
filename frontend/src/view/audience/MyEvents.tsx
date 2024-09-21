@@ -13,7 +13,7 @@ import type {
   UsersApiListingMyEventsRequest,
 } from '@/src/lib/api/generated';
 import { MyEventStatusCode } from '@/src/lib/api/generated';
-import { searchQuery } from '@/src/view/search/util/app.util';
+import { searchQuery } from '@/src/util/app.util';
 import clsx from 'clsx';
 import { useRouter, useSearchParams } from 'next/navigation';
 import queryString from 'query-string';

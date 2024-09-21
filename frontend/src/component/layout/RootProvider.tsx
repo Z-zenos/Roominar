@@ -1,10 +1,7 @@
 'use client';
 
 import ErrorBoundary from '@/src/component/layout/ErrorBoundary';
-import {
-  handleToast,
-  parseErrorMessage,
-} from '@/src/view/search/util/app.util';
+import { handleToast, parseErrorMessage } from '@/src/util/app.util';
 import {
   MutationCache,
   QueryCache,

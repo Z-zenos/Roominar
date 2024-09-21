@@ -8,8 +8,8 @@ import { toast } from 'react-hot-toast';
 import queryString from 'query-string';
 import { twMerge } from 'tailwind-merge';
 import dayjs from 'dayjs';
-import type { EventsApiSearchEventsRequest } from '../../../lib/api/generated';
-import type { SelectItem } from '../../../type/SelectItem';
+import type { EventsApiSearchEventsRequest } from '../lib/api/generated';
+import type { SelectItem } from '../type/SelectItem';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getRouter = (name?: RoutersType, ...rest: Array<any>) => {

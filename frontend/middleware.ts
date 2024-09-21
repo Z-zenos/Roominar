@@ -4,7 +4,7 @@ import type { NextFetchEvent } from 'next/server';
 import { NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import { RoleCode } from './src/constant/role_code.constant';
-import { matchRoute } from './src/view/search/util/app.util';
+import { matchRoute } from './src/util/app.util';
 
 export const pathPermissionMaster = {
   AUDIENCE: [

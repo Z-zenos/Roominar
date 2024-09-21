@@ -1,5 +1,5 @@
 import NextAuth from 'next-auth';
-import authOptions from '@/src/view/search/util/authOptions';
+import authOptions from '@/src/util/authOptions';
 
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };

@@ -4,7 +4,7 @@ import {
   createConfiguration,
   ServerConfiguration,
 } from '@/src/lib/api/generated';
-import { getRouter } from '@/src/view/search/util/app.util';
+import { getRouter } from '@/src/util/app.util';
 
 export default function apiConfig(session: Session) {
   return createConfiguration({

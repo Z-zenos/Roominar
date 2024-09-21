@@ -10,7 +10,7 @@ import {
   FormInput,
   FormTagsInput,
 } from '@/src/component/form/Form';
-import { parseCode } from '@/src/view/search/util/app.util';
+import { parseCode } from '@/src/util/app.util';
 import type {
   ApiException,
   ErrorResponse400,

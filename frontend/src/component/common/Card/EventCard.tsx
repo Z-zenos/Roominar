@@ -15,7 +15,7 @@ import type {
   SearchEventsItem,
   TagItem,
 } from '@/src/lib/api/generated';
-import { formatEventDate } from '@/src/view/search/util/app.util';
+import { formatEventDate } from '@/src/util/app.util';
 import dayjs from 'dayjs';
 import EventBookmark from '@/src/view/event/EventBookmark';
 import { useSession } from 'next-auth/react';

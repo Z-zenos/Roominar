@@ -1,6 +1,6 @@
 'use client';
 
-import { formatEventDate } from '@/src/view/search/util/app.util';
+import { formatEventDate } from '@/src/util/app.util';
 import { SlNote } from 'react-icons/sl';
 import { RiFileCloseLine } from 'react-icons/ri';
 import { PiShootingStarThin } from 'react-icons/pi';

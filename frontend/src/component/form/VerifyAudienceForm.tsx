@@ -13,7 +13,7 @@ import type {
   TagItem,
 } from '@/src/lib/api/generated';
 import { IndustryCode } from '@/src/lib/api/generated';
-import { parseCode } from '@/src/view/search/util/app.util';
+import { parseCode } from '@/src/util/app.util';
 import Tag from '../common/Tag/Tag';
 import { useListingTagsQuery } from '@/src/api/tag.api';
 import TagSkeleton from '../common/Tag/TagSkeleton';

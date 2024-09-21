@@ -3,7 +3,7 @@ import {
   createConfiguration,
   ServerConfiguration,
 } from '@/src/lib/api/generated';
-import { getRouter } from '@/src/view/search/util/app.util';
+import { getRouter } from '@/src/util/app.util';
 import { getCookie } from 'cookies-next';
 import dayjs from 'dayjs';
 import type { NextAuthOptions } from 'next-auth';
@@ -13,7 +13,7 @@ import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import type { GoogleProfile } from 'next-auth/providers/google';
 import GoogleProvider from 'next-auth/providers/google';
-import { RoleCode } from '../../../constant/role_code.constant';
+import { RoleCode } from '../constant/role_code.constant';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);

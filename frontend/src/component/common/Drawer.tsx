@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Drawer as DrawerPrimitive } from 'vaul';
 
 import { Button } from '@nextui-org/button';
-import { cn } from '@/src/view/search/util/app.util';
+import { cn } from '@/src/util/app.util';
 
 const DrawerBase = ({
   shouldScaleBackground = true,

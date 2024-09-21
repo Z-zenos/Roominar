@@ -11,7 +11,7 @@ import SearchResults from './SearchResults';
 import useWindowDimensions from '@/src/hook/useWindowDimension';
 import { styles } from '@/src/constant/styles.constant';
 import { Form } from '@/src/component/form/Form';
-import { searchQuery } from '@/src/view/search/util/app.util';
+import { searchQuery } from '@/src/util/app.util';
 import { useSearchEventsQuery } from '@/src/api/event.api';
 import queryString from 'query-string';
 import DotLoader from '@/src/component/common/Loader/DotLoader';
