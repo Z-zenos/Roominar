@@ -10,7 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '../Popover';
 import Button from '../Button/Button';
 import { Calendar } from './Calendar';
 import useWindowDimensions from '@/src/hook/useWindowDimension';
-import { cn } from '@/src/util/app.util';
+import { cn } from '@/src/view/search/util/app.util';
 import clsx from 'clsx';
 
 export interface DateRangePickerProps extends HTMLAttributes<HTMLDivElement> {

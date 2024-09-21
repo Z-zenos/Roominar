@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Optional
 
 from fastapi import Query
 from pydantic import BaseModel, Field, field_validator
@@ -10,6 +9,7 @@ from backend.core.constants import (
     EventStatusCode,
     IndustryCode,
     JobTypeCode,
+    MyEventStatusCode,
 )
 from backend.schemas.common import PaginationResponse
 from backend.schemas.questionnaire import QuestionnaireDetail
@@ -41,10 +41,10 @@ class SearchEventsItem(BaseModel):
 
 
 class SearchEventsQueryParams(BaseModel):
-    keyword: Optional[str] = Field(Query(default=None))
+    keyword: str | None = Field(Query(default=None))
 
-    # exclude_bookmarks: Optional[bool] = Field(Query(default=False)
-    # exclude_applications: Optional[bool] = Field(Query(default=False)
+    # exclude_bookmarks: bool] = Field(Query(default=False)
+    # exclude_applications: bool] = Field(Query(default=False)
     is_online: bool | None = Field(Query(default=False))
     is_offline: bool | None = Field(Query(default=False))
     is_apply_ongoing: bool | None = Field(Query(default=False))
@@ -142,3 +142,40 @@ class ListingEventRankItem(BaseModel):
 
 class ListingEventRankResponse(BaseModel):
     events: list[ListingEventRankItem]
+
+
+class MyEventItem(BaseModel):
+    id: int
+    slug: str
+    organization_name: str
+    name: str
+    start_at: datetime
+    end_at: datetime
+    application_start_at: datetime
+    application_end_at: datetime
+    applied_number: int
+    application_number: int
+    application_id: int
+    cover_image_url: str
+    organize_place_name: str | None = None
+    organize_address: str | None = None
+    organize_city_code: str | None = None
+    meeting_tool_code: EventMeetingToolCode | None = None
+    ticket_name: str | None = None
+    is_online: bool | None = None
+    is_offline: bool | None = None
+    is_applied: bool | None = None
+    is_bookmarked: bool | None = None
+    published_at: datetime
+    tags: list[TagItem] = Field([])
+
+
+class ListingMyEventsQueryParams(BaseModel):
+    keyword: str | None = Field(Query(default=None))
+    status: MyEventStatusCode = Field(Query(default=MyEventStatusCode.ALL))
+    per_page: int | None = Field(Query(default=10, le=100, ge=1))
+    page: int | None = Field(Query(default=1, ge=1))
+
+
+class ListingMyEventsResponse(PaginationResponse[MyEventItem]):
+    pass

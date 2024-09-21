@@ -23,7 +23,7 @@ import type { Session } from 'next-auth';
 import { usePathname, useRouter } from 'next/navigation';
 import { RoleCode } from '@/src/constant/role_code.constant';
 import useWindowDimensions from '@/src/hook/useWindowDimension';
-import { maskEmail } from '@/src/util/app.util';
+import { maskEmail } from '@/src/view/search/util/app.util';
 
 const menuItems = [
   {
@@ -189,7 +189,12 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
                 >
                   My Profile
                 </DropdownItem>
-                <DropdownItem key='my_events'>My Events</DropdownItem>
+                <DropdownItem
+                  key='my_events'
+                  href='/my-events'
+                >
+                  My Events
+                </DropdownItem>
                 <DropdownItem key='host_my_event'>Host Event</DropdownItem>
                 <DropdownItem
                   key='account_settings'

@@ -1,6 +1,6 @@
 import LoadingGlobal from '@/src/component/layout/LoadingGlobal';
 import RootProvider from '@/src/component/layout/RootProvider';
-import authOptions from '@/src/util/authOptions';
+import authOptions from '@/src/view/search/util/authOptions';
 import type { Metadata } from 'next';
 import { getServerSession } from 'next-auth';
 import { NextIntlClientProvider } from 'next-intl';

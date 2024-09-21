@@ -3,6 +3,7 @@ from datetime import datetime
 from sqlmodel import Session, func, select
 
 from backend.core.config import settings
+from backend.core.constants import ApplicationStatusCode
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.mails.mail import Email
@@ -75,6 +76,7 @@ async def create_application(
             workplace_name=request.workplace_name,
             phone=request.phone,
             ticket_id=request.ticket_id,
+            status=ApplicationStatusCode.CONFIRMED,
         )
 
         save(db, application)

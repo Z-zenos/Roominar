@@ -10,7 +10,7 @@ export default function RootLayout({ children }) {
       <Navbar />
       <div className='flex 1400px:px-[15%] px-0 w-full h-full'>
         <Sidebar />
-        <div className='flex-1 min-h-[calc(100vh-64px)] overflow-auto p-6 bg-slate-50'>
+        <div className='flex-1 min-h-[calc(100vh-64px)] overflow-auto px-6 py-10 bg-slate-50'>
           {children}
         </div>
       </div>

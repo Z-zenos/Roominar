@@ -16,7 +16,7 @@ import { useRequestChangeEmailMutation } from '@/src/api/auth.api';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import { Button } from '@nextui-org/button';
 import { styles } from '@/src/constant/styles.constant';
-import { maskEmail } from '@/src/util/app.util';
+import { maskEmail } from '@/src/view/search/util/app.util';
 
 export default function ChangeEmailForm() {
   useState<boolean>(false);

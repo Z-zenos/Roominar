@@ -59,7 +59,10 @@ import {
 import type { TagItem } from '@/src/lib/api/generated';
 import { usePathname, useRouter } from 'next/navigation';
 import Head from '@/src/component/common/Head';
-import { formatEventDate, groupIntoPairs } from '@/src/util/app.util';
+import {
+  formatEventDate,
+  groupIntoPairs,
+} from '@/src/view/search/util/app.util';
 import Chip from '@/src/component/common/Chip';
 import { useSession } from 'next-auth/react';
 import EventBookmark from './EventBookmark';

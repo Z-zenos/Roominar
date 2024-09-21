@@ -19,7 +19,7 @@ import { createContext, useContext, forwardRef, useId, useMemo } from 'react';
 import type { DateRange } from 'react-day-picker';
 import clsx from 'clsx';
 import { Label } from '../common/Label';
-import { cn } from '@/src/util/app.util';
+import { cn } from '@/src/view/search/util/app.util';
 import type { CheckboxProps } from '../common/Input/Checkbox';
 import {
   DateRangePicker,

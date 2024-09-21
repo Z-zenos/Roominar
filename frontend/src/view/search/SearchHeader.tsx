@@ -15,7 +15,7 @@ import {
   EventSortByCodeMappings,
   JobTypeCodeMapping,
 } from '@/src/constant/code.constant';
-import { toSelectItem } from '@/src/util/app.util';
+import { toSelectItem } from '@/src/view/search/util/app.util';
 
 interface SearchHeaderProps {
   total?: number;

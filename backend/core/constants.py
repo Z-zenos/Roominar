@@ -120,6 +120,7 @@ class EventStatusCode(str, Enum):
     PUBLIC = "PUBLIC"
     DRAFT = "DRAFT"
     PRIVATE = "PRIVATE"
+    DEFERRED = "DEFERRED"
 
 
 class QuestionnaireStatusCode(str, Enum):
@@ -181,3 +182,14 @@ class LoginMethodCode(str, Enum):
     GITHUB = "GITHUB"
     FACEBOOK = "FACEBOOK"
     X = "X"
+
+
+class MyEventStatusCode(str, Enum):
+    ALL = "ALL"
+    BOOKMARKED = "BOOKMARKED"
+    APPLIED = "APPLIED"
+    ENDED = "ENDED"
+    CANCELED = "CANCELED"
+    PENDING = "PENDING"
+    IN_PROGRESS = "IN_PROGRESS"
+    DEFERRED = "DEFERRED"

@@ -10,8 +10,12 @@ import { Image, Link } from '@nextui-org/react';
 import { SlNote } from 'react-icons/sl';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { styles } from '@/src/constant/styles.constant';
-import type { SearchEventsItem, TagItem } from '@/src/lib/api/generated';
-import { formatEventDate } from '@/src/util/app.util';
+import type {
+  MyEventItem,
+  SearchEventsItem,
+  TagItem,
+} from '@/src/lib/api/generated';
+import { formatEventDate } from '@/src/view/search/util/app.util';
 import dayjs from 'dayjs';
 import EventBookmark from '@/src/view/event/EventBookmark';
 import { useSession } from 'next-auth/react';
@@ -22,7 +26,7 @@ interface EventCardProps {
   className?: string;
   direction?: 'horizontal' | 'vertical';
   variant?: 'simple' | 'complex';
-  event: SearchEventsItem;
+  event: SearchEventsItem | MyEventItem;
 }
 
 function EventCard({
@@ -74,7 +78,7 @@ function EventCard({
             <div>
               <p className='font-semibold text-sm'>{event.organizationName}</p>
               <p className='font-light text-xs text-gray-600'>
-                Published on {dayjs(event.publishedAt).format('MMM DD, YYYY')}
+                Published on {dayjs(event?.publishedAt).format('MMM DD, YYYY')}
               </p>
             </div>
           </div>
