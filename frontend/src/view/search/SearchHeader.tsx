@@ -16,6 +16,7 @@ import {
   JobTypeCodeMapping,
 } from '@/src/constant/code.constant';
 import { toSelectItem } from '@/src/util/app.util';
+import debounce from 'lodash.debounce';
 
 interface SearchHeaderProps {
   total?: number;
@@ -81,6 +82,10 @@ function SearchHeader({
               placeholder='Find web(sem)inar events you like...'
               className='w-full'
               control={control}
+              onKeyDown={debounce(
+                () => onSearch({ keyword: form.getValues('keyword') }),
+                1000,
+              )}
             />
           </div>
           <FormCombobox

@@ -19,6 +19,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import queryString from 'query-string';
 import { useForm } from 'react-hook-form';
 import { IoSearchOutline } from 'react-icons/io5';
+import debounce from 'lodash.debounce';
 
 function MyEvents() {
   const searchParams = useSearchParams();
@@ -63,6 +64,10 @@ function MyEvents() {
               placeholder='Find web(sem)inar events you like...'
               className='w-full'
               control={form.control}
+              onKeyDown={debounce(
+                () => handleSearch({ keyword: form.getValues('keyword') }),
+                1000,
+              )}
             />
           </div>
           <BaseTabs
