@@ -39,6 +39,6 @@ async def cancel_application(
     current_user: User = Depends(get_current_user),
     application_id: int = None,
 ):
-    return await application_service.delete_application(
+    return await application_service.cancel_application(
         db, current_user, application_id
     )

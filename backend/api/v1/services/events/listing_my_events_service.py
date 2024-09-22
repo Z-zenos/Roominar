@@ -143,6 +143,8 @@ def _build_filters(current_user: User, query_params: ListingMyEventsQueryParams)
         or_(
             Application.user_id == current_user.id, Bookmark.user_id == current_user.id
         ),
+        Application.canceled_at.is_(None),
+        Application.status == ApplicationStatusCode.CANCELED,
     ]
 
     if query_params.keyword:

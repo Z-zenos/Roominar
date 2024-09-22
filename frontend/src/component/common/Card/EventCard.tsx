@@ -6,11 +6,13 @@ import { MdOutlineAccessTime, MdOutlineOnlinePrediction } from 'react-icons/md';
 import { Button } from '@nextui-org/button';
 import { FaRegShareSquare, FaTags, FaUserFriends } from 'react-icons/fa';
 import { BsThreeDots } from 'react-icons/bs';
-import { Image, Link } from '@nextui-org/react';
+import { Image, Link, useDisclosure } from '@nextui-org/react';
 import { SlNote } from 'react-icons/sl';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { styles } from '@/src/constant/styles.constant';
 import type {
+  ApiException,
+  ErrorResponse400,
   MyEventItem,
   SearchEventsItem,
   TagItem,
@@ -22,6 +24,9 @@ import { useSession } from 'next-auth/react';
 import toast from 'react-hot-toast';
 import { IoMdLogIn } from 'react-icons/io';
 import Ticket from './Ticket';
+import { useState } from 'react';
+import { useCancelEventApplicationMutation } from '@/src/api/application.api';
+import ConfirmDialog from '../Dialog/ConfirmDialog';
 
 interface EventCardProps {
   className?: string;
@@ -39,6 +44,25 @@ function EventCard({
   const router = useRouter();
   const searchParams = useSearchParams();
   const { status } = useSession();
+
+  const [isCanceled, setIsCanceled] = useState<boolean>(false);
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+
+  const { trigger: cancelEventApplication, isMutating: isCanceling } =
+    useCancelEventApplicationMutation({
+      onSuccess() {
+        setIsCanceled(true);
+        toast.success('Canceled your application successfully!');
+        onClose();
+      },
+      onError(error: ApiException<unknown>) {
+        toast.error(
+          (error.body as ErrorResponse400)?.message ??
+            (error.body as ErrorResponse400)?.errorCode ??
+            'Unknown Error 😵',
+        );
+      },
+    });
 
   return (
     <div
@@ -277,17 +301,40 @@ function EventCard({
                 className={clsx('flex justify-end items-center !gap-4 mt-2')}
               >
                 {event?.ticketName && <Ticket name={event?.ticketName} />}
-                <Button
-                  color='danger'
-                  radius='sm'
-                  variant='bordered'
-                  size='sm'
-                  className=' hover:text-white hover:bg-danger-500'
-                  // isLoading={isRequesting}
-                  // isDisabled={!form.formState.isValid}
-                >
-                  Cancel Apply
-                </Button>
+                {!isCanceled && (
+                  <Button
+                    color='danger'
+                    radius='sm'
+                    variant='bordered'
+                    size='sm'
+                    className=' hover:text-white hover:bg-danger-500'
+                    onPress={onOpen}
+                  >
+                    Cancel Apply
+                  </Button>
+                )}
+
+                <ConfirmDialog
+                  content={
+                    <p>
+                      Are you sure you want to cancel your application for event{' '}
+                      <span className='text-danger-500 underline'>
+                        {event?.name}
+                      </span>
+                      ?
+                    </p>
+                  }
+                  isOpen={isOpen}
+                  onOpenChange={onOpenChange}
+                  onConfirm={() => {
+                    cancelEventApplication({
+                      applicationId: event?.applicationId,
+                    });
+                    router.refresh();
+                  }}
+                  confirmLabel='Cancel'
+                  isLoading={isCanceling}
+                />
               </div>
             )}
         </div>

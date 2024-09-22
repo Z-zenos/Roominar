@@ -44,7 +44,7 @@ async def cancel_application(db: Session, current_user: User, application_id: in
 
         ticket = db.get(Ticket, application.ticket_id)
         context = {
-            "username": current_user.first_name_kanji + current_user.last_name_kanji,
+            "username": current_user.first_name,
             "organization_name": event.organization_name,
             "contact_url": event.contact_url,
             "event_name": event.name,
