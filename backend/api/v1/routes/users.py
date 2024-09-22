@@ -48,12 +48,14 @@ async def update_audience(
     response_model=ListingMyEventsResponse,
     responses=authenticated_api_responses,
 )
-def listing_my_events(
+async def listing_my_events(
     db: Session = Depends(get_read_db),
     current_user: User = Depends(authorize_role(RoleCode.AUDIENCE)),
     query_params: ListingMyEventsQueryParams = Depends(ListingMyEventsQueryParams),
 ):
-    events, total = events_service.listing_my_events(db, current_user, query_params)
+    events, total = await events_service.listing_my_events(
+        db, current_user, query_params
+    )
     return ListingMyEventsResponse(
         page=query_params.page,
         per_page=query_params.per_page,

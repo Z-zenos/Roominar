@@ -301,7 +301,7 @@ function EventCard({
                 className={clsx('flex justify-end items-center !gap-4 mt-2')}
               >
                 {event?.ticketName && <Ticket name={event?.ticketName} />}
-                {!isCanceled && (
+                {!isCanceled && !event?.canceledAt && (
                   <Button
                     color='danger'
                     radius='sm'
@@ -312,6 +312,11 @@ function EventCard({
                   >
                     Cancel Apply
                   </Button>
+                )}
+                {event?.canceledAt && (
+                  <p className='opacity-60 italic text-sm'>
+                    Canceled at {formatEventDate(event?.canceledAt)}
+                  </p>
                 )}
 
                 <ConfirmDialog

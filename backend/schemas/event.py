@@ -4,6 +4,7 @@ from fastapi import Query
 from pydantic import BaseModel, Field, field_validator
 
 from backend.core.constants import (
+    ApplicationStatusCode,
     EventMeetingToolCode,
     EventSortByCode,
     EventStatusCode,
@@ -168,6 +169,8 @@ class MyEventItem(BaseModel):
     is_bookmarked: bool | None = None
     published_at: datetime
     tags: list[TagItem] = Field([])
+    canceled_at: datetime | None = None
+    application_status: ApplicationStatusCode | None = None
 
 
 class ListingMyEventsQueryParams(BaseModel):

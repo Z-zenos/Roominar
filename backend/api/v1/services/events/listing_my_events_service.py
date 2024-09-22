@@ -9,16 +9,16 @@ from backend.models import Application, Bookmark, Event, Organization, Ticket, U
 from backend.schemas.event import ListingMyEventsQueryParams, MyEventStatusCode
 
 
-def listing_my_events(
+async def listing_my_events(
     db: Session, current_user: User, query_params: ListingMyEventsQueryParams
 ):
-    filters = _build_filters(current_user, query_params)
-    events = _listing_events(db, current_user, filters, query_params)
-    total = _count_events(db, current_user, filters)
+    filters = await _build_filters(current_user, query_params)
+    events = await _listing_events(db, current_user, filters, query_params)
+    total = await _count_events(db, current_user, filters)
     return events, total
 
 
-def _listing_events(
+async def _listing_events(
     db: Session,
     current_user: User,
     filters: list,
@@ -74,6 +74,8 @@ def _listing_events(
                 ),
                 else_=False,
             ).label("is_bookmarked"),
+            Application.canceled_at,
+            Application.status.label("application_status"),
         )
         .join(Organization, Event.organization_id == Organization.id)
         .outerjoin(AppliedNumber, Event.id == AppliedNumber.c.event_id)
@@ -96,6 +98,8 @@ def _listing_events(
         .offset(query_params.per_page * (query_params.page - 1))
         .order_by(Event.start_at)
     )
+
+    print(query)
     events = db.exec(query).mappings().all()
 
     result = {event.id: dict(event) for event in events}
@@ -108,7 +112,7 @@ def _listing_events(
     return list(result.values())
 
 
-def _count_events(
+async def _count_events(
     db: Session,
     current_user: User,
     filters: list,
@@ -136,15 +140,13 @@ def _count_events(
     return total
 
 
-def _build_filters(current_user: User, query_params: ListingMyEventsQueryParams):
+async def _build_filters(current_user: User, query_params: ListingMyEventsQueryParams):
     filters = [
         Event.status == EventStatusCode.PUBLIC,
         Event.published_at.isnot(None),
         or_(
             Application.user_id == current_user.id, Bookmark.user_id == current_user.id
         ),
-        Application.canceled_at.is_(None),
-        Application.status == ApplicationStatusCode.CANCELED,
     ]
 
     if query_params.keyword:
@@ -179,6 +181,16 @@ def _build_filters(current_user: User, query_params: ListingMyEventsQueryParams)
                 Application.canceled_at.isnot(None),
                 Application.user_id == current_user.id,
                 Application.status == ApplicationStatusCode.CANCELED,
+            )
+        )
+    else:
+        filters.append(
+            and_(
+                Application.canceled_at.is_(None),
+                or_(
+                    Application.status != ApplicationStatusCode.CANCELED,
+                    Application.status.is_(None),
+                ),
             )
         )
 
