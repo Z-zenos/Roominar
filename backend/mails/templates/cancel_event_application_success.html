@@ -23,70 +23,53 @@
             margin: 5px 0 0;
         }
 
-        .content {
-            line-height: 1.6;
-            font-size: 16px;
-            color: #555;
-            margin-bottom: 30px;
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
         }
 
-        .content strong {
+        h1 {
             color: #333;
         }
 
-        .content p {
-            margin-bottom: 20px;
-        }
-
-        .button {
-            display: inline-block;
-            padding: 12px 25px;
-            background-color: #2a7ae2;
-            color: #ffffff;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: bold;
-            text-align: center;
-            transition: background-color 0.3s ease;
-            margin: 20px auto 0;
-        }
-
-        .button:hover {
-            background-color: #0056b3;
-        }
-
-        .event-info td {
-            display: flex;
-            justify-items: start;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .event-info td :nth-child(1) {
-            min-width: 150px;
-        }
-
-        .notice {
-            background-color: #fff8e1;
-            border-left: 4px solid #ffb74d;
-            padding: 15px;
-            margin: 30px 0;
-            border-radius: 8px;
-            font-size: 16px;
-            color: #8a6d3b;
-        }
-
-        .important-notes {
-            font-size: 15px;
+        h2 {
             color: #555;
-            margin-top: 30px;
-            padding: 20px;
-            background-color: #f0f4f8;
-            border-radius: 8px;
         }
 
-        .important-notes p {
-            margin: 10px 0;
+        p {
+            line-height: 1.6;
+            font-size: 16px;
+        }
+
+        .event-details {
+            background: #e9f7fc;
+            border-left: 5px solid #007bff;
+            padding: 10px;
+            margin: 20px 0;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #777;
+            text-align: center;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        ul li {
+            margin: 4px 0;
         }
     </style>
 </head>
@@ -114,34 +97,45 @@
             Roominar 🎉
         </a>
         <!-- CONTENT -->
-        <div class="container">
+        <div>
             <div class="header">
-                <h1>Reseted password successfully</h1>
+                <h1>Cancel Application successfully!</h1>
             </div>
 
-            <div class="content">
-                <h3>Hi, {{first_name}} </h3>
-                <p>
-
-                    We just wanted to let you know that the password for your account associated with {{email}}
-                    has been successfully reset. 🔑✅
+            <div class="container">
+                <h2>Dear {username}, 🌸</h2>
+                <p>We hope this message finds you well! We wanted to let you know that your application for the
+                    <strong>🎉 {event_name}</strong> event has been successfully canceled. We understand that plans
+                    can change, and we appreciate you keeping us informed.
                 </p>
-                <p>
 
-                    If you made this change, there’s nothing more you need to do. You can now use your new password
-                    to sign in to your account.
-                </p>
-                <p>
+                <div class="event-details">
+                    <h2>📅 Event Details</h2>
+                    <ul>
+                        <li><strong>Event Name:</strong> 🎊 {event_name}</li>
+                        <li><strong>Organization:</strong> 🏢 {organization_name}</li>
+                        <li><strong>Date & Time:</strong> ⏰ {datetime}</li>
+                        <li><strong>Address:</strong> 📍 {address}</li>
+                        <li><strong>Meeting Tool Code:</strong> 💻 {meeting_tool_code}</li>
+                    </ul>
+                </div>
 
-                    However, if you didn’t reset your password or believe someone else may have done so without your
-                    permission, please contact us immediately. 🛡️ We’ll help you secure your account right away.
-                </p>
-                <p>
+                <p>If you have any questions or need assistance, please don’t hesitate to reach out!</p>
 
-                    For any other questions or assistance, feel free to reach out to us or visit our support page at
-                    [support.roominar]. We're here to help! 💬
-                </p>
+                <h2>🌟 Stay in Touch</h2>
+                <p>We’d love to keep you updated on future events! Explore upcoming opportunities by visiting our <a
+                        href="{detail_event_url}">Event Details</a> page.</p>
+                <p>For direct inquiries, feel free to visit our <a href="{contact_url}">Contact Page</a>. We’re here
+                    to help! 🤗</p>
+
+                <p>Thank you for being a valued member of our community. We hope to see you at future events!</p>
+
+                <div class="footer">
+                    <p>Warm regards,<br><strong>The Roominar Team</strong> 🌟</p>
+                    <p><em>P.S. If you decide to reapply or have any feedback, we’re all ears! 🎤</em></p>
+                </div>
             </div>
+
             <!-- FOOTER -->
             <div style="
       margin-top: 20px;

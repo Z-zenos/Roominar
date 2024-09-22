@@ -1,4 +1,4 @@
-import typing as t
+from typing import Any
 
 from sqlmodel import Session
 
@@ -12,11 +12,11 @@ def save(db: Session, object: BaseModel):
     return object
 
 
-def fetch_one(db: Session, query: t.Any) -> dict[str, t.Any] | None:
+def fetch_one(db: Session, query: Any) -> dict[str, Any] | None:
     ret = db.exec(query).one_or_none()
     return ret if ret else None
 
 
-def fetch_all(db: Session, query: t.Any) -> list[dict[str, t.Any]]:
+def fetch_all(db: Session, query: Any) -> list[dict[str, Any]]:
     ret = db.exec(query).fetchall()
     return [r.__dict__ for r in ret]
