@@ -1,7 +1,7 @@
 'use client';
 
 import ErrorBoundary from '@/src/component/layout/ErrorBoundary';
-import { handleToast, parseErrorMessage } from '@/src/util/app.util';
+import { parseErrorMessage } from '@/src/util/app.util';
 import {
   MutationCache,
   QueryCache,
@@ -11,6 +11,7 @@ import {
 import type { Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
 import { useMemo } from 'react';
+import toast from 'react-hot-toast';
 import { RecoilRoot } from 'recoil';
 
 export interface IRootProviderProps {
@@ -37,13 +38,13 @@ export default function RootProvider({
         queryCache: new QueryCache({
           onError: (error, query) => {
             const err = parseErrorMessage(error?.message);
-            handleToast(Number(err.httpCode), err?.body?.message);
+            toast.error(`${+err.httpCode}: ${err?.body?.message}`);
           },
         }),
         mutationCache: new MutationCache({
           onError: (error, _, __, mutation) => {
             const err = parseErrorMessage(error?.message);
-            handleToast(Number(err.httpCode), err?.body?.message);
+            toast.error(`${+err.httpCode}: ${err?.body?.message}`);
           },
           onSuccess(data, _, __, mutation) {},
         }),

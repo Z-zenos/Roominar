@@ -3,7 +3,10 @@ import { formatEventDate } from '@/src/util/app.util';
 import { Button } from '@nextui-org/button';
 import { Link } from '@nextui-org/link';
 
-function SuccessRegistration({ email, expireAt }: RegisterAudienceResponse) {
+function RegisterAudienceSuccess({
+  email,
+  expireAt,
+}: RegisterAudienceResponse) {
   return (
     <div className='flex items-center justify-center bg-gray-100'>
       <div className='bg-white p-8 rounded-lg shadow-lg w-full max-w-lg'>
@@ -56,4 +59,4 @@ function SuccessRegistration({ email, expireAt }: RegisterAudienceResponse) {
   );
 }
 
-export default SuccessRegistration;
+export default RegisterAudienceSuccess;

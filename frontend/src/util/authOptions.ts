@@ -3,7 +3,6 @@ import {
   createConfiguration,
   ServerConfiguration,
 } from '@/src/lib/api/generated';
-import { getRouter } from '@/src/util/app.util';
 import { getCookie } from 'cookies-next';
 import dayjs from 'dayjs';
 import type { NextAuthOptions } from 'next-auth';
@@ -146,9 +145,9 @@ const authOptions: NextAuthOptions = {
     },
   },
   pages: {
-    error: getRouter('home'),
-    signIn: getRouter('login'),
-    signOut: getRouter('home'),
+    error: '/home',
+    signIn: '/login',
+    signOut: '/home',
   },
 };
 

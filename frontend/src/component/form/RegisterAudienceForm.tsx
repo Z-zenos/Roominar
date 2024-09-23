@@ -18,7 +18,7 @@ import { Link } from '@nextui-org/link';
 import { styles } from '@/src/constant/styles.constant';
 import Button from '../common/Button/Button';
 import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
-import SuccessRegistration from '@/src/view/audience/SuccessRegistration';
+import RegisterAudienceSuccess from '@/src/view/audience/RegisterAudienceSuccess';
 import type { RegisterAudienceFormSchema } from '@/src/schemas/auth/RegisterAudienceFormSchema';
 import { registerAudienceFormSchema } from '@/src/schemas/auth/RegisterAudienceFormSchema';
 import { useRegisterAudienceMutation } from '@/src/api/auth.api';
@@ -78,7 +78,7 @@ function RegisterAudienceForm() {
         className={clsx('flex items-center justify-center flex-col')}
       >
         {isRegisterSuccess ? (
-          <SuccessRegistration
+          <RegisterAudienceSuccess
             email={data.email}
             expireAt={data.expireAt}
           />

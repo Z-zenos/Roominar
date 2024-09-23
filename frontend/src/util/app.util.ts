@@ -1,25 +1,11 @@
-import routers from '@/src/constant/router.constant';
-import type { GetRouterFunc, RoutersType } from '@/src/type/app';
 import type { ClassValue } from 'clsx';
 import clsx from 'clsx';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import type { ReadonlyURLSearchParams } from 'next/navigation';
-import { toast } from 'react-hot-toast';
 import queryString from 'query-string';
 import { twMerge } from 'tailwind-merge';
 import dayjs from 'dayjs';
-import type { EventsApiSearchEventsRequest } from '../lib/api/generated';
 import type { SelectItem } from '../type/SelectItem';
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const getRouter = (name?: RoutersType, ...rest: Array<any>) => {
-  if (!name) return '#';
-
-  const router = routers[name].router;
-  return typeof router === 'function'
-    ? (router as GetRouterFunc)(...rest)
-    : router;
-};
 
 export const parseErrorMessage = (errorMessage?: string) => {
   const parts = errorMessage?.split('\n');
@@ -47,17 +33,6 @@ export const parseErrorMessage = (errorMessage?: string) => {
 
   return errorObject;
 };
-
-export const handleToast = (code: number, message: string) => {
-  if (code === 400) {
-    return toast.error(message);
-  }
-  return;
-};
-
-// export const camelToSnake = (camelCase: string): string => {
-//   return camelCase.replace(/([A-Z])/g, '_$1').toLowerCase();
-// };
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

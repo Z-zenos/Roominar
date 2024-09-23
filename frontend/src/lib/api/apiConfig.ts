@@ -4,7 +4,6 @@ import {
   createConfiguration,
   ServerConfiguration,
 } from '@/src/lib/api/generated';
-import { getRouter } from '@/src/util/app.util';
 
 export default function apiConfig(session: Session) {
   return createConfiguration({
@@ -25,7 +24,7 @@ export default function apiConfig(session: Session) {
         async post(context) {
           if (context.httpStatusCode === 401) {
             signOut({
-              callbackUrl: getRouter('login'),
+              callbackUrl: '/login',
             });
           }
           return Promise.resolve(context);
