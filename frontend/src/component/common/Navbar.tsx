@@ -16,6 +16,7 @@ import {
   Avatar,
   DropdownMenu,
   DropdownItem,
+  Switch,
 } from '@nextui-org/react';
 import Logo from './Logo';
 import { signOut, useSession } from 'next-auth/react';
@@ -24,6 +25,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import { RoleCode } from '@/src/constant/role_code.constant';
 import useWindowDimensions from '@/src/hook/useWindowDimension';
 import { maskEmail } from '@/src/util/app.util';
+import { useTranslations } from 'next-intl';
+import { setUserLocale } from '@/src/util/locale';
 
 const menuItems = [
   {
@@ -54,15 +57,15 @@ const menuItems = [
 
 const navbarItems = [
   {
-    label: 'Home',
+    label: 'home',
     pathname: '/home',
   },
   {
-    label: 'Search',
+    label: 'search',
     pathname: '/search',
   },
   {
-    label: 'Host your event',
+    label: 'hostMyEvent',
     pathname: '/organization/login',
   },
 ];
@@ -73,6 +76,8 @@ interface NavbarProps {
 }
 
 export default function Navbar({ className, hasLogo = true }: NavbarProps) {
+  const t = useTranslations('app');
+  const [isEnglish, setIsEnglish] = useState<boolean>(true);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const { data: auth, status } = useSession();
   const router = useRouter();
@@ -146,12 +151,37 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
               href={ni.pathname}
               color={pathname.includes(ni.pathname) ? 'primary' : 'foreground'}
             >
-              {ni.label}
+              {t(ni.label)}
             </Link>
           </NavbarItem>
         ))}
       </NavbarContent>
       <NavbarContent justify='end'>
+        <Switch
+          defaultSelected={isEnglish}
+          size='lg'
+          color='success'
+          startContent={<span>🏴󠁧󠁢󠁥󠁮󠁧󠁿</span>}
+          endContent={<span>🇻🇳</span>}
+          onValueChange={async () => {
+            setIsEnglish(!isEnglish);
+            await setUserLocale(!isEnglish ? 'en' : 'vi');
+          }}
+          classNames={{
+            thumbIcon: 'font-light text-sm -mt-[2px]',
+            startContent: 'text-md ml-[2px] -mt-[2px]',
+            endContent: 'text-md mr-[2px] -mt-[2px]',
+            wrapper: 'w-16 bg-[#ffff00]',
+            thumb: isEnglish && 'translate-x-2',
+          }}
+          thumbIcon={({ isSelected, className }) =>
+            isSelected ? (
+              <span className={className}>en</span>
+            ) : (
+              <span className={className}>vi</span>
+            )
+          }
+        />
         {status === 'authenticated' ? (
           <div className='flex justify-end items-center gap-x-4'>
             {width > 800 && (

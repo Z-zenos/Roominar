@@ -3,9 +3,9 @@ from typing import Optional
 
 from pydantic import BaseModel, EmailStr, Field, ValidationInfo, field_validator
 
-from backend.core.constants import IndustryCode, JobTypeCode
+from backend.core.constants import IndustryCode, JobTypeCode, OrganizationTypeCode
 from backend.core.error_code import ErrorCode, ErrorMessage
-from backend.schemas.common import password_validator
+from backend.schemas.common import hp_url_validator, password_validator
 from backend.schemas.user import UserBase
 
 
@@ -132,3 +132,54 @@ class ChangeEmailRequest(BaseModel):
 class RequestChangeEmailResponse(BaseModel):
     email: str
     expire_at: datetime
+
+
+class RegisterOrganizationRequest(BaseModel):
+    email: EmailStr
+    password: str | None
+    confirm_password: str | None
+    first_name: str
+    last_name: str | None = None
+
+    name: str
+    hp_url: str | None
+    city_code: str | None
+    contact_email: EmailStr | None
+    address: str | None
+    representative_url: str | None
+    phone: str | None
+    type: OrganizationTypeCode
+
+    @field_validator("password")
+    def password_validator(cls, v):
+        return password_validator(v)
+
+    @field_validator("confirm_password")
+    def confirm_password_validator(cls, v: Optional[str], values: ValidationInfo):
+        if values.data.get("password") != v:
+            raise ValueError(
+                ErrorCode.ERR_PASSWORD_NOT_MATCHING,
+                ErrorMessage.ERR_PASSWORD_NOT_MATCHING,
+            )
+        return v
+
+    @field_validator("hp_url")
+    def hp_url_validator(cls, v):
+        return hp_url_validator(v)
+
+    @field_validator("type")
+    def type_validator(cls, v, values: ValidationInfo):
+        if type == OrganizationTypeCode.PERSONAL:
+            return v
+        else:
+            if (
+                not values.data.get("city_code")
+                or not values.data.get("contact_email")
+                or not values.data.get("address")
+                or not values.data.get("representative_url")
+                or not values.data.get("phone")
+            ):
+                raise ValueError(
+                    ErrorCode.ERR_MISSING_FIELDS,
+                    ErrorMessage.ERR_MISSING_FIELDS,
+                )

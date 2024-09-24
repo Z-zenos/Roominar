@@ -193,3 +193,10 @@ class MyEventStatusCode(str, Enum):
     PENDING = "PENDING"
     IN_PROGRESS = "IN_PROGRESS"
     DEFERRED = "DEFERRED"
+
+
+class OrganizationTypeCode(str, Enum):
+    PERSONAL = "PERSONAL"
+    BUSINESS = "BUSINESS"
+    GOVERNMENT = "GOVERNMENT"
+    EDUCATION = "EDUCATION"
