@@ -47,8 +47,8 @@ const registerOrganizationFormSchema = z
         message: 'Organization name must be less than 50 characters.',
       }),
 
-    hp_url: z.string().nullable(),
-    city_code: z
+    hpUrl: z.string().nullable(),
+    cityCode: z
       .string({ required_error: "City can't empty" })
       .trim()
       .min(1, {
@@ -58,7 +58,7 @@ const registerOrganizationFormSchema = z
         message: 'City must be less than 50 characters.',
       }),
 
-    contact_email: z
+    contactEmail: z
       .string({ required_error: "Contact email can't empty." })
       .email({ message: 'Invalid contact email.' }),
     address: z
@@ -70,7 +70,7 @@ const registerOrganizationFormSchema = z
       .max(50, {
         message: 'Address must be less than 50 characters.',
       }),
-    representative_url: z.string().nullable(),
+    representativeUrl: z.string().nullable(),
     phone: z
       .string({ required_error: "Address can't empty" })
       .trim()
@@ -92,9 +92,9 @@ const registerOrganizationFormSchema = z
     }
   });
 
-type RegisterAudienceFormSchema = z.infer<
+type RegisterOrganizationFormSchema = z.infer<
   typeof registerOrganizationFormSchema
 >;
 
-export type { RegisterAudienceFormSchema };
+export type { RegisterOrganizationFormSchema };
 export { registerOrganizationFormSchema };

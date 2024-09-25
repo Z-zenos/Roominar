@@ -1,9 +1,7 @@
 import z from 'zod';
 
 const loginAudienceFormSchema = z.object({
-  email: z
-    .string({ required_error: "Email can't empty." })
-    .email({ message: 'Invalid email.' }),
+  email: z.string({ required_error: 'empty' }).email({ message: 'invalid' }),
 
   password: z
     .string({ required_error: 'Please enter password.' })
@@ -12,7 +10,7 @@ const loginAudienceFormSchema = z.object({
     //   message: 'Invalid password.',
     // })
     .min(8, {
-      message: 'Invalid password.',
+      message: 'invalid',
     })
     .max(100, 'Password must be less than 100 characters.'),
 

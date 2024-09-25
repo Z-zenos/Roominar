@@ -4,5 +4,20 @@
         "search": "Tìm kiếm",
         "hostMyEvent": "Tổ chức sự kiện"
     },
-    "message": {}
+    "form": {
+        "label": {
+            "email": "Email",
+            "ticket": "Vé",
+            "firstName": "Họ",
+            "lastName": "Tên"
+        },
+        "message": {
+            "error": {
+                "empty": "không được bỏ trống",
+                "invalid": "không hợp lệ",
+                "min": "phải lớn hơn ký tự",
+                "max": "phải bé hơn ký tự"
+            }
+        }
+    }
 }

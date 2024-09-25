@@ -1,3 +1,5 @@
+'use client';
+
 import type * as LabelPrimitive from '@radix-ui/react-label';
 import { Slot } from '@radix-ui/react-slot';
 import type {
@@ -7,7 +9,12 @@ import type {
   FieldPath,
   FieldValues,
 } from 'react-hook-form';
-import { Controller, FormProvider, useFormContext } from 'react-hook-form';
+import {
+  Controller,
+  FormProvider,
+  useFormContext,
+  useFormState,
+} from 'react-hook-form';
 
 import type {
   ChangeEvent,
@@ -69,6 +76,7 @@ import { Button as UIButton } from '@nextui-org/button';
 import { RadioGroup, RadioGroupItem } from '../common/RadioGroup';
 import type { ImageUploaderProps } from '../common/Upload/ImageUploader';
 import ImageUploader from '../common/Upload/ImageUploader';
+import { useTranslations } from 'next-intl';
 
 const Form = FormProvider;
 
@@ -209,8 +217,12 @@ const FormMessage = forwardRef<
   HTMLParagraphElement,
   HTMLAttributes<HTMLParagraphElement>
 >(({ className, children, ...props }, ref) => {
+  const field = props.title;
+  const t = useTranslations('form');
   const { error, formMessageId } = useFormField();
-  const body = error ? String(error?.message) : children;
+  const body = error
+    ? field + ' ' + t(`message.error.${error?.message}`)
+    : children;
 
   if (!body) {
     return null;
@@ -262,7 +274,7 @@ const FormInput = ({
               }}
             />
           </FormControl>
-          {isDisplayError && <FormMessage />}
+          {isDisplayError && <FormMessage title={name} />}
         </FormItem>
       )}
     />

@@ -4,5 +4,20 @@
         "search": "Search",
         "hostMyEvent": "Host My Event"
     },
-    "message": {}
+    "form": {
+        "label": {
+            "email": "Email",
+            "ticket": "Ticket",
+            "firstName": "First name",
+            "lastName": "Last name"
+        },
+        "message": {
+            "error": {
+                "empty": "can't empty",
+                "invalid": "invalid",
+                "min": "must be greater than characters",
+                "max": "must be less than characters"
+            }
+        }
+    }
 }

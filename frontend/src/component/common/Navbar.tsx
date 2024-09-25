@@ -27,6 +27,7 @@ import useWindowDimensions from '@/src/hook/useWindowDimension';
 import { maskEmail } from '@/src/util/app.util';
 import { useTranslations } from 'next-intl';
 import { setUserLocale } from '@/src/util/locale';
+import { getCookie } from 'cookies-next';
 
 const menuItems = [
   {
@@ -77,7 +78,7 @@ interface NavbarProps {
 
 export default function Navbar({ className, hasLogo = true }: NavbarProps) {
   const t = useTranslations('app');
-  const [isEnglish, setIsEnglish] = useState<boolean>(true);
+  const [isEnglish, setIsEnglish] = useState<boolean>(getCookie('en') === 'en');
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const { data: auth, status } = useSession();
   const router = useRouter();
