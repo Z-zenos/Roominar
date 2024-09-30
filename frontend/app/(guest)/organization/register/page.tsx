@@ -1,14 +1,13 @@
-import Logo from '@/src/component/common/Logo';
-import RegisterOrganizationForm from '@/src/component/form/RegisterAudienceForm';
+import RegisterOrganizationForm from '@/src/component/form/RegisterOrganizationForm';
 
 export default function Page() {
   return (
-    <div className='mx-auto w-[500px] py-[5%]'>
+    <div className='mx-auto w-[600px] py-[5%]'>
       <h2 className='text-primary text-lg font-semibold flex justify-start items-center gap-3'>
-        Welcome to <Logo className='scale-110' /> 👋🏻
+        Create your own organization 🏢
       </h2>
       <p className='mt-2 mb-8 font-light text-gray-700 text-nm'>
-        Enter to get interesting event & webinar & seminar you like.
+        Host events and share information over the world.
       </p>
       <RegisterOrganizationForm />
     </div>

@@ -6,18 +6,46 @@
     },
     "form": {
         "label": {
-            "email": "Email",
-            "ticket": "Ticket",
-            "firstName": "First name",
-            "lastName": "Last name"
+            "email": "email",
+            "ticket": "ticket",
+            "firstName": "first name",
+            "lastName": "last name",
+            "password": "password",
+            "confirmPassword": "confirm password",
+            "currentPassword": "current password",
+            "newPassword": "new password",
+            "confirmNewPassword": "confirm new password",
+            "newEmail": "new email",
+            "organizationName": "organization name",
+            "hpUrl": "homepage url",
+            "cityCode": "city code",
+            "contactEmail": "contact email",
+            "address": "address",
+            "representativeUrl": "representative url",
+            "phone": "phone number",
+            "organizationType": "organization type",
+            "workplaceName": "workplace name",
+            "avatarUrl": "avatar url",
+            "ticketId": "ticket",
+            "industryCode": "industry",
+            "jobTypeCode": "job type",
+            "questionAnswerResults": "question answer results",
+            "tags": "tags"
         },
         "message": {
             "error": {
-                "empty": "can't empty",
-                "invalid": "invalid",
-                "min": "must be greater than characters",
-                "max": "must be less than characters"
+                "email": "invalid email",
+                "empty": "[field] can't empty",
+                "invalid_string": "invalid [field]",
+                "too_small": "[field] must be greater than [value] characters",
+                "too_big": "[field] must be less than [value] characters",
+                "passwordNotMatch": "password not match",
+                "missingTicket": "please select at least one ticket"
             }
         }
+    },
+    "code": {
+        "PERSONAL": "Personal",
+        "BUSINESS": "Business"
     }
 }

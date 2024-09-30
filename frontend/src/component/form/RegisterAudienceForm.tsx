@@ -87,7 +87,6 @@ function RegisterAudienceForm() {
             <div className='w-full'>
               <div className='w-full'>
                 <FormCustomLabel
-                  title='Your email'
                   htmlFor='email'
                   required
                 />
@@ -115,7 +114,6 @@ function RegisterAudienceForm() {
               <div className='flex w-full mt-5 mb-1 items-start justify-between gap-2'>
                 <div className='w-full'>
                   <FormCustomLabel
-                    title='First name'
                     htmlFor='firstName'
                     required
                   />
@@ -135,7 +133,6 @@ function RegisterAudienceForm() {
 
                 <div className='w-full'>
                   <FormCustomLabel
-                    title='Last name'
                     htmlFor='lastName'
                     required
                   />
@@ -155,7 +152,6 @@ function RegisterAudienceForm() {
               </div>
               <div className='w-full mt-5 relative mb-1'>
                 <FormCustomLabel
-                  title='Enter your password'
                   htmlFor='password'
                   required
                 />
@@ -191,7 +187,6 @@ function RegisterAudienceForm() {
 
               <div className='w-full mt-5 relative mb-1'>
                 <FormCustomLabel
-                  title='Confirm password'
                   htmlFor='confirmPassword'
                   required
                 />

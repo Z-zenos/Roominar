@@ -21,6 +21,7 @@ import type {
   HTMLAttributes,
   ElementRef,
   ComponentPropsWithoutRef,
+  ReactNode,
 } from 'react';
 import { createContext, useContext, forwardRef, useId, useMemo } from 'react';
 import type { DateRange } from 'react-day-picker';
@@ -220,9 +221,21 @@ const FormMessage = forwardRef<
   const field = props.title;
   const t = useTranslations('form');
   const { error, formMessageId } = useFormField();
-  const body = error
-    ? field + ' ' + t(`message.error.${error?.message}`)
-    : children;
+
+  let body = undefined;
+  if (error) {
+    body = t(
+      `message.error.${error.type !== 'custom' ? error.type : error.message}`,
+    ).replace('[field]', t(`label.${field}`));
+
+    if (['too_small', 'too_big'].includes(error.type)) {
+      const match = error?.message?.match(/\d+/);
+      const number = match ? Number(match[0]) : null;
+      body = body.replace('[value]', number);
+    }
+  } else {
+    body = children;
+  }
 
   if (!body) {
     return null;
@@ -907,23 +920,23 @@ FormDateRangePicker.displayName = 'FormDateRangePicker';
 interface FormCustomLabelProps {
   htmlFor: string;
   className?: string;
-  title: string;
   required?: boolean;
 }
 
 const FormCustomLabel = ({
   htmlFor,
   className,
-  title,
   required,
 }: FormCustomLabelProps) => {
+  const t = useTranslations('form');
+
   return (
     <div className='mb-2 block'>
       <Label
         htmlFor={htmlFor}
         className={clsx(styles.label, className)}
       >
-        {title}
+        {t(`label.${htmlFor}`)}
         {required && <span className='text-red-500 ml-2'>*</span>}
       </Label>
     </div>
@@ -1062,6 +1075,26 @@ const FormImageUploader = ({
 
 FormImageUploader.displayName = 'FormImageUploader';
 
+interface FormInstructionsProps {
+  className?: string;
+  children: ReactNode;
+}
+
+const FormInstructions = ({ className, children }: FormInstructionsProps) => {
+  return (
+    <ul
+      className={clsx(
+        'mt-2 p-4 bg-emerald-50 flex flex-col justify-start gap-2 text-ss font-light list-disc pl-6 marker:text-blue-500',
+        className,
+      )}
+    >
+      {children}
+    </ul>
+  );
+};
+
+FormInstructions.displayName = 'FormInstructions';
+
 export {
   useFormField,
   Form,
@@ -1083,4 +1116,5 @@ export {
   FormTagsInput,
   FormRadioBoxList,
   FormCustomLabel,
+  FormInstructions,
 };

@@ -67,7 +67,7 @@ export default function EventApplicationForm({
       firstName: auth?.user?.firstName || '',
       lastName: auth?.user?.lastName || '',
       workplaceName: auth?.user?.workplaceName || '',
-      phoneNumber: auth?.user?.phone || '',
+      phone: auth?.user?.phone || '',
       industryCode: (auth?.user?.industryCode as IndustryCode) || undefined,
       jobTypeCode: (auth?.user?.jobTypeCode as JobTypeCode) || undefined,
       questionAnswerResults: [],
@@ -98,7 +98,7 @@ export default function EventApplicationForm({
         firstName: data.firstName,
         lastName: data.lastName,
         workplaceName: data.workplaceName,
-        phone: data.phoneNumber,
+        phone: data.phone,
         industryCode: data.industryCode,
         jobTypeCode: data.jobTypeCode,
         questionAnswerResults:
@@ -233,7 +233,6 @@ export default function EventApplicationForm({
               <div>
                 <FormCustomLabel
                   htmlFor='email'
-                  title='Your email'
                   required
                 />
                 <FormInput
@@ -262,7 +261,6 @@ export default function EventApplicationForm({
               <div className='self-start'>
                 <FormCustomLabel
                   htmlFor='firstName'
-                  title='First name'
                   required
                 />
                 <FormInput
@@ -283,7 +281,6 @@ export default function EventApplicationForm({
               <div className='self-start'>
                 <FormCustomLabel
                   htmlFor='lastName'
-                  title='Last name'
                   required
                 />
                 <FormInput
@@ -304,7 +301,6 @@ export default function EventApplicationForm({
               <div className='self-start'>
                 <FormCustomLabel
                   htmlFor='workplaceName'
-                  title='Workplace name'
                   required
                 />
                 <FormInput
@@ -330,13 +326,12 @@ export default function EventApplicationForm({
               </div>
               <div className='self-start'>
                 <FormCustomLabel
-                  htmlFor='phoneNumber'
-                  title='Phone number'
+                  htmlFor='phone'
                   required
                 />
                 <FormInput
-                  id='phoneNumber'
-                  name='phoneNumber'
+                  id='phone'
+                  name='phone'
                   placeholder='Kevin'
                   className={clsx(
                     form.formState.errors.firstName &&
@@ -358,7 +353,6 @@ export default function EventApplicationForm({
               <div className='self-start'>
                 <FormCustomLabel
                   htmlFor='jobTypeCode'
-                  title='Job type'
                   required
                 />
                 <FormCombobox
@@ -380,7 +374,6 @@ export default function EventApplicationForm({
               <div className='self-start'>
                 <FormCustomLabel
                   htmlFor='industryCode'
-                  title='Industry'
                   required
                 />
                 <FormCombobox

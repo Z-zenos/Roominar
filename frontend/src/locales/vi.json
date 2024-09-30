@@ -6,18 +6,46 @@
     },
     "form": {
         "label": {
-            "email": "Email",
-            "ticket": "Vé",
-            "firstName": "Họ",
-            "lastName": "Tên"
+            "email": "email",
+            "ticket": "vé",
+            "firstName": "họ",
+            "lastName": "tên",
+            "password": "mật khẩu",
+            "confirmPassword": "xác nhận mật khẩu",
+            "currentPassword": "mật khẩu hiện tại",
+            "newPassword": "mật khẩu mới",
+            "confirmNewPassword": "xác nhận mật khẩu mới",
+            "newEmail": "email mới",
+            "organizationName": "tên tổ chức",
+            "hpUrl": "link trang chủ",
+            "cityCode": "mã thành phố",
+            "contactEmail": "email liên lạc",
+            "address": "địa chỉ",
+            "representativeUrl": "tên đại diện",
+            "phone": "số điện thoại",
+            "organizationType": "loại tổ chức",
+            "workplaceName": "nơi làm việc",
+            "avatarUrl": "avatar",
+            "ticketId": "vé",
+            "industryCode": "lĩnh vực",
+            "jobTypeCode": "loại công việc",
+            "questionAnswerResults": "kết quả trả lời câu hỏi",
+            "tags": "tags"
         },
         "message": {
             "error": {
-                "empty": "không được bỏ trống",
-                "invalid": "không hợp lệ",
-                "min": "phải lớn hơn ký tự",
-                "max": "phải bé hơn ký tự"
+                "email": "email không hợp lệ",
+                "empty": "[field] không được bỏ trống",
+                "invalid_string": "[field] không hợp lệ",
+                "too_small": "[field] phải có ít nhất [value] ký tự",
+                "too_big": "[field] không được chứa quá [value] ký tự",
+                "passwordNotMatch": "mật khẩu không khớp",
+                "missingTicket": "vui lòng chọn ít nhất một vé để tham gia"
             }
         }
+    },
+    "code": {
+        "PERSONAL": "Cá nhân",
+        "BUSINESS": "Doanh nghiệp"
     }
 }

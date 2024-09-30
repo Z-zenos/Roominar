@@ -27,7 +27,7 @@ function CustomInput(
         group-input h-11 bg-white overflow-hidden cursor-pointer
         shadow-[2px_2px_10px_rgba(0,_0,_0,_0.075)] border border-gray-main
         rounded-lg relative flex justify-between pl-1 gap-1 items-center
-        max-w-[500px] hover:shadow-[0_1px_6px_rgb(0, 111, 238)]
+        max-w-[600px] hover:shadow-[0_1px_6px_rgb(0, 111, 238)]
         hover:border-primary transition-all
       '
     >
@@ -57,7 +57,7 @@ function CustomInput(
       {rightIcon && (
         <span
           className={clsx(
-            'w-1/6 mx-auto h-full hover:bg-emerald-50 transition-all',
+            'w-1/6 mx-auto min-w-[40px] h-full hover:bg-emerald-50 transition-all',
             styles.center,
           )}
         >

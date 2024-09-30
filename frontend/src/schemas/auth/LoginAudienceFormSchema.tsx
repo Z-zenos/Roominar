@@ -1,18 +1,16 @@
 import z from 'zod';
 
 const loginAudienceFormSchema = z.object({
-  email: z.string({ required_error: 'empty' }).email({ message: 'invalid' }),
+  email: z.string().email(),
 
   password: z
-    .string({ required_error: 'Please enter password.' })
+    .string()
     .trim()
     // .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z_\d@$!%*?&]{8,}$/, {
     //   message: 'Invalid password.',
     // })
-    .min(8, {
-      message: 'invalid',
-    })
-    .max(100, 'Password must be less than 100 characters.'),
+    .min(8)
+    .max(255),
 
   rememberMe: z.boolean().default(true).optional(),
 });

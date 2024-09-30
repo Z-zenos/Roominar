@@ -96,7 +96,6 @@ export default function LoginAudienceForm() {
         <div className='w-full'>
           <FormCustomLabel
             htmlFor='email'
-            title='Your email'
             required
           />
           <FormInput
@@ -123,7 +122,6 @@ export default function LoginAudienceForm() {
         <div className='w-full mt-5 relative mb-1'>
           <FormCustomLabel
             htmlFor='password'
-            title='Password'
             required
           />
           <FormInput

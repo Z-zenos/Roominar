@@ -11,7 +11,7 @@ from backend.schemas.user import UserBase
 
 class UserLoginRequest(BaseModel):
     email: EmailStr
-    password: str
+    password: str = Field(min_length=8, max_length=255)
     role_code: str
     remember_me: bool | None = None
 

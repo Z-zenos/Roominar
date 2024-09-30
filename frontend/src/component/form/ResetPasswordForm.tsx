@@ -79,7 +79,6 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
       >
         <div className='w-full mt-5 relative mb-1'>
           <FormCustomLabel
-            title='Enter new password'
             htmlFor='newPassword'
             required
           />
@@ -115,7 +114,6 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
 
         <div className='w-full mt-5 relative mb-1'>
           <FormCustomLabel
-            title='Confirm password'
             required
             htmlFor='confirmPassword'
           />

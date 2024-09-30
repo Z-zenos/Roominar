@@ -18,6 +18,8 @@ export const pathPermissionMaster = {
     '/not-found',
     '/email/change/[token]',
     '/my-events',
+    '/organization/login',
+    '/organization/register',
   ],
   SPEAKER: ['/login', '/organization/login'],
   ORGANIZER: ['/login'],
@@ -33,6 +35,8 @@ export const pathPermissionMaster = {
     '/email/verify/[token]',
     '/email/change/[token]',
     '/email/revert/[token]',
+    '/organization/login',
+    '/organization/register',
   ],
 };
 

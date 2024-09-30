@@ -65,7 +65,6 @@ export default function ChangeEmailForm() {
         <div className={clsx(styles.between, 'gap-4 !items-end mt-8')}>
           <div className='self-start'>
             <FormCustomLabel
-              title='Email ( Last changed 9 month(s) ago.)'
               htmlFor='email'
               className='font-medium text-nm'
             />
@@ -99,7 +98,6 @@ export default function ChangeEmailForm() {
               <div className='self-start'>
                 <FormCustomLabel
                   htmlFor='newEmail'
-                  title='New email'
                   required
                 />
                 <FormInput
@@ -125,7 +123,6 @@ export default function ChangeEmailForm() {
               <div className='w-full relative mb-1'>
                 <FormCustomLabel
                   htmlFor='password'
-                  title='Your password'
                   required
                 />
                 <FormInput
