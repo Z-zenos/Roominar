@@ -53,7 +53,6 @@ function RegisterOrganizationForm() {
   } = useRegisterOrganizationMutation({
     onSuccess() {
       toast.success('Successfully Account Registration!');
-      setIsRegisterSuccess(true);
     },
     onError(error: ApiException<unknown>) {
       toast.error(
@@ -64,17 +63,23 @@ function RegisterOrganizationForm() {
     },
   });
 
-  const [isRegisterSuccess, setIsRegisterSuccess] = useState<boolean>(false);
   const handleRegister = (value: RegisterOrganizationFormSchema) => {
-    // trigger({
-    //   registerOrganizationRequest: {
-    //     email: value.email,
-    //     firstName: value.firstName,
-    //     lastName: value.lastName,
-    //     password: value.password,
-    //     confirmPassword: value.confirmPassword,
-    //   },
-    // });
+    trigger({
+      registerOrganizationRequest: {
+        email: value.email,
+        firstName: value.firstName,
+        lastName: value.lastName,
+        password: value.password,
+        confirmPassword: value.confirmPassword,
+        name: value.organizationName,
+        cityCode: '',
+        hpUrl: '',
+        address: value.address,
+        representativeUrl: value.representativeUrl,
+        phone: value.phone,
+        type: value.organizationType,
+      },
+    });
   };
 
   return (
@@ -226,6 +231,7 @@ function RegisterOrganizationForm() {
               <FormInput
                 id='phone'
                 name='phone'
+                type='tel'
                 placeholder='0123456789'
                 rightIcon={
                   <MdPhone
@@ -246,10 +252,7 @@ function RegisterOrganizationForm() {
         )}
 
         <div className='col-span-2'>
-          <FormCustomLabel
-            htmlFor='representativeUrl'
-            required
-          />
+          <FormCustomLabel htmlFor='representativeUrl' />
           <div className='grid grid-cols-5 items-center'>
             <p className='col-span-2 text-sm underline text-primary'>
               https://roominar.com/organizations/
@@ -265,7 +268,6 @@ function RegisterOrganizationForm() {
                     'border-error-main',
                 )}
                 control={form.control}
-                isDisplayError={true}
               />
             </div>
           </div>

@@ -144,7 +144,7 @@ class RegisterOrganizationRequest(BaseModel):
     name: str
     hp_url: str | None
     city_code: str | None
-    contact_email: EmailStr | None
+    # contact_email: EmailStr | None
     address: str | None
     representative_url: str | None
     phone: str | None

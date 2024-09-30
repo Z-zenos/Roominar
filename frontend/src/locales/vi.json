@@ -40,7 +40,9 @@
                 "too_small": "[field] phải có ít nhất [value] ký tự",
                 "too_big": "[field] không được chứa quá [value] ký tự",
                 "passwordNotMatch": "mật khẩu không khớp",
-                "missingTicket": "vui lòng chọn ít nhất một vé để tham gia"
+                "missingTicket": "vui lòng chọn ít nhất một vé để tham gia",
+                "missingAddress": "vui lòng cung cấp địa chỉ doanh nghiệp của bạn",
+                "missingPhone": "vui lòng cung cấp số điện thoại"
             }
         }
     },

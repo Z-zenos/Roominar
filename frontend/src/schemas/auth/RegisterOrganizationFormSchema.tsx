@@ -10,22 +10,38 @@ const registerOrganizationFormSchema = z
     confirmPassword: z.string().trim().min(8).max(255),
 
     organizationName: z.string().trim().min(1).max(255),
-    cityCode: z.string().trim().min(1).max(20),
+    cityCode: z.string().trim().nullable(),
 
-    address: z.string().trim().min(1).max(1000),
+    address: z.string().trim().max(1000).nullable(),
     representativeUrl: z.string().nullable(),
-    phone: z.string().trim().min(1).max(50),
+    phone: z.string().trim().max(11).nullable(),
     organizationType: z.nativeEnum(OrganizationTypeCode),
   })
-  .superRefine(({ confirmPassword, password }, ctx) => {
-    if (confirmPassword !== password) {
-      ctx.addIssue({
-        code: 'custom',
-        message: 'passwordNotMatch',
-        path: ['confirmPassword'],
-      });
-    }
-  });
+  .superRefine(
+    ({ confirmPassword, password, address, phone, organizationType }, ctx) => {
+      if (confirmPassword !== password) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'passwordNotMatch',
+          path: ['confirmPassword'],
+        });
+      }
+      if (organizationType === OrganizationTypeCode.Business && !address) {
+        return ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'missingAddress',
+          path: ['address'],
+        });
+      }
+      if (organizationType === OrganizationTypeCode.Business && !phone) {
+        return ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'missingPhone',
+          path: ['phone'],
+        });
+      }
+    },
+  );
 
 type RegisterOrganizationFormSchema = z.infer<
   typeof registerOrganizationFormSchema
