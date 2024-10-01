@@ -5,7 +5,7 @@ from pydantic import BaseModel, EmailStr, Field, ValidationInfo, field_validator
 
 from backend.core.constants import IndustryCode, JobTypeCode, OrganizationTypeCode
 from backend.core.error_code import ErrorCode, ErrorMessage
-from backend.schemas.common import hp_url_validator, password_validator
+from backend.schemas.common import password_validator
 from backend.schemas.user import UserBase
 
 
@@ -163,19 +163,19 @@ class RegisterOrganizationRequest(BaseModel):
             )
         return v
 
-    @field_validator("hp_url")
-    def hp_url_validator(cls, v):
-        return hp_url_validator(v)
+    # @field_validator("hp_url")
+    # def hp_url_validator(cls, v):
+    #     return hp_url_validator(v)
 
     @field_validator("type")
     def type_validator(cls, v, values: ValidationInfo):
-        if type == OrganizationTypeCode.PERSONAL:
+        if v == OrganizationTypeCode.PERSONAL:
             return v
         else:
             if (
-                not values.data.get("city_code")
-                or not values.data.get("contact_email")
-                or not values.data.get("address")
+                # not values.data.get("city_code")
+                # or not values.data.get("contact_email")
+                not values.data.get("address")
                 or not values.data.get("representative_url")
                 or not values.data.get("phone")
             ):
