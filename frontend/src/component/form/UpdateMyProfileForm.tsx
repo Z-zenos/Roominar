@@ -46,7 +46,7 @@ export default function UpdateMyProfileForm() {
       firstName: auth?.user?.firstName || '',
       lastName: auth?.user?.lastName || '',
       workplaceName: auth?.user?.workplaceName || '',
-      phoneNumber: auth?.user?.phone || '',
+      phone: auth?.user?.phone || '',
       industryCode: (auth?.user?.industryCode as IndustryCode) || undefined,
       jobTypeCode: (auth?.user?.jobTypeCode as JobTypeCode) || undefined,
       tags: auth?.user?.tags.map((tag) => tag.id + '') || undefined,
@@ -80,7 +80,7 @@ export default function UpdateMyProfileForm() {
         tags: data.tags?.map((id) => +id),
         avatarUrl: data.avatarUrl,
         workplaceName: data.workplaceName,
-        phone: data.phoneNumber,
+        phone: data.phone,
         industryCode: data.industryCode,
         jobTypeCode: data.jobTypeCode,
       },
@@ -121,7 +121,6 @@ export default function UpdateMyProfileForm() {
             <div className='self-start'>
               <FormCustomLabel
                 htmlFor='firstName'
-                title='First name'
                 required
               />
               <FormInput
@@ -141,7 +140,6 @@ export default function UpdateMyProfileForm() {
             <div className='self-start'>
               <FormCustomLabel
                 htmlFor='lastName'
-                title='Last name'
                 required
               />
               <FormInput
@@ -159,10 +157,7 @@ export default function UpdateMyProfileForm() {
               />
             </div>
             <div className='self-start'>
-              <FormCustomLabel
-                htmlFor='workplaceName'
-                title='Workplace name'
-              />
+              <FormCustomLabel htmlFor='workplaceName' />
               <FormInput
                 id='workplaceName'
                 name='workplaceName'
@@ -184,13 +179,10 @@ export default function UpdateMyProfileForm() {
               />
             </div>
             <div className='self-start'>
-              <FormCustomLabel
-                htmlFor='phoneNumber'
-                title='Phone number'
-              />
+              <FormCustomLabel htmlFor='phone' />
               <FormInput
-                id='phoneNumber'
-                name='phoneNumber'
+                id='phone'
+                name='phone'
                 placeholder='Kevin'
                 className={clsx(
                   form.formState.errors.firstName &&
@@ -209,10 +201,7 @@ export default function UpdateMyProfileForm() {
               />
             </div>
             <div className='self-start'>
-              <FormCustomLabel
-                htmlFor='avatarUrl'
-                title='Avatar'
-              />
+              <FormCustomLabel htmlFor='avatarUrl' />
 
               <ImageUploader
                 name='avatarUrl'
@@ -222,10 +211,7 @@ export default function UpdateMyProfileForm() {
             </div>
             &nbsp;
             <div className='self-start'>
-              <FormCustomLabel
-                htmlFor='jobTypeCode'
-                title='Job type'
-              />
+              <FormCustomLabel htmlFor='jobTypeCode' />
               <FormCombobox
                 data={Object.keys(JobTypeCodeMapping).map((key: string) => ({
                   value: key,
@@ -243,10 +229,7 @@ export default function UpdateMyProfileForm() {
               />
             </div>
             <div className='self-start'>
-              <FormCustomLabel
-                htmlFor='industryCode'
-                title='Industry'
-              />
+              <FormCustomLabel htmlFor='industryCode' />
               <FormCombobox
                 data={Object.keys(IndustryCode).map((ic: string) => ({
                   value: IndustryCode[ic],
@@ -264,10 +247,7 @@ export default function UpdateMyProfileForm() {
               />
             </div>
             <div className='col-span-2'>
-              <FormCustomLabel
-                htmlFor='tags'
-                title='Tags'
-              />
+              <FormCustomLabel htmlFor='tags' />
               <FormTagsInput
                 title='tags'
                 name='tags'

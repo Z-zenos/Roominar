@@ -100,7 +100,6 @@ export default function ChangePasswordForm() {
               <div className='w-full relative mb-1'>
                 <FormCustomLabel
                   htmlFor='currentPassword'
-                  title='Current Password'
                   required
                 />
                 <FormInput
@@ -146,7 +145,6 @@ export default function ChangePasswordForm() {
               <div className='w-full relative mb-1 self-start'>
                 <FormCustomLabel
                   htmlFor='newPassword'
-                  title='New Password'
                   required
                 />
                 <FormInput
@@ -185,7 +183,6 @@ export default function ChangePasswordForm() {
               <div className='w-full relative mb-1'>
                 <FormCustomLabel
                   htmlFor='confirmNewPassword'
-                  title='Confirm Password'
                   required
                 />
                 <FormInput

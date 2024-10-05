@@ -29,6 +29,7 @@ class ErrorCode:
     ERR_INVALID_VERIFY_CHANGE_EMAIL_TOKEN = "ERR_INVALID_VERIFY_CHANGE_EMAIL_TOKEN"
     ERR_INVALID_REVERT_EMAIL_TOKEN = "ERR_INVALID_REVERT_EMAIL_TOKEN"
     ERR_APPLICATION_NOT_FOUND = "ERR_APPLICATION_NOT_FOUND"
+    ERR_MISSING_FIELDS = "ERR_MISSING_FIELDS"
 
 
 class ErrorMessage:
@@ -60,3 +61,4 @@ class ErrorMessage:
     ERR_INVALID_VERIFY_CHANGE_EMAIL_TOKEN = "Invalid verify change email token."
     ERR_INVALID_REVERT_EMAIL_TOKEN = "Invalid revert email token."
     ERR_APPLICATION_NOT_FOUND = "The application doesn't exist."
+    ERR_MISSING_FIELDS = "Missing some important field data."

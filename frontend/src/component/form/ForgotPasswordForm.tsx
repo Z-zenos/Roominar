@@ -82,7 +82,6 @@ export default function ForgotPasswordForm() {
             <div className='w-full'>
               <FormCustomLabel
                 htmlFor='email'
-                title='Email'
                 required
               />
               <FormInput

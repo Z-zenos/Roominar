@@ -1,7 +1,7 @@
 'use client';
 
 import { useForm } from 'react-hook-form';
-import { Form, FormCombobox } from './Form';
+import { Form, FormCombobox, FormCustomLabel } from './Form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Label } from '../common/Label';
 import clsx from 'clsx';
@@ -113,12 +113,7 @@ function VerifyAudienceForm({ token }: VerifyAudienceFormProps) {
         <div className={clsx(styles.between, 'flex-wrap gap-20 mt-8')}>
           <div>
             <div className='mb-6 block'>
-              <Label
-                htmlFor='email'
-                className={clsx(styles.label, 'font-medium text-xm')}
-              >
-                Job Type
-              </Label>
+              <FormCustomLabel htmlFor='jobTypeCode' />
               <h4 className='font-light opacity-80 text-sm'>
                 Explore Opportunities Tailored to Your Profession and <br />
                 Discover Career Paths Suited to Your Skillset.
@@ -139,12 +134,8 @@ function VerifyAudienceForm({ token }: VerifyAudienceFormProps) {
 
           <div>
             <div className='mb-6 block'>
-              <Label
-                htmlFor='email'
-                className={clsx(styles.label, 'font-medium text-xm')}
-              >
-                Industry
-              </Label>
+              <FormCustomLabel htmlFor='industryCode' />
+
               <h4 className='font-light opacity-80 text-sm'>
                 Navigate Through Industry-Specific Insights and Unlock <br />
                 the Latest Trends in Your Industry.

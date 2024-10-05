@@ -1,0 +1,53 @@
+{
+    "app": {
+        "home": "Home",
+        "search": "Search",
+        "hostMyEvent": "Host My Event"
+    },
+    "form": {
+        "label": {
+            "email": "email",
+            "ticket": "ticket",
+            "firstName": "first name",
+            "lastName": "last name",
+            "password": "password",
+            "confirmPassword": "confirm password",
+            "currentPassword": "current password",
+            "newPassword": "new password",
+            "confirmNewPassword": "confirm new password",
+            "newEmail": "new email",
+            "organizationName": "organization name",
+            "hpUrl": "homepage url",
+            "cityCode": "city code",
+            "contactEmail": "contact email",
+            "address": "address",
+            "representativeUrl": "representative url",
+            "phone": "phone number",
+            "organizationType": "organization type",
+            "workplaceName": "workplace name",
+            "avatarUrl": "avatar url",
+            "ticketId": "ticket",
+            "industryCode": "industry",
+            "jobTypeCode": "job type",
+            "questionAnswerResults": "question answer results",
+            "tags": "tags"
+        },
+        "message": {
+            "error": {
+                "email": "invalid email",
+                "empty": "[field] can't empty",
+                "invalid_string": "invalid [field]",
+                "too_small": "[field] must be greater than [value] characters",
+                "too_big": "[field] must be less than [value] characters",
+                "passwordNotMatch": "password not match",
+                "missingTicket": "please select at least one ticket",
+                "missingAddress": "please provide organization address",
+                "missingPhone": "please provide phone number"
+            }
+        }
+    },
+    "code": {
+        "PERSONAL": "Personal",
+        "BUSINESS": "Business"
+    }
+}

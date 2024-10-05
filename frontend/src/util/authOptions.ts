@@ -116,7 +116,7 @@ const authOptions: NextAuthOptions = {
       };
 
       const rememberMe = getCookie('rememberMe', { cookies }) === 'true';
-      token.role = user?.role || RoleCode.AUDIENCE;
+
       if (token.accessToken && compareTime(token.expireAt)) {
         if (!rememberMe) return { ...token, ...user };
 
@@ -141,6 +141,7 @@ const authOptions: NextAuthOptions = {
       const user = await makeAuthApi(token.accessToken).me();
       session.user = JSON.parse(JSON.stringify(user));
       session.token = token;
+      session.token['role'] = session.user.roleCode;
       return session;
     },
   },
