@@ -7,16 +7,17 @@ import {
   Menu,
   MenuItem,
   menuClasses,
+  SubMenu,
 } from 'react-pro-sidebar';
 import { usePathname, useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import OverviewIcon from '@/public/icons/overview.svg';
 import EventPlanningIcon from '@/public/icons/event-planning.svg';
+import CreateEventIcon from '@/public/icons/create-event.svg';
 import AttendeesIcon from '@/public/icons/attendees.svg';
 import StaffIcon from '@/public/icons/staff.svg';
 import SurveyIcon from '@/public/icons/survey.svg';
 import TicketPaymentIcon from '@/public/icons/ticket-payment.svg';
-import useWindowDimensions from '@/src/hook/useWindowDimension';
 import { useState } from 'react';
 import {
   TbLayoutSidebarLeftCollapse,
@@ -24,6 +25,7 @@ import {
 } from 'react-icons/tb';
 import { styles } from '@/src/constant/styles.constant';
 import Logo from '../Logo';
+import { hexToRgba } from '@/src/util/app.util';
 
 const themes = {
   light: {
@@ -62,15 +64,6 @@ const themes = {
   },
 };
 
-// hex to rgba converter
-const hexToRgba = (hex: string, alpha: number) => {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-};
-
 const sidebarMenu = [
   {
     title: 'Overview',
@@ -81,10 +74,17 @@ const sidebarMenu = [
     title: 'Events',
     icon: <EventPlanningIcon width={25} />,
     route: '/organization/events',
+    submenu: [
+      {
+        title: 'Create New',
+        icon: <CreateEventIcon width={25} />,
+        route: '/organization/events/create',
+      },
+    ],
   },
   {
     title: 'Attendees',
-    icon: <AttendeesIcon width={25} />,
+    icon: <AttendeesIcon width={30} />,
     route: '/organization/attendees',
   },
   {
@@ -94,7 +94,7 @@ const sidebarMenu = [
   },
   {
     title: 'Survey',
-    icon: <SurveyIcon width={25} />,
+    icon: <SurveyIcon width={30} />,
     route: '/organization/survey',
   },
   {
@@ -152,7 +152,6 @@ export default function OrganizationSidebar({
   const pathname = usePathname();
 
   const [collapsed, setCollapsed] = useState<boolean>(false);
-  const { width } = useWindowDimensions();
   const router = useRouter();
 
   return (
@@ -186,22 +185,55 @@ export default function OrganizationSidebar({
           </div>
           <div className={clsx(collapsed ? 'ml-0' : '', 'flex-1 mt-[100px]')}>
             <Menu menuItemStyles={menuItemStyles}>
-              {sidebarMenu.map((item) => (
-                <MenuItem
-                  key={`osbmn-${item.title}`}
-                  active={pathname === item.route}
-                  className={clsx(
-                    '!text-sm',
-                    pathname === item.route
-                      ? 'bg-emerald-50 text-primary [&_svg]:fill-primary [&_g]:fill-primary [&_path]:stroke-primary font-semibold border border-primary border-r-0'
-                      : '!text-dark-main !font-light',
-                  )}
-                  icon={item.icon}
-                  onClick={() => router.push(item.route)}
-                >
-                  {!collapsed && item.title}
-                </MenuItem>
-              ))}
+              {sidebarMenu.map((item) =>
+                item.submenu ? (
+                  <SubMenu
+                    key={`osbmn-${item.title}`}
+                    active={pathname === item.route}
+                    className={clsx(
+                      '!text-sm',
+                      pathname === item.route
+                        ? 'bg-emerald-50 !text-primary [&_svg]:fill-primary [&_g]:fill-primary [&_path]:stroke-primary font-semibold border border-primary border-r-0'
+                        : '!text-dark-main !font-light',
+                    )}
+                    icon={item.icon}
+                    onClick={() => router.push(item.route)}
+                    label={item.title}
+                  >
+                    {item.submenu.map((subitem) => (
+                      <MenuItem
+                        key={`osbsmn-${subitem.title}`}
+                        active={pathname === subitem.route}
+                        className={clsx(
+                          '!text-sm',
+                          pathname === subitem.route
+                            ? 'bg-emerald-50 text-primary [&_svg]:fill-primary [&_g]:fill-primary [&_path]:stroke-primary font-semibold border border-primary border-r-0'
+                            : '!text-dark-main !font-light',
+                        )}
+                        icon={subitem.icon}
+                        onClick={() => router.push(subitem.route)}
+                      >
+                        {!collapsed && subitem.title}
+                      </MenuItem>
+                    ))}
+                  </SubMenu>
+                ) : (
+                  <MenuItem
+                    key={`osbmn-${item.title}`}
+                    active={pathname === item.route}
+                    className={clsx(
+                      '!text-sm',
+                      pathname === item.route
+                        ? 'bg-emerald-50 text-primary [&_svg]:fill-primary [&_g]:fill-primary [&_path]:stroke-primary font-semibold border border-primary border-r-0'
+                        : '!text-dark-main !font-light',
+                    )}
+                    icon={item.icon}
+                    onClick={() => router.push(item.route)}
+                  >
+                    {!collapsed && item.title}
+                  </MenuItem>
+                ),
+              )}
             </Menu>
           </div>
         </div>
