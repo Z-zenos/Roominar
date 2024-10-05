@@ -8,7 +8,7 @@ import {
   MenuItem,
   menuClasses,
 } from 'react-pro-sidebar';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import EventIcon from '@/public/icons/event.svg';
 import ProfileIcon from '@/public/icons/profile.svg';
@@ -92,12 +92,15 @@ const sidebarMenu = [
 
 const theme = 'light';
 
-interface SidebarProps {
+interface AudienceSidebarProps {
   className?: string;
   collapsed?: boolean;
 }
 
-export default function Sidebar({ className, collapsed }: SidebarProps) {
+export default function AudienceSidebar({
+  className,
+  collapsed,
+}: AudienceSidebarProps) {
   const [toggled, setToggled] = React.useState(false);
 
   const menuItemStyles: MenuItemStyles = {
@@ -135,6 +138,7 @@ export default function Sidebar({ className, collapsed }: SidebarProps) {
   };
 
   const pathname = usePathname();
+  const router = useRouter();
 
   return (
     <div className={clsx('flex border-r border-r-gray-300', className)}>
@@ -167,6 +171,7 @@ export default function Sidebar({ className, collapsed }: SidebarProps) {
                       : '!text-dark-main !font-light',
                   )}
                   icon={item.icon}
+                  onClick={() => router.push(item.route)}
                 >
                   {!collapsed && item.title}
                 </MenuItem>
