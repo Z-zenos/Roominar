@@ -2,12 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import {
-  AiOutlineEye,
-  AiOutlineEyeInvisible,
-  AiFillFacebook,
-} from 'react-icons/ai';
-import { FcGoogle } from 'react-icons/fc';
+import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import { toast } from 'react-hot-toast';
 import { getSession, signIn } from 'next-auth/react';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,27 +10,29 @@ import { HiMail } from 'react-icons/hi';
 import clsx from 'clsx';
 import { Link } from '@nextui-org/link';
 import { Form, FormCheckBox, FormCustomLabel, FormInput } from './Form';
-import { styles } from '@/src/constant/styles.constant';
 import Button from '../common/Button/Button';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getCookie, setCookie } from 'cookies-next';
-import { RoleCode } from '@/src/constant/role_code.constant';
 import { toCamelCase } from '@/src/util/app.util';
 import { initialScreen } from '@/src/constant/app.constant';
-import type { LoginAudienceFormSchema } from '@/src/schemas/auth/LoginAudienceFormSchema';
-import { loginAudienceFormSchema } from '@/src/schemas/auth/LoginAudienceFormSchema';
+import type { LoginFormSchema } from '@/src/schemas/auth/LoginFormSchema';
+import { loginFormSchema } from '@/src/schemas/auth/LoginFormSchema';
 
-export default function LoginAudienceForm() {
+interface LoginFormProps {
+  roleCode: 'AUDIENCE' | 'ORGANIZER';
+}
+
+export default function LoginForm({ roleCode }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
-  const form = useForm<LoginAudienceFormSchema>({
+  const form = useForm<LoginFormSchema>({
     mode: 'all',
     defaultValues: {
       email: '',
       password: '',
       rememberMe: true,
     },
-    resolver: zodResolver(loginAudienceFormSchema),
+    resolver: zodResolver(loginFormSchema),
   });
 
   const router = useRouter();
@@ -46,7 +43,7 @@ export default function LoginAudienceForm() {
     form.setValue('rememberMe', getCookie('rememberMe') === 'true');
   }, [form]);
 
-  const handleLogin = form.handleSubmit((data: LoginAudienceFormSchema) => {
+  const handleLogin = form.handleSubmit((data: LoginFormSchema) => {
     if (!isLoading) {
       setIsLoading(true);
 
@@ -57,7 +54,7 @@ export default function LoginAudienceForm() {
         password: data.password,
         rememberMe: data.rememberMe,
         redirect: false,
-        roleCode: RoleCode.AUDIENCE,
+        roleCode: roleCode,
       }).then(async (value) => {
         if (value.status == 200) {
           const session = await getSession();
@@ -176,35 +173,6 @@ export default function LoginAudienceForm() {
           isLoading={isLoading}
         />
         <br />
-        <h5 className='text-center pt-4 font-Poppins text-[14px] text-black dark:text-white'>
-          Or join with
-        </h5>
-        <div className='flex items-center justify-center mt-3'>
-          <FcGoogle
-            size={30}
-            className='cursor-pointer mr-2'
-            onClick={() => signIn('google', { callbackUrl: '/home' })}
-          />
-          <AiFillFacebook
-            size={30}
-            className='cursor-pointer ml-2 text-[#1877F2]'
-            onClick={() => signIn('facebook')}
-          />
-        </div>
-        <h5 className='text-center pt-4 font-Poppins text-nm font-light'>
-          Not have any account?
-          <Link
-            href='/register'
-            className='text-primary font-semibold pl-1 cursor-pointer'
-          >
-            Sign up
-          </Link>
-        </h5>
-
-        <p className={clsx('mt-4 gap-2 font-light', styles.center)}>
-          Want to host your own event?
-          <Button className='outline-none'>Navigate to organization </Button>
-        </p>
       </form>
     </Form>
   );

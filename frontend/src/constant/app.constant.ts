@@ -4,6 +4,6 @@ export const initialScreen = {
   AUDIENCE: '/home',
   SPEAKER: '/home',
   ORGANIZER: '/organization/events',
-  ADMIN: '/admin/organizers',
+  ADMIN: '/admin/dashboard',
   GUEST: '/home',
 };

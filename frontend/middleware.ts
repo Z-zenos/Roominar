@@ -22,7 +22,7 @@ export const pathPermissionMaster = {
     '/organization/register',
   ],
   SPEAKER: ['/login', '/organization/login'],
-  ORGANIZER: ['/login'],
+  ORGANIZER: ['/login', '/organization/events'],
   ADMIN: ['/admin/users', '/admin/organizers', '/login', '/organization/login'],
   GUEST: [
     '/login',
@@ -55,20 +55,13 @@ const nextResponseRedirectUrl = (
   }
 };
 
-const nextAuthMiddleware = withAuth(
-  async function middleware(req) {
-    const { pathname: pathName, href: url } = req.nextUrl;
-    const token = await getToken({ req: req });
-    if (token) {
-      return nextResponseRedirectUrl(token.role, pathName, url);
-    }
-  },
-  // {
-  //   pages: {
-  //     signIn: `/login`,
-  //   },
-  // },
-);
+const nextAuthMiddleware = withAuth(async function middleware(req) {
+  const { pathname: pathName, href: url } = req.nextUrl;
+  const token = await getToken({ req: req });
+  if (token) {
+    return nextResponseRedirectUrl(token.role, pathName, url);
+  }
+});
 
 export default async function middleware(
   request: NextRequestWithAuth,

@@ -1,6 +1,6 @@
 import z from 'zod';
 
-const loginAudienceFormSchema = z.object({
+const loginFormSchema = z.object({
   email: z.string().email(),
 
   password: z
@@ -15,7 +15,7 @@ const loginAudienceFormSchema = z.object({
   rememberMe: z.boolean().default(true).optional(),
 });
 
-type LoginAudienceFormSchema = z.infer<typeof loginAudienceFormSchema>;
+type LoginFormSchema = z.infer<typeof loginFormSchema>;
 
-export type { LoginAudienceFormSchema };
-export { loginAudienceFormSchema };
+export type { LoginFormSchema };
+export { loginFormSchema };
