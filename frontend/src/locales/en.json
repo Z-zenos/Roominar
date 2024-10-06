@@ -30,7 +30,14 @@
             "industryCode": "industry",
             "jobTypeCode": "job type",
             "questionAnswerResults": "question answer results",
-            "tags": "tags"
+            "tags": "tags",
+            "name": "name",
+            "startAt": "start at",
+            "endAt": "end at",
+            "applicationStartAt": "open apply at",
+            "applicationEndAt": "close apply at",
+            "eventFormat": "event formats",
+            "coverImageUrl": "event cover image"
         },
         "message": {
             "error": {

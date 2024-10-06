@@ -30,7 +30,14 @@
             "industryCode": "lĩnh vực",
             "jobTypeCode": "loại công việc",
             "questionAnswerResults": "kết quả trả lời câu hỏi",
-            "tags": "tags"
+            "tags": "tags",
+            "name": "tên",
+            "startAt": "bắt đầu lúc",
+            "endAt": "kết thúc lúc",
+            "applicationStartAt": "thời gian mở đăng ký",
+            "applicationEndAt": "thời gian đóng đăng ký",
+            "eventFormat": "dạng sự kiện",
+            "coverImageUrl": "ảnh đại diện sự kiện"
         },
         "message": {
             "error": {

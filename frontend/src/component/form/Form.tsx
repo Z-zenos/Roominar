@@ -27,7 +27,7 @@ import type { CheckboxProps } from '../common/Input/Checkbox';
 import {
   DateRangePicker,
   type DateRangePickerProps,
-} from '../common/Datetime/DateRangePicker';
+} from '../common/DateTime/DateRangePicker';
 import Checkbox from '../common/Input/Checkbox';
 import type { TextInputProps } from '../common/Input/TextInput';
 import TextInput from '../common/Input/TextInput';
@@ -73,6 +73,7 @@ import { RadioGroup, RadioGroupItem } from '../common/RadioGroup';
 import type { ImageUploaderProps } from '../common/Upload/ImageUploader';
 import ImageUploader from '../common/Upload/ImageUploader';
 import { useTranslations } from 'next-intl';
+import { DateTimePicker } from '../common/DateTime/DateTimePicker';
 
 const Form = FormProvider;
 
@@ -1090,6 +1091,41 @@ const FormInstructions = ({ className, children }: FormInstructionsProps) => {
 
 FormInstructions.displayName = 'FormInstructions';
 
+interface FormDateTimePickerProps {
+  name: string;
+  control: Control<any>;
+  onSearch?(data?: any): void;
+  className?: string;
+  defaultValue?: string;
+}
+
+const FormDateTimePicker = ({
+  name,
+  control,
+  onSearch,
+  className,
+  defaultValue,
+}: FormDateTimePickerProps) => {
+  return (
+    <FormField
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <FormItem className='flex flex-row items-center justify-start space-x-1'>
+          <FormControl>
+            <DateTimePicker
+              className={className}
+              // daterange={field?.value}
+            />
+          </FormControl>
+        </FormItem>
+      )}
+    />
+  );
+};
+
+FormDateTimePicker.displayName = 'FormDateTimePicker';
+
 export {
   useFormField,
   Form,
@@ -1112,4 +1148,5 @@ export {
   FormRadioBoxList,
   FormCustomLabel,
   FormInstructions,
+  FormDateTimePicker,
 };
