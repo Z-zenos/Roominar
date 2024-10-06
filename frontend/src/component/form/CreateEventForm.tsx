@@ -4,10 +4,12 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
+  FormCheckBox,
   FormCustomLabel,
   FormDateTimePicker,
   FormInput,
   FormInstructions,
+  FormSelect,
 } from '@/src/component/form/Form';
 import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
 import { EventMeetingToolCode, EventStatusCode } from '@/src/lib/api/generated';
@@ -18,8 +20,17 @@ import { usePublishEventMutation } from '@/src/api/event.api';
 import clsx from 'clsx';
 import EventCard from '../common/Card/EventCard';
 import ImageUploader from '../common/Upload/ImageUploader';
+import { styles } from '@/src/constant/styles.constant';
+import { useTranslations } from 'next-intl';
+import { toSelectItem } from '@/src/util/app.util';
+import {
+  CityCodeMappings,
+  EventMeetingToolCodeMappings,
+} from '@/src/constant/code.constant';
 
 export default function CreateEventForm() {
+  const t = useTranslations('form');
+
   const form = useForm<PublishEventFormSchema>({
     mode: 'all',
     defaultValues: {
@@ -89,7 +100,6 @@ export default function CreateEventForm() {
             <FormInput
               id='name'
               name='name'
-              type='name'
               placeholder='registermail@gmail.com'
               control={form.control}
               isDisplayError={true}
@@ -130,12 +140,13 @@ export default function CreateEventForm() {
             />
           </div>
 
-          <div className='self-start'>
+          <div className='col-span-2'>
             <FormCustomLabel htmlFor='coverImageUrl' />
 
             <ImageUploader
               name='coverImageUrl'
               onGetImageUrl={(url) => form.setValue('coverImageUrl', url)}
+              variant='cover'
               // defaultImageUrl={auth?.user?.avatarUrl}
             />
             <FormInstructions>
@@ -144,6 +155,80 @@ export default function CreateEventForm() {
                 350px (2:1 ratio) image.
               </li>
             </FormInstructions>
+          </div>
+
+          {/* === EVENT FORMAT & ADDRESS === */}
+          <h3 className='col-span-2 text-md p-3 border-l-4 border-l-primary'>
+            Event format & address
+          </h3>
+          <div className={clsx(styles.flexStart, 'gap-8 col-span-2')}>
+            <div className='mt-4'>
+              <FormCheckBox
+                name='isOnline'
+                control={form.control}
+              >
+                {t('label.isOnline')}
+              </FormCheckBox>
+            </div>
+            <div className={clsx(styles.flexStart, 'gap-4 grow')}>
+              <div>
+                <FormCustomLabel htmlFor='meetingToolCode' />
+                <FormSelect
+                  name='meetingToolCode'
+                  control={form.control}
+                  data={toSelectItem(EventMeetingToolCodeMappings)}
+                />
+              </div>
+              <div className='grow'>
+                <FormCustomLabel htmlFor='meetingUrl' />
+                <FormInput
+                  id='meetingUrl'
+                  name='meetingUrl'
+                  placeholder='https://meet.google.com/ass-asfas-12'
+                  control={form.control}
+                  isDisplayError={true}
+                  className={clsx(
+                    form.formState.errors.meetingUrl &&
+                      form.formState.touchedFields.meetingUrl &&
+                      'border-error-main',
+                  )}
+                />
+              </div>
+            </div>
+          </div>
+          <div className={clsx(styles.flexStart, 'gap-8 col-span-2')}>
+            <FormCheckBox
+              name='isOffline'
+              control={form.control}
+            >
+              {t('label.isOffline')}
+            </FormCheckBox>
+
+            <div className={clsx(styles.flexStart, 'gap-4 grow')}>
+              <div>
+                <FormCustomLabel htmlFor='organizeCityCode' />
+                <FormSelect
+                  name='organizeCityCode'
+                  control={form.control}
+                  data={toSelectItem(CityCodeMappings)}
+                />
+              </div>
+              <div className='grow'>
+                <FormCustomLabel htmlFor='organizeAddress' />
+                <FormInput
+                  id='organizeAddress'
+                  name='organizeAddress'
+                  placeholder='12 Hồ Chí Minh, Hoàn Kiếm, Hà Nội'
+                  control={form.control}
+                  isDisplayError={true}
+                  className={clsx(
+                    form.formState.errors.organizeAddress &&
+                      form.formState.touchedFields.organizeAddress &&
+                      'border-error-main',
+                  )}
+                />
+              </div>
+            </div>
           </div>
         </div>
 

@@ -37,7 +37,16 @@
             "applicationStartAt": "thời gian mở đăng ký",
             "applicationEndAt": "thời gian đóng đăng ký",
             "eventFormat": "dạng sự kiện",
-            "coverImageUrl": "ảnh đại diện sự kiện"
+            "coverImageUrl": "ảnh đại diện sự kiện",
+            "isOnline": "online",
+            "isOffline": "offline",
+            "meetingToolCode": "loại meeting",
+            "hours": "giờ",
+            "minutes": "phút",
+            "meetingUrl": "link meeting",
+            "format": "dạng sự kiện",
+            "organizeAddress": "địa chỉ tổ chức",
+            "organizeCityCode": "thành phố tổ chức"
         },
         "message": {
             "error": {

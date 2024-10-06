@@ -1113,10 +1113,7 @@ const FormDateTimePicker = ({
       render={({ field }) => (
         <FormItem className='flex flex-row items-center justify-start space-x-1'>
           <FormControl>
-            <DateTimePicker
-              className={className}
-              // daterange={field?.value}
-            />
+            <DateTimePicker className={className} />
           </FormControl>
         </FormItem>
       )}
