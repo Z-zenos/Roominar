@@ -42,7 +42,21 @@
                 "passwordNotMatch": "mật khẩu không khớp",
                 "missingTicket": "vui lòng chọn ít nhất một vé để tham gia",
                 "missingAddress": "vui lòng cung cấp địa chỉ doanh nghiệp của bạn",
-                "missingPhone": "vui lòng cung cấp số điện thoại"
+                "missingPhone": "vui lòng cung cấp số điện thoại",
+                "missingEventStartAt": "hãy chọn ngày bắt đầu diễn ra sự kiện",
+                "missingEventEndAt": "hãy chọn ngày kết thúc của sự kiện",
+                "missingEventApplicationStartAt": "hãy chọn ngày mở đăng ký cho sự kiện",
+                "missingEventApplicationEndAt": "hãy chọn ngày kết thúc đăng ký sự kiện",
+                "invalidEventEndAt": "thời gian kết thúc sự kiện phải lớn hơn thời gian đăng ký sự kiện và bắt đầu sự kiện",
+                "invalidApplicationStartAt": "thời gian bắt đầu mở đăng ký sự kiện phải bé hơn thời gian đóng đăng ký và thời gian bắt đầu sự kiện",
+                "invalidApplicationEndAt": "thời gian đóng đăng ký phải lớn hơn thời gian mở đăng ký và nhỏ hơn thời gian kết thúc sự kiện",
+                "neitherOnlineNorOffline": "sự kiện phải là online hoặc offline hoặc cả 2",
+                "missingEventOrganizePlaceName": "vui lòng nhập tên địa điểm tổ chức sự kiện",
+                "missingEventOrganizeCityCode": "vui lòng chọn thành phố tổ chức sự kiện",
+                "missingEventOrganizeAddress": "vui lòng nhập địa chỉ tổ chức sự kiện",
+                "missingEventMeetingToolCode": "vui lòng chọn ít nhất một loại meeting nếu sự kiện diễn ra online",
+                "missingEventMeetingUrl": "vui lòng cung cấp meeting url",
+                "invalidTicketPrice": "ticket không hợp lệ"
             }
         }
     },

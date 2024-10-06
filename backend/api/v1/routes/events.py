@@ -6,9 +6,11 @@ from sqlmodel import Session
 
 import backend.api.v1.services.events as events_service
 from backend.api.v1.dependencies.authentication import (
+    authorize_role,
     get_current_user,
     get_user_if_logged_in,
 )
+from backend.core.constants import RoleCode
 from backend.core.response import authenticated_api_responses, public_api_responses
 from backend.db.database import get_read_db
 from backend.models import User
@@ -16,6 +18,7 @@ from backend.schemas.event import (
     GetEventDetailResponse,
     ListingEventRankResponse,
     ListingRelatedEventsResponse,
+    PublishEventRequest,
     SearchEventsQueryParams,
     SearchEventsResponse,
 )
@@ -125,3 +128,13 @@ async def delete_event_bookmark(
     current_user: User = Depends(get_current_user),
 ):
     return await events_service.delete_event_bookmark(db, current_user, event_id)
+
+
+@router.post("/{event_id}", response_model=int, responses=authenticated_api_responses)
+async def publish_event(
+    db: Session = Depends(get_read_db),
+    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+    request: PublishEventRequest = None,
+    event_id: int = None,
+):
+    return await events_service.publish_event(db, organizer, request, event_id)

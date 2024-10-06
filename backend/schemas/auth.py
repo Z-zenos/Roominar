@@ -1,7 +1,14 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, EmailStr, Field, ValidationInfo, field_validator
+from pydantic import (
+    BaseModel,
+    EmailStr,
+    Field,
+    SecretStr,
+    ValidationInfo,
+    field_validator,
+)
 
 from backend.core.constants import IndustryCode, JobTypeCode, OrganizationTypeCode
 from backend.core.error_code import ErrorCode, ErrorMessage
@@ -11,7 +18,7 @@ from backend.schemas.user import UserBase
 
 class UserLoginRequest(BaseModel):
     email: EmailStr
-    password: str = Field(min_length=8, max_length=255)
+    password: SecretStr = Field(min_length=8, max_length=255)
     role_code: str
     remember_me: bool | None = None
 
@@ -48,8 +55,8 @@ class ForgotPasswordResponse(BaseModel):
 
 
 class ResetPasswordRequest(BaseModel):
-    new_password: str
-    confirm_password: str
+    new_password: SecretStr
+    confirm_password: SecretStr
 
     @field_validator("new_password")
     def new_password_validator(cls, v):
@@ -69,8 +76,8 @@ class RegisterAudienceRequest(BaseModel):
     email: EmailStr
     first_name: str
     last_name: str
-    password: str
-    confirm_password: str
+    password: SecretStr
+    confirm_password: SecretStr
 
     @field_validator("password")
     def password_validator(cls, v):
@@ -102,9 +109,9 @@ class VerifyAudienceResponse(UserBase):
 
 
 class ChangePasswordRequest(BaseModel):
-    current_password: str
-    new_password: str
-    confirm_new_password: str
+    current_password: SecretStr
+    new_password: SecretStr
+    confirm_new_password: SecretStr
 
     @field_validator("new_password")
     def new_password_validator(cls, v):
@@ -122,7 +129,7 @@ class ChangePasswordRequest(BaseModel):
 
 class ChangeEmailRequest(BaseModel):
     new_email: EmailStr
-    password: str
+    password: SecretStr
 
     @field_validator("password")
     def password_validator(cls, v):
@@ -136,8 +143,8 @@ class RequestChangeEmailResponse(BaseModel):
 
 class RegisterOrganizationRequest(BaseModel):
     email: EmailStr
-    password: str | None
-    confirm_password: str | None
+    password: SecretStr | None
+    confirm_password: SecretStr | None
     first_name: str
     last_name: str | None = None
 

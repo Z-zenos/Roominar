@@ -30,6 +30,9 @@ class ErrorCode:
     ERR_INVALID_REVERT_EMAIL_TOKEN = "ERR_INVALID_REVERT_EMAIL_TOKEN"
     ERR_APPLICATION_NOT_FOUND = "ERR_APPLICATION_NOT_FOUND"
     ERR_MISSING_FIELDS = "ERR_MISSING_FIELDS"
+    ERR_EVENT_NEIHER_ONLINE_NOR_OFFLINE = "ERR_EVENT_NEIHER_ONLINE_NOR_OFFLINE"
+    ERR_OFFLINE_EVENT_MISSING_ADDRESS = "ERR_OFFLINE_EVENT_MISSING_ADDRESS"
+    ERR_ONLINE_EVENT_MISSING_ADDRESS = "ERR_ONLINE_EVENT_MISSING_ADDRESS"
 
 
 class ErrorMessage:
@@ -62,3 +65,10 @@ class ErrorMessage:
     ERR_INVALID_REVERT_EMAIL_TOKEN = "Invalid revert email token."
     ERR_APPLICATION_NOT_FOUND = "The application doesn't exist."
     ERR_MISSING_FIELDS = "Missing some important field data."
+    ERR_EVENT_NEIHER_ONLINE_NOR_OFFLINE = (
+        "You must select either online, offline, or both for the event format."
+    )
+    ERR_OFFLINE_EVENT_MISSING_ADDRESS = (
+        "Missing place, city or address of offline event."
+    )
+    ERR_ONLINE_EVENT_MISSING_ADDRESS = "Missing meeting tool, url of online event."
