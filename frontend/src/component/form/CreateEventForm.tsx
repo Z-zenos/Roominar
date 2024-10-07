@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
-  FormCheckBox,
   FormCustomLabel,
   FormDateTimePicker,
   FormInput,
@@ -29,6 +28,11 @@ import {
 } from '@/src/constant/code.constant';
 import { Checkbox } from '@nextui-org/react';
 import { FaChevronRight } from 'react-icons/fa6';
+
+import dynamic from 'next/dynamic';
+const LexicalEditor = dynamic(() => import('../editor/app/app'), {
+  ssr: false,
+});
 
 export default function CreateEventForm() {
   const t = useTranslations('form');
@@ -260,13 +264,17 @@ export default function CreateEventForm() {
             </div>
           </Checkbox>
 
-          <div className='border-y border-y-primary py-[2px] my-4 col-span-2'>
+          <div className='border-y border-y-primary py-[2px] mt-4 col-span-2'>
             <div className='border-y border-y-primary py-2'>
               <h3 className='text-center text-md '>Description 🗒</h3>
             </div>
           </div>
 
-          <div className='col-span-2'></div>
+          <div className='col-span-2'>
+            <main className='flex flex-col items-center justify-between'>
+              <LexicalEditor />
+            </main>
+          </div>
 
           {/* === EVENT APPLICATION NUMBER & TICKETS === */}
           <h3 className='col-span-2 text-md p-3 border-l-4 border-l-primary'>
