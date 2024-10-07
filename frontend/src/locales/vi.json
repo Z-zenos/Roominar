@@ -44,7 +44,7 @@
             "hours": "giờ",
             "minutes": "phút",
             "meetingUrl": "link meeting",
-            "format": "dạng sự kiện",
+            "eventFormat": "dạng sự kiện",
             "organizeAddress": "địa chỉ tổ chức",
             "organizeCityCode": "thành phố tổ chức"
         },

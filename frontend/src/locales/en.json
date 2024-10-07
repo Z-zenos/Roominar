@@ -44,7 +44,7 @@
             "hours": "hours",
             "minutes": "minutes",
             "meetingUrl": "meeting url",
-            "format": "format",
+            "eventFormat": "format",
             "organizeAddress": "organize address",
             "organizeCityCode": "organize city"
         },

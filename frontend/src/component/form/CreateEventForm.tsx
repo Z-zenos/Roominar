@@ -22,11 +22,13 @@ import EventCard from '../common/Card/EventCard';
 import ImageUploader from '../common/Upload/ImageUploader';
 import { styles } from '@/src/constant/styles.constant';
 import { useTranslations } from 'next-intl';
-import { toSelectItem } from '@/src/util/app.util';
+import { cn, toSelectItem } from '@/src/util/app.util';
 import {
   CityCodeMappings,
   EventMeetingToolCodeMappings,
 } from '@/src/constant/code.constant';
+import { Checkbox } from '@nextui-org/react';
+import { FaChevronRight } from 'react-icons/fa6';
 
 export default function CreateEventForm() {
   const t = useTranslations('form');
@@ -159,18 +161,32 @@ export default function CreateEventForm() {
 
           {/* === EVENT FORMAT & ADDRESS === */}
           <h3 className='col-span-2 text-md p-3 border-l-4 border-l-primary'>
-            Event format & address
+            Event format & address ⛩️
           </h3>
-          <div className={clsx(styles.flexStart, 'gap-8 col-span-2')}>
-            <div className='mt-4'>
-              <FormCheckBox
-                name='isOnline'
-                control={form.control}
-              >
+
+          <Checkbox
+            aria-label='isOnline'
+            name='isOnline'
+            classNames={{
+              base: cn(
+                'inline-flex w-full max-w-full col-span-2 bg-content1',
+                'hover:bg-content2 items-center justify-start',
+                'cursor-pointer rounded-lg gap-2 p-4 border-2 border-transparent',
+                'data-[selected=true]:border-primary',
+              ),
+              label: 'w-full',
+            }}
+            // isSelected={isSelected}
+            // onValueChange={setIsSelected}
+            onValueChange={(isSelected) =>
+              form.setValue('isOnline', isSelected)
+            }
+          >
+            <div className='w-full flex justify-between items-center gap-2'>
+              <span className={styles.flexStart}>
                 {t('label.isOnline')}
-              </FormCheckBox>
-            </div>
-            <div className={clsx(styles.flexStart, 'gap-4 grow')}>
+                <FaChevronRight className='mx-4' />
+              </span>
               <div>
                 <FormCustomLabel htmlFor='meetingToolCode' />
                 <FormSelect
@@ -195,16 +211,29 @@ export default function CreateEventForm() {
                 />
               </div>
             </div>
-          </div>
-          <div className={clsx(styles.flexStart, 'gap-8 col-span-2')}>
-            <FormCheckBox
-              name='isOffline'
-              control={form.control}
-            >
-              {t('label.isOffline')}
-            </FormCheckBox>
+          </Checkbox>
 
-            <div className={clsx(styles.flexStart, 'gap-4 grow')}>
+          <Checkbox
+            aria-label='isOffline'
+            name='isOffline'
+            classNames={{
+              base: cn(
+                'inline-flex w-full max-w-full col-span-2 bg-content1',
+                'hover:bg-content2 items-center justify-start',
+                'cursor-pointer rounded-lg gap-2 p-4 border-2 border-transparent',
+                'data-[selected=true]:border-primary',
+              ),
+              label: 'w-full',
+            }}
+            onValueChange={(isSelected) =>
+              form.setValue('isOffline', isSelected)
+            }
+          >
+            <div className='w-full flex justify-between items-center gap-2'>
+              <span className={styles.flexStart}>
+                {t('label.isOffline')}
+                <FaChevronRight className='mx-4' />
+              </span>
               <div>
                 <FormCustomLabel htmlFor='organizeCityCode' />
                 <FormSelect
@@ -229,7 +258,20 @@ export default function CreateEventForm() {
                 />
               </div>
             </div>
+          </Checkbox>
+
+          <div className='border-y border-y-primary py-[2px] my-4 col-span-2'>
+            <div className='border-y border-y-primary py-2'>
+              <h3 className='text-center text-md '>Description 🗒</h3>
+            </div>
           </div>
+
+          <div className='col-span-2'></div>
+
+          {/* === EVENT APPLICATION NUMBER & TICKETS === */}
+          <h3 className='col-span-2 text-md p-3 border-l-4 border-l-primary'>
+            Tickets 🎟
+          </h3>
         </div>
 
         <div className='col-span-3'>
