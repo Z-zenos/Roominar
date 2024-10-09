@@ -1,3 +1,5 @@
+'use client';
+
 import { cn } from '@/src/util/app.util';
 
 import type { Period, TimePickerType } from '@/src/util/timePicker.util';

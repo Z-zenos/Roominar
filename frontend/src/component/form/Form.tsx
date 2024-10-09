@@ -74,6 +74,7 @@ import type { ImageUploaderProps } from '../common/Upload/ImageUploader';
 import ImageUploader from '../common/Upload/ImageUploader';
 import { useTranslations } from 'next-intl';
 import { DateTimePicker } from '../common/DateTime/DateTimePicker';
+import { Textarea, type TextareaProps } from '../common/Input/Textarea';
 
 const Form = FormProvider;
 
@@ -941,41 +942,40 @@ const FormCustomLabel = ({
 
 FormCustomLabel.displayName = 'FormCustomLabel';
 
-// interface FormTextareaProps extends TextareaProps {
-// 	name: string;
-// 	control: Control<any>;
-// 	onSearch?(data: any): void;
-// 	isDisplayError?: boolean;
-// }
+interface FormTextareaProps extends TextareaProps {
+  name: string;
+  control: Control<any>;
+  onSearch?(data: any): void;
+  isDisplayError?: boolean;
+}
 
-// const FormTextarea = ({
-// 	name,
-// 	control,
-// 	onSearch,
-// 	placeholder,
-// 	isDisplayError,
-// }: FormTextareaProps) => {
-// 	return (
-// 		<FormField
-// 			control={control}
-// 			name={name}
-// 			render={({ field }) => (
-// 				<FormItem>
-// 					<FormControl>
-// 						<Textarea
-// 							placeholder={placeholder}
-// 							className="resize-none"
-// 							{...field}
-// 						/>
-// 					</FormControl>
-// 					{isDisplayError && <FormMessage />}
-// 				</FormItem>
-// 			)}
-// 		/>
-// 	);
-// };
+const FormTextarea = ({
+  name,
+  control,
+  placeholder,
+  isDisplayError,
+}: FormTextareaProps) => {
+  return (
+    <FormField
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <FormItem>
+          <FormControl>
+            <Textarea
+              placeholder={placeholder}
+              className='resize-none'
+              {...field}
+            />
+          </FormControl>
+          {isDisplayError && <FormMessage />}
+        </FormItem>
+      )}
+    />
+  );
+};
 
-// FormTextarea.displayName = 'FormTextarea';
+FormTextarea.displayName = 'FormTextarea';
 
 interface FormSelectProps {
   name: string;
@@ -1102,9 +1102,7 @@ interface FormDateTimePickerProps {
 const FormDateTimePicker = ({
   name,
   control,
-  onSearch,
   className,
-  defaultValue,
 }: FormDateTimePickerProps) => {
   return (
     <FormField
@@ -1137,7 +1135,7 @@ export {
   FormCheckBoxList,
   // FormSlider,
   FormDateRangePicker,
-  // FormTextarea,
+  FormTextarea,
   FormSelect,
   FormImageUploader,
   FormCombobox,

@@ -3,6 +3,7 @@ import {
   EventMeetingToolCode,
   EventStatusCode,
   TicketDeliveryMethodCode,
+  TicketStatusCode,
   TicketTypeCode,
 } from '@/src/lib/api/generated';
 import type { Dayjs } from 'dayjs';
@@ -181,11 +182,12 @@ const eventTicketSchema = z.object({
           message: 'invalidTicketPrice',
           path: ['price'],
         }),
-      expired_at: z.date().optional(),
+      expiredAt: z.date().optional(),
       type: z.nativeEnum(TicketTypeCode),
-      delivery_method: z.nativeEnum(TicketDeliveryMethodCode),
-      access_link_url: z.string().trim().url().optional(),
-      is_refundable: z.boolean().optional(),
+      deliveryMethod: z.nativeEnum(TicketDeliveryMethodCode),
+      accessLinkUrl: z.string().trim().url().optional(),
+      isRefundable: z.boolean().optional(),
+      status: z.nativeEnum(TicketStatusCode).optional(),
     }),
   ),
 });
@@ -198,6 +200,7 @@ const eventBaseSchema = z.object({
   targetId: z.number(),
   comment: z.string().trim().nullable(),
   status: z.nativeEnum(EventStatusCode),
+  tags: z.array(z.string()).nullable(),
 });
 
 const publishEventFormSchema = z.intersection(

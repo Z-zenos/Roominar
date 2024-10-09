@@ -46,13 +46,22 @@
             "meetingUrl": "meeting url",
             "eventFormat": "format",
             "organizeAddress": "organize address",
-            "organizeCityCode": "organize city"
+            "organizeCityCode": "organize city",
+            "applicationNumber": "maximum application number",
+            "ticketName": "ticket name",
+            "ticketQuantity": "quantity",
+            "ticketPrice": "price",
+            "ticketDescription": "description",
+            "questionnaire": "questionnaire",
+            "target": "target",
+            "eventComment": "comment from organization"
         },
         "message": {
             "error": {
                 "email": "invalid email",
                 "empty": "[field] can't empty",
                 "invalid_string": "invalid [field]",
+                "invalid_type": "invalid format [field]",
                 "too_small": "[field] must be greater than [value] characters",
                 "too_big": "[field] must be less than [value] characters",
                 "passwordNotMatch": "password not match",

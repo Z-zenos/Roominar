@@ -166,7 +166,7 @@ export default function OrganizationSidebar({
           color: themes[theme].sidebar.color,
         }}
       >
-        <div className='flex flex-col h-full'>
+        <div className='flex flex-col h-full fixed w-[250px]'>
           <div className={clsx(styles.center, 'gap-2 mt-2')}>
             {!collapsed && <Logo className='w-[160px]' />}
             {!collapsed ? (

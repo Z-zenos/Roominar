@@ -46,13 +46,22 @@
             "meetingUrl": "link meeting",
             "eventFormat": "dạng sự kiện",
             "organizeAddress": "địa chỉ tổ chức",
-            "organizeCityCode": "thành phố tổ chức"
+            "organizeCityCode": "thành phố tổ chức",
+            "applicationNumber": "số lượng đơn tối đa",
+            "ticketName": "tên vé",
+            "ticketQuantity": "số lượng vé",
+            "ticketPrice": "giá",
+            "ticketDescription": "mô tả",
+            "questionnaire": "khảo sát",
+            "target": "đối tượng",
+            "eventComment": "lời nhắn của tổ chức bạn"
         },
         "message": {
             "error": {
                 "email": "email không hợp lệ",
                 "empty": "[field] không được bỏ trống",
                 "invalid_string": "[field] không hợp lệ",
+                "invalid_type": "[field] sai định dạng",
                 "too_small": "[field] phải có ít nhất [value] ký tự",
                 "too_big": "[field] không được chứa quá [value] ký tự",
                 "passwordNotMatch": "mật khẩu không khớp",
