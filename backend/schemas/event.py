@@ -16,7 +16,7 @@ from backend.core.constants import (
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.schemas.common import PaginationResponse
-from backend.schemas.questionnaire import QuestionnaireDetail
+from backend.schemas.survey import SurveyDetail
 from backend.schemas.tag import TagItem
 from backend.schemas.ticket import CreateTicketRequest, TicketItem
 
@@ -110,7 +110,7 @@ class GetEventDetailResponse(BaseModel):
     status: EventStatusCode
     application_form_url: str | None = None
     tags: list[TagItem] = Field([])
-    questionnaire: QuestionnaireDetail | None
+    survey: SurveyDetail | None
     view_number: int | None = None
 
 
@@ -215,7 +215,7 @@ class PublishEventRequest(BaseModel):
     meeting_tool_code: EventMeetingToolCode | None
     meeting_url: str | None = Field(max_length=2048)
     tickets: list[CreateTicketRequest] = Field([])
-    questionnaire_id: int | None
+    survey_id: int | None
     target_id: int
     comment: str | None
 

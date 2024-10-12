@@ -33,6 +33,8 @@ class ErrorCode:
     ERR_EVENT_NEIHER_ONLINE_NOR_OFFLINE = "ERR_EVENT_NEIHER_ONLINE_NOR_OFFLINE"
     ERR_OFFLINE_EVENT_MISSING_ADDRESS = "ERR_OFFLINE_EVENT_MISSING_ADDRESS"
     ERR_ONLINE_EVENT_MISSING_ADDRESS = "ERR_ONLINE_EVENT_MISSING_ADDRESS"
+    ERR_SURVEY_INVALID_START_END_DATE = "ERR_SURVEY_INVALID_START_END_DATE"
+    ERR_SURVEY_NAME_ALREADY_EXISTED = "ERR_SURVEY_NAME_ALREADY_EXISTED"
 
 
 class ErrorMessage:
@@ -72,3 +74,5 @@ class ErrorMessage:
         "Missing place, city or address of offline event."
     )
     ERR_ONLINE_EVENT_MISSING_ADDRESS = "Missing meeting tool, url of online event."
+    ERR_SURVEY_INVALID_START_END_DATE = "Survey end date must greater than start date."
+    ERR_SURVEY_NAME_ALREADY_EXISTED = "The survey name already existed."

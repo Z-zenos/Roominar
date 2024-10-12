@@ -196,7 +196,7 @@ const eventBaseSchema = z.object({
   name: z.string().trim().min(1).max(1024),
   description: z.string().trim().min(1),
   coverImageUrl: z.string().url().max(2048),
-  questionnaireId: z.number().nullable(),
+  survey_id: z.number().nullable(),
   targetId: z.number(),
   comment: z.string().trim().nullable(),
   status: z.nativeEnum(EventStatusCode),

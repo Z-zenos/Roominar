@@ -29,7 +29,7 @@
             "ticketId": "ticket",
             "industryCode": "industry",
             "jobTypeCode": "job type",
-            "questionAnswerResults": "question answer results",
+            "surveyResponseResults": "survey response results",
             "tags": "tags",
             "name": "name",
             "startAt": "start at",
@@ -52,7 +52,7 @@
             "ticketQuantity": "quantity",
             "ticketPrice": "price",
             "ticketDescription": "description",
-            "questionnaire": "questionnaire",
+            "survey": "survey",
             "target": "target",
             "eventComment": "comment from organization"
         },

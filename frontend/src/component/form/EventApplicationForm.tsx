@@ -31,7 +31,7 @@ import type {
   ErrorResponse400,
   JobTypeCode,
   QuestionAnswerItem,
-  QuestionAnswerResultItem,
+  SurveyResponseResultItem,
   TicketItem,
 } from '@/src/lib/api/generated';
 import { IndustryCode, QuestionTypeCode } from '@/src/lib/api/generated';
@@ -70,7 +70,7 @@ export default function EventApplicationForm({
       phone: auth?.user?.phone || '',
       industryCode: (auth?.user?.industryCode as IndustryCode) || undefined,
       jobTypeCode: (auth?.user?.jobTypeCode as JobTypeCode) || undefined,
-      questionAnswerResults: [],
+      surveyResponseResults: [],
       isAgreed: false,
     },
     resolver: zodResolver(eventApplicationFormSchema),
@@ -101,8 +101,8 @@ export default function EventApplicationForm({
         phone: data.phone,
         industryCode: data.industryCode,
         jobTypeCode: data.jobTypeCode,
-        questionAnswerResults:
-          data.questionAnswerResults as QuestionAnswerResultItem[],
+        surveyResponseResults:
+          data.surveyResponseResults as SurveyResponseResultItem[],
         ticketId: +data.ticketId,
         isAgreed: data.isAgreed,
       },
@@ -406,10 +406,10 @@ export default function EventApplicationForm({
               </p>
               <FormField
                 control={form.control}
-                name='questionAnswerResults'
+                name='surveyResponseResults'
                 render={({ field }) => (
                   <FormItem>
-                    {event.questionnaire.questionAnwers.map(
+                    {event.survey.questionAnwers.map(
                       (questionAnswer: QuestionAnswerItem) => (
                         <div
                           className='mt-4 bg-emerald-50 p-5'
@@ -426,7 +426,7 @@ export default function EventApplicationForm({
                               <FormField
                                 key={`qa-${questionAnswer.id}-${answer.id}`}
                                 control={form.control}
-                                name='questionAnswerResults'
+                                name='surveyResponseResults'
                                 render={({ field }) => {
                                   return (
                                     <FormItem

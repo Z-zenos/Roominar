@@ -15,7 +15,7 @@ const eventApplicationFormSchema = z.object({
   industryCode: z.nativeEnum(IndustryCode),
   jobTypeCode: z.nativeEnum(JobTypeCode),
 
-  questionAnswerResults: z
+  surveyResponseResults: z
     .array(
       z.object({
         questionId: z.number(),

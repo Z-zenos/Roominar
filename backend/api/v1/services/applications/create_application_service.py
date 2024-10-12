@@ -10,7 +10,7 @@ from backend.mails.mail import Email
 from backend.models.application import Application
 from backend.models.event import Event
 from backend.models.organization import Organization
-from backend.models.question_answer_result import QuestionAnswerResult
+from backend.models.survey_response_result import SurveyResponseResult
 from backend.models.ticket import Ticket
 from backend.models.user import User
 from backend.schemas.application import CreateApplicationRequest
@@ -81,19 +81,24 @@ async def create_application(
 
         save(db, application)
 
-        if len(request.question_answer_results) > 0:
-            question_answer_results = []
-            for qar in request.question_answer_results:
-                result = QuestionAnswerResult(
-                    event_id=event_id,
-                    application_id=application.id,
-                    question_id=qar.question_id,
-                    answers_ids=qar.answers_ids,
-                    questionnaire_id=event.questionnaire_id,
-                )
-                question_answer_results.append(result)
+        if len(request.survey_response_results) > 0:
+            survey_response_results = []
 
-            db.bulk_insert_mappings(QuestionAnswerResult, question_answer_results)
+            survey_response_results.extend(
+                [
+                    SurveyResponseResult(
+                        event_id=event_id,
+                        application_id=application.id,
+                        email=application.email,
+                        question_id=srr.question_id,
+                        answers_ids=srr.answers_ids,
+                        answer_text=srr.answer_text,
+                    )
+                    for srr in request.survey_response_results
+                ]
+            )
+
+            db.bulk_insert_mappings(SurveyResponseResult, survey_response_results)
             db.flush()
             db.commit()
 

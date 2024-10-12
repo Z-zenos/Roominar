@@ -10,13 +10,13 @@ from backend.models import (
     EventTag,
     Organization,
     Question,
-    Questionnaire,
+    Survey,
     Tag,
     Ticket,
     User,
 )
 from backend.schemas.answer import AnswerItem
-from backend.schemas.questionnaire import QuestionnaireDetail
+from backend.schemas.survey import SurveyDetail
 
 
 async def get_event_detail(db: Session, current_user: User, slug: str):
@@ -31,14 +31,14 @@ async def get_event_detail(db: Session, current_user: User, slug: str):
                 Organization.contact_url.label("organization_contact_url"),
                 Organization.avatar_url.label("organization_avatar_url"),
                 Organization.description.label("organization_description"),
-                Questionnaire.name.label("questionnaire_name"),
+                Survey.name.label("survey_name"),
             )
             .where(
                 Event.slug == slug,
                 Event.published_at.isnot(None),
             )
             .join(Organization, Event.organization_id == Organization.id)
-            .outerjoin(Questionnaire, Event.questionnaire_id == Questionnaire.id)
+            .outerjoin(Survey, Event.survey_id == Survey.id)
         )
         .mappings()
         .one_or_none()
@@ -52,9 +52,7 @@ async def get_event_detail(db: Session, current_user: User, slug: str):
 
     event.update(
         {
-            "questionnaire": _get_questionnaire_detail(
-                db, event["questionnaire_id"], event["questionnaire_name"]
-            ),
+            "survey": _get_survey_detail(db, event["survey_id"], event["survey_name"]),
             "tickets": _get_tickets(db, event["id"]),
             "organization_contact_url": event["organization_contact_url"],
             "applied_number": _get_applied_number(db, event["id"]),
@@ -149,24 +147,22 @@ def _get_event_tags(db: Session, event_id: int):
     return event_tags
 
 
-def _get_questionnaire_detail(
-    db: Session, questionnaire_id: int, questionnaire_name: str
-):
+def _get_survey_detail(db: Session, survey_id: int, survey_name: str):
     questions = db.exec(
         select(Question)
-        .where(Question.questionnaire_id == questionnaire_id)
+        .where(Question.survey_id == survey_id)
         .order_by(Question.order_number)
     ).fetchall()
 
-    question_answer = _get_questions_answer(db, questions)
-    return QuestionnaireDetail(
-        id=questionnaire_id,
-        name=questionnaire_name,
+    question_answer = _get_question_answer(db, questions)
+    return SurveyDetail(
+        id=survey_id,
+        name=survey_name,
         question_anwers=question_answer,
     )
 
 
-def _get_questions_answer(db: Session, questions: list[Question]):
+def _get_question_answer(db: Session, questions: list[Question]):
     question_answers = {}
     for question in questions:
         question_answers[question.id] = question.__dict__

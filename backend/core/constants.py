@@ -123,7 +123,7 @@ class EventStatusCode(str, Enum):
     DEFERRED = "DEFERRED"
 
 
-class QuestionnaireStatusCode(str, Enum):
+class SurveyStatusCode(str, Enum):
     OPEN = "OPEN"
     ARCHIVE = "ARCHIVE"
 
@@ -138,6 +138,7 @@ class EventSortByCode(str, Enum):
 class QuestionTypeCode(str, Enum):
     SINGLE = "SINGLE"
     MULTIPLE = "MULTIPLE"
+    TEXT = "TEXT"
 
 
 class TicketTypeCode(str, Enum):
