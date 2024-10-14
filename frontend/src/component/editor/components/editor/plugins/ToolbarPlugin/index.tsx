@@ -44,10 +44,14 @@ import {
   $findMatchingParent,
   $getNearestBlockElementAncestorOrThrow,
   $getNearestNodeOfType,
-  IS_APPLE,
   mergeRegister,
 } from '@lexical/utils';
-import type { ElementFormatType, LexicalEditor, NodeKey } from 'lexical';
+import type {
+  ElementFormatType,
+  LexicalEditor,
+  NodeKey,
+  TextNode,
+} from 'lexical';
 import {
   $createParagraphNode,
   $getNodeByKey,
@@ -76,7 +80,6 @@ import { useCallback, useEffect, useState } from 'react';
 import * as React from 'react';
 
 import useModal from '../../hooks/useModal';
-import catTypingGif from '../../images/cat-typing.gif';
 import { $createStickyNode } from '../../nodes/StickyNode';
 import DropDown, { DropDownItem } from '../../ui/DropDown';
 import DropdownColorPicker from '../../ui/DropdownColorPicker';
@@ -86,13 +89,13 @@ import { EmbedConfigs } from '../AutoEmbedPlugin';
 import { INSERT_COLLAPSIBLE_COMMAND } from '../CollapsiblePlugin';
 import { InsertEquationDialog } from '../EquationsPlugin';
 import { INSERT_EXCALIDRAW_COMMAND } from '../ExcalidrawPlugin';
-import type { InsertImagePayload } from '../ImagesPlugin';
-import { INSERT_IMAGE_COMMAND, InsertImageDialog } from '../ImagesPlugin';
+import { InsertImageDialog } from '../ImagesPlugin';
 import { InsertInlineImageDialog } from '../InlineImagePlugin';
 import InsertLayoutDialog from '../LayoutPlugin/InsertLayoutDialog';
 import { INSERT_PAGE_BREAK } from '../PageBreakPlugin';
 import { InsertPollDialog } from '../PollPlugin';
 import { InsertTableDialog } from '../TablePlugin';
+import { IS_APPLE } from '../../shared/environment';
 
 const blockTypeToBlockName = {
   bullet: 'Bulleted List',
@@ -198,7 +201,7 @@ function dropDownActiveClass(active: boolean) {
 function BlockFormatDropDown({
   editor,
   blockType,
-  rootType,
+  // rootType,
   disabled = false,
 }: {
   blockType: keyof typeof blockTypeToBlockName;
@@ -772,14 +775,14 @@ export default function ToolbarPlugin({
               node = node.splitText(anchor.offset)[1] || node;
             }
             if (idx === nodes.length - 1) {
-              node = node.splitText(focus.offset)[0] || node;
+              node = (node as TextNode).splitText(focus.offset)[0] || node;
             }
 
-            if (node.__style !== '') {
-              node.setStyle('');
+            if ((node as TextNode).__style !== '') {
+              (node as TextNode).setStyle('');
             }
-            if (node.__format !== 0) {
-              node.setFormat(0);
+            if ((node as TextNode).__format !== 0) {
+              (node as TextNode).setFormat(0);
               $getNearestBlockElementAncestorOrThrow(node).setFormat('');
             }
           } else if ($isHeadingNode(node) || $isQuoteNode(node)) {
@@ -827,9 +830,9 @@ export default function ToolbarPlugin({
     },
     [activeEditor, selectedElementKey],
   );
-  const insertGifOnClick = (payload: InsertImagePayload) => {
-    activeEditor.dispatchCommand(INSERT_IMAGE_COMMAND, payload);
-  };
+  // const insertGifOnClick = (payload: InsertImagePayload) => {
+  //   activeEditor.dispatchCommand(INSERT_IMAGE_COMMAND, payload);
+  // };
 
   return (
     <div className='toolbar'>

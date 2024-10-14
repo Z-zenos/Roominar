@@ -21,10 +21,10 @@ interface Props {
 }
 
 const PRETTIER_PARSER_MODULES = {
-  css: () => import('prettier/parser-postcss'),
-  html: () => import('prettier/parser-html'),
-  js: () => import('prettier/parser-babel'),
-  markdown: () => import('prettier/parser-markdown'),
+  css: () => import('prettier/plugins/postcss'),
+  html: () => import('prettier/plugins/html'),
+  js: () => import('prettier/plugins/babel'),
+  markdown: () => import('prettier/plugins/markdown'),
 } as const;
 
 type LanguagesType = keyof typeof PRETTIER_PARSER_MODULES;

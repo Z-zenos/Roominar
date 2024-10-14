@@ -128,3 +128,9 @@ export const CityCodeMappings = {
   VINHPHUC: 'Vĩnh Phúc',
   YENBAI: 'Yên Bái',
 };
+
+export const QuestionTypeCodeMappings = {
+  SINGLE: 'Single',
+  MULTIPLE: 'Multiple',
+  TEXT: 'Text',
+};

@@ -14,8 +14,8 @@ class SurveyDetail(BaseModel):
     description: str | None
     status_code: SurveyStatusCode
     question_anwers: list[QuestionAnswerItem] = Field([])
-    start_date: datetime | None
-    end_date: datetime | None
+    start_at: datetime | None
+    end_at: datetime | None
     max_response_number: int | None
 
 
@@ -41,16 +41,16 @@ class CreateSurveyRequest(BaseModel):
 
     name: str = Field(max_length=255)
     description: str | None
-    start_date: datetime | None
-    end_date: datetime | None
+    start_at: datetime | None
+    end_at: datetime | None
     max_response_number: int | None
     question_answers: list[CreateQuestionAnswerRequest] = Field(
         [], min_length=1, max_length=10
     )
 
-    @field_validator("end_date")
+    @field_validator("end_at")
     def validate_date(cls, v: str | None, values: ValidationInfo):
-        if values.data.get("start_date") > v:
+        if values.data.get("start_at") > v:
             raise BadRequestException(
                 ErrorCode.ERR_SURVEY_INVALID_START_END_DATE,
                 ErrorMessage.ERR_SURVEY_INVALID_START_END_DATE,

@@ -91,7 +91,7 @@ function markDeleted(comment: Comment): Comment {
 }
 
 function triggerOnChange(commentStore: CommentStore): void {
-  const listeners = commentStore._changeListeners;
+  const listeners = Array.from(commentStore._changeListeners);
   for (const listener of listeners) {
     listener();
   }
@@ -224,8 +224,7 @@ export class CommentStore {
   _withRemoteTransaction(fn: () => void): void {
     const provider = this._collabProvider;
     if (provider !== null) {
-      // @ts-ignore doc does exist
-      const doc = provider.doc;
+      const doc = provider['doc'];
       doc.transact(fn, this);
     }
   }
@@ -243,8 +242,7 @@ export class CommentStore {
   _getCollabComments(): null | YArray<any> {
     const provider = this._collabProvider;
     if (provider !== null) {
-      // @ts-ignore doc does exist
-      const doc = provider.doc;
+      const doc = provider['doc'];
       return doc.get('comments', YArray) as YArray<any>;
     }
     return null;
@@ -296,12 +294,8 @@ export class CommentStore {
           const shouldConnect = payload;
 
           if (shouldConnect) {
-            // eslint-disable-next-line no-console
-            console.log('Comments connected!');
             connect();
           } else {
-            // eslint-disable-next-line no-console
-            console.log('Comments disconnected!');
             disconnect();
           }
         }
@@ -391,7 +385,8 @@ export class CommentStore {
               } else if (typeof del === 'number') {
                 for (let d = 0; d < del; d++) {
                   const commentOrThread =
-                    parentThread === undefined || parentThread === false
+                    parentThread === undefined ||
+                    Boolean(parentThread) === false
                       ? this._comments[offset]
                       : parentThread.comments[offset];
                   this._withLocalTransaction(() => {

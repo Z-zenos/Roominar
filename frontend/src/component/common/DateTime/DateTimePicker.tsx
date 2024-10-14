@@ -10,7 +10,7 @@ import { BsClock } from 'react-icons/bs';
 
 export interface DateTimePickerProps extends HTMLAttributes<HTMLDivElement> {
   onDateTimeChange?: (date: Date | undefined) => void;
-  date: Date | undefined;
+  date?: Date | undefined;
 }
 
 export function DateTimePicker({

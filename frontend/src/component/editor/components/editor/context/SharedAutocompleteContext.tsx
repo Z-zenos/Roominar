@@ -44,7 +44,7 @@ export const SharedAutocompleteContext = ({
       },
       (newSuggestion: Suggestion) => {
         suggestion = newSuggestion;
-        for (const listener of listeners) {
+        for (const listener of Array.from(listeners)) {
           listener(newSuggestion);
         }
       },

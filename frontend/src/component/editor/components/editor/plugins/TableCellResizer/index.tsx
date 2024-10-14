@@ -59,7 +59,7 @@ function TableCellResizer({ editor }: { editor: LexicalEditor }): JSX.Element {
   useEffect(() => {
     return editor.registerCommand(
       SELECTION_CHANGE_COMMAND,
-      (payload) => {
+      () => {
         const selection = $getSelection();
         const isGridSelection = $isGridSelection(selection);
 
@@ -200,6 +200,7 @@ function TableCellResizer({ editor }: { editor: LexicalEditor }): JSX.Element {
           }
 
           const rowCells = tableRow.getChildren();
+          // @ts-expect-error: getColSpan doesn't exist in LexicalNode
           const rowCellsSpan = rowCells.map((cell) => cell?.getColSpan());
 
           const aggregatedRowSpans = rowCellsSpan.reduce(
@@ -309,6 +310,7 @@ function TableCellResizer({ editor }: { editor: LexicalEditor }): JSX.Element {
 
         document.addEventListener('mouseup', mouseUpHandler(direction));
       },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       activeCell,
       draggingDirection,

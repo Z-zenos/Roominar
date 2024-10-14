@@ -5,6 +5,7 @@ import {
   AuthApi,
   EventsApi,
   OrganizationsApi,
+  SurveysApi,
   TagsApi,
   UsersApi,
 } from '@/src/lib/api/generated';
@@ -18,6 +19,7 @@ function useApi() {
     tags: new TagsApi(config),
     applications: new ApplicationsApi(config),
     organizations: new OrganizationsApi(config),
+    surveys: new SurveysApi(config),
   };
 }
 

@@ -432,7 +432,7 @@ function TableActionMenu({
 
       const tableRows = tableNode.getChildren();
       const maxRowsLength = Math.max(
-        ...tableRows.map((row) => row?.getChildren().length),
+        ...tableRows.map((row) => (row as ElementNode)?.getChildren().length),
       );
 
       if (tableColumnIndex >= maxRowsLength || tableColumnIndex < 0) {
@@ -482,6 +482,7 @@ function TableActionMenu({
             for (let i = 0; i < nodes.length; i++) {
               const node = nodes[i];
               if (DEPRECATED_$isGridCellNode(node)) {
+                // @ts-expect-error: setBackgroundColor doesn't exist in DEPRECATED_$isGridCellNode
                 node?.setBackgroundColor(value);
               }
             }

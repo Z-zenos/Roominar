@@ -95,7 +95,7 @@ const sidebarMenu = [
   {
     title: 'Survey',
     icon: <SurveyIcon width={30} />,
-    route: '/organization/survey',
+    route: '/organization/surveys',
   },
   {
     title: 'Staff',
@@ -189,10 +189,10 @@ export default function OrganizationSidebar({
                 item.submenu ? (
                   <SubMenu
                     key={`osbmn-${item.title}`}
-                    active={pathname === item.route}
+                    active={pathname.includes(item.route)}
                     className={clsx(
                       '!text-sm',
-                      pathname === item.route
+                      pathname.includes(item.route)
                         ? 'bg-emerald-50 !text-primary [&_svg]:fill-primary [&_g]:fill-primary [&_path]:stroke-primary font-semibold border border-primary border-r-0'
                         : '!text-dark-main !font-light',
                     )}
@@ -203,11 +203,11 @@ export default function OrganizationSidebar({
                     {item.submenu.map((subitem) => (
                       <MenuItem
                         key={`osbsmn-${subitem.title}`}
-                        active={pathname === subitem.route}
+                        active={pathname.includes(subitem.route)}
                         className={clsx(
                           '!text-sm',
-                          pathname === subitem.route
-                            ? 'bg-emerald-50 text-primary [&_svg]:fill-primary [&_g]:fill-primary [&_path]:stroke-primary font-semibold border border-primary border-r-0'
+                          pathname.includes(subitem.route)
+                            ? 'bg-emerald-50 text-primary [&_svg]:fill-primary [&_g]:fill-primary [&_path]:stroke-primary font-semibold border-r-2 border-r-primary '
                             : '!text-dark-main !font-light',
                         )}
                         icon={subitem.icon}
@@ -220,10 +220,10 @@ export default function OrganizationSidebar({
                 ) : (
                   <MenuItem
                     key={`osbmn-${item.title}`}
-                    active={pathname === item.route}
+                    active={pathname.includes(item.route)}
                     className={clsx(
                       '!text-sm',
-                      pathname === item.route
+                      pathname.includes(item.route)
                         ? 'bg-emerald-50 text-primary [&_svg]:fill-primary [&_g]:fill-primary [&_path]:stroke-primary font-semibold border border-primary border-r-0'
                         : '!text-dark-main !font-light',
                     )}

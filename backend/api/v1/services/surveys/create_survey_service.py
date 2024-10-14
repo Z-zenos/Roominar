@@ -31,8 +31,8 @@ async def create_survey(db: Session, organizer: User, request: CreateSurveyReque
             status_code=SurveyStatusCode.OPEN,
             organization_id=organizer.organization_id,
             description=request.description,
-            start_date=request.start_date,
-            end_date=request.end_date,
+            start_at=request.start_at,
+            end_at=request.end_at,
             max_response_number=request.max_response_number,
         )
 

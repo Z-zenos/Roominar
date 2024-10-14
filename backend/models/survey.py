@@ -14,6 +14,6 @@ class Survey(BaseModel, table=True):
     name: str = Field(sa_type=String(255))
     description: Optional[str] = Field(sa_type=Text)
     status_code: SurveyStatusCode = Field(sa_type=Enum(SurveyStatusCode))
-    start_date: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
-    end_date: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
+    start_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
+    end_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
     max_response_number: Optional[int]

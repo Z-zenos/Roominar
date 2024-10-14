@@ -10,7 +10,7 @@ import type { Position, InlineImagePayload } from '../../nodes/InlineImageNode';
 import '../../ui/Checkbox.css';
 
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { $wrapNodeInElement, CAN_USE_DOM, mergeRegister } from '@lexical/utils';
+import { $wrapNodeInElement, mergeRegister } from '@lexical/utils';
 import type { LexicalCommand, LexicalEditor } from 'lexical';
 import {
   $createParagraphNode,
@@ -41,6 +41,7 @@ import { DialogActions } from '../../ui/Dialog';
 import FileInput from '../../ui/FileInput';
 import Select from '../../ui/Select';
 import TextInput from '../../ui/TextInput';
+import { CAN_USE_DOM } from '../../shared/canUseDOM';
 
 export type InsertInlineImagePayload = Readonly<InlineImagePayload>;
 

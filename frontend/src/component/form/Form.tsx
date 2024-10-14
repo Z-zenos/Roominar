@@ -257,6 +257,7 @@ interface FormInputProps extends TextInputProps {
   label?: string;
   isDisplayError?: boolean;
   onTextChange?(value: string): void;
+  wrapperClassName?: string;
 }
 
 const FormInput = ({
@@ -265,6 +266,7 @@ const FormInput = ({
   isDisplayError = false,
   label,
   onTextChange,
+  wrapperClassName,
   ...props
 }: FormInputProps) => {
   return (
@@ -272,7 +274,7 @@ const FormInput = ({
       control={control}
       name={name as string}
       render={({ field }) => (
-        <FormItem>
+        <FormItem className={wrapperClassName}>
           {label && <FormLabel>{label}</FormLabel>}
           <FormControl>
             <TextInput
@@ -983,7 +985,9 @@ interface FormSelectProps {
   onSearch?(data?: any): void;
   data: SelectItem[];
   className?: string;
+  wrapperClassName?: string;
   defaultValue?: string;
+  onSelect?(val): void;
 }
 
 const FormSelect = ({
@@ -992,24 +996,26 @@ const FormSelect = ({
   control,
   onSearch,
   className,
+  wrapperClassName,
   defaultValue,
+  onSelect,
 }: FormSelectProps) => {
   return (
     <FormField
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem>
-          {/* <FormLabel>Sort By</FormLabel> */}
+        <FormItem className={wrapperClassName}>
           <Select
             onValueChange={(value: string) => {
               field.onChange(value);
+              if (onSelect) onSelect(value);
               if (onSearch) onSearch();
             }}
             defaultValue={defaultValue}
           >
             <FormControl>
-              <SelectTrigger className={clsx('w-[180px]', className)}>
+              <SelectTrigger className={clsx('w-[180px] h-11', className)}>
                 <SelectValue placeholder={`${data[0].label}`} />
               </SelectTrigger>
             </FormControl>
@@ -1108,7 +1114,7 @@ const FormDateTimePicker = ({
     <FormField
       control={control}
       name={name}
-      render={({ field }) => (
+      render={() => (
         <FormItem className='flex flex-row items-center justify-start space-x-1'>
           <FormControl>
             <DateTimePicker className={className} />

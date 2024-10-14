@@ -6,7 +6,7 @@
  *
  */
 
-import {useCallback, useEffect, useRef} from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 const getElement = (): HTMLElement => {
   let element = document.getElementById('report-container');
@@ -51,8 +51,6 @@ export default function useReport(): (
 
   return useCallback(
     (content) => {
-      // eslint-disable-next-line no-console
-      console.log(content);
       const element = getElement();
       clearTimeout(timer.current as ReturnType<typeof setTimeout>);
       element.innerHTML = content;

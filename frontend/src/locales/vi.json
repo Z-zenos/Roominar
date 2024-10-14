@@ -54,7 +54,11 @@
             "ticketDescription": "mô tả",
             "survey": "khảo sát",
             "target": "đối tượng",
-            "eventComment": "lời nhắn của tổ chức bạn"
+            "eventComment": "lời nhắn của tổ chức bạn",
+            "question": "câu hỏi",
+            "answer": "câu trả lời",
+            "maxResponseNumber": "số lượng phản hồi tối đa cho phép",
+            "description": "mô tả"
         },
         "message": {
             "error": {

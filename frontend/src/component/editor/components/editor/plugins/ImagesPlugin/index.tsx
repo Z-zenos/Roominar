@@ -6,7 +6,7 @@
  *
  */
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { $wrapNodeInElement, CAN_USE_DOM, mergeRegister } from '@lexical/utils';
+import { $wrapNodeInElement, mergeRegister } from '@lexical/utils';
 import type { LexicalCommand, LexicalEditor } from 'lexical';
 import {
   $createParagraphNode,
@@ -27,8 +27,6 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import * as React from 'react';
 
-import landscapeImage from '../../images/landscape.jpg';
-import yellowFlowerImage from '../../images/yellow-flower.jpg';
 import type { ImagePayload } from '../../nodes/ImageNode';
 import {
   $createImageNode,
@@ -39,6 +37,7 @@ import Button from '../../ui/Button';
 import { DialogActions, DialogButtonsList } from '../../ui/Dialog';
 import FileInput from '../../ui/FileInput';
 import TextInput from '../../ui/TextInput';
+import { CAN_USE_DOM } from '../../shared/canUseDOM';
 
 export type InsertImagePayload = Readonly<ImagePayload>;
 

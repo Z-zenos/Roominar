@@ -54,7 +54,11 @@
             "ticketDescription": "description",
             "survey": "survey",
             "target": "target",
-            "eventComment": "comment from organization"
+            "eventComment": "comment from organization",
+            "question": "question",
+            "answer": "answer",
+            "maxResponseNumber": "max response number",
+            "description": "description"
         },
         "message": {
             "error": {

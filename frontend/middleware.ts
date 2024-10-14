@@ -27,6 +27,8 @@ export const pathPermissionMaster = {
     '/organization/events',
     '/organization/overview',
     '/organization/events/create',
+    '/organization/surveys',
+    '/organization/surveys/create',
   ],
   ADMIN: ['/admin/users', '/admin/organizers', '/login', '/organization/login'],
   GUEST: [
