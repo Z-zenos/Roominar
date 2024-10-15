@@ -1100,7 +1100,6 @@ FormInstructions.displayName = 'FormInstructions';
 interface FormDateTimePickerProps {
   name: string;
   control: Control<any>;
-  onSearch?(data?: any): void;
   className?: string;
   defaultValue?: string;
 }
@@ -1114,10 +1113,13 @@ const FormDateTimePicker = ({
     <FormField
       control={control}
       name={name}
-      render={() => (
+      render={({ field }) => (
         <FormItem className='flex flex-row items-center justify-start space-x-1'>
           <FormControl>
-            <DateTimePicker className={className} />
+            <DateTimePicker
+              className={className}
+              onDateTimeChange={(date) => field.onChange(date)}
+            />
           </FormControl>
         </FormItem>
       )}

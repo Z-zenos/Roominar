@@ -28,7 +28,7 @@ export default function CreateSurveyForm() {
       description: '',
       startAt: null,
       endAt: null,
-      maxResponseNumber: null,
+      maxResponseNumber: '',
 
       questionAnswers: [DEFAULT_QUESTION_ANSWER],
     },
@@ -50,13 +50,25 @@ export default function CreateSurveyForm() {
   });
 
   function handleCreateSurvey(data: CreateSurveyFormSchema) {
-    // trigger({
-    //   eventId: 0,
-    //   publishEventRequest: {
-    //     ...data,
-    //   },
-    // });
-    console.log(data, trigger, isCreating);
+    trigger({
+      createSurveyRequest: {
+        name: data.name,
+        description: data.description,
+        startAt: data.startAt,
+        endAt: data.endAt,
+        maxResponseNumber: Number(data.maxResponseNumber),
+        questionAnswers: data.questionAnswers.map((qa, qi) => ({
+          question: qa.question,
+          typeCode: qa.typeCode,
+          orderNumber: qi,
+          answers: qa.answers.map((a, ai) => ({
+            answer: a.answer,
+            orderNumber: ai,
+            isCorrect: a.isCorrect,
+          })),
+        })),
+      },
+    });
   }
 
   return (
@@ -145,7 +157,12 @@ export default function CreateSurveyForm() {
           </div>
         </div>
 
-        <Button type='submit'>Save</Button>
+        <Button
+          type='submit'
+          isLoading={isCreating}
+        >
+          Save
+        </Button>
       </form>
     </Form>
   );

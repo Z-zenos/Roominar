@@ -17,7 +17,7 @@ const createSurveyFormSchema = z.object({
   description: z.string().nullable(),
   startAt: z.date().nullable(),
   endAt: z.date().nullable(),
-  maxResponseNumber: z.string().regex(/^\d+$/).transform(Number).nullable(),
+  maxResponseNumber: z.string().regex(/^\d+$/).nullable(),
   questionAnswers: z.array(questionAnswerSchema),
 });
 

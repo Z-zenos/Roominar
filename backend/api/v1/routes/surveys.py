@@ -16,12 +16,12 @@ router = APIRouter()
     response_model=int,
     responses=authenticated_api_responses,
 )
-def create_survey(
+async def create_survey(
     db: Session = Depends(get_read_db),
     organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
     request: CreateSurveyRequest = None,
 ):
-    return survey_service.create_survey(db, organizer, request)
+    return await survey_service.create_survey(db, organizer, request)
 
 
 # @router.put(

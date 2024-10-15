@@ -27,6 +27,9 @@ export function DateTimePicker({
         className='min-w-[250px]'
         radius='sm'
         aria-label='date input'
+        onChange={(val) =>
+          onDateTimeChange(new Date(val.year, val.month, val.day))
+        }
       />
       <div className='flex items-end gap-2 -mt-5'>
         <div className='grid gap-1 text-center'>

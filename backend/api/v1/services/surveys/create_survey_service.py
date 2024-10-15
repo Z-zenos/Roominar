@@ -39,7 +39,6 @@ async def create_survey(db: Session, organizer: User, request: CreateSurveyReque
         survey = save(db, new_survey)
 
         await create_question_answer(db, request.question_answers, new_survey.id)
-
         return new_survey.id
     except Exception as e:
         db.rollback()
