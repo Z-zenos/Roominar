@@ -58,7 +58,8 @@
             "question": "question",
             "answer": "answer",
             "maxResponseNumber": "max response number",
-            "description": "description"
+            "description": "description",
+            "targetName": "target name"
         },
         "message": {
             "error": {
@@ -85,7 +86,8 @@
                 "missingEventOrganizeAddress": "please enter organize address for event",
                 "missingEventMeetingToolCode": "please select at least meeting tool if event is online",
                 "missingEventMeetingUrl": "you selected meeting tool, please provide meeting url",
-                "invalidTicketPrice": "invalid ticket"
+                "invalidTicketPrice": "invalid ticket",
+                "invalidSurveyEndAt": "invalid survey end date time"
             }
         }
     },

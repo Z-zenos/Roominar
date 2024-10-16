@@ -191,11 +191,11 @@ function RegisterOrganizationForm() {
           <FormInstructions>
             <li>
               If the organization type is {t(OrganizationTypeCode.Business)}, it
-              will not be possible to change it to{' '}
+              will not be possible to change it to
               {t(OrganizationTypeCode.Personal)}.
             </li>
             <li>
-              On the contrary, you can change it to{' '}
+              On the contrary, you can change it to
               {t(OrganizationTypeCode.Business)} in the future if needed. But
               you will need to provide some more information about your
               business.

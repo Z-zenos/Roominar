@@ -9,7 +9,11 @@ import {
   FormInput,
   FormTextarea,
 } from '@/src/component/form/Form';
-import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
+import {
+  QuestionTypeCode,
+  type ApiException,
+  type ErrorResponse400,
+} from '@/src/lib/api/generated';
 import toast from 'react-hot-toast';
 import type { CreateSurveyFormSchema } from '@/src/schemas/survey/CreateSurveyFormSchema';
 import createSurveyFormSchema from '@/src/schemas/survey/CreateSurveyFormSchema';
@@ -19,6 +23,7 @@ import CreateQuestion, {
   DEFAULT_QUESTION_ANSWER,
 } from '../common/QuestionAnswer/CreateQuestion';
 import { Button } from '@nextui-org/button';
+import { FaSquareArrowUpRight } from 'react-icons/fa6';
 
 export default function CreateSurveyForm() {
   const form = useForm<CreateSurveyFormSchema>({
@@ -64,7 +69,8 @@ export default function CreateSurveyForm() {
           answers: qa.answers.map((a, ai) => ({
             answer: a.answer,
             orderNumber: ai,
-            isCorrect: a.isCorrect,
+            isCorrect:
+              qa.typeCode === QuestionTypeCode.Text ? true : a.isCorrect,
           })),
         })),
       },
@@ -155,14 +161,21 @@ export default function CreateSurveyForm() {
               errors={form.formState.errors}
             />
           </div>
-        </div>
 
-        <Button
-          type='submit'
-          isLoading={isCreating}
-        >
-          Save
-        </Button>
+          <Button
+            className='overflow-hidden w-32 p-2 h-12 bg-black !text-white border-none rounded-md text-xm font-bold cursor-pointer relative z-10 group'
+            type='submit'
+            isLoading={isCreating}
+          >
+            Save <FaSquareArrowUpRight className='inline w-5 h-5 mb-1 ml-1' />
+            <span className='absolute w-36 h-32 -top-8 -left-2 bg-white rotate-12 transform scale-x-0 group-hover:scale-x-100 transition-transform group-hover:duration-500 duration-1000 origin-left'></span>
+            <span className='absolute w-36 h-32 -top-8 -left-2 bg-indigo-400 rotate-12 transform scale-x-0 group-hover:scale-x-100 transition-transform group-hover:duration-700 duration-700 origin-left'></span>
+            <span className='absolute w-36 h-32 -top-8 -left-2 bg-indigo-600 rotate-12 transform scale-x-0 group-hover:scale-x-50 transition-transform group-hover:duration-1000 duration-500 origin-left'></span>
+            <span className='group-hover:opacity-100 group-hover:duration-1000 duration-100 opacity-0 absolute top-2.5 left-6 z-10'>
+              Save <FaSquareArrowUpRight className='inline w-5 h-5 mb-1 ml1' />
+            </span>
+          </Button>
+        </div>
       </form>
     </Form>
   );

@@ -6,7 +6,7 @@ from backend.api.v1.dependencies.authentication import authorize_role
 from backend.core.response import authenticated_api_responses
 from backend.db.database import get_read_db
 from backend.models.user import RoleCode, User
-from backend.schemas.survey import CreateSurveyRequest
+from backend.schemas.survey import CreateSurveyRequest, ListingSurveyOptionsItem
 
 router = APIRouter()
 
@@ -71,12 +71,16 @@ async def create_survey(
 #     return ListQuestionnaireResponse(**response)
 
 
-# @router.get("/options", response_model=List[QuestionnaireOption])
-# def listing_questionnarie_for_option(
-#     db: Session = Depends(get_db),
-#     user: User = Depends(authorize_role(RoleCode.ORGANIZER)),
-# ):
-#     return questionnaire_service.listing_questionnaire_for_option(db, user)
+@router.get(
+    "/options",
+    response_model=list[ListingSurveyOptionsItem],
+    responses=authenticated_api_responses,
+)
+async def listing_survey_options(
+    db: Session = Depends(get_read_db),
+    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+):
+    return await survey_service.listing_survey_options(db, organizer)
 
 
 # @router.get(

@@ -48,7 +48,6 @@ const TicketTypeRadio = (props: RadioProps) => {
   const {
     Component,
     children,
-    isSelected,
     description,
     getBaseProps,
     getWrapperProps,

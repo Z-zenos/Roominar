@@ -254,7 +254,7 @@ function ShowClearDialog({
           }}
         >
           Clear
-        </Button>{' '}
+        </Button>
         <Button
           onClick={() => {
             editor.focus();

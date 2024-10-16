@@ -50,10 +50,17 @@ class CreateSurveyRequest(BaseModel):
 
     @field_validator("end_at")
     def validate_date(cls, v: str | None, values: ValidationInfo):
-        if values.data.get("start_at") > v:
+        start_at = values.data.get("start_at")
+        if v and start_at and start_at > v:
             raise BadRequestException(
                 ErrorCode.ERR_SURVEY_INVALID_START_END_DATE,
                 ErrorMessage.ERR_SURVEY_INVALID_START_END_DATE,
             )
 
         return v
+
+
+class ListingSurveyOptionsItem(BaseModel):
+    id: int
+    name: str
+    question_number: int

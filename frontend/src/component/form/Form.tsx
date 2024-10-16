@@ -987,7 +987,8 @@ interface FormSelectProps {
   className?: string;
   wrapperClassName?: string;
   defaultValue?: string;
-  onSelect?(val): void;
+  onSelect?(val: any): void;
+  placeholer?: string;
 }
 
 const FormSelect = ({
@@ -999,6 +1000,7 @@ const FormSelect = ({
   wrapperClassName,
   defaultValue,
   onSelect,
+  placeholer,
 }: FormSelectProps) => {
   return (
     <FormField
@@ -1016,19 +1018,21 @@ const FormSelect = ({
           >
             <FormControl>
               <SelectTrigger className={clsx('w-[180px] h-11', className)}>
-                <SelectValue placeholder={`${data[0].label}`} />
+                <SelectValue placeholder={placeholer ?? `${data[0].label}`} />
               </SelectTrigger>
             </FormControl>
             <SelectContent>
               <SelectGroup>
-                {data?.map((item: SelectItem) => (
-                  <SelectElement
-                    key={item.value}
-                    value={item.value}
-                  >
-                    {item.label}
-                  </SelectElement>
-                ))}
+                {data &&
+                  data?.length &&
+                  data?.map((item: SelectItem) => (
+                    <SelectElement
+                      key={item.value}
+                      value={item.value}
+                    >
+                      {item.label}
+                    </SelectElement>
+                  ))}
               </SelectGroup>
             </SelectContent>
           </Select>

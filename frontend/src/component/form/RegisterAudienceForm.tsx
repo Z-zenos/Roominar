@@ -228,15 +228,15 @@ function RegisterAudienceForm() {
                 className='text-primary mx-1'
               >
                 Terms of Use
-              </Link>{' '}
-              and{' '}
+              </Link>
+              and
               <Link
                 href='#'
                 underline='hover'
                 className='text-primary mx-1'
               >
                 Personal Information Handling
-              </Link>{' '}
+              </Link>
               before registering.
             </p>
             <Button
@@ -275,9 +275,7 @@ function RegisterAudienceForm() {
 
             <p className={clsx('mt-4 gap-2 font-light', styles.center)}>
               Want to host your own event?
-              <Button className='outline-none'>
-                Navigate to organization{' '}
-              </Button>
+              <Button className='outline-none'>Navigate to organization</Button>
             </p>
           </>
         )}

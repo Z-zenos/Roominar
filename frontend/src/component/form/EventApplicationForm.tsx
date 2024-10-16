@@ -416,7 +416,7 @@ export default function EventApplicationForm({
                           key={`qa-${questionAnswer.id}`}
                         >
                           <h3 className='text-nm font-semibold text-slate-800'>
-                            {questionAnswer.orderNumber}.{' '}
+                            {questionAnswer.orderNumber}.
                             {questionAnswer.question}
                           </h3>
 
@@ -558,15 +558,15 @@ export default function EventApplicationForm({
                   className='text-primary mx-1'
                 >
                   Terms of Use
-                </Link>{' '}
-                and{' '}
+                </Link>
+                and
                 <Link
                   href='#'
                   underline='hover'
                   className='text-primary mx-1'
                 >
                   Personal Information Handling
-                </Link>{' '}
+                </Link>
                 before apply.
               </p>
             </FormCheckBox>

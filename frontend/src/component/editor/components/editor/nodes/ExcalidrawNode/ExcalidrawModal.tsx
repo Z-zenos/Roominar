@@ -201,7 +201,7 @@ export default function ExcalidrawModal({
             }}
           >
             Discard
-          </Button>{' '}
+          </Button>
           <Button
             onClick={() => {
               setDiscardModalOpen(false);

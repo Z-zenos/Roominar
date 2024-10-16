@@ -12,14 +12,24 @@ const questionAnswerSchema = z.object({
   answers: z.array(answerSchema),
 });
 
-const createSurveyFormSchema = z.object({
-  name: z.string().trim().min(1).max(255),
-  description: z.string().nullable(),
-  startAt: z.date().nullable(),
-  endAt: z.date().nullable(),
-  maxResponseNumber: z.string().regex(/^\d+$/).nullable(),
-  questionAnswers: z.array(questionAnswerSchema),
-});
+const createSurveyFormSchema = z
+  .object({
+    name: z.string().trim().min(1).max(255),
+    description: z.string().nullable(),
+    startAt: z.date().nullable(),
+    endAt: z.date().nullable(),
+    maxResponseNumber: z.string().regex(/^\d+$/).nullable(),
+    questionAnswers: z.array(questionAnswerSchema),
+  })
+  .superRefine(({ startAt, endAt }, ctx) => {
+    if (endAt < startAt) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'invalidSurveyEndAt',
+        path: ['endAt'],
+      });
+    }
+  });
 
 type CreateSurveyFormSchema = z.infer<typeof createSurveyFormSchema>;
 type CreateQuestionAnswerSchema = z.infer<typeof questionAnswerSchema>;
