@@ -27,6 +27,9 @@ class TicketItem(BaseModel):
 
 
 class CreateTicketRequest(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    event_id: int | None
     name: str = Field(max_length=255)
     quantity: int = Field(ge=1)
     description: str | None
@@ -36,5 +39,5 @@ class CreateTicketRequest(BaseModel):
     delivery_method: TicketDeliveryMethodCode
     access_link_url: str | None
     is_refundable: bool | None
-
-    model_config = ConfigDict(str_strip_whitespace=True)
+    sales_start_at: datetime | None
+    sales_end_at: datetime | None

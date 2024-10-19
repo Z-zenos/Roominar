@@ -4,6 +4,7 @@ import type {
   EventsApiDeleteEventBookmarkRequest,
   EventsApiGetEventDetailRequest,
   EventsApiListingRelatedEventsRequest,
+  EventsApiListingTicketsOfEventRequest,
   EventsApiPublishEventRequest,
   EventsApiSearchEventsRequest,
   OrganizationsApiListingTopOrganizationEventsRequest,
@@ -107,4 +108,14 @@ export const usePublishEventMutation = <T>(
     async (_: string, { arg }) => await api.events.publishEvent(arg),
     options,
   );
+};
+
+export const useListingTicketsOfEventQuery = (
+  params?: EventsApiListingTicketsOfEventRequest,
+) => {
+  const api = useApi();
+  return useQuery({
+    queryKey: ['listing-tickets-of-events'],
+    queryFn: async () => await api.events.listingTicketsOfEvent(params),
+  });
 };

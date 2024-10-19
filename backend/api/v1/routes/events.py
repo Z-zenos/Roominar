@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends
 from sqlmodel import Session
 
 import backend.api.v1.services.events as events_service
+import backend.api.v1.services.tickets as tickets_service
 from backend.api.v1.dependencies.authentication import (
     authorize_role,
     get_current_user,
@@ -22,6 +23,7 @@ from backend.schemas.event import (
     SearchEventsQueryParams,
     SearchEventsResponse,
 )
+from backend.schemas.ticket import TicketItem
 
 router = APIRouter()
 
@@ -138,3 +140,16 @@ async def publish_event(
     event_id: int = None,
 ):
     return await events_service.publish_event(db, organizer, request, event_id)
+
+
+@router.get(
+    "/{event_id}/tickets",
+    response_model=list[TicketItem],
+    responses=authenticated_api_responses,
+)
+async def listing_tickets_of_event(
+    db: Session = Depends(get_read_db),
+    organizer: User = Depends(get_current_user),
+    event_id: int = None,
+):
+    return await tickets_service.listing_tickets_of_event(db, organizer, event_id)

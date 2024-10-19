@@ -17,16 +17,14 @@ import type {
   ErrorResponse400,
   TicketItem,
 } from '@/src/lib/api/generated';
-import {
-  EventStatusCode,
-  TicketDeliveryMethodCode,
-  TicketStatusCode,
-  TicketTypeCode,
-} from '@/src/lib/api/generated';
+import { EventStatusCode, TicketStatusCode } from '@/src/lib/api/generated';
 import toast from 'react-hot-toast';
 import type { PublishEventFormSchema } from '@/src/schemas/event/CreateEventFormSchema';
 import publishEventFormSchema from '@/src/schemas/event/CreateEventFormSchema';
-import { usePublishEventMutation } from '@/src/api/event.api';
+import {
+  useListingTicketsOfEventQuery,
+  usePublishEventMutation,
+} from '@/src/api/event.api';
 import clsx from 'clsx';
 import ImageUploader from '../common/Upload/ImageUploader';
 import { styles } from '@/src/constant/styles.constant';
@@ -94,6 +92,10 @@ const TICKET_TABLE_COLUMNS = [
   { name: 'ACTIONS', uid: 'actions' },
 ];
 
+interface CreateEventFormProps {
+  eventId?: number;
+}
+
 export default function CreateEventForm() {
   const t = useTranslations('form');
 
@@ -101,6 +103,9 @@ export default function CreateEventForm() {
   const { data: surveyOptions } = useListingSurveyOptionsQuery();
   const { data: targetOptions, refetch: refetchTargetOptions } =
     useListingTargetOptionsQuery();
+  const { data: tickets } = useListingTicketsOfEventQuery({
+    eventId: 1,
+  });
 
   const [rightSidebarContent, setRightSidebarContent] = useState<
     'TICKET' | 'TARGET' | null
@@ -132,17 +137,7 @@ export default function CreateEventForm() {
       meetingUrl: '',
 
       applicationNumber: 0,
-      tickets: [
-        {
-          name: 'Free Admission',
-          deliveryMethod: TicketDeliveryMethodCode.Both,
-          description: 'This is a test ticket',
-          quantity: 100,
-          price: 0,
-          type: TicketTypeCode.Free,
-          status: TicketStatusCode.Available,
-        },
-      ],
+      ticketIds: [],
     },
     resolver: zodResolver(publishEventFormSchema),
   });
@@ -235,15 +230,8 @@ export default function CreateEventForm() {
       case 'TICKET':
         return {
           title: 'TICKET',
-          body: <CreateTicketForm form={form} />,
-          footer: (
-            <Button
-              color='primary'
-              radius='sm'
-            >
-              Create
-            </Button>
-          ),
+          body: <CreateTicketForm />,
+          footer: null,
         };
 
       case 'TARGET':
@@ -491,8 +479,6 @@ export default function CreateEventForm() {
                     </SheetTrigger>
                   </div>
                 }
-                // selectedKeys={selectedKeys}
-                // onSelectionChange={setSelectedKeys}
               >
                 <TableHeader columns={TICKET_TABLE_COLUMNS}>
                   {(column) => (
@@ -506,13 +492,13 @@ export default function CreateEventForm() {
                 </TableHeader>
                 <TableBody
                   emptyContent={'Not setup ticket yet'}
-                  items={form.getValues('tickets')}
+                  items={tickets ?? []}
                 >
                   {(item) => (
                     <TableRow key={item.price}>
                       {(columnKey) => (
                         <TableCell>
-                          {renderCell(item as TicketItem, columnKey as string)}
+                          {renderCell(item, columnKey as string)}
                         </TableCell>
                       )}
                     </TableRow>

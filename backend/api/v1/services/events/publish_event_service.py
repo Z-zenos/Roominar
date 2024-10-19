@@ -6,7 +6,6 @@ from backend.core.constants import EventStatusCode
 from backend.core.error_code import ErrorCode
 from backend.core.exception import BadRequestException
 from backend.models import Event, EventTag, Tag, User
-from backend.models.ticket import Ticket
 from backend.schemas.event import PublishEventRequest
 
 
@@ -25,10 +24,6 @@ async def publish_event(
         db.add(event)
         db.flush()
 
-        tickets = [
-            Ticket(event_id=event.id, **ticket.__dict__) for ticket in request.tickets
-        ]
-
         if request.tags:
             request_tags = db.exec(select(Tag.id).where(Tag.id.in_(request.tags))).all()
             if (not request_tags) or (len(request.tags) != len(request_tags)):
@@ -38,7 +33,6 @@ async def publish_event(
             ]
             db.add_all(tags)
 
-        db.add_all(tickets)
         db.flush()
         db.commit()
 

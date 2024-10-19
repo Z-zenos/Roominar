@@ -53,9 +53,6 @@ class Event(BaseModel, table=True):
     survey_id: Optional[int] = Field(
         foreign_key="surveys.id",
     )
-    # survey_form_id: Optional[int] = Field(
-    #     foreign_key="survey_forms.id",
-    # )
     # survey_form_url: Optional[str] = Field(sa_type=String(2048))
 
     target_id: Optional[int] = Field(foreign_key="targets.id")

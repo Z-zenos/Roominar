@@ -2,9 +2,6 @@ import {
   CityCode,
   EventMeetingToolCode,
   EventStatusCode,
-  TicketDeliveryMethodCode,
-  TicketStatusCode,
-  TicketTypeCode,
 } from '@/src/lib/api/generated';
 import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
@@ -170,26 +167,9 @@ const eventAddressSchema = z
 
 const eventTicketSchema = z.object({
   applicationNumber: z.number(),
-  tickets: z.array(
-    z.object({
-      name: z.string().trim().min(1).max(255),
-      description: z.string().trim().nullable(),
-      quantity: z.number(),
-      price: z
-        .number()
-        .default(0)
-        .refine((val) => val >= 0, {
-          message: 'invalidTicketPrice',
-          path: ['price'],
-        }),
-      expiredAt: z.date().optional(),
-      type: z.nativeEnum(TicketTypeCode),
-      deliveryMethod: z.nativeEnum(TicketDeliveryMethodCode),
-      accessLinkUrl: z.string().trim().url().optional(),
-      isRefundable: z.boolean().optional(),
-      status: z.nativeEnum(TicketStatusCode).optional(),
-    }),
-  ),
+  ticketIds: z
+    .array(z.number())
+    .refine((val) => val.length > 0, { message: 'missingTicket' }),
 });
 
 const eventBaseSchema = z.object({

@@ -18,7 +18,7 @@ from backend.core.exception import BadRequestException
 from backend.schemas.common import PaginationResponse
 from backend.schemas.survey import SurveyDetail
 from backend.schemas.tag import TagItem
-from backend.schemas.ticket import CreateTicketRequest, TicketItem
+from backend.schemas.ticket import TicketItem
 
 
 class SearchEventsItem(BaseModel):
@@ -214,7 +214,7 @@ class PublishEventRequest(BaseModel):
 
     meeting_tool_code: EventMeetingToolCode | None
     meeting_url: str | None = Field(max_length=2048)
-    tickets: list[CreateTicketRequest] = Field([])
+    ticket_ids: list[int] = Field([])
     survey_id: int | None
     target_id: int
     comment: str | None
