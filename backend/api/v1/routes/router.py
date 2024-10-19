@@ -7,6 +7,7 @@ from .events import router as event_router
 from .organizations import router as organization_router
 from .surveys import router as survey_router
 from .tags import router as tag_router
+from .targets import router as target_router
 from .users import router as user_router
 
 api_router = APIRouter()
@@ -22,6 +23,7 @@ api_router.include_router(
     organization_router, prefix="/organizations", tags=["organizations"]
 )
 api_router.include_router(survey_router, prefix="/surveys", tags=["surveys"])
+api_router.include_router(target_router, prefix="/targets", tags=["targets"])
 
 
 def use_route_names_as_operation_ids(app: FastAPI) -> None:

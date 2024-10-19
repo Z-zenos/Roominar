@@ -75,6 +75,7 @@ import ImageUploader from '../common/Upload/ImageUploader';
 import { useTranslations } from 'next-intl';
 import { DateTimePicker } from '../common/DateTime/DateTimePicker';
 import { Textarea, type TextareaProps } from '../common/Input/Textarea';
+import Nodata from '../common/Nodata';
 
 const Form = FormProvider;
 
@@ -1023,8 +1024,7 @@ const FormSelect = ({
             </FormControl>
             <SelectContent>
               <SelectGroup>
-                {data &&
-                  data?.length &&
+                {data && data?.length > 0 ? (
                   data?.map((item: SelectItem) => (
                     <SelectElement
                       key={item.value}
@@ -1032,7 +1032,12 @@ const FormSelect = ({
                     >
                       {item.label}
                     </SelectElement>
-                  ))}
+                  ))
+                ) : (
+                  <SelectElement value='0'>
+                    <Nodata />
+                  </SelectElement>
+                )}
               </SelectGroup>
             </SelectContent>
           </Select>

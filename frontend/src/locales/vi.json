@@ -87,7 +87,9 @@
                 "missingEventMeetingToolCode": "vui lòng chọn ít nhất một loại meeting nếu sự kiện diễn ra online",
                 "missingEventMeetingUrl": "vui lòng cung cấp meeting url",
                 "invalidTicketPrice": "ticket không hợp lệ",
-                "invalidSurveyEndAt": "ngày đóng khảo sát không thể nhỏ hơn ngày mở khảo sáts"
+                "invalidSurveyEndAt": "ngày đóng khảo sát không thể nhỏ hơn ngày mở khảo sáts",
+                "missingIndustryCodes": "target phải chứa ít nhất một loại lĩnh vực",
+                "missingIndustryCodes": "target phải chứa ít nhất một loại công việc"
             }
         }
     },

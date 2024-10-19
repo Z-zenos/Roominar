@@ -73,6 +73,7 @@ import { CiStickyNote } from 'react-icons/ci';
 import { useListingSurveyOptionsQuery } from '@/src/api/survey.api';
 import CreateTicketForm from './CreateTicketForm';
 import CreateTargetForm from './CreateTargetForm';
+import { useListingTargetOptionsQuery } from '@/src/api/target.api';
 
 const LexicalEditor = dynamic(() => import('../editor/app/app'), {
   ssr: false,
@@ -98,6 +99,9 @@ export default function CreateEventForm() {
 
   const { data: tagData } = useListingTagsQuery();
   const { data: surveyOptions } = useListingSurveyOptionsQuery();
+  const { data: targetOptions, refetch: refetchTargetOptions } =
+    useListingTargetOptionsQuery();
+
   const [rightSidebarContent, setRightSidebarContent] = useState<
     'TICKET' | 'TARGET' | null
   >();
@@ -245,24 +249,18 @@ export default function CreateEventForm() {
       case 'TARGET':
         return {
           title: 'TARGET',
-          body: <CreateTargetForm form={form} />,
-          footer: (
-            <Button
-              color='primary'
-              radius='sm'
-            >
-              Save
-            </Button>
-          ),
+          body: <CreateTargetForm />,
+          footer: null,
         };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rightSidebarContent]);
 
   return (
-    <Form {...form}>
-      <Sheet>
+    <Sheet>
+      <Form {...form}>
         <form
+          id='create-event-form'
           onSubmit={form.handleSubmit(handlePublishEvent)}
           className='grid grid-cols-12 items-start gap-10'
         >
@@ -552,8 +550,21 @@ export default function CreateEventForm() {
                 required
               />
 
+              <div onClick={() => refetchTargetOptions({})}>
+                <FormSelect
+                  name='targetId'
+                  control={form.control}
+                  placeholer='Select target'
+                  data={targetOptions?.map((to) => ({
+                    value: to.id + '',
+                    label: `${to.name}`,
+                  }))}
+                  className='w-full'
+                />
+              </div>
+
               <SheetTrigger
-                className='hover:text-primary hover:bg-white border border-primary py-2 px-4 bg-primary text-white transition-all'
+                className='hover:text-primary mt-3 hover:bg-white border border-primary py-2 px-4 bg-primary text-white transition-all'
                 onClick={() => setRightSidebarContent('TARGET')}
               >
                 Add new target +
@@ -602,7 +613,10 @@ export default function CreateEventForm() {
                   Draft <CiStickyNote className='inline w-5 h-5 mb-1 ml1' />
                 </span>
               </button>
-              <button className='overflow-hidden w-32 p-2 h-12 bg-black text-white border-none rounded-md text-xm font-bold cursor-pointer relative z-10 group'>
+              <button
+                form='create-event-form'
+                className='overflow-hidden w-32 p-2 h-12 bg-black text-white border-none rounded-md text-xm font-bold cursor-pointer relative z-10 group'
+              >
                 Publish
                 <FaSquareArrowUpRight className='inline w-5 h-5 mb-1 ml1' />
                 <span className='absolute w-36 h-32 -top-8 -left-2 bg-white rotate-12 transform scale-x-0 group-hover:scale-x-100 transition-transform group-hover:duration-500 duration-1000 origin-left'></span>
@@ -610,7 +624,7 @@ export default function CreateEventForm() {
                 <span className='absolute w-36 h-32 -top-8 -left-2 bg-indigo-600 rotate-12 transform scale-x-0 group-hover:scale-x-50 transition-transform group-hover:duration-1000 duration-500 origin-left'></span>
                 <span className='group-hover:opacity-100 group-hover:duration-1000 duration-100 opacity-0 absolute top-2.5 left-6 z-10'>
                   Publish
-                  <FaSquareArrowUpRight className='inline w-5 h-5 mb-1 ml1' />
+                  <FaSquareArrowUpRight className='inline-block w-5 h-5 mb-1' />
                 </span>
               </button>
             </div>
@@ -637,23 +651,23 @@ export default function CreateEventForm() {
             className='w-full'
           /> */}
           </div>
-
-          <SheetOverlay>
-            <SheetContent
-              side='right'
-              className='min-w-[600px]'
-            >
-              <SheetHeader>
-                <SheetTitle className='text-primary'>
-                  {rightSidebar?.title}
-                </SheetTitle>
-                <SheetDescription>{rightSidebar?.body}</SheetDescription>
-              </SheetHeader>
-              <SheetFooter>{rightSidebar?.footer}</SheetFooter>
-            </SheetContent>
-          </SheetOverlay>
         </form>
-      </Sheet>
-    </Form>
+      </Form>
+      <SheetOverlay>
+        <SheetContent
+          side='right'
+          className='min-w-[600px]'
+        >
+          <SheetHeader>
+            <SheetTitle className='text-primary'>
+              {rightSidebar?.title}
+            </SheetTitle>
+            <SheetDescription />
+          </SheetHeader>
+          {rightSidebar?.body}
+          <SheetFooter>{rightSidebar?.footer}</SheetFooter>
+        </SheetContent>
+      </SheetOverlay>
+    </Sheet>
   );
 }

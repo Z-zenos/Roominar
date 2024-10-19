@@ -21,6 +21,4 @@ async def listing_survey_options(db: Session, organizer: User):
         .all()
     )
 
-    print(survey_options)
-
     return survey_options

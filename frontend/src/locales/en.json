@@ -87,7 +87,9 @@
                 "missingEventMeetingToolCode": "please select at least meeting tool if event is online",
                 "missingEventMeetingUrl": "you selected meeting tool, please provide meeting url",
                 "invalidTicketPrice": "invalid ticket",
-                "invalidSurveyEndAt": "invalid survey end date time"
+                "invalidSurveyEndAt": "invalid survey end date time",
+                "missingIndustryCodes": "target must contain at least one industry",
+                "missingIndustryCodes": "target must contain at least one job type"
             }
         }
     },
