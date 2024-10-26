@@ -78,7 +78,9 @@ interface NavbarProps {
 
 export default function Navbar({ className, hasLogo = true }: NavbarProps) {
   const t = useTranslations('app');
-  const [isEnglish, setIsEnglish] = useState<boolean>(getCookie('en') === 'en');
+  const [isEnglish, setIsEnglish] = useState<boolean>(
+    getCookie('NEXT_LOCALE') === 'en' || !getCookie('NEXT_LOCALE'),
+  );
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const { data: auth, status } = useSession();
   const router = useRouter();

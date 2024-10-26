@@ -1,11 +1,6 @@
-import {
-  IndustryCodeMapping,
-  JobTypeCodeMapping,
-} from '@/src/constant/code.constant';
 import { Form, FormCustomLabel, FormField, FormInput, FormItem } from './Form';
 import type { ControllerRenderProps } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
-import { toSelectItem } from '@/src/util/app.util';
 import { Button, Chip } from '@nextui-org/react';
 import clsx from 'clsx';
 import type { CreateTargetFormSchema } from '@/src/schemas/target/CreateTargetFormSchema';
@@ -17,11 +12,14 @@ import type {
   ApiException,
   CreateTargetRequest,
   ErrorResponse400,
-  IndustryCode,
-  JobTypeCode,
 } from '@/src/lib/api/generated';
+import { IndustryCode, JobTypeCode } from '@/src/lib/api/generated';
+import { optionify } from '@/src/util/app.util';
+import { useTranslations } from 'next-intl';
 
 function CreateTargetForm() {
+  const t = useTranslations();
+
   const form = useForm<CreateTargetFormSchema>({
     mode: 'onChange',
     defaultValues: {
@@ -54,10 +52,7 @@ function CreateTargetForm() {
     });
   }
 
-  function handleToggle(
-    field: ControllerRenderProps<any, string>,
-    value: string,
-  ) {
+  function handleToggle(field: ControllerRenderProps<any, any>, value: string) {
     let newItems = null;
 
     if (field?.value.includes(value)) {
@@ -75,22 +70,21 @@ function CreateTargetForm() {
         className='my-6'
         id='create-target-form'
       >
-        <FormCustomLabel
-          htmlFor='name'
-          required
-        />
         <FormInput
           id='name'
           name='name'
+          label='name'
+          required
           placeholder='AI student and worker'
           control={form.control}
-          isDisplayError={true}
+          showError={true}
         />
 
         <div className='py-2 mt-8 px-4 bg-primary h-10 relative after:absolute after:w-10 after:z-10 after:rotate-45 after:h-10 after:-top-6 after:bg-white after:-right-6 w-fit overflow-hidden'>
           <FormCustomLabel
             htmlFor='jobTypeCode'
             required
+            label='jobTypeCode'
             className='text-white font-semibold'
           />
         </div>
@@ -100,7 +94,7 @@ function CreateTargetForm() {
             name='jobTypeCodes'
             render={({ field }) => (
               <FormItem className=' flex flex-wrap gap-3 space-y-0'>
-                {toSelectItem(JobTypeCodeMapping).map((ic) => (
+                {optionify(JobTypeCode).map((ic) => (
                   <Chip
                     key={ic.value}
                     variant='bordered'
@@ -114,7 +108,7 @@ function CreateTargetForm() {
                     )}
                     onClick={() => handleToggle(field, ic.value as JobTypeCode)}
                   >
-                    {ic.label}
+                    {t(`code.industry.${ic.label}`)}
                   </Chip>
                 ))}
               </FormItem>
@@ -126,6 +120,7 @@ function CreateTargetForm() {
           <FormCustomLabel
             htmlFor='industryCode'
             required
+            label='industryCode'
             className='text-white font-semibold'
           />
         </div>
@@ -135,7 +130,7 @@ function CreateTargetForm() {
             name='industryCodes'
             render={({ field }) => (
               <FormItem className='flex flex-wrap gap-3 space-y-0'>
-                {toSelectItem(IndustryCodeMapping).map((ic) => (
+                {optionify(IndustryCode).map((ic) => (
                   <Chip
                     key={ic.value}
                     variant='bordered'
@@ -151,7 +146,7 @@ function CreateTargetForm() {
                       handleToggle(field, ic.value as IndustryCode)
                     }
                   >
-                    {ic.label}
+                    {t(`code.jobType.${ic.label}`)}
                   </Chip>
                 ))}
               </FormItem>

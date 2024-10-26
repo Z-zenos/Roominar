@@ -3,7 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import clsx from 'clsx';
-import { Form, FormCustomLabel, FormInput } from '@/src/component/form/Form';
+import { Form, FormInput } from '@/src/component/form/Form';
 import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
 import { useState } from 'react';
 import useWindowDimensions from '@/src/hook/useWindowDimension';
@@ -98,13 +98,11 @@ export default function ChangePasswordForm() {
               )}
             >
               <div className='w-full relative mb-1'>
-                <FormCustomLabel
-                  htmlFor='currentPassword'
-                  required
-                />
                 <FormInput
                   id='currentPassword'
                   name='currentPassword'
+                  label='currentPassword'
+                  required
                   type={!showCurrentPassword ? 'password' : 'text'}
                   rightIcon={
                     !showCurrentPassword ? (
@@ -122,13 +120,8 @@ export default function ChangePasswordForm() {
                     )
                   }
                   placeholder='password!@%'
-                  className={clsx(
-                    form.formState.errors.currentPassword &&
-                      form.formState.touchedFields.currentPassword &&
-                      'border-error-main',
-                  )}
                   control={form.control}
-                  isDisplayError={
+                  showError={
                     form.formState.errors.currentPassword &&
                     form.formState.touchedFields.currentPassword &&
                     true
@@ -143,13 +136,11 @@ export default function ChangePasswordForm() {
                 Forgot password ?
               </Link>
               <div className='w-full relative mb-1 self-start'>
-                <FormCustomLabel
-                  htmlFor='newPassword'
-                  required
-                />
                 <FormInput
                   id='newPassword'
                   name='newPassword'
+                  label='newPassword'
+                  required
                   type={!showNewPassword ? 'password' : 'text'}
                   rightIcon={
                     !showNewPassword ? (
@@ -167,13 +158,8 @@ export default function ChangePasswordForm() {
                     )
                   }
                   placeholder='password!@%'
-                  className={clsx(
-                    form.formState.errors.newPassword &&
-                      form.formState.touchedFields.newPassword &&
-                      'border-error-main',
-                  )}
                   control={form.control}
-                  isDisplayError={
+                  showError={
                     form.formState.errors.newPassword &&
                     form.formState.touchedFields.newPassword &&
                     true
@@ -181,13 +167,10 @@ export default function ChangePasswordForm() {
                 />
               </div>
               <div className='w-full relative mb-1'>
-                <FormCustomLabel
-                  htmlFor='confirmNewPassword'
-                  required
-                />
                 <FormInput
                   id='confirmNewPassword'
                   name='confirmNewPassword'
+                  label='confirmNewPassword'
                   type={!showConfirmNewPassword ? 'password' : 'text'}
                   rightIcon={
                     !showConfirmNewPassword ? (
@@ -205,13 +188,8 @@ export default function ChangePasswordForm() {
                     )
                   }
                   placeholder='password!@%'
-                  className={clsx(
-                    form.formState.errors.confirmNewPassword &&
-                      form.formState.touchedFields.confirmNewPassword &&
-                      'border-error-main',
-                  )}
                   control={form.control}
-                  isDisplayError={
+                  showError={
                     form.formState.errors.confirmNewPassword &&
                     form.formState.touchedFields.confirmNewPassword &&
                     true

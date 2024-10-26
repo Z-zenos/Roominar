@@ -2,7 +2,13 @@ import { Button, RadioGroup } from '@nextui-org/react';
 import { TicketTypeRadio } from '../common/RadioGroup';
 import clsx from 'clsx';
 import { styles } from '@/src/constant/styles.constant';
-import { Form, FormCustomLabel, FormInput, FormTextarea } from './Form';
+import {
+  Form,
+  FormInput,
+  FormRadioBoxList,
+  FormSelect,
+  FormTextarea,
+} from './Form';
 import { useForm } from 'react-hook-form';
 import {
   createTicketFormSchema,
@@ -12,13 +18,17 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
 import {
   TicketDeliveryMethodCode,
-  TicketStatusCode,
   TicketTypeCode,
 } from '@/src/lib/api/generated';
 import { useCreateTicketMutation } from '@/src/api/ticket.api';
 import toast from 'react-hot-toast';
+import { optionify } from '@/src/util/app.util';
 
-function CreateTicketForm() {
+interface CreateTicketFormProps {
+  eventId?: number;
+}
+
+function CreateTicketForm({ eventId }: CreateTicketFormProps) {
   const form = useForm<CreateTicketFormSchema>({
     mode: 'onChange',
     defaultValues: {
@@ -26,23 +36,27 @@ function CreateTicketForm() {
       quantity: 0,
       description: '',
       price: 0,
-      expiredAt: null,
+      // expiredAt: undefined,
       type: TicketTypeCode.Free,
       deliveryMethod: TicketDeliveryMethodCode.Both,
-      accessLinkUrl: null,
-      isRefundable: null,
-      status: TicketStatusCode.Available,
+      // accessLinkUrl: undefined,
+      // isRefundable: undefined,
+      // status: TicketStatusCode.Available,
       salesStartAt: new Date(),
       salesEndAt: new Date(),
     },
     resolver: zodResolver(createTicketFormSchema),
   });
 
-  console.log(form.formState.errors);
+  console.log(
+    form.formState.errors,
+    form.getValues(),
+    typeof form.getValues().quantity,
+  );
 
   const { trigger, isMutating: isCreating } = useCreateTicketMutation({
     onSuccess() {
-      toast.success('Create target successfully!');
+      toast.success('Create ticket successfully!');
       form.reset();
     },
     onError(error: ApiException<unknown>) {
@@ -55,14 +69,25 @@ function CreateTicketForm() {
   });
 
   function handleCreateTicket(data: CreateTicketFormSchema) {
-    // trigger({
-    //   createTargetRequest: {
-    //     ...data,
-    //   },
-    // });
-
-    console.log(data);
+    trigger({
+      createTicketRequest: {
+        name: data.name,
+        description: data.description,
+        quantity: +data?.quantity,
+        price: +data?.price,
+        type: data.type,
+        deliveryMethod: data.deliveryMethod,
+        eventId: eventId ?? null,
+        expiredAt: null,
+        isRefundable: null,
+        salesStartAt: null,
+        salesEndAt: null,
+        accessLinkUrl: null,
+      },
+    });
   }
+
+  console.log(form.formState.errors);
 
   return (
     <Form {...form}>
@@ -89,80 +114,77 @@ function CreateTicketForm() {
         </RadioGroup>
 
         <div className='col-span-2 mt-4'>
-          <FormCustomLabel
-            htmlFor='ticketName'
-            required
-          />
           <FormInput
             id='ticketName'
             name='name'
+            label='ticketName'
+            required
             placeholder='100'
             control={form.control}
-            isDisplayError={true}
-            className={clsx(
-              form.formState.errors.name &&
-                form.formState.touchedFields.name &&
-                'border-error-main',
-            )}
+            showError={true}
           />
         </div>
 
         <div>
-          <FormCustomLabel
-            htmlFor='ticketQuantity'
-            required
-          />
           <FormInput
             id='ticketQuantity'
             name='quantity'
+            label='ticketQuantity'
+            required
             placeholder='100'
             control={form.control}
-            isDisplayError={true}
+            showError={true}
             type='number'
-            className={clsx(
-              form.formState.errors.quantity &&
-                form.formState.touchedFields.quantity &&
-                'border-error-main',
-            )}
           />
         </div>
 
         <div>
-          <FormCustomLabel
-            htmlFor='ticketPrice'
-            required
-          />
           <FormInput
             id='ticketPrice'
             name='price'
+            label='ticketPrice'
+            required
             placeholder='100'
             control={form.control}
-            isDisplayError={true}
+            showError={true}
             type='number'
-            className={clsx(
-              form.formState.errors.price &&
-                form.formState.touchedFields.price &&
-                'border-error-main',
-            )}
           />
         </div>
 
         <div className='col-span-2 mt-4'>
-          <FormCustomLabel
-            htmlFor='ticketDescription'
-            required
-          />
           <FormTextarea
             id='ticketDescription'
             name='description'
+            label='ticketDescription'
+            required
             placeholder='100'
             control={form.control}
-            isDisplayError={true}
-            className={clsx(
-              form.formState.errors.description &&
-                form.formState.touchedFields.description &&
-                'border-error-main',
-            )}
+            showError={true}
+          />
+        </div>
+
+        <div className='col-span-2 my-4'>
+          <FormSelect
+            name='type'
+            label='ticketType'
+            required
+            control={form.control}
+            placeholder='Select Ticket Type'
+            options={optionify(TicketTypeCode)}
+            i18nPath='code.ticket.type'
+            className='w-full'
+          />
+        </div>
+
+        <div className='col-span-2'>
+          <FormRadioBoxList
+            name='deliveryMethod'
+            label='deliveryMethod'
+            control={form.control}
+            options={optionify(TicketDeliveryMethodCode)}
+            i18nPath='code.ticket.deliveryMethod'
+            direction='horizontal'
+            required
           />
         </div>
 
@@ -175,7 +197,7 @@ function CreateTicketForm() {
           isDisabled={!form.formState.isValid}
           type='submit'
         >
-          Create Target
+          Create Ticket
         </Button>
       </form>
     </Form>

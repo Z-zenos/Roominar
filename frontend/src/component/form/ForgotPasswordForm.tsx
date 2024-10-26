@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { HiMail } from 'react-icons/hi';
 import clsx from 'clsx';
 import { Link } from '@nextui-org/link';
-import { Form, FormCustomLabel, FormInput } from './Form';
+import { Form, FormInput } from './Form';
 import { styles } from '@/src/constant/styles.constant';
 import Button from '../common/Button/Button';
 import type { ForgotPasswordFormSchema } from '@/src/schemas/auth/ForgotPasswordFormSchema';
@@ -80,14 +80,12 @@ export default function ForgotPasswordForm() {
         ) : (
           <>
             <div className='w-full'>
-              <FormCustomLabel
-                htmlFor='email'
-                required
-              />
               <FormInput
                 id='email'
                 name='email'
+                label='email'
                 type='email'
+                required
                 rightIcon={
                   <HiMail
                     size={20}
@@ -95,13 +93,8 @@ export default function ForgotPasswordForm() {
                   />
                 }
                 placeholder='youremail@gmail.com'
-                className={clsx(
-                  form.formState.errors.email &&
-                    form.formState.touchedFields.email &&
-                    'border-error-main',
-                )}
                 control={form.control}
-                isDisplayError={true}
+                showError={true}
               />
             </div>
 

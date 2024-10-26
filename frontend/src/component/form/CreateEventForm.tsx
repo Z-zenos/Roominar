@@ -17,7 +17,12 @@ import type {
   ErrorResponse400,
   TicketItem,
 } from '@/src/lib/api/generated';
-import { EventStatusCode, TicketStatusCode } from '@/src/lib/api/generated';
+import {
+  CityCode,
+  EventMeetingToolCode,
+  EventStatusCode,
+  TicketStatusCode,
+} from '@/src/lib/api/generated';
 import toast from 'react-hot-toast';
 import type { PublishEventFormSchema } from '@/src/schemas/event/CreateEventFormSchema';
 import publishEventFormSchema from '@/src/schemas/event/CreateEventFormSchema';
@@ -25,15 +30,9 @@ import {
   useListingTicketsOfEventQuery,
   usePublishEventMutation,
 } from '@/src/api/event.api';
-import clsx from 'clsx';
 import ImageUploader from '../common/Upload/ImageUploader';
 import { styles } from '@/src/constant/styles.constant';
 import { useTranslations } from 'next-intl';
-import { cn, toSelectItem } from '@/src/util/app.util';
-import {
-  CityCodeMappings,
-  EventMeetingToolCodeMappings,
-} from '@/src/constant/code.constant';
 import type { ChipProps } from '@nextui-org/react';
 import {
   Button,
@@ -72,10 +71,11 @@ import { useListingSurveyOptionsQuery } from '@/src/api/survey.api';
 import CreateTicketForm from './CreateTicketForm';
 import CreateTargetForm from './CreateTargetForm';
 import { useListingTargetOptionsQuery } from '@/src/api/target.api';
+import { cn, optionify } from '@/src/util/app.util';
 
-const LexicalEditor = dynamic(() => import('../editor/app/app'), {
-  ssr: false,
-});
+// const LexicalEditor = dynamic(() => import('../editor/app/app'), {
+//   ssr: false,
+// });
 
 const statusColorMap: Record<string, ChipProps['color']> = {
   [TicketStatusCode.Available]: 'success',
@@ -254,55 +254,55 @@ export default function CreateEventForm() {
         >
           <div className='grid grid-cols-2 gap-6 [&>div]:w-full bg-white rounded-md p-6 shadow-md col-span-9 max-w-[1000px]'>
             <div className='col-span-2'>
-              <FormCustomLabel
-                htmlFor='name'
-                required
-              />
               <FormInput
                 id='name'
                 name='name'
+                label='name'
+                required
                 placeholder='event name'
                 control={form.control}
-                isDisplayError={true}
-                className={clsx(
-                  form.formState.errors.name &&
-                    form.formState.touchedFields.name &&
-                    'border-error-main',
-                )}
+                showError={true}
               />
             </div>
             <div>
-              <FormCustomLabel htmlFor='startAt' />
               <FormDateTimePicker
                 name='startAt'
+                label='startAt'
+                required
                 control={form.control}
               />
             </div>
             <div>
-              <FormCustomLabel htmlFor='endAt' />
               <FormDateTimePicker
                 name='endAt'
+                label='endAt'
+                required
                 control={form.control}
               />
             </div>
 
             <div>
-              <FormCustomLabel htmlFor='applicationStartAt' />
               <FormDateTimePicker
                 name='applicationStartAt'
+                label='applicationStartAt'
+                required
                 control={form.control}
               />
             </div>
             <div>
-              <FormCustomLabel htmlFor='applicationEndAt' />
               <FormDateTimePicker
                 name='applicationEndAt'
+                label='applicationEndAt'
+                required
                 control={form.control}
               />
             </div>
 
             <div className='col-span-2'>
-              <FormCustomLabel htmlFor='coverImageUrl' />
+              <FormCustomLabel
+                htmlFor='coverImageUrl'
+                label='coverImageUrl'
+              />
 
               <ImageUploader
                 name='coverImageUrl'
@@ -347,26 +347,22 @@ export default function CreateEventForm() {
                   <FaChevronRight className='mx-4' />
                 </span>
                 <div>
-                  <FormCustomLabel htmlFor='meetingToolCode' />
                   <FormSelect
                     name='meetingToolCode'
+                    label='meetingToolCode'
                     control={form.control}
-                    data={toSelectItem(EventMeetingToolCodeMappings)}
+                    options={optionify(EventMeetingToolCode)}
+                    i18nPath='code.event.meetingTool'
                   />
                 </div>
                 <div className='grow'>
-                  <FormCustomLabel htmlFor='meetingUrl' />
                   <FormInput
                     id='meetingUrl'
                     name='meetingUrl'
+                    label='meetingUrl'
                     placeholder='https://meet.google.com/ass-asfas-12'
                     control={form.control}
-                    isDisplayError={true}
-                    className={clsx(
-                      form.formState.errors.meetingUrl &&
-                        form.formState.touchedFields.meetingUrl &&
-                        'border-error-main',
-                    )}
+                    showError={true}
                   />
                 </div>
               </div>
@@ -394,26 +390,22 @@ export default function CreateEventForm() {
                   <FaChevronRight className='mx-4' />
                 </span>
                 <div>
-                  <FormCustomLabel htmlFor='organizeCityCode' />
                   <FormSelect
                     name='organizeCityCode'
+                    label='organizeCityCode'
                     control={form.control}
-                    data={toSelectItem(CityCodeMappings)}
+                    options={optionify(CityCode)}
+                    i18nPath='code.city'
                   />
                 </div>
                 <div className='grow'>
-                  <FormCustomLabel htmlFor='organizeAddress' />
                   <FormInput
                     id='organizeAddress'
                     name='organizeAddress'
+                    label='organizeAddress'
                     placeholder='12 Hồ Chí Minh, Hoàn Kiếm, Hà Nội'
                     control={form.control}
-                    isDisplayError={true}
-                    className={clsx(
-                      form.formState.errors.organizeAddress &&
-                        form.formState.touchedFields.organizeAddress &&
-                        'border-error-main',
-                    )}
+                    showError={true}
                   />
                 </div>
               </div>
@@ -436,21 +428,14 @@ export default function CreateEventForm() {
               Tickets 🎟
             </h3>
             <div>
-              <FormCustomLabel
-                htmlFor='applicationNumber'
-                required
-              />
               <FormInput
                 id='applicationNumber'
                 name='applicationNumber'
+                label='applicationNumber'
+                required
                 placeholder='100'
                 control={form.control}
-                isDisplayError={true}
-                className={clsx(
-                  form.formState.errors.applicationNumber &&
-                    form.formState.touchedFields.applicationNumber &&
-                    'border-error-main',
-                )}
+                showError={true}
                 type='number'
               />
             </div>
@@ -513,16 +498,13 @@ export default function CreateEventForm() {
             </h3>
 
             <div className='col-span-1'>
-              <FormCustomLabel
-                htmlFor='survey'
-                required
-              />
-
               <FormSelect
                 name='surveyId'
                 control={form.control}
-                placeholer='Select survey'
-                data={surveyOptions?.map((so) => ({
+                placeholder='Select survey'
+                label='survey'
+                required
+                options={surveyOptions?.map((so) => ({
                   value: so.id + '',
                   label: `${so.name} (${so.questionNumber} questions)`,
                 }))}
@@ -531,17 +513,14 @@ export default function CreateEventForm() {
             </div>
 
             <div className='col-span-1'>
-              <FormCustomLabel
-                htmlFor='target'
-                required
-              />
-
               <div onClick={() => refetchTargetOptions({})}>
                 <FormSelect
                   name='targetId'
                   control={form.control}
-                  placeholer='Select target'
-                  data={targetOptions?.map((to) => ({
+                  label='target'
+                  required
+                  placeholder='Select target'
+                  options={targetOptions?.map((to) => ({
                     value: to.id + '',
                     label: `${to.name}`,
                   }))}
@@ -558,29 +537,22 @@ export default function CreateEventForm() {
             </div>
 
             <div className='col-span-2 mt-4'>
-              <FormCustomLabel
-                htmlFor='eventComment'
-                required
-              />
               <FormTextarea
                 id='comment'
                 name='comment'
+                label='eventComment'
+                required
                 placeholder='Enter comment of organization for audience when they apply'
                 control={form.control}
-                isDisplayError={true}
-                className={clsx(
-                  form.formState.errors.comment &&
-                    form.formState.touchedFields.comment &&
-                    'border-error-main',
-                )}
+                showError={true}
               />
             </div>
 
             <div className='col-span-2'>
-              <FormCustomLabel htmlFor='tags' />
               <FormTagsInput
                 title='tags'
                 name='tags'
+                label='tags'
                 control={form.control}
                 data={tagData}
               />

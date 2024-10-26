@@ -5,7 +5,7 @@ import type { ReadonlyURLSearchParams } from 'next/navigation';
 import queryString from 'query-string';
 import { twMerge } from 'tailwind-merge';
 import dayjs from 'dayjs';
-import type { SelectItem } from '../type/SelectItem';
+import type Option from '../type/Option';
 
 export const parseErrorMessage = (errorMessage?: string) => {
   const parts = errorMessage?.split('\n');
@@ -104,19 +104,17 @@ export function formatEventDate(datetime: Date) {
   return dayjs(datetime).format('YYYY MMM d - HH:MM');
 }
 
-export function parseCode(code: string) {
-  const words = code.toLowerCase().split('_');
-  const capitalizedWords = words.map(
-    (word) => word.charAt(0).toUpperCase() + word.slice(1),
-  );
-  return capitalizedWords.join(' ');
-}
-
-export function toSelectItem(obj: { [key: string]: string }) {
-  return Object.keys(obj).map((key: string) => ({
-    value: key,
-    label: obj[key],
-  })) as SelectItem[];
+export function optionify(
+  options: { [key: string]: string } | string[],
+): Option[] {
+  if (Array.isArray(options)) {
+    return options.map((opt) => ({ value: opt, label: opt }));
+  } else if (options instanceof Object) {
+    return Object.keys(options).map((key: string) => ({
+      value: key,
+      label: options[key],
+    }));
+  }
 }
 
 export function groupIntoPairs(arr: any) {
@@ -142,11 +140,10 @@ export function matchRoute(route: string, pathname: string) {
   return routeRegex.test(pathname);
 }
 
-
-export function hexToRgba (hex: string, alpha: number) {
+export function hexToRgba(hex: string, alpha: number) {
   const r = parseInt(hex.slice(1, 3), 16);
   const g = parseInt(hex.slice(3, 5), 16);
   const b = parseInt(hex.slice(5, 7), 16);
 
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-};
+}

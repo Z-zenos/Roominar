@@ -132,7 +132,7 @@ class EventSortByCode(str, Enum):
     START_AT = "START_AT"
     PUBLISHED_AT = "PUBLISHED_AT"
     APPLICATION_END_AT = "APPLICATION_END_AT"
-    RECOMMEDATION = "RECOMMEDATION"
+    RECOMMENDATION = "RECOMMENDATION"
 
 
 class QuestionTypeCode(str, Enum):

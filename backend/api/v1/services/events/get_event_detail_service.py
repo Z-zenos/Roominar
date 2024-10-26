@@ -31,14 +31,12 @@ async def get_event_detail(db: Session, current_user: User, slug: str):
                 Organization.contact_url.label("organization_contact_url"),
                 Organization.avatar_url.label("organization_avatar_url"),
                 Organization.description.label("organization_description"),
-                Survey.name.label("survey_name"),
             )
             .where(
                 Event.slug == slug,
                 Event.published_at.isnot(None),
             )
             .join(Organization, Event.organization_id == Organization.id)
-            .outerjoin(Survey, Event.survey_id == Survey.id)
         )
         .mappings()
         .one_or_none()
@@ -52,7 +50,11 @@ async def get_event_detail(db: Session, current_user: User, slug: str):
 
     event.update(
         {
-            "survey": _get_survey_detail(db, event["survey_id"], event["survey_name"]),
+            "survey": (
+                _get_survey_detail(db, event["survey_id"])
+                if event["survey_id"]
+                else None
+            ),
             "tickets": _get_tickets(db, event["id"]),
             "organization_contact_url": event["organization_contact_url"],
             "applied_number": _get_applied_number(db, event["id"]),
@@ -147,22 +149,29 @@ def _get_event_tags(db: Session, event_id: int):
     return event_tags
 
 
-def _get_survey_detail(db: Session, survey_id: int, survey_name: str):
+def _get_survey_detail(db: Session, survey_id: int):
+    survey = db.get(Survey, survey_id)
+
     questions = db.exec(
         select(Question)
         .where(Question.survey_id == survey_id)
         .order_by(Question.order_number)
     ).fetchall()
 
-    question_answer = _get_question_answer(db, questions)
+    question_answers = _get_question_answers(db, questions)
     return SurveyDetail(
         id=survey_id,
-        name=survey_name,
-        question_anwers=question_answer,
+        name=survey.name,
+        description=survey.description,
+        status_code=survey.status_code,
+        question_anwers=question_answers,
+        start_at=survey.start_at,
+        end_at=survey.end_at,
+        max_response_number=survey.max_response_number,
     )
 
 
-def _get_question_answer(db: Session, questions: list[Question]):
+def _get_question_answers(db: Session, questions: list[Question]):
     question_answers = {}
     for question in questions:
         question_answers[question.id] = question.__dict__

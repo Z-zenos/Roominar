@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
-  FormCustomLabel,
   FormDateTimePicker,
   FormInput,
   FormTextarea,
@@ -18,7 +17,6 @@ import toast from 'react-hot-toast';
 import type { CreateSurveyFormSchema } from '@/src/schemas/survey/CreateSurveyFormSchema';
 import createSurveyFormSchema from '@/src/schemas/survey/CreateSurveyFormSchema';
 import { useCreateSurveyMutation } from '@/src/api/survey.api';
-import clsx from 'clsx';
 import CreateQuestion, {
   DEFAULT_QUESTION_ANSWER,
 } from '../common/QuestionAnswer/CreateQuestion';
@@ -85,65 +83,47 @@ export default function CreateSurveyForm() {
       >
         <div className='grid grid-cols-2 gap-6 [&>div]:w-full bg-white rounded-md p-6 shadow-md col-span-9 max-w-[1000px]'>
           <div className='col-span-2'>
-            <FormCustomLabel
-              htmlFor='name'
-              required
-            />
             <FormInput
               id='name'
               name='name'
+              label='name'
+              required
               placeholder='survey name'
               control={form.control}
-              isDisplayError={true}
-              className={clsx(
-                form.formState.errors.name &&
-                  form.formState.touchedFields.name &&
-                  'border-error-main',
-              )}
+              showError={true}
             />
           </div>
           <div>
-            <FormCustomLabel htmlFor='startAt' />
             <FormDateTimePicker
               name='startAt'
+              label='startAt'
               control={form.control}
             />
           </div>
           <div>
-            <FormCustomLabel htmlFor='endAt' />
             <FormDateTimePicker
               name='endAt'
+              label='endAt'
               control={form.control}
             />
           </div>
 
           <div className='col-span-2'>
-            <FormCustomLabel htmlFor='description' />
             <FormTextarea
               id='description'
               name='description'
+              label='description'
               placeholder='Describe something about this survey...'
               control={form.control}
-              className={clsx(
-                form.formState.errors.description &&
-                  form.formState.touchedFields.description &&
-                  'border-error-main',
-              )}
             />
           </div>
           <div>
-            <FormCustomLabel htmlFor='maxResponseNumber' />
-
             <FormInput
               id='maxResponseNumber'
               name='maxResponseNumber'
+              label='maxResponseNumber'
               placeholder='100'
               control={form.control}
-              className={clsx(
-                form.formState.errors.maxResponseNumber &&
-                  form.formState.touchedFields.maxResponseNumber &&
-                  'border-error-main',
-              )}
             />
           </div>
 

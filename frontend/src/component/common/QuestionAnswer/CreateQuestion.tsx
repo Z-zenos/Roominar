@@ -10,8 +10,6 @@ import type {
 } from 'react-hook-form';
 import { useFieldArray, type Control } from 'react-hook-form';
 import { FormCustomLabel, FormSelect } from '../../form/Form';
-import { toSelectItem } from '@/src/util/app.util';
-import { QuestionTypeCodeMappings } from '@/src/constant/code.constant';
 import CreateAnswer, { DEFAULT_ANSWER } from './CreateAnswer';
 import { Button, Input, useDisclosure } from '@nextui-org/react';
 import { GoTrash } from 'react-icons/go';
@@ -19,6 +17,7 @@ import { QuestionTypeCode } from '@/src/lib/api/generated';
 import { IoMdAddCircleOutline } from 'react-icons/io';
 import ConfirmDialog from '../Dialog/ConfirmDialog';
 import type { CreateSurveyFormSchema } from '@/src/schemas/survey/CreateSurveyFormSchema';
+import { optionify } from '@/src/util/app.util';
 
 interface CreateQuestionProps {
   control: Control<any>;
@@ -59,7 +58,10 @@ function CreateQuestion({
             <div className='bg-slate-50 p-6 rounded-md'>
               <div className={clsx(styles.flexStart)}>
                 <span className='font-semibold text-nm'>{index + 1}.</span>
-                <FormCustomLabel htmlFor='question' />
+                <FormCustomLabel
+                  htmlFor='typeCode'
+                  label='question'
+                />
               </div>
 
               <div className='grid grid-cols-10 gap-2'>
@@ -79,8 +81,11 @@ function CreateQuestion({
                       );
                     }
                   }}
-                  data={toSelectItem(QuestionTypeCodeMappings)}
-                  wrapperClassName='max-w-xs col-span-2 h-[42px] mt-3 bg-white'
+                  options={optionify(QuestionTypeCode)}
+                  i18nPath='code.question.type'
+                  classNames={{
+                    wrapper: 'max-w-xs col-span-2 h-[42px] mt-3 bg-white',
+                  }}
                 />
                 <Input
                   variant='underlined'

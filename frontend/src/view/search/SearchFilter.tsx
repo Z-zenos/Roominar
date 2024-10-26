@@ -18,16 +18,20 @@ import {
   IndustryCode,
   type EventsApiSearchEventsRequest,
 } from '@/src/lib/api/generated';
-import { parseCode } from '@/src/util/app.util';
 import { useListingTagsQuery } from '@/src/api/tag.api';
+import { optionify } from '@/src/util/app.util';
 
 interface SearchFilterProps {
   className?: string;
   control: Control<EventsApiSearchEventsRequest>;
-  onSearch: (data: EventsApiSearchEventsRequest) => void;
+  onValueChange: (data: EventsApiSearchEventsRequest) => void;
 }
 
-function SearchFilter({ className, control, onSearch }: SearchFilterProps) {
+function SearchFilter({
+  className,
+  control,
+  onValueChange,
+}: SearchFilterProps) {
   const [showMoreIndustryCodes, setShowMoreIndustryCodes] =
     useState<boolean>(false);
   const { data: tagData } = useListingTagsQuery();
@@ -43,16 +47,13 @@ function SearchFilter({ className, control, onSearch }: SearchFilterProps) {
         <FormCheckBoxList
           name='industryCodes'
           control={control}
-          data={Object.keys(IndustryCode)
-            .slice(
-              0,
-              showMoreIndustryCodes ? Object.keys(IndustryCode).length : 7,
-            )
-            .map((ic: string) => ({
-              value: IndustryCode[ic],
-              label: parseCode(IndustryCode[ic]),
-            }))}
-          onSearch={onSearch}
+          options={optionify(IndustryCode).slice(
+            0,
+            showMoreIndustryCodes ? optionify(IndustryCode).length : 7,
+          )}
+          i18nPath='code.industry'
+          direction='vertical'
+          onValueChange={onValueChange}
         />
         <Link
           className={
@@ -70,7 +71,7 @@ function SearchFilter({ className, control, onSearch }: SearchFilterProps) {
           title='tags'
           name='tags'
           control={control}
-          onSearch={onSearch}
+          onValueChange={onValueChange}
           data={tagData}
         />
       </FilterBox>
@@ -79,55 +80,55 @@ function SearchFilter({ className, control, onSearch }: SearchFilterProps) {
         <FormCheckBox
           name='isFree'
           control={control}
-          onSearch={onSearch}
-          title='Free'
+          onValueChange={onValueChange}
+          label='isFree'
         />
         <FormCheckBox
           name='isPaid'
           control={control}
-          onSearch={onSearch}
-          title='Paid'
+          onValueChange={onValueChange}
+          label='isPaid'
         />
       </FilterBox>
       <FilterBox title='State'>
         <FormCheckBox
           name='isOnline'
           control={control}
-          onSearch={onSearch}
-          title='Online'
+          onValueChange={onValueChange}
+          label='isOnline'
         />
         <FormCheckBox
           name='isOffline'
           control={control}
-          onSearch={onSearch}
-          title='Offline'
+          onValueChange={onValueChange}
+          label='isOffline'
         />
       </FilterBox>
       <FilterBox title='Timeline'>
         <FormCheckBox
           name='today'
           control={control}
-          onSearch={onSearch}
-          title='Today'
+          onValueChange={onValueChange}
+          label='today'
         />
         <FormCheckBox
           name='isApplyOngoing'
           control={control}
-          onSearch={onSearch}
-          title='Opening Application'
+          onValueChange={onValueChange}
+          label='isApplyOngoing'
         />
         <FormCheckBox
           name='isApplyEnded'
           control={control}
-          onSearch={onSearch}
-          title='Closed Application'
+          onValueChange={onValueChange}
+          label='isApplyEnded'
         />
         <Label className='mt-3'>Start date</Label>
         <FormDateRangePicker
           name='start_at_range'
           control={control}
           className='w-full'
-          onSearch={onSearch}
+          onValueChange={onValueChange}
         />
       </FilterBox>
     </div>

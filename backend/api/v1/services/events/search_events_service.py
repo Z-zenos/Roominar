@@ -238,7 +238,10 @@ def _build_filters(db: Session, user: User, query_params: SearchEventsQueryParam
         filters.append(Event.application_end_at >= datetime.now())
         sort_by = Event.application_end_at
 
-    if query_params.sort_by == EventSortByCode.RECOMMEDATION and recommendation_targets:
+    if (
+        query_params.sort_by == EventSortByCode.RECOMMENDATION
+        and recommendation_targets
+    ):
         conditions = []
         rankings = []
 
