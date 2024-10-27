@@ -15,6 +15,7 @@
   "dependencies": {
     "@excalidraw/excalidraw": "^0.17.6",
     "@hookform/resolvers": "^3.9.0",
+    "@internationalized/date": "^3.5.6",
     "@lexical/code": "^0.12.6",
     "@lexical/file": "^0.12.6",
     "@lexical/hashtag": "^0.12.6",

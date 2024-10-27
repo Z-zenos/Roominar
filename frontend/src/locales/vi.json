@@ -71,6 +71,7 @@
         },
         "message": {
             "error": {
+                "required": "[field] không được bỏ trống",
                 "email": "email không hợp lệ",
                 "empty": "[field] không được bỏ trống",
                 "invalid_string": "[field] không hợp lệ",

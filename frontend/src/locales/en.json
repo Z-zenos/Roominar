@@ -71,6 +71,7 @@
         },
         "message": {
             "error": {
+                "required": "[field] is required",
                 "email": "invalid email",
                 "empty": "[field] can't empty",
                 "invalid_string": "invalid [field]",

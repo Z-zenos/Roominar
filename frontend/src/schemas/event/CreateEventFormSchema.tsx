@@ -173,7 +173,7 @@ const eventTicketSchema = z.object({
 });
 
 const eventBaseSchema = z.object({
-  name: z.string().trim().min(1).max(1024),
+  name: z.string().trim().min(1, {message: 'required'}).max(1024),
   description: z.string().trim().min(1),
   coverImageUrl: z.string().url().max(2048),
   survey_id: z.number().nullable(),

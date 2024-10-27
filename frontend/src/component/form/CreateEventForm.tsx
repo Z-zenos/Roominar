@@ -120,13 +120,13 @@ export default function CreateEventForm() {
       survey_id: null,
       targetId: null,
       comment: '',
-      status: EventStatusCode.Draft,
+      status: EventStatusCode.Public,
       tags: [],
 
-      startAt: '',
-      endAt: '',
-      applicationStartAt: '',
-      applicationEndAt: '',
+      startAt: undefined,
+      endAt: undefined,
+      applicationStartAt: undefined,
+      applicationEndAt: undefined,
 
       isOnline: null,
       isOffline: null,
@@ -165,6 +165,8 @@ export default function CreateEventForm() {
     // });
     console.log(data);
   }
+
+  console.log(form.getValues());
 
   const renderCell = useCallback((ticket: TicketItem, columnKey: string) => {
     const cellValue = columnKey !== 'actions' ? ticket[columnKey] : null;

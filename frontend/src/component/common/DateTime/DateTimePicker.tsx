@@ -5,8 +5,9 @@ import { cn } from '@/src/util/app.util';
 import { DatePicker } from '@nextui-org/react';
 import { styles } from '@/src/constant/styles.constant';
 import { TimePickerInput } from './TimePicker';
-import { Label } from '@radix-ui/react-label';
 import { BsClock } from 'react-icons/bs';
+import { FormCustomLabel } from '../../form/Form';
+import { parseDate } from '@internationalized/date';
 
 export interface DateTimePickerProps extends HTMLAttributes<HTMLDivElement> {
   onDateTimeChange?: (date: Date | undefined) => void;
@@ -16,11 +17,10 @@ export interface DateTimePickerProps extends HTMLAttributes<HTMLDivElement> {
 export function DateTimePicker({
   className,
   onDateTimeChange,
-  date,
+  date = new Date(),
 }: DateTimePickerProps) {
   const minuteRef = useRef<HTMLInputElement>(null);
   const hourRef = useRef<HTMLInputElement>(null);
-  const secondRef = useRef<HTMLInputElement>(null);
   return (
     <div className={cn(styles.flexStart, 'gap-3', className)}>
       <DatePicker
@@ -30,38 +30,34 @@ export function DateTimePicker({
         onChange={(val) =>
           onDateTimeChange(new Date(val.year, val.month, val.day))
         }
+        value={parseDate(date.toISOString().split('T')[0])}
+        showMonthAndYearPickers
       />
       <div className='flex items-end gap-2 -mt-5'>
         <div className='grid gap-1 text-center'>
-          <Label
+          <FormCustomLabel
             htmlFor='hours'
-            className='text-xs'
-          >
-            Hours
-          </Label>
+            label='hours'
+          />
           <TimePickerInput
             picker='hours'
             date={date}
             setDate={onDateTimeChange}
-            ref={hourRef}
             onRightFocus={() => minuteRef.current?.focus()}
           />
         </div>
         <span className='text-md font-bold mb-2'>:</span>
         <div className='grid gap-1 text-center'>
-          <Label
+          <FormCustomLabel
             htmlFor='minutes'
-            className='text-xs'
-          >
-            Minutes
-          </Label>
+            label='minutes'
+          />
           <TimePickerInput
             picker='minutes'
             date={date}
             setDate={onDateTimeChange}
             ref={minuteRef}
             onLeftFocus={() => hourRef.current?.focus()}
-            onRightFocus={() => secondRef.current?.focus()}
           />
         </div>
         <div className='flex h-10 items-center'>

@@ -223,16 +223,23 @@ const FormMessage = forwardRef<HTMLParagraphElement, FormMessageProps>(
     const { error, formMessageId } = useFormField();
     let body = undefined;
     if (error) {
-      body = capitalize(
-        t(
-          `message.error.${error.type !== 'custom' ? error.type : error.message}`,
-        ).replace('[field]', t(`label.${label}`)),
-      );
+      if (error?.message === 'required') {
+        body = capitalize(t('message.error.required')).replace(
+          '[field]',
+          label,
+        );
+      } else {
+        body = capitalize(
+          t(
+            `message.error.${error.type !== 'custom' ? error.type : error.message}`,
+          ).replace('[field]', t(`label.${label}`)),
+        );
 
-      if (['too_small', 'too_big'].includes(error.type)) {
-        const match = error?.message?.match(/\d+/);
-        const number = match ? Number(match[0]) : null;
-        body = body.replace('[value]', number);
+        if (['too_small', 'too_big'].includes(error.type)) {
+          const match = error?.message?.match(/\d+/);
+          const value = match ? Number(match[0]) : null;
+          body = body.replace('[value]', value);
+        }
       }
     } else {
       body = children;
@@ -1243,6 +1250,7 @@ const FormDateTimePicker = ({
           <FormControl>
             <DateTimePicker
               className={className}
+              date={field.value}
               onDateTimeChange={(date) => field.onChange(date)}
             />
           </FormControl>

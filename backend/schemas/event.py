@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from fastapi import Query
-from pydantic import BaseModel, Field, ValidationInfo, field_validator
+from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, field_validator
 
 from backend.core.constants import (
     ApplicationStatusCode,
@@ -191,6 +191,8 @@ class ListingMyEventsResponse(PaginationResponse[MyEventItem]):
 
 
 class PublishEventRequest(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+
     name: str = Field(max_length=1024)
 
     start_at: datetime
