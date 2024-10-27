@@ -166,7 +166,7 @@ const eventAddressSchema = z
   );
 
 const eventTicketSchema = z.object({
-  applicationNumber: z.number(),
+  applicationNumber: z.coerce.number(),
   ticketIds: z
     .array(z.number())
     .refine((val) => val.length > 0, { message: 'missingTicket' }),

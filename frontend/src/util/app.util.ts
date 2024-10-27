@@ -104,15 +104,20 @@ export function formatEventDate(datetime: Date) {
   return dayjs(datetime).format('YYYY MMM d - HH:MM');
 }
 
+interface OptionifyOptions {
+  useValueAsKey: boolean;
+}
+
 export function optionify(
-  options: { [key: string]: string } | string[],
+  data: { [key: string]: string } | string[],
+  options: OptionifyOptions = { useValueAsKey: true },
 ): Option[] {
-  if (Array.isArray(options)) {
-    return options.map((opt) => ({ value: opt, label: opt }));
-  } else if (options instanceof Object) {
-    return Object.keys(options).map((key: string) => ({
-      value: key,
-      label: options[key],
+  if (Array.isArray(data)) {
+    return data.map((opt) => ({ value: opt, label: opt }));
+  } else if (data instanceof Object) {
+    return Object.keys(data).map((key: string) => ({
+      value: options?.useValueAsKey ? data[key] : key,
+      label: data[key],
     }));
   }
 }

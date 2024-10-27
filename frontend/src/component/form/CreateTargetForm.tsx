@@ -18,7 +18,7 @@ import { optionify } from '@/src/util/app.util';
 import { useTranslations } from 'next-intl';
 
 function CreateTargetForm() {
-  const t = useTranslations();
+  const t = useTranslations('code');
 
   const form = useForm<CreateTargetFormSchema>({
     mode: 'onChange',
@@ -108,7 +108,7 @@ function CreateTargetForm() {
                     )}
                     onClick={() => handleToggle(field, ic.value as JobTypeCode)}
                   >
-                    {t(`code.industry.${ic.label}`)}
+                    {t(`jobType.${ic.label}`)}
                   </Chip>
                 ))}
               </FormItem>
@@ -146,7 +146,7 @@ function CreateTargetForm() {
                       handleToggle(field, ic.value as IndustryCode)
                     }
                   >
-                    {t(`code.jobType.${ic.label}`)}
+                    {t(`industry.${ic.label}`)}
                   </Chip>
                 ))}
               </FormItem>
