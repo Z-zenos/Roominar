@@ -14,9 +14,8 @@ async def publish_event(
 ):
     try:
         event = db.get(Event, event_id)
-
-        Event.update_by_dict(event, request)
-
+        Event.update_by_dict(event, request.model_dump())
+        print(event)
         event.organization_id = organizer.organization_id
         event.published_at = datetime.now()
         event.status = EventStatusCode.PUBLIC

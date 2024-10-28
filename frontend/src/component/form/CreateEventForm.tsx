@@ -21,6 +21,7 @@ import {
   CityCode,
   EventMeetingToolCode,
   EventStatusCode,
+  PublishEventRequestOrganizeCityCodeEnum,
   TicketStatusCode,
 } from '@/src/lib/api/generated';
 import toast from 'react-hot-toast';
@@ -115,25 +116,26 @@ export default function CreateEventForm() {
     mode: 'all',
     defaultValues: {
       name: '',
-      description: '',
-      coverImageUrl: '',
-      survey_id: null,
-      targetId: null,
+      description: 'ignore description',
+      coverImageUrl:
+        'https://images.squarespace-cdn.com/content/v1/5f4d61e4378d637cba3d29c7/99d54c26-4229-4fa0-99eb-eafd9afdd047/2023_TahoeFoodHub_HolidayBlockParty_Post+%282%29.jpg',
+      surveyId: undefined,
+      targetId: undefined,
       comment: '',
       status: EventStatusCode.Public,
       tags: [],
 
-      startAt: undefined,
-      endAt: undefined,
-      applicationStartAt: undefined,
-      applicationEndAt: undefined,
+      startAt: new Date(),
+      endAt: new Date(),
+      applicationStartAt: new Date(),
+      applicationEndAt: new Date(),
 
-      isOnline: null,
-      isOffline: null,
+      isOnline: undefined,
+      isOffline: undefined,
       organizeAddress: '',
-      organizePlaceName: '',
-      organizeCityCode: null,
-      meetingToolCode: null,
+      // organizePlaceName: '',
+      organizeCityCode: undefined,
+      meetingToolCode: undefined,
       meetingUrl: '',
 
       applicationNumber: 0,
@@ -157,16 +159,33 @@ export default function CreateEventForm() {
   });
 
   function handlePublishEvent(data: PublishEventFormSchema) {
-    // trigger({
-    //   eventId: 0,
-    //   publishEventRequest: {
-    //     ...data,
-    //   },
-    // });
-    console.log(data);
+    trigger({
+      eventId: 11,
+      publishEventRequest: {
+        name: data.name,
+        description: data.description,
+        coverImageUrl: data.coverImageUrl,
+        surveyId: data.surveyId,
+        targetId: data.targetId,
+        comment: data.comment,
+        status: data.status,
+        ticketIds: data.ticketIds,
+        tags: data.tags,
+        applicationNumber: data.applicationNumber,
+        startAt: data.startAt,
+        endAt: data.endAt,
+        applicationEndAt: data.applicationEndAt,
+        applicationStartAt: data.applicationStartAt,
+        isOnline: data.isOnline,
+        isOffline: data.isOffline,
+        organizeAddress: data.organizeAddress,
+        organizeCityCode: PublishEventRequestOrganizeCityCodeEnum.Angiang,
+        organizePlaceName: '12 aH',
+        meetingToolCode: data.meetingToolCode,
+        meetingUrl: data.meetingUrl,
+      },
+    });
   }
-
-  console.log(form.getValues());
 
   const renderCell = useCallback((ticket: TicketItem, columnKey: string) => {
     const cellValue = columnKey !== 'actions' ? ticket[columnKey] : null;
@@ -337,8 +356,6 @@ export default function CreateEventForm() {
                 ),
                 label: 'w-full',
               }}
-              // isSelected={isSelected}
-              // onValueChange={setIsSelected}
               onValueChange={(isSelected) =>
                 form.setValue('isOnline', isSelected)
               }
@@ -357,7 +374,12 @@ export default function CreateEventForm() {
                     i18nPath='code.event.meetingTool'
                   />
                 </div>
-                <div className='grow'>
+                <div
+                  className='grow'
+                  onClick={(e) =>
+                    e.currentTarget.querySelector('input').focus()
+                  }
+                >
                   <FormInput
                     id='meetingUrl'
                     name='meetingUrl'
@@ -400,7 +422,12 @@ export default function CreateEventForm() {
                     i18nPath='code.city'
                   />
                 </div>
-                <div className='grow'>
+                <div
+                  className='grow'
+                  onClick={(e) =>
+                    e.currentTarget.querySelector('input').focus()
+                  }
+                >
                   <FormInput
                     id='organizeAddress'
                     name='organizeAddress'
@@ -576,6 +603,10 @@ export default function CreateEventForm() {
               <button
                 form='create-event-form'
                 className='overflow-hidden w-32 p-2 h-12 bg-black text-white border-none rounded-md text-xm font-bold cursor-pointer relative z-10 group'
+                type='submit'
+                onClick={() =>
+                  console.log(form.getValues(), form.formState.errors)
+                }
               >
                 Publish
                 <FaSquareArrowUpRight className='inline w-5 h-5 mb-1 ml1' />

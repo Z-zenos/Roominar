@@ -27,9 +27,18 @@ export function DateTimePicker({
         className='min-w-[250px]'
         radius='sm'
         aria-label='date input'
-        onChange={(val) =>
-          onDateTimeChange(new Date(val.year, val.month, val.day))
-        }
+        onChange={(val) => {
+          console.log(val);
+          onDateTimeChange(
+            new Date(
+              val.year,
+              val.month - 1,
+              val.day,
+              date.getHours(),
+              date.getMinutes(),
+            ),
+          );
+        }}
         value={parseDate(date.toISOString().split('T')[0])}
         showMonthAndYearPickers
       />

@@ -768,7 +768,6 @@ const FormTagsInput = ({
                               {tagGroup.tags.map((tag: TagItem) => (
                                 <Checkbox
                                   key={`modal-tag-${tag.id}`}
-                                  title={tag.name.toLowerCase()}
                                   id={tag.id + ''}
                                   onCheckedChange={() => {
                                     handleSelectTags(field, tag.id + '');
@@ -776,7 +775,9 @@ const FormTagsInput = ({
                                   defaultChecked={field?.value.includes(
                                     tag.id + '',
                                   )}
-                                />
+                                >
+                                  {tag.name.toLowerCase()}
+                                </Checkbox>
                               ))}
                             </div>
                           </div>

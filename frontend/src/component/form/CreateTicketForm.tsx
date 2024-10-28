@@ -48,12 +48,6 @@ function CreateTicketForm({ eventId }: CreateTicketFormProps) {
     resolver: zodResolver(createTicketFormSchema),
   });
 
-  console.log(
-    form.formState.errors,
-    form.getValues(),
-    typeof form.getValues().quantity,
-  );
-
   const { trigger, isMutating: isCreating } = useCreateTicketMutation({
     onSuccess() {
       toast.success('Create ticket successfully!');
@@ -86,8 +80,6 @@ function CreateTicketForm({ eventId }: CreateTicketFormProps) {
       },
     });
   }
-
-  console.log(form.formState.errors);
 
   return (
     <Form {...form}>

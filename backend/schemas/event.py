@@ -216,13 +216,13 @@ class PublishEventRequest(BaseModel):
 
     meeting_tool_code: EventMeetingToolCode | None
     meeting_url: str | None = Field(max_length=2048)
-    ticket_ids: list[int] = Field([])
+    ticket_ids: list[int] | None = Field([])
     survey_id: int | None
     target_id: int
     comment: str | None
 
     status: EventStatusCode
-    tags: list[int] = None
+    tags: list[int] | None = Field([])
 
     @field_validator("is_online")
     def validate_online_offline(cls, v: str | None, values: ValidationInfo):
