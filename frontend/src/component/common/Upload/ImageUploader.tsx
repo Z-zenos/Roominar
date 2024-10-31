@@ -20,6 +20,7 @@ export interface ImageUploaderProps extends HTMLAttributes<HTMLDivElement> {
   formats?: string[];
   onGetImageUrl?(url: string): void;
   defaultImageUrl?: string;
+  variant?: 'avatar' | 'cover';
 }
 
 const ImageUploader = ({
@@ -30,6 +31,7 @@ const ImageUploader = ({
   formats = ['.png', '.jpeg', '.jpg'],
   onGetImageUrl,
   defaultImageUrl,
+  variant = 'avatar',
 }: ImageUploaderProps) => {
   const u = useUpload(formats, maxFiles, maxSize);
 
@@ -43,10 +45,16 @@ const ImageUploader = ({
         {!u.isFetching && u.image && (
           <Avatar
             isBordered
-            className='transition-transform w-[100px] h-[100px]'
+            className={clsx(
+              'transition-transform',
+              variant === 'avatar'
+                ? 'w-[100px] h-[100px]'
+                : 'w-[700px] h-[350px]',
+            )}
             color='primary'
             name={name}
             src={u?.image?.secure_url}
+            radius={variant === 'cover' ? 'lg' : 'full'}
           />
         )}
         {!u.isFetching && !u.image && (
@@ -57,6 +65,10 @@ const ImageUploader = ({
               htmlFor={name}
               onClick={() => u.inputRef.current?.click()}
               defaultImageUrl={defaultImageUrl}
+              className={clsx(
+                variant === 'cover' &&
+                  'w-[700px] h-[350px] !border-gray-400 rounded-lg',
+              )}
             />
           </div>
         )}

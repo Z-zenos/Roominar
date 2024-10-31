@@ -6,14 +6,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Label } from '../common/Label';
 import clsx from 'clsx';
 import { styles } from '@/src/constant/styles.constant';
-import { JobTypeCodeMapping } from '@/src/constant/code.constant';
-import type {
-  ApiException,
-  ErrorResponse400,
-  TagItem,
+
+import {
+  IndustryCode,
+  JobTypeCode,
+  type ApiException,
+  type ErrorResponse400,
+  type TagItem,
 } from '@/src/lib/api/generated';
-import { IndustryCode } from '@/src/lib/api/generated';
-import { parseCode } from '@/src/util/app.util';
+import { optionify } from '@/src/util/app.util';
 import Tag from '../common/Tag/Tag';
 import { useListingTagsQuery } from '@/src/api/tag.api';
 import TagSkeleton from '../common/Tag/TagSkeleton';
@@ -113,17 +114,18 @@ function VerifyAudienceForm({ token }: VerifyAudienceFormProps) {
         <div className={clsx(styles.between, 'flex-wrap gap-20 mt-8')}>
           <div>
             <div className='mb-6 block'>
-              <FormCustomLabel htmlFor='jobTypeCode' />
+              <FormCustomLabel
+                htmlFor='jobTypeCode'
+                label='jobTypeCode'
+              />
               <h4 className='font-light opacity-80 text-sm'>
                 Explore Opportunities Tailored to Your Profession and <br />
                 Discover Career Paths Suited to Your Skillset.
               </h4>
             </div>
             <FormCombobox
-              data={Object.keys(JobTypeCodeMapping).map((key: string) => ({
-                value: key,
-                label: JobTypeCodeMapping[key],
-              }))}
+              data={optionify(JobTypeCode)}
+              i18nPath='code.jobType'
               name='jobTypeCode'
               control={form.control}
               title='type job'
@@ -134,7 +136,10 @@ function VerifyAudienceForm({ token }: VerifyAudienceFormProps) {
 
           <div>
             <div className='mb-6 block'>
-              <FormCustomLabel htmlFor='industryCode' />
+              <FormCustomLabel
+                htmlFor='industryCode'
+                label='industryCode'
+              />
 
               <h4 className='font-light opacity-80 text-sm'>
                 Navigate Through Industry-Specific Insights and Unlock <br />
@@ -142,10 +147,8 @@ function VerifyAudienceForm({ token }: VerifyAudienceFormProps) {
               </h4>
             </div>
             <FormCombobox
-              data={Object.keys(IndustryCode).map((ic: string) => ({
-                value: IndustryCode[ic],
-                label: parseCode(IndustryCode[ic]),
-              }))}
+              data={optionify(IndustryCode)}
+              i18nPath='code.industry'
               name='industryCode'
               control={form.control}
               title='industry'

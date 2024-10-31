@@ -99,7 +99,6 @@ async def _listing_events(
         .order_by(Event.start_at)
     )
 
-    print(query)
     events = db.exec(query).mappings().all()
 
     result = {event.id: dict(event) for event in events}

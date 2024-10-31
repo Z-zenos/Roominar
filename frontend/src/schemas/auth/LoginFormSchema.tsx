@@ -12,7 +12,7 @@ const loginFormSchema = z.object({
     .min(8)
     .max(255),
 
-  rememberMe: z.boolean().default(true).optional(),
+  rememberMe: z.boolean().default(false).optional(),
 });
 
 type LoginFormSchema = z.infer<typeof loginFormSchema>;

@@ -6,7 +6,7 @@ from backend.schemas.answer import AnswerItem
 
 class QuestionItem(BaseModel):
     id: int
-    questionnaire_id: int
+    survey_id: int
     type_code: QuestionTypeCode
     question: str
     order_number: int

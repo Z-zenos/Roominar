@@ -10,14 +10,11 @@ import {
   FormInput,
   FormTagsInput,
 } from '@/src/component/form/Form';
-import { parseCode } from '@/src/util/app.util';
-import type {
-  ApiException,
-  ErrorResponse400,
-  JobTypeCode,
-} from '@/src/lib/api/generated';
+import { optionify } from '@/src/util/app.util';
+import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
+import { JobTypeCode } from '@/src/lib/api/generated';
 import { IndustryCode } from '@/src/lib/api/generated';
-import { JobTypeCodeMapping } from '@/src/constant/code.constant';
+
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { BiSolidSchool } from 'react-icons/bi';
@@ -119,57 +116,44 @@ export default function UpdateMyProfileForm() {
             )}
           >
             <div className='self-start'>
-              <FormCustomLabel
-                htmlFor='firstName'
-                required
-              />
               <FormInput
                 id='firstName'
                 name='firstName'
+                label='firstName'
+                required
                 placeholder='Kevin'
                 className={clsx(
-                  form.formState.errors.firstName &&
-                    form.formState.touchedFields.firstName &&
-                    'border-error-main',
                   status === 'authenticated' && 'bg-slate-100 text-gray-500',
                 )}
                 control={form.control}
-                isDisplayError={true}
+                showError={true}
               />
             </div>
             <div className='self-start'>
-              <FormCustomLabel
-                htmlFor='lastName'
-                required
-              />
               <FormInput
                 id='lastName'
                 name='lastName'
+                label='lastName'
+                required
                 placeholder='De Bruyne'
                 className={clsx(
-                  form.formState.errors.lastName &&
-                    form.formState.touchedFields.lastName &&
-                    'border-error-main',
                   status === 'authenticated' && 'bg-slate-100 text-gray-500',
                 )}
                 control={form.control}
-                isDisplayError={true}
+                showError={true}
               />
             </div>
             <div className='self-start'>
-              <FormCustomLabel htmlFor='workplaceName' />
               <FormInput
                 id='workplaceName'
                 name='workplaceName'
+                label='workplaceName'
                 placeholder='Place you work or learn'
                 className={clsx(
-                  form.formState.errors.firstName &&
-                    form.formState.touchedFields.firstName &&
-                    'border-error-main',
                   status === 'authenticated' && 'bg-slate-100 text-gray-500',
                 )}
                 control={form.control}
-                isDisplayError={true}
+                showError={true}
                 rightIcon={
                   <BiSolidSchool
                     className='text-primary'
@@ -179,19 +163,16 @@ export default function UpdateMyProfileForm() {
               />
             </div>
             <div className='self-start'>
-              <FormCustomLabel htmlFor='phone' />
               <FormInput
                 id='phone'
                 name='phone'
-                placeholder='Kevin'
+                label='phone'
+                placeholder='0123456789'
                 className={clsx(
-                  form.formState.errors.firstName &&
-                    form.formState.touchedFields.firstName &&
-                    'border-error-main',
                   status === 'authenticated' && 'bg-slate-100 text-gray-500',
                 )}
                 control={form.control}
-                isDisplayError={true}
+                showError={true}
                 rightIcon={
                   <FaPhone
                     className='text-primary'
@@ -201,7 +182,10 @@ export default function UpdateMyProfileForm() {
               />
             </div>
             <div className='self-start'>
-              <FormCustomLabel htmlFor='avatarUrl' />
+              <FormCustomLabel
+                htmlFor='avatarUrl'
+                label='avatarUrl'
+              />
 
               <ImageUploader
                 name='avatarUrl'
@@ -211,12 +195,10 @@ export default function UpdateMyProfileForm() {
             </div>
             &nbsp;
             <div className='self-start'>
-              <FormCustomLabel htmlFor='jobTypeCode' />
               <FormCombobox
-                data={Object.keys(JobTypeCodeMapping).map((key: string) => ({
-                  value: key,
-                  label: JobTypeCodeMapping[key],
-                }))}
+                label='jobTypeCode'
+                data={optionify(JobTypeCode)}
+                i18nPath='code.jobType'
                 name='jobTypeCode'
                 control={form.control}
                 title='type job'
@@ -229,12 +211,10 @@ export default function UpdateMyProfileForm() {
               />
             </div>
             <div className='self-start'>
-              <FormCustomLabel htmlFor='industryCode' />
               <FormCombobox
-                data={Object.keys(IndustryCode).map((ic: string) => ({
-                  value: IndustryCode[ic],
-                  label: parseCode(IndustryCode[ic]),
-                }))}
+                label='industryCode'
+                data={optionify(IndustryCode)}
+                i18nPath='code.industry'
                 name='industryCode'
                 control={form.control}
                 title='industry'
@@ -247,10 +227,10 @@ export default function UpdateMyProfileForm() {
               />
             </div>
             <div className='col-span-2'>
-              <FormCustomLabel htmlFor='tags' />
               <FormTagsInput
                 title='tags'
                 name='tags'
+                label='tags'
                 control={form.control}
                 data={tagData}
               />

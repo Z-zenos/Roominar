@@ -3,22 +3,23 @@ import { forwardRef } from 'react';
 
 import './Input.css';
 import { Link } from '@nextui-org/link';
+import { FormCustomLabel } from '../../form/Form';
 
 export interface CheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
   link?: string;
-  helperText?: string;
   className?: string;
-  title?: string;
+  label?: string;
   onCheckedChange?(checked: boolean): void;
+  i18nPath?: string;
 }
 
 function CustomCheckbox(
   {
     id,
-    title,
+    label,
     link,
-    helperText,
     onCheckedChange,
+    i18nPath,
     children,
     ...props
   }: CheckboxProps,
@@ -46,7 +47,14 @@ function CustomCheckbox(
             htmlFor={id}
             className='text-dark-main dark:text-gray-300 peer-checked:text-primary checkbox-title'
           >
-            {title}
+            {label && (
+              <FormCustomLabel
+                htmlFor={id}
+                label={label}
+                required={props.required}
+                i18nPath={i18nPath}
+              />
+            )}
             {children}
 
             {link && (
@@ -58,14 +66,6 @@ function CustomCheckbox(
               </Link>
             )}
           </label>
-          {helperText && (
-            <p
-              id='helper-checkbox-text'
-              className='text-sm font-normal text-gray-500 dark:text-gray-300'
-            >
-              For orders shipped from $25 in books or $29 in other categories
-            </p>
-          )}
         </div>
       </div>
     </div>

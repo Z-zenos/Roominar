@@ -9,7 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { HiMail } from 'react-icons/hi';
 import clsx from 'clsx';
 import { Link } from '@nextui-org/link';
-import { Form, FormCheckBox, FormCustomLabel, FormInput } from './Form';
+import { Form, FormCheckBox, FormInput } from './Form';
 import Button from '../common/Button/Button';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getCookie, setCookie } from 'cookies-next';
@@ -24,106 +24,93 @@ interface LoginFormProps {
 
 export default function LoginForm({ roleCode }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const searchParams = useSearchParams();
 
   const form = useForm<LoginFormSchema>({
     mode: 'all',
     defaultValues: {
       email: '',
       password: '',
-      rememberMe: true,
+      rememberMe: false,
     },
     resolver: zodResolver(loginFormSchema),
   });
 
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-  const searchParams = useSearchParams();
-
   useEffect(() => {
     form.setValue('rememberMe', getCookie('rememberMe') === 'true');
-  }, [form]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const handleLogin = form.handleSubmit((data: LoginFormSchema) => {
+  const handleLogin = form.handleSubmit(async (data: LoginFormSchema) => {
     if (!isLoading) {
       setIsLoading(true);
 
       setCookie('rememberMe', data.rememberMe?.toString());
 
-      signIn('credentials', {
+      const res = await signIn('credentials', {
         email: data.email,
         password: data.password,
         rememberMe: data.rememberMe,
         redirect: false,
         roleCode: roleCode,
-      }).then(async (value) => {
-        if (value.status == 200) {
-          const session = await getSession();
-          setIsLoading(false);
-          if (searchParams.has('callback')) {
-            router.back();
-          } else {
-            router.push(initialScreen?.[toCamelCase(session.user).roleCode]);
-            router.refresh();
-          }
-          return;
-        }
-        if (value.status == 401) {
-          setIsLoading(false);
-          return toast.error('Invalid email or password.');
-        }
-        if (value.status == 404) {
-          setIsLoading(false);
-          return toast.error('Invalid email or password.');
-        }
       });
+
+      if (res.status === 200) {
+        const session = await getSession();
+        setIsLoading(false);
+        if (searchParams.has('callback')) {
+          router.back();
+        } else {
+          router.push(initialScreen?.[toCamelCase(session.user).roleCode]);
+          router.refresh();
+        }
+        return;
+      }
+      if (res.status == 401) {
+        setIsLoading(false);
+        return toast.error('Invalid email or password.');
+      }
+      if (res.status == 404) {
+        setIsLoading(false);
+        return toast.error('Invalid email or password.');
+      }
     }
   });
 
   return (
     <Form {...form}>
       <form
-        onSubmit={(data) => {
-          if (form.formState.isValid) {
-            setIsLoading(true);
-            handleLogin(data);
-          }
-        }}
+        onSubmit={handleLogin}
         className={clsx('flex items-center justify-center flex-col')}
       >
         <div className='w-full'>
-          <FormCustomLabel
-            htmlFor='email'
-            required
-          />
           <FormInput
             id='email'
             name='email'
             type='email'
+            required
+            label='email'
             rightIcon={
               <HiMail
                 size={20}
                 className='text-primary'
               />
             }
-            placeholder='loginmail@gmail.com'
-            className={clsx(
-              form.formState.errors.email &&
-                form.formState.touchedFields.email &&
-                'border-error-main',
-            )}
+            placeholder='login@gmail.com'
             control={form.control}
-            isDisplayError={true}
+            showError={true}
           />
         </div>
 
         <div className='w-full mt-5 relative mb-1'>
-          <FormCustomLabel
-            htmlFor='password'
-            required
-          />
           <FormInput
             id='password'
             name='password'
+            control={form.control}
+            required
+            label='password'
             type={!showPassword ? 'password' : 'text'}
             rightIcon={
               !showPassword ? (
@@ -141,19 +128,13 @@ export default function LoginForm({ roleCode }: LoginFormProps) {
               )
             }
             placeholder='password!@%'
-            className={clsx(
-              form.formState.errors.password &&
-                form.formState.touchedFields.password &&
-                'border-error-main',
-            )}
-            control={form.control}
-            isDisplayError={true}
+            showError={true}
           />
         </div>
         <div className='w-full mt-5 relative mb-1 flex justify-between items-center'>
           <FormCheckBox
-            id='remember-me'
-            title='Remember me'
+            id='rememberMe'
+            label='rememberMe'
             name='rememberMe'
             control={form.control}
           />
@@ -169,7 +150,7 @@ export default function LoginForm({ roleCode }: LoginFormProps) {
           title='Login'
           type='submit'
           className='w-full mt-5'
-          disabled={!form.formState.isValid || !form.formState.isDirty}
+          disabled={!form.formState.isValid}
           isLoading={isLoading}
         />
         <br />

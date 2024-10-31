@@ -5,7 +5,7 @@ import type { ReadonlyURLSearchParams } from 'next/navigation';
 import queryString from 'query-string';
 import { twMerge } from 'tailwind-merge';
 import dayjs from 'dayjs';
-import type { SelectItem } from '../type/SelectItem';
+import type Option from '../type/Option';
 
 export const parseErrorMessage = (errorMessage?: string) => {
   const parts = errorMessage?.split('\n');
@@ -104,19 +104,22 @@ export function formatEventDate(datetime: Date) {
   return dayjs(datetime).format('YYYY MMM d - HH:MM');
 }
 
-export function parseCode(code: string) {
-  const words = code.toLowerCase().split('_');
-  const capitalizedWords = words.map(
-    (word) => word.charAt(0).toUpperCase() + word.slice(1),
-  );
-  return capitalizedWords.join(' ');
+interface OptionifyOptions {
+  useValueAsKey: boolean;
 }
 
-export function toSelectItem(obj: { [key: string]: string }) {
-  return Object.keys(obj).map((key: string) => ({
-    value: key,
-    label: obj[key],
-  })) as SelectItem[];
+export function optionify(
+  data: { [key: string]: string } | string[],
+  options: OptionifyOptions = { useValueAsKey: true },
+): Option[] {
+  if (Array.isArray(data)) {
+    return data.map((opt) => ({ value: opt, label: opt }));
+  } else if (data instanceof Object) {
+    return Object.keys(data).map((key: string) => ({
+      value: options?.useValueAsKey ? data[key] : key,
+      label: data[key],
+    }));
+  }
 }
 
 export function groupIntoPairs(arr: any) {
@@ -140,4 +143,12 @@ export function maskEmail(email: string) {
 export function matchRoute(route: string, pathname: string) {
   const routeRegex = new RegExp('^' + route.replace(/\[.*?\]/g, '.*') + '$');
   return routeRegex.test(pathname);
+}
+
+export function hexToRgba(hex: string, alpha: number) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }

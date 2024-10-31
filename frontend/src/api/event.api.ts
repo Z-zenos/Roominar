@@ -4,6 +4,8 @@ import type {
   EventsApiDeleteEventBookmarkRequest,
   EventsApiGetEventDetailRequest,
   EventsApiListingRelatedEventsRequest,
+  EventsApiListingTicketsOfEventRequest,
+  EventsApiPublishEventRequest,
   EventsApiSearchEventsRequest,
   OrganizationsApiListingTopOrganizationEventsRequest,
 } from '../lib/api/generated';
@@ -94,4 +96,26 @@ export const useDeleteEventBookmarkMutation = <T>(
     async (_: string, { arg }) => await api.events.deleteEventBookmark(arg),
     options,
   );
+};
+
+export const usePublishEventMutation = <T>(
+  options?: SWRMutationConfiguration<number, T>,
+) => {
+  const api = useApi();
+  const key = 'publish-event';
+  return useSWRMutation<number, T, typeof key, EventsApiPublishEventRequest>(
+    key,
+    async (_: string, { arg }) => await api.events.publishEvent(arg),
+    options,
+  );
+};
+
+export const useListingTicketsOfEventQuery = (
+  params?: EventsApiListingTicketsOfEventRequest,
+) => {
+  const api = useApi();
+  return useQuery({
+    queryKey: ['listing-tickets-of-events'],
+    queryFn: async () => await api.events.listingTicketsOfEvent(params),
+  });
 };

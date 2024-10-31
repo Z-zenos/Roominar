@@ -46,11 +46,7 @@ function RegisterOrganizationForm() {
     resolver: zodResolver(registerOrganizationFormSchema),
   });
 
-  const {
-    trigger,
-    data,
-    isMutating: isLoading,
-  } = useRegisterOrganizationMutation({
+  const { trigger, isMutating: isLoading } = useRegisterOrganizationMutation({
     onSuccess() {
       toast.success('Successfully Account Registration!');
     },
@@ -89,14 +85,12 @@ function RegisterOrganizationForm() {
         className={clsx('grid grid-cols-2 items-center gap-5')}
       >
         <div className='col-span-2'>
-          <FormCustomLabel
-            htmlFor='email'
-            required
-          />
           <FormInput
             id='email'
             name='email'
             type='email'
+            label='email'
+            required
             rightIcon={
               <HiMail
                 size={20}
@@ -105,12 +99,7 @@ function RegisterOrganizationForm() {
             }
             placeholder='registermail@gmail.com'
             control={form.control}
-            isDisplayError={true}
-            className={clsx(
-              form.formState.errors.email &&
-                form.formState.touchedFields.email &&
-                'border-error-main',
-            )}
+            showError={true}
           />
 
           <FormInstructions>
@@ -122,21 +111,14 @@ function RegisterOrganizationForm() {
         </div>
 
         <div className='col-span-2'>
-          <FormCustomLabel
-            htmlFor='organizationName'
-            required
-          />
           <FormInput
             id='organizationName'
             name='organizationName'
+            label='organizationName'
+            required
             placeholder='ABC Company Inc.'
-            className={clsx(
-              form.formState.errors.organizationName &&
-                form.formState.touchedFields.organizationName &&
-                'border-error-main',
-            )}
             control={form.control}
-            isDisplayError={true}
+            showError={true}
           />
         </div>
 
@@ -144,11 +126,12 @@ function RegisterOrganizationForm() {
           <FormCustomLabel
             htmlFor='organizationType'
             required
+            label='organizationType'
           />
 
           <BaseTabs
             defaultValue={form.getValues('organizationType')}
-            className={clsx('w-full mx-auto')}
+            className={clsx('w-full mx-auto mt-2')}
           >
             <TabsList className={clsx('grid grid-cols-2')}>
               <TabsTrigger
@@ -166,7 +149,7 @@ function RegisterOrganizationForm() {
                     '!bg-primary font-bold !text-white',
                 )}
               >
-                {t(OrganizationTypeCode.Personal)}
+                {t(`event.type.${OrganizationTypeCode.Personal}`)}
               </TabsTrigger>
               <TabsTrigger
                 value={OrganizationTypeCode.Business}
@@ -183,7 +166,7 @@ function RegisterOrganizationForm() {
                     '!bg-primary font-bold !text-white',
                 )}
               >
-                {t(OrganizationTypeCode.Business)}
+                {t(`event.type.${OrganizationTypeCode.Business}`)}
               </TabsTrigger>
             </TabsList>
           </BaseTabs>
@@ -191,11 +174,11 @@ function RegisterOrganizationForm() {
           <FormInstructions>
             <li>
               If the organization type is {t(OrganizationTypeCode.Business)}, it
-              will not be possible to change it to{' '}
+              will not be possible to change it to
               {t(OrganizationTypeCode.Personal)}.
             </li>
             <li>
-              On the contrary, you can change it to{' '}
+              On the contrary, you can change it to
               {t(OrganizationTypeCode.Business)} in the future if needed. But
               you will need to provide some more information about your
               business.
@@ -206,32 +189,23 @@ function RegisterOrganizationForm() {
         {isBusiness && (
           <div className='col-span-2 gap-3 grid grid-cols-7'>
             <div className='col-span-4 self-start'>
-              <FormCustomLabel
-                htmlFor='address'
-                required={isBusiness}
-              />
               <FormInput
                 id='address'
                 name='address'
+                label='address'
+                required={isBusiness}
                 placeholder='12, abc street - xyz state, Vietnam'
-                className={clsx(
-                  form.formState.errors.address &&
-                    form.formState.touchedFields.address &&
-                    'border-error-main',
-                )}
                 control={form.control}
-                isDisplayError={true}
+                showError={true}
               />
             </div>
             <div className='col-span-3 self-start'>
-              <FormCustomLabel
-                htmlFor='phone'
-                required={isBusiness}
-              />
               <FormInput
                 id='phone'
                 name='phone'
                 type='tel'
+                label='phone'
+                required={isBusiness}
                 placeholder='0123456789'
                 rightIcon={
                   <MdPhone
@@ -239,20 +213,18 @@ function RegisterOrganizationForm() {
                     className='text-primary'
                   />
                 }
-                className={clsx(
-                  form.formState.errors.phone &&
-                    form.formState.touchedFields.phone &&
-                    'border-error-main',
-                )}
                 control={form.control}
-                isDisplayError={true}
+                showError={true}
               />
             </div>
           </div>
         )}
 
         <div className='col-span-2'>
-          <FormCustomLabel htmlFor='representativeUrl' />
+          <FormCustomLabel
+            htmlFor='representativeUrl'
+            label='representativeUrl'
+          />
           <div className='grid grid-cols-5 items-center'>
             <p className='col-span-2 text-sm underline text-primary'>
               https://roominar.com/organizations/
@@ -262,11 +234,6 @@ function RegisterOrganizationForm() {
                 id='representativeUrl'
                 name='representativeUrl'
                 placeholder='abc'
-                className={clsx(
-                  form.formState.errors.representativeUrl &&
-                    form.formState.touchedFields.representativeUrl &&
-                    'border-error-main',
-                )}
                 control={form.control}
               />
             </div>
@@ -282,52 +249,36 @@ function RegisterOrganizationForm() {
         </div>
 
         <div className='col-span-1'>
-          <FormCustomLabel
-            htmlFor='firstName'
-            required
-          />
           <FormInput
             id='firstName'
             name='firstName'
+            label='firstName'
+            required
             placeholder='Kevin'
-            className={clsx(
-              form.formState.errors.firstName &&
-                form.formState.touchedFields.firstName &&
-                'border-error-main',
-            )}
             control={form.control}
-            isDisplayError={true}
+            showError={true}
           />
         </div>
 
         <div className='col-span-1 self-start'>
-          <FormCustomLabel
-            htmlFor='lastName'
-            required
-          />
           <FormInput
             id='lastName'
             name='lastName'
+            label='lastName'
+            required
             placeholder='De Bruyne'
-            className={clsx(
-              form.formState.errors.lastName &&
-                form.formState.touchedFields.lastName &&
-                'border-error-main',
-            )}
             control={form.control}
-            isDisplayError={true}
+            showError={true}
           />
         </div>
 
         <div className='col-span-2 grid grid-cols-2 gap-3'>
           <div className='self-start'>
-            <FormCustomLabel
-              htmlFor='password'
-              required
-            />
             <FormInput
               id='password'
               name='password'
+              label='password'
+              required
               type={!showPassword ? 'password' : 'text'}
               rightIcon={
                 !showPassword ? (
@@ -345,23 +296,16 @@ function RegisterOrganizationForm() {
                 )
               }
               placeholder='password!@%'
-              className={clsx(
-                form.formState.errors.password &&
-                  form.formState.touchedFields.password &&
-                  'border-error-main',
-              )}
               control={form.control}
-              isDisplayError={true}
+              showError={true}
             />
           </div>
           <div className='self-start'>
-            <FormCustomLabel
-              htmlFor='confirmPassword'
-              required
-            />
             <FormInput
               id='confirmPassword'
               name='confirmPassword'
+              label='confirmPassword'
+              required
               type={!showConfirmPassword ? 'password' : 'text'}
               rightIcon={
                 !showConfirmPassword ? (
@@ -379,13 +323,8 @@ function RegisterOrganizationForm() {
                 )
               }
               placeholder='password!@%'
-              className={clsx(
-                form.formState.errors.confirmPassword &&
-                  form.formState.touchedFields.confirmPassword &&
-                  'border-error-main',
-              )}
               control={form.control}
-              isDisplayError={true}
+              showError={true}
             />
           </div>
         </div>

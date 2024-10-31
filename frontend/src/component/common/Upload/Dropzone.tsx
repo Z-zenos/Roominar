@@ -13,6 +13,7 @@ type DropzoneProps = {
   onInputProps: <T extends DropzoneInputProps>(props?: T) => T;
   onClick: () => void;
   defaultImageUrl?: string;
+  className?: string;
 };
 
 export const Dropzone: FC<DropzoneProps> = ({
@@ -21,6 +22,7 @@ export const Dropzone: FC<DropzoneProps> = ({
   htmlFor,
   onClick,
   defaultImageUrl,
+  className,
 }) => {
   return (
     <label
@@ -31,7 +33,9 @@ export const Dropzone: FC<DropzoneProps> = ({
         isActive
           ? 'border-pink-300 bg-pink-50'
           : 'border-gray-600 bg-slate-50 hover:border-blue-main',
-        defaultImageUrl ? '' : ' overflow-hidden  p-8 border-2',
+        defaultImageUrl ? '' : 'overflow-hidden p-8 border-2',
+        'flex justify-center items-center',
+        className,
       )}
     >
       <input {...onInputProps()} />
@@ -44,7 +48,7 @@ export const Dropzone: FC<DropzoneProps> = ({
           src={defaultImageUrl}
         />
       ) : (
-        <PhotoIcon className='fill-gray-600 w-8 h-8 group-hover:fill-blue-main' />
+        <PhotoIcon className='fill-gray-600 w-[30%] h-[30%] min-h-8 min-w-8 group-hover:fill-blue-main' />
       )}
     </label>
   );

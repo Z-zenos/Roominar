@@ -30,6 +30,12 @@ class ErrorCode:
     ERR_INVALID_REVERT_EMAIL_TOKEN = "ERR_INVALID_REVERT_EMAIL_TOKEN"
     ERR_APPLICATION_NOT_FOUND = "ERR_APPLICATION_NOT_FOUND"
     ERR_MISSING_FIELDS = "ERR_MISSING_FIELDS"
+    ERR_EVENT_NEIHER_ONLINE_NOR_OFFLINE = "ERR_EVENT_NEIHER_ONLINE_NOR_OFFLINE"
+    ERR_OFFLINE_EVENT_MISSING_ADDRESS = "ERR_OFFLINE_EVENT_MISSING_ADDRESS"
+    ERR_ONLINE_EVENT_MISSING_ADDRESS = "ERR_ONLINE_EVENT_MISSING_ADDRESS"
+    ERR_SURVEY_INVALID_START_END_DATE = "ERR_SURVEY_INVALID_START_END_DATE"
+    ERR_SURVEY_NAME_ALREADY_EXISTED = "ERR_SURVEY_NAME_ALREADY_EXISTED"
+    ERR_TARGET_ALREADY_EXISTED = "ERR_TARGET_ALREADY_EXISTED"
 
 
 class ErrorMessage:
@@ -62,3 +68,13 @@ class ErrorMessage:
     ERR_INVALID_REVERT_EMAIL_TOKEN = "Invalid revert email token."
     ERR_APPLICATION_NOT_FOUND = "The application doesn't exist."
     ERR_MISSING_FIELDS = "Missing some important field data."
+    ERR_EVENT_NEIHER_ONLINE_NOR_OFFLINE = (
+        "You must select either online, offline, or both for the event format."
+    )
+    ERR_OFFLINE_EVENT_MISSING_ADDRESS = (
+        "Missing place, city or address of offline event."
+    )
+    ERR_ONLINE_EVENT_MISSING_ADDRESS = "Missing meeting tool, url of online event."
+    ERR_SURVEY_INVALID_START_END_DATE = "Survey end date must greater than start date."
+    ERR_SURVEY_NAME_ALREADY_EXISTED = "The survey name already existed."
+    ERR_TARGET_ALREADY_EXISTED = "The target already existed."

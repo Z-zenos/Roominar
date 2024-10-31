@@ -9,3 +9,4 @@ class Answer(BaseModel, table=True):
     question_id: int = Field(foreign_key="questions.id")
     answer: str = Field(sa_type=String(1024))
     order_number: int
+    is_correct: bool

@@ -14,10 +14,10 @@ import {
   CommandItem,
   CommandList,
 } from './Command';
-import type { SelectItem } from '@/src/type/SelectItem';
+import type Option from '@/src/type/Option';
 
 export interface ComboboxProps {
-  data?: SelectItem[];
+  data?: Option[];
   title?: string;
 }
 

@@ -243,7 +243,7 @@ function EventDetail({ slug }: EventDetailProps) {
           >
             <div>
               <h4 className='text-green-500 font-semibold text-md'>
-                Social Media Share{' '}
+                Social Media Share
               </h4>
               <div
                 className={clsx(styles.between, 'mt-4 [&>*]:cursor-pointer')}
@@ -523,7 +523,7 @@ function EventDetail({ slug }: EventDetailProps) {
                             {topOrganizationEvent.name}
                           </h3>
                           <p className='text-ss font-light opacity-65'>
-                            Start at{' '}
+                            Start at
                             {formatEventDate(topOrganizationEvent.startAt)}
                           </p>
                         </div>
@@ -578,7 +578,7 @@ function EventDetail({ slug }: EventDetailProps) {
                             {relatedEventPair[0]?.name}
                           </h3>
                           <p className='text-ss font-light opacity-65'>
-                            Start at{' '}
+                            Start at
                             {formatEventDate(relatedEventPair[0]?.startAt)}
                           </p>
                         </div>
@@ -595,7 +595,7 @@ function EventDetail({ slug }: EventDetailProps) {
                             {relatedEventPair[1]?.name}
                           </h3>
                           <p className='text-ss font-light opacity-65'>
-                            Start at{' '}
+                            Start at
                             {formatEventDate(relatedEventPair[1]?.startAt)}
                           </p>
                         </div>

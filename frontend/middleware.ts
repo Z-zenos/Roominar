@@ -22,7 +22,14 @@ export const pathPermissionMaster = {
     '/organization/register',
   ],
   SPEAKER: ['/login', '/organization/login'],
-  ORGANIZER: ['/login', '/organization/events', '/organization/overview'],
+  ORGANIZER: [
+    '/login',
+    '/organization/events',
+    '/organization/overview',
+    '/organization/events/create',
+    '/organization/surveys',
+    '/organization/surveys/create',
+  ],
   ADMIN: ['/admin/users', '/admin/organizers', '/login', '/organization/login'],
   GUEST: [
     '/login',

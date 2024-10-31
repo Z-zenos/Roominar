@@ -5,8 +5,8 @@ from .event import Event
 from .event_tag import EventTag
 from .organization import Organization
 from .question import Question
-from .question_answer_result import QuestionAnswerResult
-from .questionnaire import Questionnaire
+from .survey import Survey
+from .survey_response_result import SurveyResponseResult
 from .tag import Tag
 from .tag_group import TagGroup
 from .target import Target
@@ -20,7 +20,7 @@ all = (
     Event,
     EventTag,
     Organization,
-    Questionnaire,
+    Survey,
     TagGroup,
     Tag,
     Target,
@@ -28,6 +28,6 @@ all = (
     UserTag,
     User,
     Answer,
-    QuestionAnswerResult,
+    SurveyResponseResult,
     Question,
 )

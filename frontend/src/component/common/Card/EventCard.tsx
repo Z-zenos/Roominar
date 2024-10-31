@@ -116,8 +116,8 @@ function EventCard({
               {event.organizeAddress}
             </p>
             <span className='flex items-center text-ss gap-1 my-2'>
-              <MdOutlineAccessTime className='text-nm' />{' '}
-              {formatEventDate(event.startAt)}{' '}
+              <MdOutlineAccessTime className='text-nm' />
+              {formatEventDate(event.startAt)}
               {direction === 'horizontal' &&
                 '〜' + formatEventDate(event.endAt)}
             </span>
@@ -322,7 +322,7 @@ function EventCard({
                 <ConfirmDialog
                   content={
                     <p>
-                      Are you sure you want to cancel your application for event{' '}
+                      Are you sure you want to cancel your application for event
                       <span className='text-danger-500 underline'>
                         {event?.name}
                       </span>

@@ -1,10 +1,11 @@
 from datetime import datetime
 
 from fastapi import Query
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, field_validator
 
 from backend.core.constants import (
     ApplicationStatusCode,
+    CityCode,
     EventMeetingToolCode,
     EventSortByCode,
     EventStatusCode,
@@ -12,8 +13,10 @@ from backend.core.constants import (
     JobTypeCode,
     MyEventStatusCode,
 )
+from backend.core.error_code import ErrorCode, ErrorMessage
+from backend.core.exception import BadRequestException
 from backend.schemas.common import PaginationResponse
-from backend.schemas.questionnaire import QuestionnaireDetail
+from backend.schemas.survey import SurveyDetail
 from backend.schemas.tag import TagItem
 from backend.schemas.ticket import TicketItem
 
@@ -107,7 +110,7 @@ class GetEventDetailResponse(BaseModel):
     status: EventStatusCode
     application_form_url: str | None = None
     tags: list[TagItem] = Field([])
-    questionnaire: QuestionnaireDetail | None
+    survey: SurveyDetail | None
     view_number: int | None = None
 
 
@@ -182,3 +185,68 @@ class ListingMyEventsQueryParams(BaseModel):
 
 class ListingMyEventsResponse(PaginationResponse[MyEventItem]):
     pass
+
+
+# class DraftEventRequest(BaseModel):
+
+
+class PublishEventRequest(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    name: str = Field(max_length=1024)
+
+    start_at: datetime
+    end_at: datetime
+    application_start_at: datetime
+    application_end_at: datetime
+
+    application_number: int
+    cover_image_url: str = Field(max_length=2048)
+    gallery: list[str] | None = Field([])
+
+    description: str
+    description_image_urls: list[str] | None = Field([])
+
+    is_offline: bool | None
+    is_online: bool | None
+
+    organize_place_name: str | None = Field(max_length=255)
+    organize_city_code: CityCode | None = Field(max_length=50)
+    organize_address: str | None = Field(max_length=255)
+
+    meeting_tool_code: EventMeetingToolCode | None
+    meeting_url: str | None = Field(max_length=2048)
+    ticket_ids: list[int] | None = Field([])
+    survey_id: int | None
+    target_id: int
+    comment: str | None
+
+    status: EventStatusCode
+    tags: list[int] | None = Field([])
+
+    @field_validator("is_online")
+    def validate_online_offline(cls, v: str | None, values: ValidationInfo):
+        if not v and not values.data.get("is_online"):
+            raise BadRequestException(
+                ErrorCode.ERR_EVENT_NEIHER_ONLINE_NOR_OFFLINE,
+                ErrorMessage.ERR_EVENT_NEIHER_ONLINE_NOR_OFFLINE,
+            )
+        return v
+
+    @field_validator("organize_place_name", "organize_city_code", "organize_address")
+    def validate_offline_address(cls, v: str | None, values: ValidationInfo):
+        if values.data.get("is_offline") and not v:
+            raise BadRequestException(
+                ErrorCode.ERR_OFFLINE_EVENT_MISSING_ADDRESS,
+                ErrorMessage.ERR_OFFLINE_EVENT_MISSING_ADDRESS,
+            )
+
+        return v
+
+    @field_validator("meeting_tool_code", "meeting_url")
+    def validate_online_address(cls, v: str, values: ValidationInfo):
+        if values.data.get("is_online") and not v:
+            raise BadRequestException(
+                ErrorCode.ERR_ONLINE_EVENT_MISSING_ADDRESS,
+                ErrorMessage.ERR_ONLINE_EVENT_MISSING_ADDRESS,
+            )
