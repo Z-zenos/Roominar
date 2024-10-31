@@ -1,11 +1,3 @@
-/**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-
 import {
   $createCodeNode,
   $isCodeNode,
@@ -55,7 +47,6 @@ import type {
 import {
   $createParagraphNode,
   $getNodeByKey,
-  $getRoot,
   $getSelection,
   $INTERNAL_isPointSelection,
   $isElementNode,
@@ -80,20 +71,20 @@ import { useCallback, useEffect, useState } from 'react';
 import * as React from 'react';
 
 import useModal from '../../hooks/useModal';
-import { $createStickyNode } from '../../nodes/StickyNode';
+// import { $createStickyNode } from '../../nodes/StickyNode';
 import DropDown, { DropDownItem } from '../../ui/DropDown';
 import DropdownColorPicker from '../../ui/DropdownColorPicker';
 import { getSelectedNode } from '../../utils/getSelectedNode';
 import { sanitizeUrl } from '../../utils/url';
 import { EmbedConfigs } from '../AutoEmbedPlugin';
 import { INSERT_COLLAPSIBLE_COMMAND } from '../CollapsiblePlugin';
-import { InsertEquationDialog } from '../EquationsPlugin';
+// import { InsertEquationDialog } from '../EquationsPlugin';
 import { INSERT_EXCALIDRAW_COMMAND } from '../ExcalidrawPlugin';
 import { InsertImageDialog } from '../ImagesPlugin';
 import { InsertInlineImageDialog } from '../InlineImagePlugin';
 import InsertLayoutDialog from '../LayoutPlugin/InsertLayoutDialog';
-import { INSERT_PAGE_BREAK } from '../PageBreakPlugin';
-import { InsertPollDialog } from '../PollPlugin';
+// import { INSERT_PAGE_BREAK } from '../PageBreakPlugin';
+// import { InsertPollDialog } from '../PollPlugin';
 import { InsertTableDialog } from '../TablePlugin';
 import { IS_APPLE } from '../../shared/environment';
 
@@ -437,7 +428,6 @@ function ElementFormatDropdown({
   return (
     <DropDown
       disabled={disabled}
-      buttonLabel={formatOption.name}
       buttonIconClassName={`icon ${
         isRTL ? formatOption.iconRTL : formatOption.icon
       }`}
@@ -1087,7 +1077,7 @@ export default function ToolbarPlugin({
               <i className='icon horizontal-rule' />
               <span className='text'>Horizontal Rule</span>
             </DropDownItem>
-            <DropDownItem
+            {/* <DropDownItem
               onClick={() => {
                 activeEditor.dispatchCommand(INSERT_PAGE_BREAK, undefined);
               }}
@@ -1095,7 +1085,7 @@ export default function ToolbarPlugin({
             >
               <i className='icon page-break' />
               <span className='text'>Page Break</span>
-            </DropDownItem>
+            </DropDownItem> */}
             <DropDownItem
               onClick={() => {
                 showModal('Insert Image', (onClose) => (
@@ -1150,7 +1140,7 @@ export default function ToolbarPlugin({
               <i className='icon table' />
               <span className='text'>Table</span>
             </DropDownItem>
-            <DropDownItem
+            {/* <DropDownItem
               onClick={() => {
                 showModal('Insert Poll', (onClose) => (
                   <InsertPollDialog
@@ -1163,7 +1153,7 @@ export default function ToolbarPlugin({
             >
               <i className='icon poll' />
               <span className='text'>Poll</span>
-            </DropDownItem>
+            </DropDownItem> */}
             <DropDownItem
               onClick={() => {
                 showModal('Insert Columns Layout', (onClose) => (
@@ -1179,7 +1169,7 @@ export default function ToolbarPlugin({
               <span className='text'>Columns Layout</span>
             </DropDownItem>
 
-            <DropDownItem
+            {/* <DropDownItem
               onClick={() => {
                 showModal('Insert Equation', (onClose) => (
                   <InsertEquationDialog
@@ -1192,8 +1182,8 @@ export default function ToolbarPlugin({
             >
               <i className='icon equation' />
               <span className='text'>Equation</span>
-            </DropDownItem>
-            <DropDownItem
+            </DropDownItem> */}
+            {/* <DropDownItem
               onClick={() => {
                 editor.update(() => {
                   const root = $getRoot();
@@ -1205,7 +1195,7 @@ export default function ToolbarPlugin({
             >
               <i className='icon sticky' />
               <span className='text'>Sticky Note</span>
-            </DropDownItem>
+            </DropDownItem> */}
             <DropDownItem
               onClick={() => {
                 editor.dispatchCommand(INSERT_COLLAPSIBLE_COMMAND, undefined);

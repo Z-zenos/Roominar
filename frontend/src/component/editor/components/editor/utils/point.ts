@@ -1,10 +1,3 @@
-/**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
 export class Point {
   private readonly _x: number;
   private readonly _y: number;
@@ -22,15 +15,15 @@ export class Point {
     return this._y;
   }
 
-  public equals({x, y}: Point): boolean {
+  public equals({ x, y }: Point): boolean {
     return this.x === x && this.y === y;
   }
 
-  public calcDeltaXTo({x}: Point): number {
+  public calcDeltaXTo({ x }: Point): number {
     return this.x - x;
   }
 
-  public calcDeltaYTo({y}: Point): number {
+  public calcDeltaYTo({ y }: Point): number {
     return this.y - y;
   }
 

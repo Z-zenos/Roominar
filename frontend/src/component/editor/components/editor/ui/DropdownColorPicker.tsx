@@ -1,11 +1,3 @@
-/**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-
 import * as React from 'react';
 
 import ColorPicker from './ColorPicker';
@@ -34,8 +26,12 @@ export default function DropdownColorPicker({
     <DropDown
       {...rest}
       disabled={disabled}
-      stopCloseOnClickSelf={stopCloseOnClickSelf}>
-      <ColorPicker color={color} onChange={onChange} />
+      stopCloseOnClickSelf={stopCloseOnClickSelf}
+    >
+      <ColorPicker
+        color={color}
+        onChange={onChange}
+      />
     </DropDown>
   );
 }

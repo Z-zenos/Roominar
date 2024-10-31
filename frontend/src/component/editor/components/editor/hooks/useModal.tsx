@@ -1,12 +1,4 @@
-/**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-
-import {useCallback, useMemo, useState} from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import * as React from 'react';
 
 import Modal from '../ui/Modal';
@@ -29,12 +21,13 @@ export default function useModal(): [
     if (modalContent === null) {
       return null;
     }
-    const {title, content, closeOnClickOutside} = modalContent;
+    const { title, content, closeOnClickOutside } = modalContent;
     return (
       <Modal
         onClose={onClose}
         title={title}
-        closeOnClickOutside={closeOnClickOutside}>
+        closeOnClickOutside={closeOnClickOutside}
+      >
         {content}
       </Modal>
     );

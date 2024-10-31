@@ -1,22 +1,15 @@
-/**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-import type {Position, InlineImageNode} from './InlineImageNode';
-import type {BaseSelection, LexicalEditor, NodeKey} from 'lexical';
+import type { Position, InlineImageNode } from './InlineImageNode';
+import type { BaseSelection, LexicalEditor, NodeKey } from 'lexical';
 
 import './InlineImageNode.css';
 
-import {AutoFocusPlugin} from '@lexical/react/LexicalAutoFocusPlugin';
-import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
+import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
-import {LexicalNestedComposer} from '@lexical/react/LexicalNestedComposer';
-import {RichTextPlugin} from '@lexical/react/LexicalRichTextPlugin';
-import {useLexicalNodeSelection} from '@lexical/react/useLexicalNodeSelection';
-import {mergeRegister} from '@lexical/utils';
+import { LexicalNestedComposer } from '@lexical/react/LexicalNestedComposer';
+import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
+import { useLexicalNodeSelection } from '@lexical/react/useLexicalNodeSelection';
+import { mergeRegister } from '@lexical/utils';
 import {
   $getNodeByKey,
   $getSelection,
@@ -32,7 +25,7 @@ import {
   SELECTION_CHANGE_COMMAND,
 } from 'lexical';
 import * as React from 'react';
-import {Suspense, useCallback, useEffect, useRef, useState} from 'react';
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 
 import useModal from '../hooks/useModal';
 import FloatingLinkEditorPlugin from '../plugins/FloatingLinkEditorPlugin/index';
@@ -40,11 +33,11 @@ import FloatingTextFormatToolbarPlugin from '../plugins/FloatingTextFormatToolba
 import LinkPlugin from '../plugins/LinkPlugin';
 import Button from '../ui/Button';
 import ContentEditable from '../ui/ContentEditable';
-import {DialogActions} from '../ui/Dialog';
+import { DialogActions } from '../ui/Dialog';
 import Placeholder from '../ui/Placeholder';
 import Select from '../ui/Select';
 import TextInput from '../ui/TextInput';
-import {$isInlineImageNode} from './InlineImageNode';
+import { $isInlineImageNode } from './InlineImageNode';
 
 const imageCache = new Set();
 
@@ -73,7 +66,7 @@ function LazyImage({
   altText: string;
   className: string | null;
   height: 'inherit' | number;
-  imageRef: {current: null | HTMLImageElement};
+  imageRef: { current: null | HTMLImageElement };
   src: string;
   width: 'inherit' | number;
   position: Position;
@@ -91,7 +84,7 @@ function LazyImage({
         height,
         width,
       }}
-      draggable="false"
+      draggable='false'
     />
   );
 }
@@ -122,7 +115,7 @@ export function UpdateInlineImageDialog({
   };
 
   const handleOnConfirm = () => {
-    const payload = {altText, position, showCaption};
+    const payload = { altText, position, showCaption };
     if (node) {
       activeEditor.update(() => {
         node.update(payload);
@@ -133,42 +126,44 @@ export function UpdateInlineImageDialog({
 
   return (
     <>
-      <div style={{marginBottom: '1em'}}>
+      <div style={{ marginBottom: '1em' }}>
         <TextInput
-          label="Alt Text"
-          placeholder="Descriptive alternative text"
+          label='Alt Text'
+          placeholder='Descriptive alternative text'
           onChange={setAltText}
           value={altText}
-          data-test-id="image-modal-alt-text-input"
+          data-test-id='image-modal-alt-text-input'
         />
       </div>
 
       <Select
-        style={{marginBottom: '1em', width: '208px'}}
+        style={{ marginBottom: '1em', width: '208px' }}
         value={position}
-        label="Position"
-        name="position"
-        id="position-select"
-        onChange={handlePositionChange}>
-        <option value="left">Left</option>
-        <option value="right">Right</option>
-        <option value="full">Full Width</option>
+        label='Position'
+        name='position'
+        id='position-select'
+        onChange={handlePositionChange}
+      >
+        <option value='left'>Left</option>
+        <option value='right'>Right</option>
+        <option value='full'>Full Width</option>
       </Select>
 
-      <div className="Input__wrapper">
+      <div className='Input__wrapper'>
         <input
-          id="caption"
-          type="checkbox"
+          id='caption'
+          type='checkbox'
           checked={showCaption}
           onChange={handleShowCaptionChange}
         />
-        <label htmlFor="caption">Show Caption</label>
+        <label htmlFor='caption'>Show Caption</label>
       </div>
 
       <DialogActions>
         <Button
-          data-test-id="image-modal-file-upload-btn"
-          onClick={() => handleOnConfirm()}>
+          data-test-id='image-modal-file-upload-btn'
+          onClick={() => handleOnConfirm()}
+        >
           Confirm
         </Button>
       </DialogActions>
@@ -272,7 +267,7 @@ export default function InlineImageComponent({
   useEffect(() => {
     let isMounted = true;
     const unregister = mergeRegister(
-      editor.registerUpdateListener(({editorState}) => {
+      editor.registerUpdateListener(({ editorState }) => {
         if (isMounted) {
           setSelection(editorState.read(() => $getSelection()));
         }
@@ -355,7 +350,7 @@ export default function InlineImageComponent({
       <>
         <div draggable={draggable}>
           <button
-            className="image-edit-button"
+            className='image-edit-button'
             ref={buttonRef}
             onClick={() => {
               showModal('Update Inline Image', (onClose) => (
@@ -365,7 +360,8 @@ export default function InlineImageComponent({
                   onClose={onClose}
                 />
               ));
-            }}>
+            }}
+          >
             Edit
           </button>
           <LazyImage
@@ -383,7 +379,7 @@ export default function InlineImageComponent({
           />
         </div>
         {showCaption && (
-          <div className="image-caption-container">
+          <div className='image-caption-container'>
             <LexicalNestedComposer initialEditor={caption}>
               <AutoFocusPlugin />
               <LinkPlugin />
@@ -394,10 +390,10 @@ export default function InlineImageComponent({
               <FloatingTextFormatToolbarPlugin />
               <RichTextPlugin
                 contentEditable={
-                  <ContentEditable className="InlineImageNode__contentEditable" />
+                  <ContentEditable className='InlineImageNode__contentEditable' />
                 }
                 placeholder={
-                  <Placeholder className="InlineImageNode__placeholder">
+                  <Placeholder className='InlineImageNode__placeholder'>
                     Enter a caption...
                   </Placeholder>
                 }

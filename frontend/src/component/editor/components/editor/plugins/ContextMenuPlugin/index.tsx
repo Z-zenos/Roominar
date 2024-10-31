@@ -1,12 +1,4 @@
-/**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-
-import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import {
   LexicalContextMenuPlugin,
   MenuOption,
@@ -19,7 +11,7 @@ import {
   CUT_COMMAND,
   PASTE_COMMAND,
 } from 'lexical';
-import {useCallback, useMemo} from 'react';
+import { useCallback, useMemo } from 'react';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
@@ -46,12 +38,13 @@ function ContextMenuItem({
       tabIndex={-1}
       className={className}
       ref={option.setRefElement}
-      role="option"
+      role='option'
       aria-selected={isSelected}
       id={'typeahead-item-' + index}
       onMouseEnter={onMouseEnter}
-      onClick={onClick}>
-      <span className="text">{option.title}</span>
+      onClick={onClick}
+    >
+      <span className='text'>{option.title}</span>
     </li>
   );
 }
@@ -68,7 +61,7 @@ function ContextMenu({
   options: Array<ContextMenuOption>;
 }) {
   return (
-    <div className="typeahead-popover">
+    <div className='typeahead-popover'>
       <ul>
         {options.map((option: ContextMenuOption, i: number) => (
           <ContextMenuItem
@@ -211,18 +204,19 @@ export default function ContextMenuPlugin(): JSX.Element {
           selectOptionAndCleanUp,
           setHighlightedIndex,
         },
-        {setMenuRef},
+        { setMenuRef },
       ) =>
         anchorElementRef.current
           ? ReactDOM.createPortal(
               <div
-                className="typeahead-popover auto-embed-menu"
+                className='typeahead-popover auto-embed-menu'
                 style={{
                   marginLeft: anchorElementRef.current.style.width,
                   userSelect: 'none',
                   width: 200,
                 }}
-                ref={setMenuRef}>
+                ref={setMenuRef}
+              >
                 <ContextMenu
                   options={options}
                   selectedItemIndex={selectedIndex}

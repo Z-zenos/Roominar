@@ -1,12 +1,5 @@
-/**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-import {debounce} from 'lodash-es';
-import {useMemo, useRef} from 'react';
+import { debounce } from 'lodash-es';
+import { useMemo, useRef } from 'react';
 
 export function useDebounce<T extends (...args: never[]) => void>(
   fn: T,
@@ -25,7 +18,7 @@ export function useDebounce<T extends (...args: never[]) => void>(
           }
         },
         ms,
-        {maxWait},
+        { maxWait },
       ),
     [ms, maxWait],
   );

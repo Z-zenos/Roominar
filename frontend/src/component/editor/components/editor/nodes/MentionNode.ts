@@ -1,12 +1,4 @@
-/**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-
-import type {Spread} from 'lexical';
+import type { Spread } from 'lexical';
 
 import {
   type DOMConversionMap,
@@ -88,7 +80,7 @@ export class MentionNode extends TextNode {
     const element = document.createElement('span');
     element.setAttribute('data-lexical-mention', 'true');
     element.textContent = this.__text;
-    return {element};
+    return { element };
   }
 
   static importDOM(): DOMConversionMap | null {

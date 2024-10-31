@@ -1,14 +1,6 @@
-/**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-
 import katex from 'katex';
 import * as React from 'react';
-import {useEffect, useRef} from 'react';
+import { useEffect, useRef } from 'react';
 
 export default function KatexRenderer({
   equation,
@@ -41,14 +33,20 @@ export default function KatexRenderer({
     // inner text from Katex. There didn't seem to be any other way of making this work,
     // without having a physical space.
     <>
-      <img src="#" alt="" />
+      <img
+        src='#'
+        alt=''
+      />
       <span
-        role="button"
+        role='button'
         tabIndex={-1}
         onDoubleClick={onDoubleClick}
         ref={katexElementRef}
       />
-      <img src="#" alt="" />
+      <img
+        src='#'
+        alt=''
+      />
     </>
   );
 }

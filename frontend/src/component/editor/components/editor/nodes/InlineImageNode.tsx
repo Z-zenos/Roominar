@@ -1,18 +1,3 @@
-/**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-/**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-
 import type {
   DOMConversionMap,
   DOMConversionOutput,
@@ -26,9 +11,9 @@ import type {
   Spread,
 } from 'lexical';
 
-import {$applyNodeReplacement, createEditor, DecoratorNode} from 'lexical';
+import { $applyNodeReplacement, createEditor, DecoratorNode } from 'lexical';
 import * as React from 'react';
-import {Suspense} from 'react';
+import { Suspense } from 'react';
 
 const InlineImageComponent = React.lazy(() => import('./InlineImageComponent'));
 
@@ -53,9 +38,9 @@ export interface UpdateInlineImagePayload {
 
 function convertInlineImageElement(domNode: Node): null | DOMConversionOutput {
   if (domNode instanceof HTMLImageElement) {
-    const {alt: altText, src, width, height} = domNode;
-    const node = $createInlineImageNode({altText, height, src, width});
-    return {node};
+    const { alt: altText, src, width, height } = domNode;
+    const node = $createInlineImageNode({ altText, height, src, width });
+    return { node };
   }
   return null;
 }
@@ -102,7 +87,7 @@ export class InlineImageNode extends DecoratorNode<JSX.Element> {
   static importJSON(
     serializedNode: SerializedInlineImageNode,
   ): InlineImageNode {
-    const {altText, height, width, caption, src, showCaption, position} =
+    const { altText, height, width, caption, src, showCaption, position } =
       serializedNode;
     const node = $createInlineImageNode({
       altText,
@@ -155,7 +140,7 @@ export class InlineImageNode extends DecoratorNode<JSX.Element> {
     element.setAttribute('alt', this.__altText);
     element.setAttribute('width', this.__width.toString());
     element.setAttribute('height', this.__height.toString());
-    return {element};
+    return { element };
   }
 
   exportJSON(): SerializedInlineImageNode {
@@ -214,7 +199,7 @@ export class InlineImageNode extends DecoratorNode<JSX.Element> {
 
   update(payload: UpdateInlineImagePayload): void {
     const writable = this.getWritable();
-    const {altText, showCaption, position} = payload;
+    const { altText, showCaption, position } = payload;
     if (altText !== undefined) {
       writable.__altText = altText;
     }

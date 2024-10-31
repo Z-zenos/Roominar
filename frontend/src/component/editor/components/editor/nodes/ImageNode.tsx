@@ -1,11 +1,3 @@
-/**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-
 import type {
   DOMConversionMap,
   DOMConversionOutput,
@@ -19,9 +11,9 @@ import type {
   Spread,
 } from 'lexical';
 
-import {$applyNodeReplacement, createEditor, DecoratorNode} from 'lexical';
+import { $applyNodeReplacement, createEditor, DecoratorNode } from 'lexical';
 import * as React from 'react';
-import {Suspense} from 'react';
+import { Suspense } from 'react';
 
 const ImageComponent = React.lazy(
   // @ts-ignore
@@ -42,9 +34,9 @@ export interface ImagePayload {
 
 function convertImageElement(domNode: Node): null | DOMConversionOutput {
   if (domNode instanceof HTMLImageElement) {
-    const {alt: altText, src, width, height} = domNode;
-    const node = $createImageNode({altText, height, src, width});
-    return {node};
+    const { alt: altText, src, width, height } = domNode;
+    const node = $createImageNode({ altText, height, src, width });
+    return { node };
   }
   return null;
 }
@@ -92,7 +84,7 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
   }
 
   static importJSON(serializedNode: SerializedImageNode): ImageNode {
-    const {altText, height, width, maxWidth, caption, src, showCaption} =
+    const { altText, height, width, maxWidth, caption, src, showCaption } =
       serializedNode;
     const node = $createImageNode({
       altText,
@@ -116,7 +108,7 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
     element.setAttribute('alt', this.__altText);
     element.setAttribute('width', this.__width.toString());
     element.setAttribute('height', this.__height.toString());
-    return {element};
+    return { element };
   }
 
   static importDOM(): DOMConversionMap | null {

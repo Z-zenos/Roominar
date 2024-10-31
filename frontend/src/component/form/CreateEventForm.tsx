@@ -74,9 +74,9 @@ import CreateTargetForm from './CreateTargetForm';
 import { useListingTargetOptionsQuery } from '@/src/api/target.api';
 import { cn, optionify } from '@/src/util/app.util';
 
-// const LexicalEditor = dynamic(() => import('../editor/app/app'), {
-//   ssr: false,
-// });
+const LexicalEditor = dynamic(() => import('../editor/app/app'), {
+  ssr: false,
+});
 
 const statusColorMap: Record<string, ChipProps['color']> = {
   [TicketStatusCode.Available]: 'success',
@@ -448,7 +448,7 @@ export default function CreateEventForm() {
 
             <div className='col-span-2'>
               <main className='flex flex-col items-center justify-between'>
-                {/* <LexicalEditor /> */}
+                <LexicalEditor />
               </main>
             </div>
 
