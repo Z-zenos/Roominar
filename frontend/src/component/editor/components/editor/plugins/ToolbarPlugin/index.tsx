@@ -71,20 +71,16 @@ import { useCallback, useEffect, useState } from 'react';
 import * as React from 'react';
 
 import useModal from '../../hooks/useModal';
-// import { $createStickyNode } from '../../nodes/StickyNode';
 import DropDown, { DropDownItem } from '../../ui/DropDown';
 import DropdownColorPicker from '../../ui/DropdownColorPicker';
 import { getSelectedNode } from '../../utils/getSelectedNode';
 import { sanitizeUrl } from '../../utils/url';
 import { EmbedConfigs } from '../AutoEmbedPlugin';
 import { INSERT_COLLAPSIBLE_COMMAND } from '../CollapsiblePlugin';
-// import { InsertEquationDialog } from '../EquationsPlugin';
 import { INSERT_EXCALIDRAW_COMMAND } from '../ExcalidrawPlugin';
 import { InsertImageDialog } from '../ImagesPlugin';
 import { InsertInlineImageDialog } from '../InlineImagePlugin';
 import InsertLayoutDialog from '../LayoutPlugin/InsertLayoutDialog';
-// import { INSERT_PAGE_BREAK } from '../PageBreakPlugin';
-// import { InsertPollDialog } from '../PollPlugin';
 import { InsertTableDialog } from '../TablePlugin';
 import { IS_APPLE } from '../../shared/environment';
 

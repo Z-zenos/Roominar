@@ -252,6 +252,7 @@ pre::-webkit-scrollbar-thumb {
   background-image: url(/icons/download.svg);
 }
 
+/* Fix Typeahead Menu Not Showing */
 #typeahead-menu {
   min-width: 200px;
 }

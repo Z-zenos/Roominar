@@ -22,11 +22,9 @@ import CodeActionMenuPlugin from './plugins/CodeActionMenuPlugin';
 import CodeHighlightPlugin from './plugins/CodeHighlightPlugin';
 import CollapsiblePlugin from './plugins/CollapsiblePlugin';
 import ComponentPickerPlugin from './plugins/ComponentPickerPlugin';
-import ContextMenuPlugin from './plugins/ContextMenuPlugin';
 import DragDropPaste from './plugins/DragDropPastePlugin';
 import DraggableBlockPlugin from './plugins/DraggableBlockPlugin';
 import EmojiPickerPlugin from './plugins/EmojiPickerPlugin';
-import EmojisPlugin from './plugins/EmojisPlugin';
 import EquationsPlugin from './plugins/EquationsPlugin';
 import ExcalidrawPlugin from './plugins/ExcalidrawPlugin';
 import FigmaPlugin from './plugins/FigmaPlugin';
@@ -37,10 +35,8 @@ import KeywordsPlugin from './plugins/KeywordsPlugin';
 import { LayoutPlugin } from './plugins/LayoutPlugin/LayoutPlugin';
 import LinkPlugin from './plugins/LinkPlugin';
 import ListMaxIndentLevelPlugin from './plugins/ListMaxIndentLevelPlugin';
-import MarkdownShortcutPlugin from './plugins/MarkdownShortcutPlugin';
 import { MaxLengthPlugin } from './plugins/MaxLengthPlugin';
 import PageBreakPlugin from './plugins/PageBreakPlugin';
-import PollPlugin from './plugins/PollPlugin';
 import TabFocusPlugin from './plugins/TabFocusPlugin';
 import TableCellActionMenuPlugin from './plugins/TableActionMenuPlugin';
 import TableCellResizer from './plugins/TableCellResizer';
@@ -52,6 +48,7 @@ import ContentEditable from './ui/ContentEditable';
 import Placeholder from './ui/Placeholder';
 import { CAN_USE_DOM } from './shared/canUseDOM';
 import { AutoFocusPlugin } from './plugins/AutoFocusPlugin';
+import MentionsPlugin from './plugins/MentionsPlugin';
 
 export default function Editor(): JSX.Element {
   const { historyState } = useSharedHistoryContext();
@@ -61,7 +58,6 @@ export default function Editor(): JSX.Element {
       isRichText,
       showTreeView,
       showTableOfContents,
-      shouldUseLexicalContextMenu,
       tableCellMerge,
       tableCellBackgroundColor,
     },
@@ -115,8 +111,7 @@ export default function Editor(): JSX.Element {
         <ComponentPickerPlugin />
         <EmojiPickerPlugin />
         <AutoEmbedPlugin />
-        {/* <MentionsPlugin /> */}
-        <EmojisPlugin />
+        <MentionsPlugin />
         <HashtagPlugin />
         <KeywordsPlugin />
         <AutoLinkPlugin />
@@ -137,7 +132,6 @@ export default function Editor(): JSX.Element {
               placeholder={placeholder}
               ErrorBoundary={LexicalErrorBoundary}
             />
-            <MarkdownShortcutPlugin />
             <CodeHighlightPlugin />
             <ListPlugin />
             <CheckListPlugin />
@@ -150,7 +144,6 @@ export default function Editor(): JSX.Element {
             <ImagesPlugin />
             <InlineImagePlugin />
             <LinkPlugin />
-            <PollPlugin />
             <TwitterPlugin />
             <YouTubePlugin />
             <FigmaPlugin />
@@ -190,7 +183,6 @@ export default function Editor(): JSX.Element {
           </>
         )}
         <div>{showTableOfContents && <TableOfContentsPlugin />}</div>
-        {shouldUseLexicalContextMenu && <ContextMenuPlugin />}
         <ActionsPlugin isRichText={isRichText} />
       </div>
     </>
