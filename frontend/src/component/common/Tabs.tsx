@@ -61,21 +61,30 @@ TabsContent.displayName = TabsPrimitive.Content.displayName;
 interface TabsProps extends HTMLAttributes<HTMLDivElement> {
   defaultValue: string;
   tabClassName?: string;
-  tabs: { value: string; content: ReactNode }[];
+  tabs: { value: string; content?: ReactNode }[];
 }
 
 export function Tabs({ defaultValue, className, tabs }: TabsProps) {
   return (
-    <BaseTabs defaultValue={defaultValue} className={clsx('w-full mx-auto', className)}>
+    <BaseTabs
+      defaultValue={defaultValue}
+      className={clsx('w-full mx-auto', className)}
+    >
       <TabsList className='max-w-[400px] mx-auto grid grid-cols-3'>
         {tabs.map((tab) => (
-          <TabsTrigger value={tab.value} key={`tt-${tab.value}`}>
+          <TabsTrigger
+            value={tab.value}
+            key={`tt-${tab.value}`}
+          >
             {tab.value}
           </TabsTrigger>
         ))}
       </TabsList>
       {tabs.map((tab) => (
-        <TabsContent value={tab.value} key={`tc-${tab.value}`}>
+        <TabsContent
+          value={tab.value}
+          key={`tc-${tab.value}`}
+        >
           <Suspense>{tab.content}</Suspense>
         </TabsContent>
       ))}

@@ -12,7 +12,6 @@ import {
   FormCheckBox,
   FormCombobox,
   FormControl,
-  FormCustomLabel,
   FormField,
   FormInput,
   FormItem,
@@ -20,7 +19,7 @@ import {
 } from '@/src/component/form/Form';
 import Button from '@/src/component/common/Button/Button';
 import { useGetEventDetailQuery } from '@/src/api/event.api';
-import { parseCode } from '@/src/util/app.util';
+import { optionify } from '@/src/util/app.util';
 import { MdOutlineOnlinePrediction } from 'react-icons/md';
 import Chip from '@/src/component/common/Chip';
 import { FaUserFriends } from 'react-icons/fa';
@@ -29,13 +28,13 @@ import type {
   AnswerItem,
   ApiException,
   ErrorResponse400,
-  JobTypeCode,
   QuestionAnswerItem,
-  QuestionAnswerResultItem,
+  SurveyResponseResultItem,
   TicketItem,
 } from '@/src/lib/api/generated';
-import { IndustryCode, QuestionTypeCode } from '@/src/lib/api/generated';
-import { JobTypeCodeMapping } from '@/src/constant/code.constant';
+import { JobTypeCode } from '@/src/lib/api/generated';
+import { IndustryCode } from '@/src/lib/api/generated';
+import { QuestionTypeCode } from '@/src/lib/api/generated';
 import { RadioGroup, RadioGroupItem } from '@/src/component/common/RadioGroup';
 import Checkbox from '@/src/component/common/Input/Checkbox';
 import { useApplyEventMutation } from '@/src/api/application.api';
@@ -67,10 +66,10 @@ export default function EventApplicationForm({
       firstName: auth?.user?.firstName || '',
       lastName: auth?.user?.lastName || '',
       workplaceName: auth?.user?.workplaceName || '',
-      phoneNumber: auth?.user?.phone || '',
+      phone: auth?.user?.phone || '',
       industryCode: (auth?.user?.industryCode as IndustryCode) || undefined,
       jobTypeCode: (auth?.user?.jobTypeCode as JobTypeCode) || undefined,
-      questionAnswerResults: [],
+      surveyResponseResults: [],
       isAgreed: false,
     },
     resolver: zodResolver(eventApplicationFormSchema),
@@ -98,11 +97,11 @@ export default function EventApplicationForm({
         firstName: data.firstName,
         lastName: data.lastName,
         workplaceName: data.workplaceName,
-        phone: data.phoneNumber,
+        phone: data.phone,
         industryCode: data.industryCode,
         jobTypeCode: data.jobTypeCode,
-        questionAnswerResults:
-          data.questionAnswerResults as QuestionAnswerResultItem[],
+        surveyResponseResults:
+          data.surveyResponseResults as SurveyResponseResultItem[],
         ticketId: +data.ticketId,
         isAgreed: data.isAgreed,
       },
@@ -189,12 +188,12 @@ export default function EventApplicationForm({
                             )}
                             key={`t-${ticket.id}`}
                           >
-                            <FormLabel className='font-normal cursor-pointer'>
+                            <div className='font-normal cursor-pointer'>
                               <h4 className='text-nm'>{ticket.name}</h4>
                               <p className='font-light opacity-80 text-sm mt-2'>
                                 {ticket.description}
                               </p>
-                            </FormLabel>
+                            </div>
                             <FormControl>
                               <RadioGroupItem value={ticket.id + ''} />
                             </FormControl>
@@ -231,15 +230,12 @@ export default function EventApplicationForm({
               )}
             >
               <div>
-                <FormCustomLabel
-                  htmlFor='email'
-                  title='Your email'
-                  required
-                />
                 <FormInput
                   id='email'
                   name='email'
                   type='email'
+                  label='email'
+                  required
                   rightIcon={
                     <HiMail
                       size={20}
@@ -248,11 +244,8 @@ export default function EventApplicationForm({
                   }
                   placeholder='registermail@gmail.com'
                   control={form.control}
-                  isDisplayError={true}
+                  showError={true}
                   className={clsx(
-                    form.formState.errors.email &&
-                      form.formState.touchedFields.email &&
-                      'border-error-main',
                     status === 'authenticated' && 'bg-slate-100 text-gray-500',
                   )}
                   disabled={status === 'authenticated'}
@@ -260,66 +253,48 @@ export default function EventApplicationForm({
               </div>
               {width < 600 ? <></> : <>&nbsp;</>}
               <div className='self-start'>
-                <FormCustomLabel
-                  htmlFor='firstName'
-                  title='First name'
-                  required
-                />
                 <FormInput
                   id='firstName'
                   name='firstName'
+                  label='firstName'
+                  required
                   placeholder='Kevin'
                   className={clsx(
-                    form.formState.errors.firstName &&
-                      form.formState.touchedFields.firstName &&
-                      'border-error-main',
                     status === 'authenticated' && 'bg-slate-100 text-gray-500',
                   )}
                   disabled={status === 'authenticated'}
                   control={form.control}
-                  isDisplayError={true}
+                  showError={true}
                 />
               </div>
               <div className='self-start'>
-                <FormCustomLabel
-                  htmlFor='lastName'
-                  title='Last name'
-                  required
-                />
                 <FormInput
                   id='lastName'
                   name='lastName'
+                  label='lastName'
+                  required
                   placeholder='De Bruyne'
                   className={clsx(
-                    form.formState.errors.lastName &&
-                      form.formState.touchedFields.lastName &&
-                      'border-error-main',
                     status === 'authenticated' && 'bg-slate-100 text-gray-500',
                   )}
                   disabled={status === 'authenticated'}
                   control={form.control}
-                  isDisplayError={true}
+                  showError={true}
                 />
               </div>
               <div className='self-start'>
-                <FormCustomLabel
-                  htmlFor='workplaceName'
-                  title='Workplace name'
-                  required
-                />
                 <FormInput
                   id='workplaceName'
                   name='workplaceName'
+                  label='workplaceName'
+                  required
                   placeholder='Place you work or learn'
                   className={clsx(
-                    form.formState.errors.firstName &&
-                      form.formState.touchedFields.firstName &&
-                      'border-error-main',
                     status === 'authenticated' && 'bg-slate-100 text-gray-500',
                   )}
                   disabled={status === 'authenticated'}
                   control={form.control}
-                  isDisplayError={true}
+                  showError={true}
                   rightIcon={
                     <BiSolidSchool
                       className='text-primary'
@@ -329,24 +304,18 @@ export default function EventApplicationForm({
                 />
               </div>
               <div className='self-start'>
-                <FormCustomLabel
-                  htmlFor='phoneNumber'
-                  title='Phone number'
-                  required
-                />
                 <FormInput
-                  id='phoneNumber'
-                  name='phoneNumber'
-                  placeholder='Kevin'
+                  id='phone'
+                  name='phone'
+                  label='phone'
+                  required
+                  placeholder='your phone number'
                   className={clsx(
-                    form.formState.errors.firstName &&
-                      form.formState.touchedFields.firstName &&
-                      'border-error-main',
                     status === 'authenticated' && 'bg-slate-100 text-gray-500',
                   )}
                   disabled={status === 'authenticated'}
                   control={form.control}
-                  isDisplayError={true}
+                  showError={true}
                   rightIcon={
                     <FaPhone
                       className='text-primary'
@@ -356,16 +325,11 @@ export default function EventApplicationForm({
                 />
               </div>
               <div className='self-start'>
-                <FormCustomLabel
-                  htmlFor='jobTypeCode'
-                  title='Job type'
-                  required
-                />
                 <FormCombobox
-                  data={Object.keys(JobTypeCodeMapping).map((key: string) => ({
-                    value: key,
-                    label: JobTypeCodeMapping[key],
-                  }))}
+                  label='jobTypeCode'
+                  required
+                  data={optionify(JobTypeCode)}
+                  i18nPath='code.jobType'
                   name='jobTypeCode'
                   control={form.control}
                   title='type job'
@@ -378,16 +342,11 @@ export default function EventApplicationForm({
                 />
               </div>
               <div className='self-start'>
-                <FormCustomLabel
-                  htmlFor='industryCode'
-                  title='Industry'
-                  required
-                />
                 <FormCombobox
-                  data={Object.keys(IndustryCode).map((ic: string) => ({
-                    value: IndustryCode[ic],
-                    label: parseCode(IndustryCode[ic]),
-                  }))}
+                  label='industryCode'
+                  required
+                  data={optionify(IndustryCode)}
+                  i18nPath='code.industry'
                   name='industryCode'
                   control={form.control}
                   title='industry'
@@ -401,7 +360,7 @@ export default function EventApplicationForm({
               </div>
             </div>
           </div>
-          {event && (
+          {event && event.survey && (
             <div className='w-full shadow-[rgba(0,_0,_0,_0.16)_0px_1px_4px] border border-gray-200 px-10 py-6 rounded-md mt-6 bg-white'>
               <h2 className='text-md font-semibold text-secondary'>
                 Answer some questions
@@ -413,17 +372,17 @@ export default function EventApplicationForm({
               </p>
               <FormField
                 control={form.control}
-                name='questionAnswerResults'
+                name='surveyResponseResults'
                 render={({ field }) => (
                   <FormItem>
-                    {event.questionnaire.questionAnwers.map(
+                    {event.survey.questionAnwers.map(
                       (questionAnswer: QuestionAnswerItem) => (
                         <div
                           className='mt-4 bg-emerald-50 p-5'
                           key={`qa-${questionAnswer.id}`}
                         >
                           <h3 className='text-nm font-semibold text-slate-800'>
-                            {questionAnswer.orderNumber}.{' '}
+                            {questionAnswer.orderNumber}.
                             {questionAnswer.question}
                           </h3>
 
@@ -433,7 +392,7 @@ export default function EventApplicationForm({
                               <FormField
                                 key={`qa-${questionAnswer.id}-${answer.id}`}
                                 control={form.control}
-                                name='questionAnswerResults'
+                                name='surveyResponseResults'
                                 render={({ field }) => {
                                   return (
                                     <FormItem
@@ -565,15 +524,15 @@ export default function EventApplicationForm({
                   className='text-primary mx-1'
                 >
                   Terms of Use
-                </Link>{' '}
-                and{' '}
+                </Link>
+                and
                 <Link
                   href='#'
                   underline='hover'
                   className='text-primary mx-1'
                 >
                   Personal Information Handling
-                </Link>{' '}
+                </Link>
                 before apply.
               </p>
             </FormCheckBox>

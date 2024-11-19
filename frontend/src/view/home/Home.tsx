@@ -106,7 +106,7 @@ export default function Home() {
             <span>Elevate</span>
           </h2>
           <h1 className='text-hg my-5 font-semibold'>
-            Web(<span className='text-gradient'>Sem</span>)inar &{' '}
+            Web(<span className='text-gradient'>Sem</span>)inar &
             <span className='text-gradient'>E</span>vent 2024 🎉
           </h1>
           <p className='text-primary font-semibold mb-8'>
@@ -227,7 +227,7 @@ export default function Home() {
           className='text-warning font-bold inline-flex justify-start gap-2 items-center cursor-pointer border-b border-b-warning pb-2 mt-8'
           href='/search?sort_by=APPLICATION_END_AT'
         >
-          Application Closing Soon Event{' '}
+          Application Closing Soon Event
           <MdKeyboardDoubleArrowRight size={20} />
         </Link>
         <div className='border-l border-l-warning'>

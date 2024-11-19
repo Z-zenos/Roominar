@@ -13,7 +13,7 @@ class Event(BaseModel, table=True):
 
     organization_id: Optional[int] = Field(foreign_key="organizations.id")
 
-    name: Optional[str] = Field(sa_type=String(1024))
+    name: str = Field(sa_type=String(1024))
 
     start_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
     end_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
@@ -50,12 +50,9 @@ class Event(BaseModel, table=True):
     )
     meeting_url: Optional[str] = Field(sa_type=String(2048))
 
-    questionnaire_id: Optional[int] = Field(
-        foreign_key="questionnaires.id",
+    survey_id: Optional[int] = Field(
+        foreign_key="surveys.id",
     )
-    # survey_form_id: Optional[int] = Field(
-    #     foreign_key="survey_forms.id",
-    # )
     # survey_form_url: Optional[str] = Field(sa_type=String(2048))
 
     target_id: Optional[int] = Field(foreign_key="targets.id")
@@ -65,4 +62,4 @@ class Event(BaseModel, table=True):
 
     published_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
     application_form_url: Optional[str] = Field(sa_type=String(2048))
-    view_number: Optional[int]
+    view_number: Optional[int] = Field(default=0)

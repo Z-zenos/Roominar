@@ -1,7 +1,7 @@
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
 from backend.schemas.common import industry_code_validator, job_type_code_validator
-from backend.schemas.question_answer_result import QuestionAnswerResultItem
+from backend.schemas.survey_response_result import SurveyResponseResultItem
 
 
 class CreateApplicationRequest(BaseModel):
@@ -12,7 +12,7 @@ class CreateApplicationRequest(BaseModel):
     phone: str = Field(max_length=20)
     industry_code: str = Field(max_length=50)
     job_type_code: str = Field(max_length=20)
-    question_answer_results: list[QuestionAnswerResultItem] = Field([])
+    survey_response_results: list[SurveyResponseResultItem] = Field([])
     ticket_id: int
     is_agreed: bool
 

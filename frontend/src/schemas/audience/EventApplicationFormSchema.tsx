@@ -2,45 +2,20 @@ import { IndustryCode, JobTypeCode } from '@/src/lib/api/generated';
 import z from 'zod';
 
 const eventApplicationFormSchema = z.object({
-  email: z
-    .string({ required_error: "Email can't empty." })
-    .email({ message: 'Invalid email.' }),
+  email: z.string().email(),
 
   ticketId: z.string({
-    required_error: 'Please select at least one ticket.',
+    required_error: 'missingTicket',
   }),
 
-  firstName: z
-    .string({ required_error: "First name can't empty" })
-    .trim()
-    .min(1, { message: 'First name must be greater than 1 characters.' })
-    .max(50, { message: 'First name must be less than 50 characters.' }),
+  firstName: z.string().trim().min(1).max(255),
+  lastName: z.string().trim().min(1).max(255),
+  workplaceName: z.string().min(5).max(255),
+  phone: z.string().min(1),
+  industryCode: z.nativeEnum(IndustryCode),
+  jobTypeCode: z.nativeEnum(JobTypeCode),
 
-  lastName: z
-    .string({ required_error: "Last name can't empty" })
-    .trim()
-    .min(1, { message: 'Last name must be greater than 1 characters.' })
-    .max(50, { message: 'Last name must be less than 50 characters.' }),
-
-  workplaceName: z
-    .string({ required_error: "Workplace name can't empty" })
-    .max(255, { message: 'Workplace name must be less than 50 characters.' }),
-
-  phoneNumber: z
-    .string({
-      required_error: 'Phone number cannot empty',
-    })
-    .min(1, "Phone number can't empty"),
-
-  industryCode: z.nativeEnum(IndustryCode, {
-    required_error: "Industry code can't empty",
-  }),
-
-  jobTypeCode: z.nativeEnum(JobTypeCode, {
-    required_error: "Job type code can't empty",
-  }),
-
-  questionAnswerResults: z
+  surveyResponseResults: z
     .array(
       z.object({
         questionId: z.number(),
@@ -49,9 +24,7 @@ const eventApplicationFormSchema = z.object({
     )
     .nullable(),
 
-  isAgreed: z.boolean({
-    required_error: 'Please agree with our term about privacy.',
-  }),
+  isAgreed: z.boolean(),
 });
 
 type EventApplicationFormSchema = z.infer<typeof eventApplicationFormSchema>;

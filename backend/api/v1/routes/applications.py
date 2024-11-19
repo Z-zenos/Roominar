@@ -1,10 +1,12 @@
+from http import HTTPStatus
+
 from fastapi import APIRouter, Depends
 from sqlmodel import Session
 
 import backend.api.v1.services.applications as application_service
-from backend.api.v1.dependencies.authentication import authorize_role
+from backend.api.v1.dependencies.authentication import authorize_role, get_current_user
 from backend.core.constants import RoleCode
-from backend.core.response import public_api_responses
+from backend.core.response import authenticated_api_responses, public_api_responses
 from backend.db.database import get_read_db
 from backend.models.user import User
 from backend.schemas.application import CreateApplicationRequest
@@ -27,14 +29,16 @@ async def create_application(
     )
 
 
-# @router.delete(
-#     "/{application_id}",
-#     status_code=HTTPStatus.NO_CONTENT,
-#     responses=authenticated_api_responses,
-# )
-# def delete_application(
-#     application_id: int,
-#     user: Annotated[User, Depends(get_current_user)],
-#     db: Session = Depends(get_db),
-# ):
-#     return application_service.delete_application(db, user, application_id)
+@router.delete(
+    "/{application_id}",
+    status_code=HTTPStatus.NO_CONTENT,
+    responses=authenticated_api_responses,
+)
+async def cancel_application(
+    db: Session = Depends(get_read_db),
+    current_user: User = Depends(get_current_user),
+    application_id: int = None,
+):
+    return await application_service.cancel_application(
+        db, current_user, application_id
+    )

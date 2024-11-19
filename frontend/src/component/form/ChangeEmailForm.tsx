@@ -19,7 +19,6 @@ import { styles } from '@/src/constant/styles.constant';
 import { maskEmail } from '@/src/util/app.util';
 
 export default function ChangeEmailForm() {
-  useState<boolean>(false);
   const { data: auth, status } = useSession();
   const { width } = useWindowDimensions();
   const router = useRouter();
@@ -65,8 +64,8 @@ export default function ChangeEmailForm() {
         <div className={clsx(styles.between, 'gap-4 !items-end mt-8')}>
           <div className='self-start'>
             <FormCustomLabel
-              title='Email ( Last changed 9 month(s) ago.)'
               htmlFor='email'
+              label='email'
               className='font-medium text-nm'
             />
             <p className=''>{maskEmail(auth?.user?.email)}</p>
@@ -97,24 +96,18 @@ export default function ChangeEmailForm() {
               )}
             >
               <div className='self-start'>
-                <FormCustomLabel
-                  htmlFor='newEmail'
-                  title='New email'
-                  required
-                />
                 <FormInput
                   id='newEmail'
                   name='newEmail'
+                  label='newEmail'
+                  required
                   placeholder='newemail@gmail.com'
                   className={clsx(
-                    form.formState.errors.newEmail &&
-                      form.formState.touchedFields.newEmail &&
-                      'border-error-main',
                     status === 'authenticated' && 'bg-slate-100 text-gray-500',
                   )}
                   type='email'
                   control={form.control}
-                  isDisplayError={
+                  showError={
                     form.formState.errors.newEmail &&
                     form.formState.touchedFields.newEmail &&
                     true
@@ -123,14 +116,11 @@ export default function ChangeEmailForm() {
               </div>
 
               <div className='w-full relative mb-1'>
-                <FormCustomLabel
-                  htmlFor='password'
-                  title='Your password'
-                  required
-                />
                 <FormInput
                   id='password'
                   name='password'
+                  label='password'
+                  required
                   type={!showPassword ? 'password' : 'text'}
                   rightIcon={
                     !showPassword ? (
@@ -148,13 +138,8 @@ export default function ChangeEmailForm() {
                     )
                   }
                   placeholder='password!@%'
-                  className={clsx(
-                    form.formState.errors.password &&
-                      form.formState.touchedFields.password &&
-                      'border-error-main',
-                  )}
                   control={form.control}
-                  isDisplayError={
+                  showError={
                     form.formState.errors.password &&
                     form.formState.touchedFields.password &&
                     true

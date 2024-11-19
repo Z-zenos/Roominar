@@ -4,7 +4,9 @@ from .change_password_service import change_password
 from .forgot_password_service import forgot_password
 from .password_service import get_password_hash, verify_password
 from .register_audience_service import register_audience
+from .register_organization_service import register_organization
 from .reset_password_service import reset_password
+from .revert_email_service import revert_email
 from .social_auth_service import social_auth
 from .token_service import (
     create_access_token,
@@ -33,4 +35,6 @@ all = (
     verify_new_email,
     gen_auth_token,
     gen_encrypted_token,
+    register_organization,
+    revert_email,
 )

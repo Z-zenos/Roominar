@@ -17,9 +17,19 @@ export const pathPermissionMaster = {
     '/account-settings',
     '/not-found',
     '/email/change/[token]',
+    '/my-events',
+    '/organization/login',
+    '/organization/register',
   ],
   SPEAKER: ['/login', '/organization/login'],
-  ORGANIZER: ['/login'],
+  ORGANIZER: [
+    '/login',
+    '/organization/events',
+    '/organization/overview',
+    '/organization/events/create',
+    '/organization/surveys',
+    '/organization/surveys/create',
+  ],
   ADMIN: ['/admin/users', '/admin/organizers', '/login', '/organization/login'],
   GUEST: [
     '/login',
@@ -32,6 +42,8 @@ export const pathPermissionMaster = {
     '/email/verify/[token]',
     '/email/change/[token]',
     '/email/revert/[token]',
+    '/organization/login',
+    '/organization/register',
   ],
 };
 
@@ -50,20 +62,13 @@ const nextResponseRedirectUrl = (
   }
 };
 
-const nextAuthMiddleware = withAuth(
-  async function middleware(req) {
-    const { pathname: pathName, href: url } = req.nextUrl;
-    const token = await getToken({ req: req });
-    if (token) {
-      return nextResponseRedirectUrl(token.role, pathName, url);
-    }
-  },
-  // {
-  //   pages: {
-  //     signIn: `/login`,
-  //   },
-  // },
-);
+const nextAuthMiddleware = withAuth(async function middleware(req) {
+  const { pathname: pathName, href: url } = req.nextUrl;
+  const token = await getToken({ req: req });
+  if (token) {
+    return nextResponseRedirectUrl(token.role, pathName, url);
+  }
+});
 
 export default async function middleware(
   request: NextRequestWithAuth,

@@ -10,7 +10,7 @@ import { FcGoogle } from 'react-icons/fc';
 import { zodResolver } from '@hookform/resolvers/zod';
 import clsx from 'clsx';
 import { Link } from '@nextui-org/link';
-import { Form, FormCustomLabel, FormInput } from './Form';
+import { Form, FormInput } from './Form';
 import Button from '../common/Button/Button';
 import { signIn } from 'next-auth/react';
 import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
@@ -78,14 +78,11 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
         className={clsx('flex items-center justify-center flex-col')}
       >
         <div className='w-full mt-5 relative mb-1'>
-          <FormCustomLabel
-            title='Enter new password'
-            htmlFor='newPassword'
-            required
-          />
           <FormInput
             id='newPassword'
             name='newPassword'
+            label='newPassword'
+            required
             type={!showPassword ? 'password' : 'text'}
             rightIcon={
               !showPassword ? (
@@ -103,25 +100,17 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
               )
             }
             placeholder='password!@%'
-            className={clsx(
-              form.formState.errors.newPassword &&
-                form.formState.touchedFields.newPassword &&
-                'border-error-main',
-            )}
             control={form.control}
-            isDisplayError={true}
+            showError={true}
           />
         </div>
 
         <div className='w-full mt-5 relative mb-1'>
-          <FormCustomLabel
-            title='Confirm password'
-            required
-            htmlFor='confirmPassword'
-          />
           <FormInput
             id='confirm-password'
             name='confirmPassword'
+            label='confirmPassword'
+            required
             type={!showConfirmPassword ? 'password' : 'text'}
             rightIcon={
               !showConfirmPassword ? (
@@ -139,13 +128,8 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
               )
             }
             placeholder='password!@%'
-            className={clsx(
-              form.formState.errors.confirmPassword &&
-                form.formState.touchedFields.confirmPassword &&
-                'border-error-main',
-            )}
             control={form.control}
-            isDisplayError={true}
+            showError={true}
           />
         </div>
 

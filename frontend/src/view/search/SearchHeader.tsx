@@ -9,17 +9,18 @@ import { Button } from '@nextui-org/button';
 import Text from '../../component/common/Typography/Text';
 import { HiOutlineAdjustmentsHorizontal } from 'react-icons/hi2';
 import { FormCombobox, FormInput, FormSelect } from '@/src/component/form/Form';
-import { type EventsApiSearchEventsRequest } from '@/src/lib/api/generated';
-import { useRouter } from 'next/navigation';
 import {
-  EventSortByCodeMappings,
-  JobTypeCodeMapping,
-} from '@/src/constant/code.constant';
-import { toSelectItem } from '@/src/util/app.util';
+  EventSortByCode,
+  JobTypeCode,
+  type EventsApiSearchEventsRequest,
+} from '@/src/lib/api/generated';
+import { useRouter } from 'next/navigation';
+import debounce from 'lodash.debounce';
+import { optionify } from '@/src/util/app.util';
 
 interface SearchHeaderProps {
   total?: number;
-  onSearch: (data: any) => void;
+  onValueChange: (data: any) => void;
   form: UseFormReturn<EventsApiSearchEventsRequest, any, undefined>;
   isFetching?: boolean;
 }
@@ -27,7 +28,7 @@ interface SearchHeaderProps {
 function SearchHeader({
   total,
   form,
-  onSearch,
+  onValueChange,
   isFetching,
 }: SearchHeaderProps) {
   const { control, getValues, reset } = form;
@@ -81,17 +82,19 @@ function SearchHeader({
               placeholder='Find web(sem)inar events you like...'
               className='w-full'
               control={control}
+              onKeyDown={debounce(
+                () => onValueChange({ keyword: form.getValues('keyword') }),
+                1000,
+              )}
             />
           </div>
           <FormCombobox
-            data={Object.keys(JobTypeCodeMapping).map((key: string) => ({
-              value: key,
-              label: JobTypeCodeMapping[key],
-            }))}
+            options={optionify(JobTypeCode)}
+            i18nPath='code.jobType'
             name='jobTypeCodes'
             control={control}
-            title='type job'
-            onSearch={onSearch}
+            onValueChange={onValueChange}
+            title='job type'
           />
         </div>
         <div className='flex items-center justify-start gap-4 400px:mt-3'>
@@ -100,9 +103,10 @@ function SearchHeader({
             className='font-light text-gray-500'
           />
           <FormSelect
-            data={toSelectItem(EventSortByCodeMappings)}
+            options={optionify(EventSortByCode)}
+            i18nPath='code.sortBy.search'
             control={control}
-            onSearch={onSearch}
+            onValueChange={onValueChange}
             defaultValue={getValues('sortBy')}
             name='sortBy'
           />
@@ -123,7 +127,7 @@ function SearchHeader({
                 content={sgt}
                 onClick={() => {
                   setValue('name', sgt);
-                  onSearch({ name: sgt });
+                  onValueChange({ name: sgt });
                 }}
               />
             ))}

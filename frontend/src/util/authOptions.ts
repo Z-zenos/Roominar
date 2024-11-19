@@ -3,7 +3,6 @@ import {
   createConfiguration,
   ServerConfiguration,
 } from '@/src/lib/api/generated';
-import { getRouter } from '@/src/util/app.util';
 import { getCookie } from 'cookies-next';
 import dayjs from 'dayjs';
 import type { NextAuthOptions } from 'next-auth';
@@ -117,7 +116,7 @@ const authOptions: NextAuthOptions = {
       };
 
       const rememberMe = getCookie('rememberMe', { cookies }) === 'true';
-      token.role = user?.role || RoleCode.AUDIENCE;
+
       if (token.accessToken && compareTime(token.expireAt)) {
         if (!rememberMe) return { ...token, ...user };
 
@@ -142,13 +141,14 @@ const authOptions: NextAuthOptions = {
       const user = await makeAuthApi(token.accessToken).me();
       session.user = JSON.parse(JSON.stringify(user));
       session.token = token;
+      session.token['role'] = session.user.roleCode;
       return session;
     },
   },
   pages: {
-    error: getRouter('home'),
-    signIn: getRouter('login'),
-    signOut: getRouter('home'),
+    error: '/home',
+    signIn: '/login',
+    signOut: '/home',
   },
 };
 

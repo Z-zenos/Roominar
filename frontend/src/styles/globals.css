@@ -80,10 +80,35 @@
     background-color: white;
     /* prettier-ignore */
     text-shadow:
-      -1px -1px 0 #000,
-      1px -1px 0 #000,
-      -1px 1px 0 #000,
-      1px 1px 0 #000;
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;
+  }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    transition: #fff 5000s ease-in-out 0s;
+  }
+
+  @-webkit-keyframes autofill {
+    0%,
+    100% {
+      color: #666;
+      background: transparent;
+    }
+  }
+
+  input:-webkit-autofill {
+    -webkit-animation-delay: 1s; /* Safari support - any positive time runs instantly */
+    -webkit-animation-name: autofill;
+    -webkit-animation-fill-mode: both;
+  }
+
+  input:-webkit-autofill {
+    -webkit-background-clip: text;
   }
 }
 

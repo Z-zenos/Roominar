@@ -13,12 +13,12 @@ import { signIn } from 'next-auth/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { HiMail } from 'react-icons/hi';
 import clsx from 'clsx';
-import { Form, FormCustomLabel, FormInput } from './Form';
+import { Form, FormInput } from './Form';
 import { Link } from '@nextui-org/link';
 import { styles } from '@/src/constant/styles.constant';
 import Button from '../common/Button/Button';
 import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
-import SuccessRegistration from '@/src/view/audience/SuccessRegistration';
+import RegisterAudienceSuccess from '@/src/view/audience/RegisterAudienceSuccess';
 import type { RegisterAudienceFormSchema } from '@/src/schemas/auth/RegisterAudienceFormSchema';
 import { registerAudienceFormSchema } from '@/src/schemas/auth/RegisterAudienceFormSchema';
 import { useRegisterAudienceMutation } from '@/src/api/auth.api';
@@ -78,90 +78,62 @@ function RegisterAudienceForm() {
         className={clsx('flex items-center justify-center flex-col')}
       >
         {isRegisterSuccess ? (
-          <SuccessRegistration
+          <RegisterAudienceSuccess
             email={data.email}
             expireAt={data.expireAt}
           />
         ) : (
           <>
             <div className='w-full'>
-              <div className='w-full'>
-                <FormCustomLabel
-                  title='Your email'
-                  htmlFor='email'
-                  required
-                />
-                <FormInput
-                  id='email'
-                  name='email'
-                  type='email'
-                  rightIcon={
-                    <HiMail
-                      size={20}
-                      className='text-primary'
-                    />
-                  }
-                  placeholder='registermail@gmail.com'
-                  control={form.control}
-                  isDisplayError={true}
-                  className={clsx(
-                    form.formState.errors.email &&
-                      form.formState.touchedFields.email &&
-                      'border-error-main',
-                  )}
-                />
-              </div>
+              <FormInput
+                id='email'
+                name='email'
+                type='email'
+                label='email'
+                required
+                rightIcon={
+                  <HiMail
+                    size={20}
+                    className='text-primary'
+                  />
+                }
+                placeholder='registermail@gmail.com'
+                control={form.control}
+                showError={true}
+              />
 
               <div className='flex w-full mt-5 mb-1 items-start justify-between gap-2'>
                 <div className='w-full'>
-                  <FormCustomLabel
-                    title='First name'
-                    htmlFor='firstName'
-                    required
-                  />
                   <FormInput
                     id='firstName'
                     name='firstName'
+                    label='firstName'
+                    required
                     placeholder='Kevin'
-                    className={clsx(
-                      form.formState.errors.firstName &&
-                        form.formState.touchedFields.firstName &&
-                        'border-error-main',
-                    )}
                     control={form.control}
-                    isDisplayError={true}
+                    showError={true}
+                    className='w-full'
                   />
                 </div>
 
                 <div className='w-full'>
-                  <FormCustomLabel
-                    title='Last name'
-                    htmlFor='lastName'
-                    required
-                  />
                   <FormInput
                     id='lastName'
                     name='lastName'
+                    label='lastName'
+                    required
                     placeholder='De Bruyne'
-                    className={clsx(
-                      form.formState.errors.lastName &&
-                        form.formState.touchedFields.lastName &&
-                        'border-error-main',
-                    )}
                     control={form.control}
-                    isDisplayError={true}
+                    showError={true}
                   />
                 </div>
               </div>
               <div className='w-full mt-5 relative mb-1'>
-                <FormCustomLabel
-                  title='Enter your password'
-                  htmlFor='password'
-                  required
-                />
                 <FormInput
                   id='password'
                   name='password'
+                  label='password'
+                  required
                   type={!showPassword ? 'password' : 'text'}
                   rightIcon={
                     !showPassword ? (
@@ -179,25 +151,17 @@ function RegisterAudienceForm() {
                     )
                   }
                   placeholder='password!@%'
-                  className={clsx(
-                    form.formState.errors.password &&
-                      form.formState.touchedFields.password &&
-                      'border-error-main',
-                  )}
                   control={form.control}
-                  isDisplayError={true}
+                  showError={true}
                 />
               </div>
 
               <div className='w-full mt-5 relative mb-1'>
-                <FormCustomLabel
-                  title='Confirm password'
-                  htmlFor='confirmPassword'
-                  required
-                />
                 <FormInput
                   id='confirmPassword'
                   name='confirmPassword'
+                  label='confirmPassword'
+                  required
                   type={!showConfirmPassword ? 'password' : 'text'}
                   rightIcon={
                     !showConfirmPassword ? (
@@ -215,13 +179,8 @@ function RegisterAudienceForm() {
                     )
                   }
                   placeholder='password!@%'
-                  className={clsx(
-                    form.formState.errors.confirmPassword &&
-                      form.formState.touchedFields.confirmPassword &&
-                      'border-error-main',
-                  )}
                   control={form.control}
-                  isDisplayError={true}
+                  showError={true}
                 />
               </div>
             </div>
@@ -233,15 +192,15 @@ function RegisterAudienceForm() {
                 className='text-primary mx-1'
               >
                 Terms of Use
-              </Link>{' '}
-              and{' '}
+              </Link>
+              and
               <Link
                 href='#'
                 underline='hover'
                 className='text-primary mx-1'
               >
                 Personal Information Handling
-              </Link>{' '}
+              </Link>
               before registering.
             </p>
             <Button
@@ -280,9 +239,7 @@ function RegisterAudienceForm() {
 
             <p className={clsx('mt-4 gap-2 font-light', styles.center)}>
               Want to host your own event?
-              <Button className='outline-none'>
-                Navigate to organization{' '}
-              </Button>
+              <Button className='outline-none'>Navigate to organization</Button>
             </p>
           </>
         )}

@@ -99,7 +99,7 @@ function SearchEvent() {
         <SearchHeader
           total={data?.total}
           form={form}
-          onSearch={handleSearch}
+          onValueChange={handleSearch}
           isFetching={isFetching}
         />
         <div className='py-10 flex 1000px:flex-row 1000px:justify-between 1000px:items-start flex-col items-center justify-center gap-3'>
@@ -113,7 +113,7 @@ function SearchEvent() {
                 <SearchFilter
                   className='xl:w-1/5 lg:w-1/4 1000px:w-1/4 w-full h-fit'
                   control={form.control}
-                  onSearch={handleSearch}
+                  onValueChange={handleSearch}
                 />
               </FilterContainer>
               <SearchResults

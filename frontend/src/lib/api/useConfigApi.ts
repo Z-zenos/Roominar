@@ -2,7 +2,6 @@ import {
   createConfiguration,
   ServerConfiguration,
 } from '@/src/lib/api/generated';
-import { getRouter } from '@/src/util/app.util';
 import dayjs from 'dayjs';
 import type { JwtPayload } from 'jwt-decode';
 import { jwtDecode } from 'jwt-decode';
@@ -42,7 +41,7 @@ function useApiConfig() {
                       jwtDecode<JwtPayload>(refreshToken);
                     if (dayjs().isAfter(dayjs.unix(decodedRefreshToken.exp))) {
                       await signOut({
-                        callbackUrl: getRouter('login'),
+                        callbackUrl: '/login',
                       });
                       return Promise.reject(context);
                     }
@@ -55,7 +54,7 @@ function useApiConfig() {
                   }
 
                   await signOut({
-                    callbackUrl: getRouter('login'),
+                    callbackUrl: '/login',
                   });
                   return Promise.reject(context);
                 }
@@ -75,7 +74,7 @@ function useApiConfig() {
             async post(context) {
               if (context.httpStatusCode === 401) {
                 await signOut({
-                  callbackUrl: getRouter('login'),
+                  callbackUrl: '/login',
                 });
                 return Promise.reject(context);
               }

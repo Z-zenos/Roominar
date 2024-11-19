@@ -1,3 +1,5 @@
+'use client';
+
 import type * as LabelPrimitive from '@radix-ui/react-label';
 import { Slot } from '@radix-ui/react-slot';
 import type {
@@ -14,6 +16,7 @@ import type {
   HTMLAttributes,
   ElementRef,
   ComponentPropsWithoutRef,
+  ReactNode,
 } from 'react';
 import { createContext, useContext, forwardRef, useId, useMemo } from 'react';
 import type { DateRange } from 'react-day-picker';
@@ -24,7 +27,7 @@ import type { CheckboxProps } from '../common/Input/Checkbox';
 import {
   DateRangePicker,
   type DateRangePickerProps,
-} from '../common/Datetime/DateRangePicker';
+} from '../common/DateTime/DateRangePicker';
 import Checkbox from '../common/Input/Checkbox';
 import type { TextInputProps } from '../common/Input/TextInput';
 import TextInput from '../common/Input/TextInput';
@@ -48,7 +51,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../common/Select';
-import type { SelectItem } from '@/src/type/SelectItem';
 import type {
   ListingTagsResponse,
   TagGroup,
@@ -69,6 +71,12 @@ import { Button as UIButton } from '@nextui-org/button';
 import { RadioGroup, RadioGroupItem } from '../common/RadioGroup';
 import type { ImageUploaderProps } from '../common/Upload/ImageUploader';
 import ImageUploader from '../common/Upload/ImageUploader';
+import { useTranslations } from 'next-intl';
+import { DateTimePicker } from '../common/DateTime/DateTimePicker';
+import { Textarea, type TextareaProps } from '../common/Input/Textarea';
+import Nodata from '../common/Nodata';
+import type Option from '@/src/type/Option';
+import { capitalize } from 'lodash-es';
 
 const Form = FormProvider;
 
@@ -205,151 +213,206 @@ const FormDescription = forwardRef<
 
 FormDescription.displayName = 'FormDescription';
 
-const FormMessage = forwardRef<
-  HTMLParagraphElement,
-  HTMLAttributes<HTMLParagraphElement>
->(({ className, children, ...props }, ref) => {
-  const { error, formMessageId } = useFormField();
-  const body = error ? String(error?.message) : children;
+interface FormMessageProps extends HTMLAttributes<HTMLParagraphElement> {
+  label?: string;
+}
 
-  if (!body) {
-    return null;
-  }
+const FormMessage = forwardRef<HTMLParagraphElement, FormMessageProps>(
+  ({ label, className, children, ...props }, ref) => {
+    const t = useTranslations('form');
+    const { error, formMessageId } = useFormField();
+    let body = undefined;
+    if (error) {
+      if (error?.message === 'required') {
+        body = capitalize(t('message.error.required')).replace(
+          '[field]',
+          label,
+        );
+      } else {
+        body = capitalize(
+          t(
+            `message.error.${error.type !== 'custom' ? error.type : error.message}`,
+          ).replace('[field]', t(`label.${label}`)),
+        );
 
-  return (
-    <p
-      ref={ref}
-      id={formMessageId}
-      className={cn('text-sm font-medium text-destructive', className)}
-      {...props}
-    >
-      {body}
-    </p>
-  );
-});
+        if (['too_small', 'too_big'].includes(error.type)) {
+          const match = error?.message?.match(/\d+/);
+          const value = match ? Number(match[0]) : null;
+          body = body.replace('[value]', value);
+        }
+      }
+    } else {
+      body = children;
+    }
+
+    if (!body) {
+      return null;
+    }
+
+    return (
+      <p
+        ref={ref}
+        id={formMessageId}
+        className={cn('text-sm font-medium text-destructive', className)}
+        {...props}
+      >
+        {body}
+      </p>
+    );
+  },
+);
 
 FormMessage.displayName = 'FormMessage';
 
-interface FormInputProps extends TextInputProps {
-  control: Control<any>;
-  label?: string;
-  isDisplayError?: boolean;
-  onTextChange?(value: string): void;
+enum FormItemClassname {
+  label = 'label',
+  wrapper = 'wrapper',
 }
+
+interface FormItemProps {
+  name: string;
+  control: Control<any>;
+  showError?: boolean;
+  classNames?: { [k in FormItemClassname]?: string };
+  label?: string;
+  required?: boolean;
+  onValueChange?(val?: any): void;
+  i18nPath?: string;
+}
+
+interface FormInputProps extends Omit<FormItemProps & TextInputProps, null> {}
 
 const FormInput = ({
   name,
   control,
-  isDisplayError = false,
-  label,
-  onTextChange,
+  showError = false,
   ...props
 }: FormInputProps) => {
   return (
     <FormField
       control={control}
-      name={name as string}
-      render={({ field }) => (
-        <FormItem>
-          {label && <FormLabel>{label}</FormLabel>}
+      name={name}
+      render={({ field, fieldState }) => (
+        <FormItem className={props.classNames?.wrapper}>
+          {props.label && (
+            <FormCustomLabel
+              htmlFor={name}
+              label={props.label}
+              required={props.required}
+              className={props.classNames?.label}
+            />
+          )}
           <FormControl>
             <TextInput
               {...props}
               {...field}
+              error={fieldState.error}
               onChange={(e: ChangeEvent<HTMLInputElement>) => {
                 field.onChange(e);
-                onTextChange && onTextChange(e.target.value);
+                props.onValueChange && props.onValueChange(e.target.value);
               }}
             />
           </FormControl>
-          {isDisplayError && <FormMessage />}
+          {showError && <FormMessage label={props.label} />}
         </FormItem>
       )}
     />
   );
 };
 
-interface FormCheckBoxListProps extends CheckboxProps {
-  data: SelectItem[];
-  name: string;
-  control: Control<any>;
-  onSearch?(data?: any): void;
+interface FormCheckBoxListProps
+  extends Omit<FormItemProps & CheckboxProps, null> {
+  options: Option[];
+  direction?: 'vertical' | 'horizontal';
 }
-
 const FormCheckBoxList = ({
-  data,
+  options,
   name,
   control,
-  onSearch,
-  className,
+  classNames,
+  i18nPath,
+  direction = 'horizontal',
   ...props
 }: FormCheckBoxListProps) => {
   return (
     <FormField
-      control={control}
       name={name}
+      control={control}
       render={() => (
-        <FormItem className={className}>
-          {data.map((item: SelectItem, index: number) => (
-            <FormField
-              key={`fcbl-${item.value}`}
-              control={control}
-              name={name}
-              render={({ field }) => {
-                return (
-                  <FormItem
-                    key={`ficb-${item.value}`}
-                    className={clsx(
-                      !index && 'mt-2',
-                      'flex flex-row items-center justify-start space-x-1 ',
-                    )}
-                  >
-                    <FormControl>
-                      <Checkbox
-                        checked={field?.value?.includes(item.value)}
-                        {...props}
-                        onCheckedChange={(checked) => {
-                          let newItems = null;
-
-                          if (checked) {
-                            newItems = field?.value
-                              ? [...field.value, item.value]
-                              : [item.value];
-                          } else {
-                            newItems = field?.value?.filter(
-                              (value: any) => value !== item.value,
-                            );
-                          }
-                          field.onChange(newItems);
-                          if (onSearch) onSearch();
-                        }}
-                        title={item.label}
-                      />
-                    </FormControl>
-                  </FormItem>
-                );
-              }}
+        <FormItem>
+          {props.label && (
+            <FormCustomLabel
+              htmlFor={name}
+              label={props.label}
+              required={props.required}
+              className={classNames?.label}
             />
-          ))}
-          {/* <FormMessage /> */}
+          )}
+          <div
+            className={clsx(
+              'gap-4 flex justify-start',
+              direction === 'vertical' ? 'flex-col' : 'items-center',
+            )}
+          >
+            {options.length > 0 &&
+              options.map((option: Option, index: number) => (
+                <FormField
+                  key={`fcbl-${option.value}`}
+                  name={name}
+                  control={control}
+                  render={({ field }) => {
+                    return (
+                      <FormItem
+                        key={`ficb-${option.value}`}
+                        className={clsx(
+                          !index && 'mt-2',
+                          'flex flex-row items-center justify-start space-x-1 ',
+                          classNames?.wrapper,
+                        )}
+                      >
+                        <FormControl>
+                          <Checkbox
+                            checked={field?.value?.includes(option.value)}
+                            {...props}
+                            onCheckedChange={(checked) => {
+                              let newItems = null;
+
+                              if (checked) {
+                                newItems = field?.value
+                                  ? [...field.value, option.value]
+                                  : [option.value];
+                              } else {
+                                newItems = field?.value?.filter(
+                                  (value: any) => value !== option.value,
+                                );
+                              }
+                              field.onChange(newItems);
+                              if (props.onValueChange) props.onValueChange();
+                            }}
+                            label={option.label}
+                            i18nPath={i18nPath}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    );
+                  }}
+                />
+              ))}
+          </div>
+          {props.showError && <FormMessage label={props.label} />}
         </FormItem>
       )}
     />
   );
 };
-
 FormCheckBoxList.displayName = 'FormCheckBoxList';
 
-interface FormCheckBoxProps extends CheckboxProps {
-  name: string;
-  control: Control<any>;
-  onSearch?(data?: any): void;
-}
-
+interface FormCheckBoxProps extends Omit<FormItemProps & CheckboxProps, null> {}
 const FormCheckBox = ({
   name,
   control,
-  onSearch,
+  classNames,
+  onValueChange,
   ...props
 }: FormCheckBoxProps) => {
   return (
@@ -357,48 +420,69 @@ const FormCheckBox = ({
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem className='flex flex-row items-center justify-start space-x-1'>
+        <FormItem
+          className={clsx(
+            'flex flex-row items-center justify-start space-x-1',
+            classNames?.wrapper,
+          )}
+        >
           <FormControl>
             <Checkbox
               checked={field?.value}
+              label={props.label}
               {...props}
               onCheckedChange={(checked) => {
                 field.onChange(checked);
-                onSearch && onSearch();
+                onValueChange && onValueChange();
               }}
+              i18nPath={props.i18nPath}
             />
           </FormControl>
+          {props.showError && <FormMessage label={props.label} />}
         </FormItem>
       )}
     />
   );
 };
-
 FormCheckBox.displayName = 'FormCheckBox';
 
-interface FormComboboxProps extends ComboboxProps {
-  name: string;
-  control: Control<any>;
-  onSearch?(data?: any): void;
+interface FormComboboxProps extends Omit<FormItemProps & ComboboxProps, null> {
   multiple?: boolean;
   className?: string;
+  options?: Option[];
 }
-
 const FormCombobox = ({
   name,
   control,
-  data,
   title,
-  onSearch,
+  onValueChange,
   multiple = true,
+  options,
+  i18nPath,
   className,
+  ...props
 }: FormComboboxProps) => {
+  const t = useTranslations(i18nPath);
+
   return (
     <FormField
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem className='flex flex-col shadow-[2px_2px_10px_rgba(0,_0,_0,_0.075)] bg-white '>
+        <FormItem
+          className={clsx(
+            'flex flex-col shadow-[2px_2px_10px_rgba(0,_0,_0,_0.075)] bg-white',
+            props.classNames?.wrapper,
+          )}
+        >
+          {props.label && (
+            <FormCustomLabel
+              htmlFor={name}
+              label={props.label}
+              required={props.required}
+              className={props.classNames?.label}
+            />
+          )}
           <Popover>
             <PopoverTrigger
               asChild
@@ -424,16 +508,18 @@ const FormCombobox = ({
                     {multiple &&
                       field?.value &&
                       (field?.value as string[])
-                        .map(
-                          (selectedItem: string) =>
-                            data.find((item) => item.value === selectedItem)
-                              ?.label,
+                        .map((selectedItem: string) =>
+                          t(
+                            `${options.find((option) => option.value === selectedItem)}`,
+                          ),
                         )
                         .join(', ')}
 
                     {!multiple &&
                       field?.value &&
-                      data.find((item) => item.value === field?.value)?.label}
+                      t(
+                        `${options.find((option) => option.value === field?.value)}`,
+                      )}
 
                     {(!field?.value || !field?.value?.length) &&
                       `Select ${title}`}
@@ -448,74 +534,73 @@ const FormCombobox = ({
                 <CommandList>
                   <CommandEmpty>No {title} found.</CommandEmpty>
                   <CommandGroup>
-                    {data.map((item: SelectItem) => (
-                      <CommandItem
-                        value={item.label}
-                        key={item.value}
-                        onSelect={() => {
-                          let newItems = null;
+                    {options &&
+                      options.length > 0 &&
+                      options.map((option: Option) => (
+                        <CommandItem
+                          value={t(option.label)}
+                          key={option.value}
+                          onSelect={() => {
+                            let newItems = null;
 
-                          if (multiple) {
-                            if (field?.value.includes(item.value)) {
-                              newItems = field?.value?.filter(
-                                (value: string) => value !== item.value,
-                              );
+                            if (multiple) {
+                              if (field?.value.includes(option.value)) {
+                                newItems = field?.value?.filter(
+                                  (value: string) => value !== option.value,
+                                );
+                              } else {
+                                newItems = field?.value
+                                  ? [...field.value, option.value]
+                                  : [option.value];
+                              }
                             } else {
-                              newItems = field?.value
-                                ? [...field.value, item.value]
-                                : [item.value];
+                              newItems = option.value;
                             }
-                          } else {
-                            newItems = item.value;
-                          }
-                          field.onChange(newItems);
-                          if (onSearch) onSearch();
-                        }}
-                      >
-                        <Check
-                          className={cn(
-                            'mr-2 h-4 w-4',
-                            multiple
-                              ? field?.value.includes(item.value)
-                                ? 'opacity-100'
-                                : 'opacity-0'
-                              : field?.value === item.value
-                                ? 'opacity-100'
-                                : 'opacity-0',
-                          )}
-                        />
-                        {item.label}
-                      </CommandItem>
-                    ))}
+                            field.onChange(newItems);
+                            if (onValueChange) onValueChange();
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              'mr-2 h-4 w-4',
+                              multiple
+                                ? field?.value.includes(option.value)
+                                  ? 'opacity-100'
+                                  : 'opacity-0'
+                                : field?.value === option.value
+                                  ? 'opacity-100'
+                                  : 'opacity-0',
+                            )}
+                          />
+                          {t(option.label)}
+                        </CommandItem>
+                      ))}
                   </CommandGroup>
                 </CommandList>
               </Command>
             </PopoverContent>
           </Popover>
+          {props.showError && <FormMessage label={props.label} />}
         </FormItem>
       )}
     />
   );
 };
-
 FormCombobox.displayName = 'FormCombobox';
 
-interface FormTagsInputProps {
-  name: string;
-  control: Control<any>;
-  onSearch?(data?: any): void;
+interface FormTagsInputProps extends FormItemProps {
   className?: string;
   data?: ListingTagsResponse;
   title?: string;
 }
-
 const FormTagsInput = ({
   data,
   name,
   control,
-  onSearch,
+  onValueChange,
   className,
   title,
+  ...props
 }: FormTagsInputProps) => {
   const tags = useMemo(
     () =>
@@ -527,7 +612,7 @@ const FormTagsInput = ({
                 name: tag.name,
               }))
               .map((tag) => ({ value: tag.id + '', label: tag.name })),
-          ) as SelectItem[])
+          ) as Option[])
         : [],
     [data],
   );
@@ -553,7 +638,15 @@ const FormTagsInput = ({
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem className='flex flex-col'>
+        <FormItem className={clsx('flex flex-col', props.classNames?.wrapper)}>
+          {props.label && (
+            <FormCustomLabel
+              htmlFor={name}
+              label={props.label}
+              required={props.required}
+              className={props.classNames?.label}
+            />
+          )}
           <div className='border border-gray-300 rounded-sm bg-white'>
             <div className={clsx('max-h-[100px] overflow-y-scroll p-1')}>
               {field?.value &&
@@ -569,15 +662,14 @@ const FormTagsInput = ({
                   >
                     <span className='break-all max-w-[90%]'>
                       {'#' +
-                        tags?.find((tag: SelectItem) => tag.value === id)
-                          ?.label}
+                        tags?.find((tag: Option) => tag.value === id)?.label}
                     </span>
                     <IoClose
                       onClick={() => {
                         field.onChange(
                           field?.value?.filter((value: string) => value !== id),
                         );
-                        if (onSearch) onSearch();
+                        if (onValueChange) onValueChange();
                       }}
                       className='min-w-5 cursor-pointer'
                     />
@@ -613,16 +705,16 @@ const FormTagsInput = ({
                   <CommandList>
                     <CommandEmpty>No {title} found.</CommandEmpty>
                     <CommandGroup>
-                      {tags.map((item: SelectItem) => (
+                      {tags.map((item: Option) => (
                         <CommandItem
                           value={item.label}
                           key={`command-${item.value}`}
                           onSelect={() => {
                             handleSelectTags(field, item.value);
-                            if (onSearch) onSearch();
+                            if (onValueChange) onValueChange();
                           }}
                           onKeyDown={() => {
-                            if (onSearch) onSearch();
+                            if (onValueChange) onValueChange();
                           }}
                         >
                           <Check
@@ -676,7 +768,6 @@ const FormTagsInput = ({
                               {tagGroup.tags.map((tag: TagItem) => (
                                 <Checkbox
                                   key={`modal-tag-${tag.id}`}
-                                  title={tag.name.toLowerCase()}
                                   id={tag.id + ''}
                                   onCheckedChange={() => {
                                     handleSelectTags(field, tag.id + '');
@@ -684,7 +775,9 @@ const FormTagsInput = ({
                                   defaultChecked={field?.value.includes(
                                     tag.id + '',
                                   )}
-                                />
+                                >
+                                  {tag.name.toLowerCase()}
+                                </Checkbox>
                               ))}
                             </div>
                           </div>
@@ -704,7 +797,7 @@ const FormTagsInput = ({
                       <UIButton
                         color='primary'
                         onPress={() => {
-                          if (onSearch) onSearch();
+                          if (onValueChange) onValueChange();
                           onClose();
                         }}
                       >
@@ -716,77 +809,93 @@ const FormTagsInput = ({
               </ModalContent>
             </Modal>
           </div>
+          {props.showError && <FormMessage label={props.label} />}
         </FormItem>
       )}
     />
   );
 };
-
 FormTagsInput.displayName = 'FormTagsInput';
 
-interface FormRadioBoxListProps {
-  data: SelectItem[];
-  name: string;
-  control: Control<any>;
-  onSearch?(data?: any): void;
+interface FormRadioBoxListProps extends FormItemProps {
+  direction: 'vertical' | 'horizontal';
+  options: Option[];
 }
-
 function FormRadioBoxList({
   name,
-  data,
+  options,
+  i18nPath,
   control,
-  onSearch,
+  onValueChange,
+  direction = 'vertical',
+  ...props
 }: FormRadioBoxListProps) {
+  const t = useTranslations(i18nPath);
+
   return (
     <FormField
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem className='space-y-3'>
+        <FormItem className={clsx('space-y-3', props.classNames?.wrapper)}>
+          {props.label && (
+            <FormCustomLabel
+              htmlFor={name}
+              label={props.label}
+              required={props.required}
+              className={props.classNames?.label}
+            />
+          )}
           <FormControl>
             <RadioGroup
               onValueChange={(value) => {
                 field.onChange(value);
-                if (onSearch) onSearch();
+                if (onValueChange) onValueChange();
               }}
               defaultValue={field?.value}
-              className='flex flex-col space-y-1'
+              className={clsx(
+                direction === 'vertical'
+                  ? 'flex flex-col space-y-1'
+                  : 'grid grid-cols-3 space-x-1',
+              )}
             >
-              {data &&
-                data.length > 0 &&
-                data.map((item: SelectItem) => (
+              {options &&
+                options.length > 0 &&
+                options.map((option: Option) => (
                   <FormItem
-                    key={`frbl-${item.value}`}
+                    key={`frbl-${option.value}`}
                     className='flex items-center space-x-3 space-y-0 mt-2'
                   >
                     <FormControl>
-                      <RadioGroupItem value={item.value} />
+                      <RadioGroupItem value={option.value} />
                     </FormControl>
-                    <FormLabel className='font-normal'>{item.label}</FormLabel>
+                    <FormLabel className='font-normal'>
+                      {t(option.label)}
+                    </FormLabel>
                   </FormItem>
                 ))}
             </RadioGroup>
           </FormControl>
+          {props.showError && <FormMessage label={props.label} />}
         </FormItem>
       )}
     />
   );
 }
-
 FormRadioBoxList.displayName = 'FormRadioBoxList';
 
 // interface FormSliderProps extends HTMLAttributes<HTMLDivElement> {
 // 	min: number;
 // 	max: number;
 // 	control: Control<any>;
-// 	onSearch?(data: any): void;
+// 	onValueChange?(data: any): void;
 // 	name?: string;
 // }
 
 // const FormSlider = ({
 // 	min,
 // 	max,
-// 	onSearch,
+// 	onValueChange,
 // 	name,
 // 	control,
 // 	className,
@@ -808,7 +917,7 @@ FormRadioBoxList.displayName = 'FormRadioBoxList';
 // 								value={field?.value || [1, 1000]}
 // 								onChange={(values) => {
 // 									field.onChange(values);
-// 									(onSearch as Function)({ price: values });
+// 									(onValueChange as Function)({ price: values });
 // 								}}
 // 							/>
 // 							<div
@@ -825,7 +934,7 @@ FormRadioBoxList.displayName = 'FormRadioBoxList';
 // 									value={field?.value ? field?.value[0] : 1}
 // 									onChange={(ev) => {
 // 										field.onChange([+ev.target.value, field?.value[1]]);
-// 										(onSearch as Function)({
+// 										(onValueChange as Function)({
 // 											price: [+ev.target.value, field?.value[1]],
 // 										});
 // 									}}
@@ -839,7 +948,7 @@ FormRadioBoxList.displayName = 'FormRadioBoxList';
 // 									value={field?.value ? field?.value[1] : 1000}
 // 									onChange={(ev) => {
 // 										field.onChange([field?.value[0], +ev.target.value]);
-// 										(onSearch as Function)({
+// 										(onValueChange as Function)({
 // 											price: [field?.value[0], +ev.target.value],
 // 										});
 // 									}}
@@ -856,24 +965,34 @@ FormRadioBoxList.displayName = 'FormRadioBoxList';
 
 // FormSlider.displayName = 'FormSlider';
 
-interface FormDateRangePickerProps extends DateRangePickerProps {
-  name: string;
-  control: Control<any>;
-  onSearch?(data?: any): void;
-}
+interface FormDateRangePickerProps
+  extends Omit<FormItemProps & DateRangePickerProps, null> {}
 
 const FormDateRangePicker = ({
   name,
   control,
-  onSearch,
   className,
+  ...props
 }: FormDateRangePickerProps) => {
   return (
     <FormField
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem className='flex flex-row items-center justify-start space-x-1'>
+        <FormItem
+          className={clsx(
+            'flex flex-row items-center justify-start space-x-1',
+            props.classNames?.wrapper,
+          )}
+        >
+          {props.label && (
+            <FormCustomLabel
+              htmlFor={name}
+              label={props.label}
+              required={props.required}
+              className={props.classNames?.label}
+            />
+          )}
           <FormControl>
             <DateRangePicker
               className={className}
@@ -881,158 +1000,189 @@ const FormDateRangePicker = ({
               onDateRangeChange={(daterange: DateRange | undefined) => {
                 field.onChange(daterange);
               }}
-              onDateRangeSelect={onSearch}
+              onDateRangeSelect={props.onValueChange}
             />
           </FormControl>
+          {props.showError && <FormMessage label={props.label} />}
         </FormItem>
       )}
     />
   );
 };
-
 FormDateRangePicker.displayName = 'FormDateRangePicker';
 
 interface FormCustomLabelProps {
   htmlFor: string;
+  label?: string;
   className?: string;
-  title: string;
   required?: boolean;
+  custom?: ReactNode;
+  i18nPath?: string;
 }
-
 const FormCustomLabel = ({
   htmlFor,
   className,
-  title,
   required,
+  label,
+  custom,
+  i18nPath = 'form.label',
 }: FormCustomLabelProps) => {
+  const t = useTranslations(i18nPath);
+
   return (
-    <div className='mb-2 block'>
+    <div className='-mb-1 block'>
       <Label
         htmlFor={htmlFor}
         className={clsx(styles.label, className)}
       >
-        {title}
+        {capitalize(t(`${label}`))}
+        {custom}
         {required && <span className='text-red-500 ml-2'>*</span>}
       </Label>
     </div>
   );
 };
-
 FormCustomLabel.displayName = 'FormCustomLabel';
 
-// interface FormTextareaProps extends TextareaProps {
-// 	name: string;
-// 	control: Control<any>;
-// 	onSearch?(data: any): void;
-// 	isDisplayError?: boolean;
-// }
-
-// const FormTextarea = ({
-// 	name,
-// 	control,
-// 	onSearch,
-// 	placeholder,
-// 	isDisplayError,
-// }: FormTextareaProps) => {
-// 	return (
-// 		<FormField
-// 			control={control}
-// 			name={name}
-// 			render={({ field }) => (
-// 				<FormItem>
-// 					<FormControl>
-// 						<Textarea
-// 							placeholder={placeholder}
-// 							className="resize-none"
-// 							{...field}
-// 						/>
-// 					</FormControl>
-// 					{isDisplayError && <FormMessage />}
-// 				</FormItem>
-// 			)}
-// 		/>
-// 	);
-// };
-
-// FormTextarea.displayName = 'FormTextarea';
-
-interface FormSelectProps {
-  name: string;
-  control: Control<any>;
-  onSearch?(data?: any): void;
-  data: SelectItem[];
-  className?: string;
-  defaultValue?: string;
-}
-
-const FormSelect = ({
-  data,
+interface FormTextareaProps extends Omit<FormItemProps & TextareaProps, null> {}
+const FormTextarea = ({
   name,
   control,
-  onSearch,
-  className,
-  defaultValue,
-}: FormSelectProps) => {
+  placeholder,
+  ...props
+}: FormTextareaProps) => {
   return (
     <FormField
       control={control}
       name={name}
       render={({ field }) => (
         <FormItem>
-          {/* <FormLabel>Sort By</FormLabel> */}
-          <Select
-            onValueChange={(value: string) => {
-              field.onChange(value);
-              if (onSearch) onSearch();
-            }}
-            defaultValue={defaultValue}
-          >
-            <FormControl>
-              <SelectTrigger className={clsx('w-[180px]', className)}>
-                <SelectValue placeholder={`${data[0].label}`} />
-              </SelectTrigger>
-            </FormControl>
-            <SelectContent>
-              <SelectGroup>
-                {data?.map((item: SelectItem) => (
-                  <SelectElement
-                    key={item.value}
-                    value={item.value}
-                  >
-                    {item.label}
-                  </SelectElement>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+          {props.label && (
+            <FormCustomLabel
+              htmlFor={name}
+              label={props.label}
+              required={props.required}
+              className={props.classNames?.label}
+            />
+          )}
+          <FormControl>
+            <Textarea
+              placeholder={placeholder}
+              className='resize-none'
+              {...field}
+            />
+          </FormControl>
+          {props.showError && <FormMessage label={props.label} />}
         </FormItem>
       )}
     />
   );
 };
+FormTextarea.displayName = 'FormTextarea';
 
+interface FormSelectProps extends FormItemProps {
+  options: Option[];
+  className?: string;
+  defaultValue?: string;
+  onSelect?(val: any): void;
+  placeholder?: string;
+}
+const FormSelect = ({
+  options,
+  i18nPath,
+  name,
+  control,
+  className,
+  defaultValue,
+  onSelect,
+  placeholder,
+  ...props
+}: FormSelectProps) => {
+  const t = useTranslations(i18nPath);
+
+  return (
+    <FormField
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <FormItem className={props.classNames?.wrapper}>
+          {props.label && (
+            <FormCustomLabel
+              htmlFor={name}
+              label={props.label}
+              required={props.required}
+              className={props.classNames?.label}
+            />
+          )}
+          <Select
+            onValueChange={(value: string) => {
+              field.onChange(value);
+              if (onSelect) onSelect(value);
+              if (props.onValueChange) props.onValueChange();
+            }}
+            defaultValue={defaultValue}
+          >
+            <FormControl>
+              <SelectTrigger className={clsx('w-[180px] h-11', className)}>
+                <SelectValue
+                  placeholder={
+                    placeholder ??
+                    `${i18nPath ? t(options[0]?.label) : options[0]?.label}`
+                  }
+                />
+              </SelectTrigger>
+            </FormControl>
+            <SelectContent>
+              <SelectGroup>
+                {options && options?.length > 0 ? (
+                  options?.map((option: Option) => (
+                    <SelectElement
+                      key={option.value}
+                      value={option.value}
+                    >
+                      {i18nPath ? t(option.label) : option.label}
+                    </SelectElement>
+                  ))
+                ) : (
+                  <SelectElement value='0'>
+                    <Nodata />
+                  </SelectElement>
+                )}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          {props.showError && <FormMessage label={props.label} />}
+        </FormItem>
+      )}
+    />
+  );
+};
 FormSelect.displayName = 'FormSelect';
 
-interface FormImageUploaderProps extends ImageUploaderProps {
-  name: string;
-  control: Control<any>;
-  isDisplayError?: boolean;
-}
-
+interface FormImageUploaderProps
+  extends Omit<FormItemProps & ImageUploaderProps, null> {}
 const FormImageUploader = ({
   name,
   control,
-  isDisplayError,
   className,
   formats,
   onGetImageUrl,
+  ...props
 }: FormImageUploaderProps) => {
   return (
     <FormField
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem>
+        <FormItem className={props.classNames?.wrapper}>
+          {props.label && (
+            <FormCustomLabel
+              htmlFor={name}
+              label={props.label}
+              required={props.required}
+              className={props.classNames?.label}
+            />
+          )}
           <FormControl>
             <ImageUploader
               className={className}
@@ -1041,14 +1191,77 @@ const FormImageUploader = ({
               {...field}
             />
           </FormControl>
-          {isDisplayError && <FormMessage />}
+          {props.showError && <FormMessage label={props.label} />}
         </FormItem>
       )}
     />
   );
 };
-
 FormImageUploader.displayName = 'FormImageUploader';
+
+interface FormInstructionsProps {
+  className?: string;
+  children: ReactNode;
+}
+
+const FormInstructions = ({ className, children }: FormInstructionsProps) => {
+  return (
+    <ul
+      className={clsx(
+        'mt-2 p-4 bg-emerald-50 flex flex-col justify-start gap-2 text-ss font-light list-disc pl-6 marker:text-blue-500',
+        className,
+      )}
+    >
+      {children}
+    </ul>
+  );
+};
+
+FormInstructions.displayName = 'FormInstructions';
+
+interface FormDateTimePickerProps extends FormItemProps {
+  className?: string;
+  defaultValue?: string;
+}
+const FormDateTimePicker = ({
+  name,
+  control,
+  className,
+  ...props
+}: FormDateTimePickerProps) => {
+  return (
+    <FormField
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <FormItem
+          className={clsx(
+            'flex flex-col items-start justify-start space-x-1',
+            props.classNames?.wrapper,
+          )}
+        >
+          {props.label && (
+            <FormCustomLabel
+              htmlFor={name}
+              label={props.label}
+              required={props.required}
+              className={props.classNames?.label}
+            />
+          )}
+          <FormControl>
+            <DateTimePicker
+              className={className}
+              date={field.value}
+              onDateTimeChange={(date) => field.onChange(date)}
+            />
+          </FormControl>
+          {props.showError && <FormMessage label={props.label} />}
+        </FormItem>
+      )}
+    />
+  );
+};
+FormDateTimePicker.displayName = 'FormDateTimePicker';
 
 export {
   useFormField,
@@ -1064,11 +1277,13 @@ export {
   FormCheckBoxList,
   // FormSlider,
   FormDateRangePicker,
-  // FormTextarea,
+  FormTextarea,
   FormSelect,
   FormImageUploader,
   FormCombobox,
   FormTagsInput,
   FormRadioBoxList,
   FormCustomLabel,
+  FormInstructions,
+  FormDateTimePicker,
 };

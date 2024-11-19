@@ -1,11 +1,17 @@
 'use client';
 
 import ErrorBoundary from '@/src/component/layout/ErrorBoundary';
-import { handleToast, parseErrorMessage } from '@/src/util/app.util';
-import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { parseErrorMessage } from '@/src/util/app.util';
+import {
+  MutationCache,
+  QueryCache,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query';
 import type { Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
 import { useMemo } from 'react';
+import toast from 'react-hot-toast';
 import { RecoilRoot } from 'recoil';
 
 export interface IRootProviderProps {
@@ -13,7 +19,10 @@ export interface IRootProviderProps {
   children: React.ReactNode;
 }
 
-export default function RootProvider({ children, session }: IRootProviderProps) {
+export default function RootProvider({
+  children,
+  session,
+}: IRootProviderProps) {
   const queryClient = useMemo(
     () =>
       new QueryClient({
@@ -29,13 +38,13 @@ export default function RootProvider({ children, session }: IRootProviderProps) 
         queryCache: new QueryCache({
           onError: (error, query) => {
             const err = parseErrorMessage(error?.message);
-            handleToast(Number(err.httpCode), err?.body?.message);
+            toast.error(`${+err.httpCode}: ${err?.body?.message}`);
           },
         }),
         mutationCache: new MutationCache({
           onError: (error, _, __, mutation) => {
             const err = parseErrorMessage(error?.message);
-            handleToast(Number(err.httpCode), err?.body?.message);
+            toast.error(`${+err.httpCode}: ${err?.body?.message}`);
           },
           onSuccess(data, _, __, mutation) {},
         }),
@@ -47,7 +56,9 @@ export default function RootProvider({ children, session }: IRootProviderProps) 
     <ErrorBoundary>
       <SessionProvider session={session}>
         <RecoilRoot>
-          <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+          <QueryClientProvider client={queryClient}>
+            {children}
+          </QueryClientProvider>
         </RecoilRoot>
       </SessionProvider>
     </ErrorBoundary>
