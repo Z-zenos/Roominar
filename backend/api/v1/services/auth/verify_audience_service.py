@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from fastapi import BackgroundTasks
 from sqlmodel import Session, select
 
 from backend.core.config import settings
@@ -15,6 +16,7 @@ from backend.utils.database import save
 
 async def verify_audience(
     db: Session,
+    worker: BackgroundTasks,
     user: User,
     request: VerifyAudienceRequest,
 ) -> User:
@@ -38,8 +40,8 @@ async def verify_audience(
             db.add_all(user_tags)
 
         user.email_verified_at = datetime.now()
-        user.email_verify_token = None
-        user.email_verify_token_expire_at = None
+        user.verify_email_token = None
+        user.verify_email_token_expire_at = None
         user = save(db, user)
 
         context = {
@@ -49,7 +51,8 @@ async def verify_audience(
         }
 
         mailer = Email()
-        await mailer.send_aud_email(
+        worker.add_task(
+            mailer.send_aud_email,
             user.email,
             "create_audience_account_success.html",
             "Thankyu",

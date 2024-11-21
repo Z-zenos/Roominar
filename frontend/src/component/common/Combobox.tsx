@@ -17,11 +17,11 @@ import {
 import type Option from '@/src/type/Option';
 
 export interface ComboboxProps {
-  data?: Option[];
+  options?: Option[];
   title?: string;
 }
 
-export function Combobox({ data, title }: ComboboxProps) {
+export function Combobox({ options, title }: ComboboxProps) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState('');
 
@@ -38,7 +38,7 @@ export function Combobox({ data, title }: ComboboxProps) {
           className='w-[200px] justify-between'
         >
           {value
-            ? data.find((item) => item.value === value)?.label
+            ? options.find((item) => item.value === value)?.label
             : `Select ${title}...`}
           <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
         </Button>
@@ -49,7 +49,7 @@ export function Combobox({ data, title }: ComboboxProps) {
           <CommandList>
             <CommandEmpty>No {title} found.</CommandEmpty>
             <CommandGroup>
-              {data.map((item) => (
+              {options.map((item) => (
                 <CommandItem
                   key={item.value}
                   value={item.value}

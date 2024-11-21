@@ -4,7 +4,6 @@ import type {
   ForgotPasswordResponse,
   RegisterAudienceResponse,
   AuthApiRegisterAudienceRequest,
-  VerifyAudienceResponse,
   AuthApiVerifyAudienceRequest,
   RequestChangeEmailResponse,
   AuthApiRequestChangeEmailRequest,
@@ -62,16 +61,11 @@ export const useRegisterAudienceMutation = <T>(
 };
 
 export const useVerifyAudienceMutation = <T>(
-  options?: SWRMutationConfiguration<VerifyAudienceResponse, T>,
+  options?: SWRMutationConfiguration<number, T>,
 ) => {
   const api = useApi();
   const key = `verify-user`;
-  return useSWRMutation<
-    VerifyAudienceResponse,
-    T,
-    typeof key,
-    AuthApiVerifyAudienceRequest
-  >(
+  return useSWRMutation<number, T, typeof key, AuthApiVerifyAudienceRequest>(
     key,
     async (_: string, { arg }) => await api.auth.verifyAudience(arg),
     options,

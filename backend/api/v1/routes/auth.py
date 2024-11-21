@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, BackgroundTasks, Depends
 from sqlmodel import Session
 
 import backend.api.v1.services.auth as auth_service
@@ -31,7 +31,6 @@ from backend.schemas.auth import (
     TokenResponse,
     UserLoginRequest,
     VerifyAudienceRequest,
-    VerifyAudienceResponse,
 )
 
 router = APIRouter()
@@ -56,25 +55,27 @@ async def login(
 )
 async def register_audience(
     db: Session = Depends(get_read_db),
+    worker: BackgroundTasks = None,
     request: RegisterAudienceRequest = None,
 ):
-    new_user = await auth_service.register_audience(db, request)
+    new_user = await auth_service.register_audience(db, worker, request)
     return RegisterAudienceResponse(
-        email=new_user.email, expire_at=new_user.email_verify_token_expire_at
+        email=new_user.email, expire_at=new_user.verify_email_token_expire_at
     )
 
 
 @router.patch(
     "/verify/{token}",
-    response_model=VerifyAudienceResponse,
+    response_model=int,
     responses=public_api_responses,
 )
 async def verify_audience(
     db: Session = Depends(get_read_db),
-    user: User = Depends(validate_encrypted_token("email_verification_token")),
+    worker: BackgroundTasks = None,
+    user: User = Depends(validate_encrypted_token("verify_email_token")),
     request: VerifyAudienceRequest = None,
 ):
-    return await auth_service.verify_audience(db, user, request)
+    return await auth_service.verify_audience(db, worker, user, request)
 
 
 @router.post(

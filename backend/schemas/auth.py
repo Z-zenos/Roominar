@@ -97,10 +97,6 @@ class VerifyAudienceRequest(BaseModel):
     tags: list[int] = Field([])
 
 
-class VerifyAudienceResponse(UserBase):
-    id: int
-
-
 class ChangePasswordRequest(BaseModel):
     current_password: str
     new_password: str

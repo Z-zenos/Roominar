@@ -328,7 +328,7 @@ export default function EventApplicationForm({
                 <FormCombobox
                   label='jobTypeCode'
                   required
-                  data={optionify(JobTypeCode)}
+                  options={optionify(JobTypeCode)}
                   i18nPath='code.jobType'
                   name='jobTypeCode'
                   control={form.control}
@@ -345,7 +345,7 @@ export default function EventApplicationForm({
                 <FormCombobox
                   label='industryCode'
                   required
-                  data={optionify(IndustryCode)}
+                  options={optionify(IndustryCode)}
                   i18nPath='code.industry'
                   name='industryCode'
                   control={form.control}

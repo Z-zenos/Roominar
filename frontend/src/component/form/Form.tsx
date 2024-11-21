@@ -510,7 +510,7 @@ const FormCombobox = ({
                       (field?.value as string[])
                         .map((selectedItem: string) =>
                           t(
-                            `${options.find((option) => option.value === selectedItem)}`,
+                            `${options.find((option) => option.value === selectedItem).value}`,
                           ),
                         )
                         .join(', ')}
@@ -518,7 +518,7 @@ const FormCombobox = ({
                     {!multiple &&
                       field?.value &&
                       t(
-                        `${options.find((option) => option.value === field?.value)}`,
+                        `${options.find((option) => option.value === field?.value).value}`,
                       )}
 
                     {(!field?.value || !field?.value?.length) &&

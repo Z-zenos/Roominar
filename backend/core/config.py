@@ -7,6 +7,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from backend.utils.logging import CustomFormatter
 
+
 # create logger with 'spam_application'
 logger = logging.getLogger("Roominar")
 logger.setLevel(logging.DEBUG)

@@ -1,9 +1,11 @@
 from datetime import datetime
 
+from fastapi import BackgroundTasks
 import pytz
 from sqlmodel import Session
 
 import backend.api.v1.services.auth as auth_service
+from backend.api.v1.services.auth.token_service import gen_encrypted_token
 from backend.core.config import settings
 from backend.core.constants import LoginMethodCode
 from backend.core.error_code import ErrorCode, ErrorMessage
@@ -14,7 +16,9 @@ from backend.schemas.auth import RegisterAudienceRequest
 from backend.utils.database import save
 
 
-async def register_audience(db: Session, request: RegisterAudienceRequest) -> User:
+async def register_audience(
+    db: Session, worker: BackgroundTasks, request: RegisterAudienceRequest
+) -> User:
     email = request.email
     user = auth_service.get_user_by_email(db, email, RoleCode.AUDIENCE)
 
@@ -23,53 +27,59 @@ async def register_audience(db: Session, request: RegisterAudienceRequest) -> Us
             ErrorCode.ERR_USER_ALREADY_EXISTED, ErrorMessage.ERR_USER_ALREADY_EXISTED
         )
 
-    if user and user.email_verify_token_expire_at > datetime.now(pytz.utc):
-        context = {
-            "url": f"""
-                {settings.AUD_FRONTEND_URL}/email/verify/{user.email_verify_token}
-            """,
-            "expire_at": user.email_verify_token_expire_at.strftime("%Y/%m/%d %H:%M"),
-            "first_name": user.first_name,
-        }
-
-        mailer = Email()
-        await mailer.send_aud_email(
-            email,
-            "register_audience.html",
-            "Account Verification",
-            context,
-        )
-
-        return user
-
-    token, expire = auth_service.create_email_verification_token()
+    verify_token, encrypted_verify_token, verify_expire_at = gen_encrypted_token(
+        settings.EMAIL_VERIFICATION_TOKEN_EXPIRE_MINUTES,
+        settings.EMAIL_VERIFICATION_TOKEN_LENGTH,
+    )
 
     try:
-        if user:
-            user.email_verify_token = token
-            user.email_verify_token_expire_at = expire
+        if user and user.verify_email_token_expire_at > datetime.now(pytz.utc):
+            user.verify_email_token = encrypted_verify_token
+            user.verify_email_token_expire_at = verify_expire_at
             new_user = save(db, user)
-        else:
-            new_user = User(
-                email=email,
-                email_verify_token=token,
-                email_verify_token_expire_at=expire,
-                role_code=RoleCode.AUDIENCE,
-                password=auth_service.get_password_hash(request.password),
-                first_name=request.first_name,
-                last_name=request.last_name,
-                login_method_code=LoginMethodCode.NORMAL,
+
+            context = {
+                "url": f"""
+                    {settings.AUD_FRONTEND_URL}/email/verify/{user.verify_email_token}
+                """,
+                "expire_at": user.verify_email_token_expire_at.strftime(
+                    "%Y/%m/%d %H:%M"
+                ),
+                "first_name": user.first_name,
+            }
+
+            mailer = Email()
+            worker.add_task(
+                mailer.send_aud_email,
+                email,
+                "register_audience.html",
+                "Account Verification",
+                context,
             )
-            new_user = save(db, new_user)
+
+            return user
+
+        new_user = User(
+            email=email,
+            verify_email_token=encrypted_verify_token,
+            verify_email_token_expire_at=verify_expire_at,
+            role_code=RoleCode.AUDIENCE,
+            password=auth_service.get_password_hash(request.password),
+            first_name=request.first_name,
+            last_name=request.last_name,
+            login_method_code=LoginMethodCode.NORMAL,
+        )
+        new_user = save(db, new_user)
 
         context = {
-            "url": f"{settings.AUD_FRONTEND_URL}/verify/{new_user.email_verify_token}",
-            "expire_at": expire.strftime("%Y/%m/%d %H:%M"),
+            "url": f"{settings.AUD_FRONTEND_URL}/email/verify/{verify_token}",
+            "expire_at": verify_expire_at.strftime("%Y/%m/%d %H:%M"),
             "first_name": new_user.first_name,
         }
 
         mailer = Email()
-        await mailer.send_aud_email(
+        worker.add_task(
+            mailer.send_aud_email,
             email,
             "register_audience.html",
             "Account Verification",

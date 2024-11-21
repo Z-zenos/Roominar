@@ -124,7 +124,7 @@ function VerifyAudienceForm({ token }: VerifyAudienceFormProps) {
               </h4>
             </div>
             <FormCombobox
-              data={optionify(JobTypeCode)}
+              options={optionify(JobTypeCode)}
               i18nPath='code.jobType'
               name='jobTypeCode'
               control={form.control}
@@ -147,7 +147,7 @@ function VerifyAudienceForm({ token }: VerifyAudienceFormProps) {
               </h4>
             </div>
             <FormCombobox
-              data={optionify(IndustryCode)}
+              options={optionify(IndustryCode)}
               i18nPath='code.industry'
               name='industryCode'
               control={form.control}

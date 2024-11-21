@@ -87,5 +87,4 @@ def gen_encrypted_token(expire_minutes: int, length: int):
 
     token = create_token(length)
     encrypted_token = hashlib.sha256(token.encode("utf-8")).hexdigest()
-
     return token, encrypted_token, expire_at

@@ -197,7 +197,7 @@ export default function UpdateMyProfileForm() {
             <div className='self-start'>
               <FormCombobox
                 label='jobTypeCode'
-                data={optionify(JobTypeCode)}
+                options={optionify(JobTypeCode)}
                 i18nPath='code.jobType'
                 name='jobTypeCode'
                 control={form.control}
@@ -213,7 +213,7 @@ export default function UpdateMyProfileForm() {
             <div className='self-start'>
               <FormCombobox
                 label='industryCode'
-                data={optionify(IndustryCode)}
+                options={optionify(IndustryCode)}
                 i18nPath='code.industry'
                 name='industryCode'
                 control={form.control}

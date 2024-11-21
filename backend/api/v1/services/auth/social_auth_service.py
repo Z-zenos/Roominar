@@ -35,8 +35,8 @@ async def social_auth(db: Session, request: SocialAuthRequest):
             first_name=request.family_name if request.family_name else request.name,
             last_name=request.given_name,
             avatar_url=request.picture,
-            email_verify_token=None,
-            email_verify_token_expire_at=None,
+            verify_email_token=None,
+            verify_email_token_expire_at=None,
             login_method_code=LoginMethodCode.GOOGLE,
         )
         user = save(db, user)

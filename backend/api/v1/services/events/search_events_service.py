@@ -87,6 +87,7 @@ async def search_events(
         .limit(query_params.per_page)
         .offset((query_params.page - 1) * query_params.per_page)
     )
+
     events = db.exec(query).mappings().all()
     result = {event.id: dict(event) for event in events}
     event_ids = list(result.keys())
