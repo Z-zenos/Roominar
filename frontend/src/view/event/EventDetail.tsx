@@ -45,9 +45,9 @@ import 'swiper/css/navigation';
 
 // import required modules
 import { Autoplay, FreeMode, Pagination } from 'swiper/modules';
-import { styles } from '@/src/constant/styles.constant';
+import { styles } from '@/src/constants/styles.constant';
 import DotLoader from '@/src/component/common/Loader/DotLoader';
-import useWindowDimensions from '@/src/hook/useWindowDimension';
+import useWindowDimensions from '@/src/hooks/useWindowDimension';
 import Timeline from '@/src/component/common/Timeline';
 import Badge from '@/src/component/common/Badge';
 import SpeakerCard from '@/src/component/common/Card/SpeakerCard';
@@ -59,7 +59,7 @@ import {
 import type { TagItem } from '@/src/lib/api/generated';
 import { usePathname, useRouter } from 'next/navigation';
 import Head from '@/src/component/common/Head';
-import { formatEventDate, groupIntoPairs } from '@/src/util/app.util';
+import { formatEventDate, groupIntoPairs } from '@/src/utils/app.util';
 import Chip from '@/src/component/common/Chip';
 import { useSession } from 'next-auth/react';
 import EventBookmark from './EventBookmark';

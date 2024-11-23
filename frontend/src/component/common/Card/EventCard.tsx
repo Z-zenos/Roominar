@@ -9,7 +9,7 @@ import { BsThreeDots } from 'react-icons/bs';
 import { Image, Link, useDisclosure } from '@nextui-org/react';
 import { SlNote } from 'react-icons/sl';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { styles } from '@/src/constant/styles.constant';
+import { styles } from '@/src/constants/styles.constant';
 import type {
   ApiException,
   ErrorResponse400,
@@ -17,7 +17,7 @@ import type {
   SearchEventsItem,
   TagItem,
 } from '@/src/lib/api/generated';
-import { formatEventDate } from '@/src/util/app.util';
+import { formatEventDate } from '@/src/utils/app.util';
 import dayjs from 'dayjs';
 import EventBookmark from '@/src/view/event/EventBookmark';
 import { useSession } from 'next-auth/react';

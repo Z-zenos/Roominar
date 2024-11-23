@@ -12,7 +12,7 @@ import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import type { GoogleProfile } from 'next-auth/providers/google';
 import GoogleProvider from 'next-auth/providers/google';
-import { RoleCode } from '../constant/role_code.constant';
+import { RoleCode } from '../constants/role_code.constant';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);

@@ -32,7 +32,7 @@ import {
   usePublishEventMutation,
 } from '@/src/api/event.api';
 import ImageUploader from '../common/Upload/ImageUploader';
-import { styles } from '@/src/constant/styles.constant';
+import { styles } from '@/src/constants/styles.constant';
 import { useTranslations } from 'next-intl';
 import type { ChipProps } from '@nextui-org/react';
 import {
@@ -72,7 +72,7 @@ import { useListingSurveyOptionsQuery } from '@/src/api/survey.api';
 import CreateTicketForm from './CreateTicketForm';
 import CreateTargetForm from './CreateTargetForm';
 import { useListingTargetOptionsQuery } from '@/src/api/target.api';
-import { cn, optionify } from '@/src/util/app.util';
+import { cn, optionify } from '@/src/utils/app.util';
 
 const LexicalEditor = dynamic(() => import('../editor/app/app'), {
   ssr: false,

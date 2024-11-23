@@ -4,7 +4,7 @@ import * as React from 'react';
 import { type DialogProps } from '@radix-ui/react-dialog';
 import { Command as CommandPrimitive } from 'cmdk';
 import { Dialog, DialogContent } from './Dialog/Dialog';
-import { cn } from '@/src/util/app.util';
+import { cn } from '@/src/utils/app.util';
 import { IoIosSearch } from 'react-icons/io';
 
 const Command = React.forwardRef<

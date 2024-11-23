@@ -22,7 +22,7 @@ import { createContext, useContext, forwardRef, useId, useMemo } from 'react';
 import type { DateRange } from 'react-day-picker';
 import clsx from 'clsx';
 import { Label } from '../common/Label';
-import { cn } from '@/src/util/app.util';
+import { cn } from '@/src/utils/app.util';
 import type { CheckboxProps } from '../common/Input/Checkbox';
 import {
   DateRangePicker,
@@ -56,7 +56,7 @@ import type {
   TagGroup,
   TagItem,
 } from '@/src/lib/api/generated';
-import { styles } from '@/src/constant/styles.constant';
+import { styles } from '@/src/constants/styles.constant';
 import { IoClose } from 'react-icons/io5';
 import {
   Modal,
@@ -75,7 +75,7 @@ import { useTranslations } from 'next-intl';
 import { DateTimePicker } from '../common/DateTime/DateTimePicker';
 import { Textarea, type TextareaProps } from '../common/Input/Textarea';
 import Nodata from '../common/Nodata';
-import type Option from '@/src/type/Option';
+import type Option from '@/src/types/Option';
 import { capitalize } from 'lodash-es';
 
 const Form = FormProvider;

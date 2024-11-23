@@ -10,7 +10,7 @@ import type {
   OrganizationsApiListingTopOrganizationEventsRequest,
 } from '../lib/api/generated';
 import useApi from '../lib/api/useApi';
-import { toCamelCase } from '../util/app.util';
+import { toCamelCase } from '../utils/app.util';
 import type { SWRMutationConfiguration } from 'swr/mutation';
 import useSWRMutation from 'swr/mutation';
 

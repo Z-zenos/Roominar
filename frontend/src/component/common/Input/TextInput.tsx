@@ -1,6 +1,6 @@
 'use client';
 
-import { styles } from '@/src/constant/styles.constant';
+import { styles } from '@/src/constants/styles.constant';
 import clsx from 'clsx';
 import type { InputHTMLAttributes, LegacyRef, ReactNode } from 'react';
 import { forwardRef } from 'react';

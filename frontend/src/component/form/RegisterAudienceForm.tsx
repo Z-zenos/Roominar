@@ -15,7 +15,7 @@ import { HiMail } from 'react-icons/hi';
 import clsx from 'clsx';
 import { Form, FormInput } from './Form';
 import { Link } from '@nextui-org/link';
-import { styles } from '@/src/constant/styles.constant';
+import { styles } from '@/src/constants/styles.constant';
 import Button from '../common/Button/Button';
 import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
 import RegisterAudienceSuccess from '@/src/view/audience/RegisterAudienceSuccess';

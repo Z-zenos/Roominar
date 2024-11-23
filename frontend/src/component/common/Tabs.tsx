@@ -6,7 +6,7 @@ import * as TabsPrimitive from '@radix-ui/react-tabs';
 import type { HTMLAttributes, ReactNode } from 'react';
 import { Suspense } from 'react';
 import clsx from 'clsx';
-import { cn } from '@/src/util/app.util';
+import { cn } from '@/src/utils/app.util';
 
 const BaseTabs = TabsPrimitive.Root;
 

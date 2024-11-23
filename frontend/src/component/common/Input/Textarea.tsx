@@ -1,4 +1,4 @@
-import { cn } from '@/src/util/app.util';
+import { cn } from '@/src/utils/app.util';
 import * as React from 'react';
 
 export interface TextareaProps

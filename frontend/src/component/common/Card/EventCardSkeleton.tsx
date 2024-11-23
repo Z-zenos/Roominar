@@ -3,7 +3,7 @@
 import clsx from 'clsx';
 import { FaTags } from 'react-icons/fa';
 import { Skeleton } from '@nextui-org/react';
-import { styles } from '@/src/constant/styles.constant';
+import { styles } from '@/src/constants/styles.constant';
 
 interface EventCardSkeletonProps {
   className?: string;
@@ -11,7 +11,11 @@ interface EventCardSkeletonProps {
   variant?: 'simple' | 'complex';
 }
 
-function EventCardSkeleton({ className, direction = 'vertical', variant = 'complex' }: EventCardSkeletonProps) {
+function EventCardSkeleton({
+  className,
+  direction = 'vertical',
+  variant = 'complex',
+}: EventCardSkeletonProps) {
   return (
     <div
       className={clsx(
@@ -25,11 +29,18 @@ function EventCardSkeleton({ className, direction = 'vertical', variant = 'compl
       <div
         className={clsx(
           'flex gap-4 justify-start ',
-          direction === 'vertical' ? 'flex-col' : 'flex-row justify-between items-start flex-wrap ',
+          direction === 'vertical'
+            ? 'flex-col'
+            : 'flex-row justify-between items-start flex-wrap ',
           variant === 'complex' && 'pb-3 border-b border-b-slate-300',
         )}
       >
-        <div className={clsx(direction === 'vertical' ? '' : 'w-[50%]', 'flex gap-2 flex-col')}>
+        <div
+          className={clsx(
+            direction === 'vertical' ? '' : 'w-[50%]',
+            'flex gap-2 flex-col',
+          )}
+        >
           <div className='flex gap-3 items-center px-3'>
             <Skeleton className={clsx('rounded-full w-8 h-8 ')} />
             <div>
@@ -61,13 +72,21 @@ function EventCardSkeleton({ className, direction = 'vertical', variant = 'compl
           </div>
         </div>
 
-        <div className={clsx(direction === 'vertical' ? '' : 'w-[45%] flex justify-end items-start h-full')}>
+        <div
+          className={clsx(
+            direction === 'vertical'
+              ? ''
+              : 'w-[45%] flex justify-end items-start h-full',
+          )}
+        >
           <Skeleton className={clsx('w-full h-[200px]')} />
 
           <div
             className={clsx(
               'flex items-center gap-3 px-3',
-              direction === 'horizontal' ? 'justify-center flex-col' : 'justify-start flex-row mt-3',
+              direction === 'horizontal'
+                ? 'justify-center flex-col'
+                : 'justify-start flex-row mt-3',
             )}
           >
             <Skeleton className={clsx('rounded-xl w-[40px] h-[40px]')} />
@@ -79,8 +98,17 @@ function EventCardSkeleton({ className, direction = 'vertical', variant = 'compl
       </div>
 
       {variant === 'complex' && (
-        <div className={clsx(styles.flexStart, 'flex-wrap gap-x-2 mt-2', direction === 'vertical' && 'px-3')}>
-          <FaTags className='text-orange-500 ' size={16} />
+        <div
+          className={clsx(
+            styles.flexStart,
+            'flex-wrap gap-x-2 mt-2',
+            direction === 'vertical' && 'px-3',
+          )}
+        >
+          <FaTags
+            className='text-orange-500 '
+            size={16}
+          />
           <Skeleton className={clsx('rounded-md w-[40px] h-[16px]')} />
         </div>
       )}

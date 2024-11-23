@@ -9,8 +9,8 @@ import type { DateRange, SelectRangeEventHandler } from 'react-day-picker';
 import { Popover, PopoverContent, PopoverTrigger } from '../Popover';
 import Button from '../Button/Button';
 import { Calendar } from './Calendar';
-import useWindowDimensions from '@/src/hook/useWindowDimension';
-import { cn } from '@/src/util/app.util';
+import useWindowDimensions from '@/src/hooks/useWindowDimension';
+import { cn } from '@/src/utils/app.util';
 import clsx from 'clsx';
 
 export interface DateRangePickerProps extends HTMLAttributes<HTMLDivElement> {

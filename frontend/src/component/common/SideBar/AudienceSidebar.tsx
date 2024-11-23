@@ -15,7 +15,7 @@ import ProfileIcon from '@/public/icons/profile.svg';
 import NotificationIcon from '@/public/icons/notification.svg';
 import AccountSettingIcon from '@/public/icons/account-settings.svg';
 import PaymentIcon from '@/public/icons/payment.svg';
-import { hexToRgba } from '@/src/util/app.util';
+import { hexToRgba } from '@/src/utils/app.util';
 
 const themes = {
   light: {

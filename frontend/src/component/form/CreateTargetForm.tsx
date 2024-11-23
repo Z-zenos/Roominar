@@ -14,7 +14,7 @@ import type {
   ErrorResponse400,
 } from '@/src/lib/api/generated';
 import { IndustryCode, JobTypeCode } from '@/src/lib/api/generated';
-import { optionify } from '@/src/util/app.util';
+import { optionify } from '@/src/utils/app.util';
 import { useTranslations } from 'next-intl';
 
 function CreateTargetForm() {

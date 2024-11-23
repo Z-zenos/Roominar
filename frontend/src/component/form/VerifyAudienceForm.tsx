@@ -5,7 +5,7 @@ import { Form, FormCombobox, FormCustomLabel } from './Form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Label } from '../common/Label';
 import clsx from 'clsx';
-import { styles } from '@/src/constant/styles.constant';
+import { styles } from '@/src/constants/styles.constant';
 
 import {
   IndustryCode,
@@ -14,7 +14,7 @@ import {
   type ErrorResponse400,
   type TagItem,
 } from '@/src/lib/api/generated';
-import { optionify } from '@/src/util/app.util';
+import { optionify } from '@/src/utils/app.util';
 import Tag from '../common/Tag/Tag';
 import { useListingTagsQuery } from '@/src/api/tag.api';
 import TagSkeleton from '../common/Tag/TagSkeleton';

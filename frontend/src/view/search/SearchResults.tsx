@@ -2,7 +2,7 @@
 
 import ReactPaginate from 'react-paginate';
 import EventCard from '../../component/common/Card/EventCard';
-import useWindowDimensions from '@/src/hook/useWindowDimension';
+import useWindowDimensions from '@/src/hooks/useWindowDimension';
 import type { SearchEventsItem } from '@/src/lib/api/generated';
 
 interface SearchResultsProps {
@@ -15,7 +15,14 @@ interface SearchResultsProps {
   page: number;
 }
 
-function SearchResults({ className, events, total, perPage, onPageChange, page }: SearchResultsProps) {
+function SearchResults({
+  className,
+  events,
+  total,
+  perPage,
+  onPageChange,
+  page,
+}: SearchResultsProps) {
   const { width } = useWindowDimensions();
 
   return (
@@ -23,7 +30,11 @@ function SearchResults({ className, events, total, perPage, onPageChange, page }
       {events?.length > 0 &&
         events?.map((event: SearchEventsItem) => (
           <EventCard
-            direction={(width < 1200 && width > 1000) || width < 800 ? 'vertical' : 'horizontal'}
+            direction={
+              (width < 1200 && width > 1000) || width < 800
+                ? 'vertical'
+                : 'horizontal'
+            }
             className='w-full'
             event={event}
             key={event.id}

@@ -23,9 +23,9 @@ import {
   TbLayoutSidebarLeftCollapse,
   TbLayoutSidebarRightCollapse,
 } from 'react-icons/tb';
-import { styles } from '@/src/constant/styles.constant';
+import { styles } from '@/src/constants/styles.constant';
 import Logo from '../Logo';
-import { hexToRgba } from '@/src/util/app.util';
+import { hexToRgba } from '@/src/utils/app.util';
 
 const themes = {
   light: {

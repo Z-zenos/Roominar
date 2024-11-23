@@ -1,6 +1,6 @@
 import { nextui } from '@nextui-org/theme';
 import type { Config } from 'tailwindcss';
-import { colors } from './src/constant/colors.constant';
+import { colors } from './src/constants/colors.constant';
 
 const config = {
   darkMode: ['class'],
@@ -95,7 +95,11 @@ const config = {
       },
     },
   },
-  plugins: [nextui(), require('tailwindcss-animate'), require('tailwind-gradient-mask-image')],
+  plugins: [
+    nextui(),
+    require('tailwindcss-animate'),
+    require('tailwind-gradient-mask-image'),
+  ],
 } satisfies Config;
 
 export default config;

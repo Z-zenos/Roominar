@@ -1,9 +1,9 @@
 'use client';
 
 import { useRef, type HTMLAttributes } from 'react';
-import { cn } from '@/src/util/app.util';
+import { cn } from '@/src/utils/app.util';
 import { DatePicker } from '@nextui-org/react';
-import { styles } from '@/src/constant/styles.constant';
+import { styles } from '@/src/constants/styles.constant';
 import { TimePickerInput } from './TimePicker';
 import { BsClock } from 'react-icons/bs';
 import { FormCustomLabel } from '../../form/Form';

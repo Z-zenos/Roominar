@@ -1,7 +1,7 @@
 'use client';
 
 import ErrorBoundary from '@/src/component/layout/ErrorBoundary';
-import { parseErrorMessage } from '@/src/util/app.util';
+import { parseErrorMessage } from '@/src/utils/app.util';
 import {
   MutationCache,
   QueryCache,

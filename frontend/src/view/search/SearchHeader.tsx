@@ -16,7 +16,7 @@ import {
 } from '@/src/lib/api/generated';
 import { useRouter } from 'next/navigation';
 import debounce from 'lodash.debounce';
-import { optionify } from '@/src/util/app.util';
+import { optionify } from '@/src/utils/app.util';
 
 interface SearchHeaderProps {
   total?: number;

@@ -1,6 +1,6 @@
 'use client';
 
-import { styles } from '@/src/constant/styles.constant';
+import { styles } from '@/src/constants/styles.constant';
 import clsx from 'clsx';
 import type {
   FieldErrors,
@@ -17,7 +17,7 @@ import { QuestionTypeCode } from '@/src/lib/api/generated';
 import { IoMdAddCircleOutline } from 'react-icons/io';
 import ConfirmDialog from '../Dialog/ConfirmDialog';
 import type { CreateSurveyFormSchema } from '@/src/schemas/survey/CreateSurveyFormSchema';
-import { optionify } from '@/src/util/app.util';
+import { optionify } from '@/src/utils/app.util';
 
 interface CreateQuestionProps {
   control: Control<any>;

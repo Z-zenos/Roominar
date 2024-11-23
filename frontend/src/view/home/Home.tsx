@@ -25,7 +25,7 @@ import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { Organization } from '@/src/component/common/Card/OrganizationCard';
-import useWindowDimensions from '@/src/hook/useWindowDimension';
+import useWindowDimensions from '@/src/hooks/useWindowDimension';
 import OrganizationCard from '@/src/component/common/Card/OrganizationCard';
 import RankingList from '@/src/component/common/Ranking/RankingList';
 import SpeakerCard from '@/src/component/common/Card/SpeakerCard';

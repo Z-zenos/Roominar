@@ -1,6 +1,6 @@
 'use client';
 
-import { styles } from '@/src/constant/styles.constant';
+import { styles } from '@/src/constants/styles.constant';
 import { QuestionTypeCode } from '@/src/lib/api/generated';
 import type { CreateSurveyFormSchema } from '@/src/schemas/survey/CreateSurveyFormSchema';
 import { Checkbox, Input, Radio, RadioGroup } from '@nextui-org/react';

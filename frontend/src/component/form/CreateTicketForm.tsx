@@ -1,7 +1,7 @@
 import { Button, RadioGroup } from '@nextui-org/react';
 import { TicketTypeRadio } from '../common/RadioGroup';
 import clsx from 'clsx';
-import { styles } from '@/src/constant/styles.constant';
+import { styles } from '@/src/constants/styles.constant';
 import {
   Form,
   FormInput,
@@ -22,7 +22,7 @@ import {
 } from '@/src/lib/api/generated';
 import { useCreateTicketMutation } from '@/src/api/ticket.api';
 import toast from 'react-hot-toast';
-import { optionify } from '@/src/util/app.util';
+import { optionify } from '@/src/utils/app.util';
 
 interface CreateTicketFormProps {
   eventId?: number;

@@ -4,7 +4,7 @@ import {
   useCreateEventBookmarkMutation,
   useDeleteEventBookmarkMutation,
 } from '@/src/api/event.api';
-import { styles } from '@/src/constant/styles.constant';
+import { styles } from '@/src/constants/styles.constant';
 import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
 import { Button } from '@nextui-org/button';
 import clsx from 'clsx';

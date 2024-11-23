@@ -1,6 +1,6 @@
 import Button from '@/src/component/common/Button/Button';
 import LoginForm from '@/src/component/form/LoginForm';
-import { styles } from '@/src/constant/styles.constant';
+import { styles } from '@/src/constants/styles.constant';
 import SocialLogin from '@/src/view/auth/SocialLogin';
 import { Link } from '@nextui-org/link';
 import clsx from 'clsx';

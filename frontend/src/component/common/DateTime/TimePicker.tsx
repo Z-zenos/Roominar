@@ -1,13 +1,13 @@
 'use client';
 
-import { cn } from '@/src/util/app.util';
+import { cn } from '@/src/utils/app.util';
 
-import type { Period, TimePickerType } from '@/src/util/timePicker.util';
+import type { Period, TimePickerType } from '@/src/utils/timePicker.util';
 import {
   getArrowByType,
   getDateByType,
   setDateByType,
-} from '@/src/util/timePicker.util';
+} from '@/src/utils/timePicker.util';
 import React from 'react';
 import { ShardInput } from '../Input/ShardInput';
 

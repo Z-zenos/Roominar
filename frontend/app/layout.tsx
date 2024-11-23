@@ -1,13 +1,13 @@
 import LoadingGlobal from '@/src/component/layout/LoadingGlobal';
 import RootProvider from '@/src/component/layout/RootProvider';
-import authOptions from '@/src/util/authOptions';
+import authOptions from '@/src/utils/authOptions';
 import type { Metadata } from 'next';
 import { getServerSession } from 'next-auth';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import '@/src/styles/globals.css';
 import clsx from 'clsx';
-import { fontSans } from '@/src/constant/fonts.constant';
+import { fontSans } from '@/src/constants/fonts.constant';
 import { UIProvider } from '@/src/contexts/UIProvider';
 import { Toaster } from 'react-hot-toast';
 

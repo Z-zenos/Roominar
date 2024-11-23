@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { HiMail } from 'react-icons/hi';
 import clsx from 'clsx';
-import { styles } from '@/src/constant/styles.constant';
+import { styles } from '@/src/constants/styles.constant';
 import type { EventApplicationFormSchema } from '@/src/schemas/audience/EventApplicationFormSchema';
 import eventApplicationFormSchema from '@/src/schemas/audience/EventApplicationFormSchema';
 import {
@@ -19,7 +19,7 @@ import {
 } from '@/src/component/form/Form';
 import Button from '@/src/component/common/Button/Button';
 import { useGetEventDetailQuery } from '@/src/api/event.api';
-import { optionify } from '@/src/util/app.util';
+import { optionify } from '@/src/utils/app.util';
 import { MdOutlineOnlinePrediction } from 'react-icons/md';
 import Chip from '@/src/component/common/Chip';
 import { FaUserFriends } from 'react-icons/fa';
@@ -43,7 +43,7 @@ import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { BiSolidSchool } from 'react-icons/bi';
 import { FaPhone } from 'react-icons/fa6';
-import useWindowDimensions from '@/src/hook/useWindowDimension';
+import useWindowDimensions from '@/src/hooks/useWindowDimension';
 import Timeline from '@/src/component/common/Timeline';
 
 interface EventApplicationFormProps {

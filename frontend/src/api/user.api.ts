@@ -6,7 +6,7 @@ import type {
 } from '../lib/api/generated';
 import useSWRMutation from 'swr/mutation';
 import useApi from '../lib/api/useApi';
-import { toCamelCase } from '../util/app.util';
+import { toCamelCase } from '../utils/app.util';
 import { useQuery } from '@tanstack/react-query';
 
 export const useUpdateMyProfileMutation = <T>(

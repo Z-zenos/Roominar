@@ -1,5 +1,5 @@
 import type { RegisterAudienceResponse } from '@/src/lib/api/generated';
-import { formatEventDate } from '@/src/util/app.util';
+import { formatEventDate } from '@/src/utils/app.util';
 import { Button } from '@nextui-org/button';
 import { Link } from '@nextui-org/link';
 

@@ -7,7 +7,7 @@ import { Form, FormCustomLabel, FormInput } from '@/src/component/form/Form';
 import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
-import useWindowDimensions from '@/src/hook/useWindowDimension';
+import useWindowDimensions from '@/src/hooks/useWindowDimension';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import type { ChangeEmailFormSchema } from '@/src/schemas/auth/ChangeEmailFormSchema';
@@ -15,8 +15,8 @@ import { changeEmailFormSchema } from '@/src/schemas/auth/ChangeEmailFormSchema'
 import { useRequestChangeEmailMutation } from '@/src/api/auth.api';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import { Button } from '@nextui-org/button';
-import { styles } from '@/src/constant/styles.constant';
-import { maskEmail } from '@/src/util/app.util';
+import { styles } from '@/src/constants/styles.constant';
+import { maskEmail } from '@/src/utils/app.util';
 
 export default function ChangeEmailForm() {
   const { data: auth, status } = useSession();

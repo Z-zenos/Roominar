@@ -22,11 +22,11 @@ import Logo from './Logo';
 import { signOut, useSession } from 'next-auth/react';
 import type { Session } from 'next-auth';
 import { usePathname, useRouter } from 'next/navigation';
-import { RoleCode } from '@/src/constant/role_code.constant';
-import useWindowDimensions from '@/src/hook/useWindowDimension';
-import { maskEmail } from '@/src/util/app.util';
+import { RoleCode } from '@/src/constants/role_code.constant';
+import useWindowDimensions from '@/src/hooks/useWindowDimension';
+import { maskEmail } from '@/src/utils/app.util';
 import { useTranslations } from 'next-intl';
-import { setUserLocale } from '@/src/util/locale';
+import { setUserLocale } from '@/src/utils/locale';
 import { getCookie } from 'cookies-next';
 
 const menuItems = [

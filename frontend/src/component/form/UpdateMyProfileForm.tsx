@@ -10,7 +10,7 @@ import {
   FormInput,
   FormTagsInput,
 } from '@/src/component/form/Form';
-import { optionify } from '@/src/util/app.util';
+import { optionify } from '@/src/utils/app.util';
 import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
 import { JobTypeCode } from '@/src/lib/api/generated';
 import { IndustryCode } from '@/src/lib/api/generated';
@@ -19,12 +19,12 @@ import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { BiSolidSchool } from 'react-icons/bi';
 import { FaPhone } from 'react-icons/fa6';
-import useWindowDimensions from '@/src/hook/useWindowDimension';
+import useWindowDimensions from '@/src/hooks/useWindowDimension';
 import type { UpdateMyProfileFormSchema } from '@/src/schemas/audience/UpdateMyProfileFormSchema';
 import updateMyProfileFormSchema from '@/src/schemas/audience/UpdateMyProfileFormSchema';
 import { useUpdateMyProfileMutation } from '@/src/api/user.api';
 import toast from 'react-hot-toast';
-import { styles } from '@/src/constant/styles.constant';
+import { styles } from '@/src/constants/styles.constant';
 import { useListingTagsQuery } from '@/src/api/tag.api';
 import ImageUploader from '../common/Upload/ImageUploader';
 import { Button } from '@nextui-org/button';

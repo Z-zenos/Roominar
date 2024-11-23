@@ -3,8 +3,8 @@ import { withAuth } from 'next-auth/middleware';
 import type { NextFetchEvent } from 'next/server';
 import { NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
-import { RoleCode } from './src/constant/role_code.constant';
-import { matchRoute } from './src/util/app.util';
+import { RoleCode } from './src/constants/role_code.constant';
+import { matchRoute } from './src/utils/app.util';
 
 export const pathPermissionMaster = {
   AUDIENCE: [

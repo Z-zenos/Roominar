@@ -5,7 +5,7 @@ import type { ReadonlyURLSearchParams } from 'next/navigation';
 import queryString from 'query-string';
 import { twMerge } from 'tailwind-merge';
 import dayjs from 'dayjs';
-import type Option from '../type/Option';
+import type Option from '../types/Option';
 
 export const parseErrorMessage = (errorMessage?: string) => {
   const parts = errorMessage?.split('\n');

@@ -13,13 +13,13 @@ import {
   FormDateRangePicker,
   FormTagsInput,
 } from '@/src/component/form/Form';
-import { styles } from '@/src/constant/styles.constant';
+import { styles } from '@/src/constants/styles.constant';
 import {
   IndustryCode,
   type EventsApiSearchEventsRequest,
 } from '@/src/lib/api/generated';
 import { useListingTagsQuery } from '@/src/api/tag.api';
-import { optionify } from '@/src/util/app.util';
+import { optionify } from '@/src/utils/app.util';
 
 interface SearchFilterProps {
   className?: string;

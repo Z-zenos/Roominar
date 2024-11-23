@@ -13,8 +13,8 @@ import { Form, FormCheckBox, FormInput } from './Form';
 import Button from '../common/Button/Button';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getCookie, setCookie } from 'cookies-next';
-import { toCamelCase } from '@/src/util/app.util';
-import { initialScreen } from '@/src/constant/app.constant';
+import { toCamelCase } from '@/src/utils/app.util';
+import { initialScreen } from '@/src/constants/app.constant';
 import type { LoginFormSchema } from '@/src/schemas/auth/LoginFormSchema';
 import { loginFormSchema } from '@/src/schemas/auth/LoginFormSchema';
 

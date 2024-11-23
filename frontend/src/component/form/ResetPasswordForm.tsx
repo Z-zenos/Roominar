@@ -21,7 +21,7 @@ import { resetPasswordFormSchema } from '@/src/schemas/auth/ResetPasswordFormSch
 import { useResetPasswordMutation } from '@/src/api/auth.api';
 import { useRouter } from 'next/navigation';
 import { FaArrowLeft } from 'react-icons/fa6';
-import { styles } from '@/src/constant/styles.constant';
+import { styles } from '@/src/constants/styles.constant';
 
 interface ResetPasswordFormProps {
   token: string;
