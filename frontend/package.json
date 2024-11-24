@@ -59,6 +59,7 @@
     "@react-aria/ssr": "3.9.4",
     "@react-aria/visually-hidden": "3.8.12",
     "@tanstack/react-query": "^5.50.1",
+    "@tanstack/react-table": "^8.20.5",
     "@types/jsdom": "^21.1.7",
     "@types/katex": "^0.16.7",
     "@types/lodash-es": "^4.17.12",

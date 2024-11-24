@@ -6,6 +6,16 @@ import queryString from 'query-string';
 import { twMerge } from 'tailwind-merge';
 import dayjs from 'dayjs';
 import type Option from '../types/Option';
+import {
+  ArrowDownIcon,
+  ArrowRightIcon,
+  ArrowUpIcon,
+  CheckCircle2,
+  CircleHelp,
+  CircleIcon,
+  CircleX,
+  Timer,
+} from 'lucide-react';
 
 export const parseErrorMessage = (errorMessage?: string) => {
   const parts = errorMessage?.split('\n');
@@ -151,4 +161,77 @@ export function hexToRgba(hex: string, alpha: number) {
   const b = parseInt(hex.slice(5, 7), 16);
 
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+export function formatTableDataDate(
+  date: Date | string | number,
+  opts: Intl.DateTimeFormatOptions = {},
+) {
+  return new Intl.DateTimeFormat('en-US', {
+    month: opts.month ?? 'long',
+    day: opts.day ?? 'numeric',
+    year: opts.year ?? 'numeric',
+    ...opts,
+  }).format(new Date(date));
+}
+
+export function toSentenceCase(str: string) {
+  return str
+    .replace(/_/g, ' ')
+    .replace(/([A-Z])/g, ' $1')
+    .toLowerCase()
+    .replace(/^\w/, (c) => c.toUpperCase())
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/**
+ * @see https://github.com/radix-ui/primitives/blob/main/packages/core/primitive/src/primitive.tsx
+ */
+export function composeEventHandlers<E>(
+  originalEventHandler?: (event: E) => void,
+  ourEventHandler?: (event: E) => void,
+  { checkForDefaultPrevented = true } = {},
+) {
+  return function handleEvent(event: E) {
+    originalEventHandler?.(event);
+
+    if (
+      checkForDefaultPrevented === false ||
+      !(event as unknown as Event).defaultPrevented
+    ) {
+      return ourEventHandler?.(event);
+    }
+  };
+}
+
+/**
+ * Returns the appropriate status icon based on the provided status.
+ * @param status - The status of the task.
+ * @returns A React component representing the status icon.
+ */
+export function getStatusIcon(status: any['status']) {
+  const statusIcons = {
+    canceled: CircleX,
+    done: CheckCircle2,
+    'in-progress': Timer,
+    todo: CircleHelp,
+  };
+
+  return statusIcons[status] || CircleIcon;
+}
+
+/**
+ * Returns the appropriate priority icon based on the provided priority.
+ * @param priority - The priority of the task.
+ * @returns A React component representing the priority icon.
+ */
+export function getPriorityIcon(priority: any['priority']) {
+  const priorityIcons = {
+    high: ArrowUpIcon,
+    low: ArrowDownIcon,
+    medium: ArrowRightIcon,
+  };
+
+  return priorityIcons[priority] || CircleIcon;
 }

@@ -2,14 +2,20 @@ import clsx from 'clsx';
 import type { ReactNode } from 'react';
 
 interface BadgeProps {
-  title?: string;
+  title?: string | number;
   icon?: ReactNode;
   iconColor?: string;
   className?: string;
   onClick?(): void;
 }
 
-export default function Badge({ title, icon: Icon, iconColor = 'text-dark-main', className, onClick }: BadgeProps) {
+export default function Badge({
+  title,
+  icon: Icon,
+  iconColor = 'text-dark-main',
+  className,
+  onClick,
+}: BadgeProps) {
   return (
     <div
       className={clsx(

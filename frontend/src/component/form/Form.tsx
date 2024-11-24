@@ -47,7 +47,7 @@ import {
   Select,
   SelectContent,
   SelectGroup,
-  SelectElement,
+  SelectItem,
   SelectTrigger,
   SelectValue,
 } from '../common/Select';
@@ -1136,17 +1136,17 @@ const FormSelect = ({
               <SelectGroup>
                 {options && options?.length > 0 ? (
                   options?.map((option: Option) => (
-                    <SelectElement
+                    <SelectItem
                       key={option.value}
                       value={option.value}
                     >
                       {i18nPath ? t(option.label) : option.label}
-                    </SelectElement>
+                    </SelectItem>
                   ))
                 ) : (
-                  <SelectElement value='0'>
+                  <SelectItem value='0'>
                     <Nodata />
-                  </SelectElement>
+                  </SelectItem>
                 )}
               </SelectGroup>
             </SelectContent>
