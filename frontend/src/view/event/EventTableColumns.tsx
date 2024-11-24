@@ -43,10 +43,14 @@ export function getColumns({
       header: ({ table }) => (
         <Checkbox
           checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && 'indeterminate')
+            // table?.getIsAllPageRowsSelected() ||
+            // (table?.getIsSomePageRowsSelected() && 'indeterminate')
+            true
           }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          onCheckedChange={(value) => {
+            return true;
+            // return table?.toggleAllPageRowsSelected(!!value)
+          }}
           aria-label='Select all'
           className='translate-y-0.5'
         />

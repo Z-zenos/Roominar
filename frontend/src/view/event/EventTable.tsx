@@ -17,6 +17,7 @@ import * as React from 'react';
 import { getColumns } from './EventTableColumns';
 import { EventStatusCode } from '@/src/lib/api/generated';
 import { useDataTable } from '@/src/hooks/useDataTable';
+import { useListingOrganizationEventsQuery } from '@/src/api/event.api';
 
 export function EventTable() {
   const [{ data, pageCount }, statusCounts, priorityCounts] = [
@@ -24,6 +25,8 @@ export function EventTable() {
     undefined,
     undefined,
   ];
+
+  const { data: organizationEventsData } = useListingOrganizationEventsQuery();
 
   const [rowAction, setRowAction] =
     React.useState<DataTableRowAction<any> | null>(null);
@@ -121,9 +124,9 @@ export function EventTable() {
   // const enableFloatingBar = true;
 
   const { table } = useDataTable({
-    data,
+    data: organizationEventsData?.data,
     columns,
-    pageCount,
+    pageCount: organizationEventsData?.perPage,
     filterFields,
     enableAdvancedFilter: enableAdvancedTable,
     initialState: {

@@ -250,3 +250,33 @@ class PublishEventRequest(BaseModel):
                 ErrorCode.ERR_ONLINE_EVENT_MISSING_ADDRESS,
                 ErrorMessage.ERR_ONLINE_EVENT_MISSING_ADDRESS,
             )
+
+
+class ListingOrganizationEventsItem(BaseModel):
+    id: int
+    slug: str
+    name: str
+    cover_image_url: str
+    start_at: datetime
+    end_at: datetime
+    application_start_at: datetime
+    application_end_at: datetime
+    is_online: bool
+    is_offline: bool
+    organize_city_code: str | None = None
+    organize_place_name: str | None = None
+    meeting_url: str | None = None
+    meeting_tool_code: EventMeetingToolCode
+    # tickets: list[TicketItem] = Field([])
+    application_number: int
+    applied_number: int | None = None
+    status: EventStatusCode
+    # tags: list[TagItem] = Field([])
+    # survey: SurveyDetail | None = None
+    view_number: int | None = None
+
+
+class ListingOrganizationEventsResponse(
+    PaginationResponse[ListingOrganizationEventsItem]
+):
+    pass

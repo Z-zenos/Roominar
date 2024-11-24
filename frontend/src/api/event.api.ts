@@ -119,3 +119,11 @@ export const useListingTicketsOfEventQuery = (
     queryFn: async () => await api.events.listingTicketsOfEvent(params),
   });
 };
+
+export const useListingOrganizationEventsQuery = () => {
+  const api = useApi();
+  return useQuery({
+    queryKey: ['listing-organization-events'],
+    queryFn: async () => await api.organizations.listingOrganizationEvents(),
+  });
+};

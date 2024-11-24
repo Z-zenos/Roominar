@@ -83,6 +83,7 @@
     "next-auth": "^4.24.7",
     "next-intl": "^3.17.2",
     "next-themes": "^0.2.1",
+    "nuqs": "^2.2.3",
     "query-string": "^9.0.0",
     "rc-slider": "^11.1.5",
     "react": "^18",

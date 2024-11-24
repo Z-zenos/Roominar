@@ -68,8 +68,8 @@ export function DataTable<TData>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
+            {/* {table && table?.getRowModel()?.rows?.length ? (
+              table?.getRowModel()?.rows.map((row) => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
@@ -89,22 +89,22 @@ export function DataTable<TData>({
                   ))}
                 </TableRow>
               ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={table.getAllColumns().length}
-                  className='h-24 text-center'
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
+            ) : ( */}
+            <TableRow>
+              <TableCell
+                colSpan={table.getAllColumns()?.length}
+                className='h-24 text-center'
+              >
+                No results.
+              </TableCell>
+            </TableRow>
+            {/* )} */}
           </TableBody>
         </Table>
       </div>
       <div className='flex flex-col gap-2.5'>
-        <DataTablePagination table={table} />
-        {table.getFilteredSelectedRowModel().rows.length > 0 && floatingBar}
+        {/* <DataTablePagination table={table} /> */}
+        {/* {table.getFilteredSelectedRowModel()?.rows?.length > 0 && floatingBar} */}
       </div>
     </div>
   );

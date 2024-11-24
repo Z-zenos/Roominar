@@ -7,6 +7,7 @@ from .listing_related_events_service import listing_related_events
 from .listing_top_organization_events_service import listing_top_organization_events
 from .publish_event_service import publish_event
 from .search_events_service import search_events
+from .listing_organization_events_service import listing_organization_events
 
 all = (
     search_events,
@@ -18,4 +19,5 @@ all = (
     delete_event_bookmark,
     listing_my_events,
     publish_event,
+    listing_organization_events,
 )

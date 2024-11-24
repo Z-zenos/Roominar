@@ -6,7 +6,7 @@ from backend.models.bookmark import Bookmark
 from backend.models.event import Event
 
 
-def listing_top_organization_events(db: Session, organization_id: int):
+async def listing_top_organization_events(db: Session, organization_id: int):
     """
     rank = view * 1  +  bookmark * 500 + applied * 5000
     """
