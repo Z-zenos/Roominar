@@ -25,16 +25,14 @@ import {
   DropdownMenuTrigger,
 } from '../DropdownMenu';
 import { Avatar, AvatarFallback, AvatarImage } from '../Avatar';
+import type { GetMeResponse } from '@/src/lib/api/generated';
 
-export function NavUser({
-  user,
-}: {
-  user: {
-    name: string;
-    email: string;
-    avatar: string;
-  };
-}) {
+interface SidebarUserProps {
+  user: GetMeResponse;
+  onLogout: () => void;
+}
+
+export function SidebarUser({ user, onLogout }: SidebarUserProps) {
   const { isMobile } = useSidebar();
 
   return (
@@ -48,14 +46,18 @@ export function NavUser({
             >
               <Avatar className='h-8 w-8 rounded-lg'>
                 <AvatarImage
-                  src={user.avatar}
-                  alt={user.name}
+                  src={user?.avatarUrl}
+                  alt={user?.firstName}
                 />
-                <AvatarFallback className='rounded-lg'>CN</AvatarFallback>
+                <AvatarFallback className='rounded-lg'>
+                  {user?.firstName.slice(0, 2).toUpperCase()}
+                </AvatarFallback>
               </Avatar>
               <div className='grid flex-1 text-left text-sm leading-tight'>
-                <span className='truncate font-semibold'>{user.name}</span>
-                <span className='truncate text-xs'>{user.email}</span>
+                <span className='truncate font-semibold'>
+                  {user?.firstName}
+                </span>
+                <span className='truncate text-xs'>{user?.email}</span>
               </div>
               <ChevronsUpDown className='ml-auto size-4' />
             </SidebarMenuButton>
@@ -70,14 +72,18 @@ export function NavUser({
               <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm'>
                 <Avatar className='h-8 w-8 rounded-lg'>
                   <AvatarImage
-                    src={user.avatar}
-                    alt={user.name}
+                    src={user?.avatarUrl}
+                    alt={user?.firstName}
                   />
-                  <AvatarFallback className='rounded-lg'>CN</AvatarFallback>
+                  <AvatarFallback className='rounded-lg'>
+                    {user?.firstName.slice(0, 2).toUpperCase()}
+                  </AvatarFallback>
                 </Avatar>
                 <div className='grid flex-1 text-left text-sm leading-tight'>
-                  <span className='truncate font-semibold'>{user.name}</span>
-                  <span className='truncate text-xs'>{user.email}</span>
+                  <span className='truncate font-semibold'>
+                    {user?.firstName}
+                  </span>
+                  <span className='truncate text-xs'>{user?.email}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
@@ -105,7 +111,7 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <LogOut />
+              <LogOut onClick={onLogout} />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>

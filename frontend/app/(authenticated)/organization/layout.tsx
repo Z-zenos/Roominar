@@ -6,7 +6,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@/src/component/common/Sidebar';
-import { AppSidebar } from '@/src/component/common/SideBar/OrgSidebar';
+import { AppSidebar } from '@/src/component/common/SideBar/OrganizationSidebar';
 
 // import OrganizationSidebar from '@/src/component/common/SideBar/OrganizationSidebar';
 
