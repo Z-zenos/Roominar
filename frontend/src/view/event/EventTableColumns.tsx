@@ -8,7 +8,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuSub,
@@ -16,14 +15,10 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/src/component/common/DropdownMenu';
-import Checkbox from '@/src/component/common/Input/Checkbox';
-import { EventStatusCode } from '@/src/lib/api/generated';
+import type { ListingOrganizationEventsItem } from '@/src/lib/api/generated';
 import type { DataTableRowAction } from '@/src/types/DataTable';
-import {
-  formatTableDataDate,
-  getPriorityIcon,
-  getStatusIcon,
-} from '@/src/utils/app.util';
+import { getStatusIcon } from '@/src/utils/app.util';
+import { Checkbox } from '@nextui-org/react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Ellipsis } from 'lucide-react';
 import * as React from 'react';
@@ -36,7 +31,7 @@ interface GetColumnsProps {
 
 export function getColumns({
   setRowAction,
-}: GetColumnsProps): ColumnDef<any>[] {
+}: GetColumnsProps): ColumnDef<ListingOrganizationEventsItem>[] {
   return [
     {
       id: 'select',
@@ -47,50 +42,38 @@ export function getColumns({
             // (table?.getIsSomePageRowsSelected() && 'indeterminate')
             true
           }
-          onCheckedChange={(value) => {
+          onChange={(value) => {
             return true;
             // return table?.toggleAllPageRowsSelected(!!value)
           }}
           aria-label='Select all'
-          className='translate-y-0.5'
+          radius='sm'
         />
       ),
       cell: ({ row }) => (
         <Checkbox
           checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          onChange={(value) => row.toggleSelected(!!value)}
           aria-label='Select row'
-          className='translate-y-0.5'
+          radius='sm'
         />
       ),
       enableSorting: false,
       enableHiding: false,
     },
     {
-      accessorKey: 'code',
+      accessorKey: 'name',
       header: ({ column }) => (
         <DataTableColumnHeader
           column={column}
-          title='Task'
-        />
-      ),
-      cell: ({ row }) => <div className='w-20'>{row.getValue('code')}</div>,
-      enableSorting: false,
-      enableHiding: false,
-    },
-    {
-      accessorKey: 'title',
-      header: ({ column }) => (
-        <DataTableColumnHeader
-          column={column}
-          title='Title'
+          title='Name'
         />
       ),
       cell: ({ row }) => {
         return (
           <div className='flex space-x-2'>
             <span className='max-w-[31.25rem] truncate font-medium'>
-              {row.getValue('title')}
+              {row.getValue('name')}
             </span>
           </div>
         );
@@ -105,9 +88,7 @@ export function getColumns({
         />
       ),
       cell: ({ row }) => {
-        const status = Object.keys(EventStatusCode).find(
-          (status) => status === row.original.status,
-        );
+        const status = row.getValue('status');
 
         if (!status) return null;
 
@@ -119,7 +100,7 @@ export function getColumns({
               className='mr-2 size-4 text-muted-foreground'
               aria-hidden='true'
             />
-            <span className='capitalize'>{status}</span>
+            <span className='capitalize'>{status as any}</span>
           </div>
         );
       },
@@ -166,7 +147,9 @@ export function getColumns({
           title='Archived'
         />
       ),
-      cell: ({ row }) => <Badge title={row.original.archived ? 'Yes' : 'No'} />,
+      cell: ({ row }) => (
+        <Badge title={row.original.applicationEndAt ? 'Yes' : 'No'} />
+      ),
     },
     {
       accessorKey: 'createdAt',
@@ -176,7 +159,8 @@ export function getColumns({
           title='Created At'
         />
       ),
-      cell: ({ cell }) => formatTableDataDate(cell.getValue() as Date),
+      // cell: ({ cell }) => formatTableDataDate(cell.getValue() as Date),
+      cell: ({ cell }) => '2424-89-89',
     },
     {
       id: 'actions',
@@ -210,7 +194,7 @@ export function getColumns({
                 <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
                 <DropdownMenuSubContent>
                   <DropdownMenuRadioGroup
-                    value={row.original.label}
+                    value={row.original.slug}
                     // onValueChange={(value) => {
                     //   startUpdateTransition(() => {
                     //     toast.promise(

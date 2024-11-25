@@ -49,9 +49,9 @@ export function EventTable() {
    */
   const filterFields: DataTableFilterField<any>[] = [
     {
-      id: 'title',
-      label: 'Title',
-      placeholder: 'Filter titles...',
+      id: 'name',
+      label: 'Name',
+      placeholder: 'Filter names...',
     },
     {
       id: 'status',
@@ -87,8 +87,8 @@ export function EventTable() {
    */
   const advancedFilterFields: DataTableAdvancedFilterField<any>[] = [
     {
-      id: 'title',
-      label: 'Title',
+      id: 'name',
+      label: 'Name',
       type: 'text',
     },
     {
@@ -124,7 +124,7 @@ export function EventTable() {
   // const enableFloatingBar = true;
 
   const { table } = useDataTable({
-    data: organizationEventsData?.data,
+    data: organizationEventsData?.data ?? [],
     columns,
     pageCount: organizationEventsData?.perPage,
     filterFields,

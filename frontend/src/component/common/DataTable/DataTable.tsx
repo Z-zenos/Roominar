@@ -35,6 +35,8 @@ export function DataTable<TData>({
   className,
   ...props
 }: DataTableProps<TData>) {
+  console.log(table.getRowModel());
+
   return (
     <div
       className={cn('w-full space-y-2.5 overflow-auto', className)}
@@ -68,7 +70,7 @@ export function DataTable<TData>({
             ))}
           </TableHeader>
           <TableBody>
-            {/* {table && table?.getRowModel()?.rows?.length ? (
+            {table && table?.getRowModel()?.rows?.length ? (
               table?.getRowModel()?.rows.map((row) => (
                 <TableRow
                   key={row.id}
@@ -89,16 +91,16 @@ export function DataTable<TData>({
                   ))}
                 </TableRow>
               ))
-            ) : ( */}
-            <TableRow>
-              <TableCell
-                colSpan={table.getAllColumns()?.length}
-                className='h-24 text-center'
-              >
-                No results.
-              </TableCell>
-            </TableRow>
-            {/* )} */}
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={table.getAllColumns()?.length}
+                  className='h-24 text-center'
+                >
+                  No results.
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </div>

@@ -212,10 +212,10 @@ export function composeEventHandlers<E>(
  */
 export function getStatusIcon(status: any['status']) {
   const statusIcons = {
-    canceled: CircleX,
-    done: CheckCircle2,
-    'in-progress': Timer,
-    todo: CircleHelp,
+    PUBLIC: CircleX,
+    DRAFT: CheckCircle2,
+    PRIVATE: Timer,
+    DEFERRED: CircleHelp,
   };
 
   return statusIcons[status] || CircleIcon;
