@@ -1,6 +1,5 @@
 'use client';
 
-import Badge from '@/src/component/common/Badge';
 import { Button } from '@/src/component/common/Button/ShardButton';
 import { DataTableColumnHeader } from '@/src/component/common/DataTable/DataTableColumnHeader';
 import {
@@ -17,15 +16,16 @@ import {
 } from '@/src/component/common/DropdownMenu';
 import type { ListingOrganizationEventsItem } from '@/src/lib/api/generated';
 import type { DataTableRowAction } from '@/src/types/DataTable';
-import { getStatusIcon } from '@/src/utils/app.util';
+import { formatTableDataDate, getStatusIcon } from '@/src/utils/app.util';
 import { Checkbox } from '@nextui-org/react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Ellipsis } from 'lucide-react';
 import * as React from 'react';
+import { Image } from '@nextui-org/react';
 
 interface GetColumnsProps {
   setRowAction: React.Dispatch<
-    React.SetStateAction<DataTableRowAction<any> | null>
+    React.SetStateAction<DataTableRowAction<ListingOrganizationEventsItem> | null>
   >;
 }
 
@@ -71,8 +71,18 @@ export function getColumns({
       ),
       cell: ({ row }) => {
         return (
-          <div className='flex space-x-2'>
-            <span className='max-w-[31.25rem] truncate font-medium'>
+          <div className='flex items-center justify-start gap-2'>
+            <Image
+              src={
+                row.original.coverImageUrl ??
+                'https://cdn-icons-png.flaticon.com/128/3175/3175209.png'
+              }
+              width={160}
+              height={120}
+              alt='event cover image'
+              className='min-w-[160px]'
+            />
+            <span className='max-w-[31.25rem] font-medium'>
               {row.getValue('name')}
             </span>
           </div>
@@ -100,7 +110,7 @@ export function getColumns({
               className='mr-2 size-4 text-muted-foreground'
               aria-hidden='true'
             />
-            <span className='capitalize'>{status as any}</span>
+            <span>{status as any}</span>
           </div>
         );
       },
@@ -108,39 +118,8 @@ export function getColumns({
         return Array.isArray(value) && value.includes(row.getValue(id));
       },
     },
-    // {
-    //   accessorKey: 'priority',
-    //   header: ({ column }) => (
-    //     <DataTableColumnHeader
-    //       column={column}
-    //       title='Priority'
-    //     />
-    //   ),
-    //   cell: ({ row }) => {
-    //     const priority = tasks.priority.enumValues.find(
-    //       (priority) => priority === row.original.priority,
-    //     );
-
-    //     if (!priority) return null;
-
-    //     const Icon = getPriorityIcon(priority);
-
-    //     return (
-    //       <div className='flex items-center'>
-    //         <Icon
-    //           className='mr-2 size-4 text-muted-foreground'
-    //           aria-hidden='true'
-    //         />
-    //         <span className='capitalize'>{priority}</span>
-    //       </div>
-    //     );
-    //   },
-    //   filterFn: (row, id, value) => {
-    //     return Array.isArray(value) && value.includes(row.getValue(id));
-    //   },
-    // },
     {
-      accessorKey: 'archived',
+      accessorKey: 'applyState',
       header: ({ column }) => (
         <DataTableColumnHeader
           column={column}
@@ -148,25 +127,24 @@ export function getColumns({
         />
       ),
       cell: ({ row }) => (
-        <Badge title={row.original.applicationEndAt ? 'Yes' : 'No'} />
+        <span>
+          {row.original.appliedNumber ?? 0} / {row.original.applicationNumber}{' '}
+        </span>
       ),
     },
     {
-      accessorKey: 'createdAt',
+      accessorKey: 'startAt',
       header: ({ column }) => (
         <DataTableColumnHeader
           column={column}
-          title='Created At'
+          title='Start At'
         />
       ),
-      // cell: ({ cell }) => formatTableDataDate(cell.getValue() as Date),
-      cell: ({ cell }) => '2424-89-89',
+      cell: ({ row }) => formatTableDataDate(row.getValue('startAt') as Date),
     },
     {
       id: 'actions',
       cell: function Cell({ row }) {
-        const [isUpdatePending, startUpdateTransition] = React.useTransition();
-
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

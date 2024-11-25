@@ -8,11 +8,7 @@ import type {
   DataTableFilterField,
   DataTableRowAction,
 } from '@/src/types/DataTable';
-import {
-  getPriorityIcon,
-  getStatusIcon,
-  toSentenceCase,
-} from '@/src/utils/app.util';
+import { getStatusIcon, toSentenceCase } from '@/src/utils/app.util';
 import * as React from 'react';
 import { getColumns } from './EventTableColumns';
 import { EventStatusCode } from '@/src/lib/api/generated';
@@ -20,11 +16,7 @@ import { useDataTable } from '@/src/hooks/useDataTable';
 import { useListingOrganizationEventsQuery } from '@/src/api/event.api';
 
 export function EventTable() {
-  const [{ data, pageCount }, statusCounts, priorityCounts] = [
-    { data: [], pageCount: 0 },
-    undefined,
-    undefined,
-  ];
+  const statusCounts = undefined;
 
   const { data: organizationEventsData } = useListingOrganizationEventsQuery();
 
@@ -63,16 +55,6 @@ export function EventTable() {
         count: statusCounts ? statusCounts[status] : 0,
       })),
     },
-    // {
-    //   id: 'priority',
-    //   label: 'Priority',
-    //   options: tasks.priority.enumValues.map((priority) => ({
-    //     label: toSentenceCase(priority),
-    //     value: priority,
-    //     icon: getPriorityIcon(priority),
-    //     count: priorityCounts[priority],
-    //   })),
-    // },
   ];
 
   /**
@@ -102,20 +84,9 @@ export function EventTable() {
         count: statusCounts ? statusCounts[status] : 0,
       })),
     },
-    // {
-    //   id: 'priority',
-    //   label: 'Priority',
-    //   type: 'multi-select',
-    //   options: tasks.priority.enumValues.map((priority) => ({
-    //     label: toSentenceCase(priority),
-    //     value: priority,
-    //     icon: getPriorityIcon(priority),
-    //     count: priorityCounts[priority],
-    //   })),
-    // },
     {
-      id: 'createdAt',
-      label: 'Created at',
+      id: 'startAt',
+      label: 'Start At',
       type: 'date',
     },
   ];
@@ -130,7 +101,7 @@ export function EventTable() {
     filterFields,
     enableAdvancedFilter: enableAdvancedTable,
     initialState: {
-      sorting: [{ id: 'createdAt', desc: true }],
+      sorting: [{ id: 'startAt', desc: true }],
       columnPinning: { right: ['actions'] },
     },
     getRowId: (originalRow, index) => `${originalRow.id}-${index}`,
