@@ -1,26 +1,9 @@
 import type { ColumnType, Filter, FilterOperator } from '@/src/types/DataTable';
 import type { Column } from '@tanstack/react-table';
-import { Pickaxe, SquareSquare } from 'lucide-react';
 
 export type DataTableConfig = typeof dataTableConfig;
 
 export const dataTableConfig = {
-  featureFlags: [
-    {
-      label: 'Advanced table',
-      value: 'advancedTable' as const,
-      icon: Pickaxe,
-      tooltipTitle: 'Toggle advanced table',
-      tooltipDescription: 'A filter and sort builder to filter and sort rows.',
-    },
-    {
-      label: 'Floating bar',
-      value: 'floatingBar' as const,
-      icon: SquareSquare,
-      tooltipTitle: 'Toggle floating bar',
-      tooltipDescription: 'A floating bar that sticks to the top of the table.',
-    },
-  ],
   textOperators: [
     { label: 'Contains', value: 'iLike' as const },
     { label: 'Does not contain', value: 'notILike' as const },

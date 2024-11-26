@@ -256,12 +256,12 @@ class PublishEventRequest(BaseModel):
 
 class ListingOrganizationEventsQueryParams(BaseModel):
     keyword: str | None = Field(Query(default=None, description=""))
-    tags: list[int] | None = Field(Query(default=None))
-    meeting_tool_codes: list[EventMeetingToolCode] | None = Field(Query(default=None))
+    tags: list[int] = Field(Query(default=None))
+    meeting_tool_codes: list[EventMeetingToolCode] = Field(Query(default=[]))
 
     start_at_from: datetime | None = Field(Query(default=None))
     start_at_to: datetime | None = Field(Query(default=None))
-    event_status: EventStatusCode | None = Field(Query(default=None))
+    event_status: list[EventStatusCode] = Field(Query(default=[]))
     time_status: EventTimeStatusCode | None = Field(Query(default=None))
 
     sort_by: ManageEventSortByCode | None = Field(

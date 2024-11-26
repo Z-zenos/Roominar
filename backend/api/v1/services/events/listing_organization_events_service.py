@@ -1,10 +1,10 @@
 from datetime import datetime
-from sqlmodel import Session, and_, select, func, Date, text
+
+from sqlmodel import Date, Session, func, select, text
 
 from backend.api.v1.services.tags.get_event_tags_service import get_event_tags
 from backend.core.constants import (
     ApplicationStatusCode,
-    EventStatusCode,
     EventTimeStatusCode,
     ManageEventSortByCode,
 )
@@ -118,7 +118,7 @@ def _build_filters(
         filters.append(Event.start_at.cast(Date) <= query_params.end_start_at.date())
 
     if query_params.event_status:
-        filters.append(Event.status == EventStatusCode.PUBLIC)
+        filters.append(Event.status.in_(query_params.event_status))
 
     if query_params.time_status == EventTimeStatusCode.UPCOMING:
         filters.append(Event.application_start_at > datetime.now())

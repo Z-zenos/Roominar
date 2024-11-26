@@ -8,7 +8,6 @@ import { cn } from '@/src/utils/app.util';
 import TextInput from '../Input/TextInput';
 import { DataTableFacetedFilter } from './DataTableFacetedFilter';
 import { Button } from '../Button/ShardButton';
-import { DataTableViewOptions } from './DataTableViewOptions';
 
 interface DataTableToolbarProps<TData>
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -112,10 +111,7 @@ export function DataTableToolbar<TData>({
           </Button>
         )}
       </div>
-      <div className='flex items-center gap-2'>
-        {children}
-        <DataTableViewOptions table={table} />
-      </div>
+      <div className='flex items-center gap-2'>{children}</div>
     </div>
   );
 }

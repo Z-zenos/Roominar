@@ -3,7 +3,6 @@
 import type { DataTableAdvancedFilterField } from '@/src/types/DataTable';
 import { cn } from '@/src/utils/app.util';
 import * as React from 'react';
-import { DataTableViewOptions } from './DataTableViewOptions';
 import type { Table } from '@tanstack/react-table';
 
 interface DataTableAdvancedToolbarProps<TData>
@@ -67,10 +66,7 @@ export function DataTableAdvancedToolbar<TData>({
       {...props}
     >
       <div className='flex items-center gap-2'>Left Funct</div>
-      <div className='flex items-center gap-2'>
-        {children}
-        <DataTableViewOptions table={table} />
-      </div>
+      <div className='flex items-center gap-2'>{children}</div>
     </div>
   );
 }

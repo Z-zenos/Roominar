@@ -1,24 +1,25 @@
 'use client';
 
 import { DataTable } from '@/src/component/common/DataTable/DataTable';
-import { DataTableAdvancedToolbar } from '@/src/component/common/DataTable/DataTableAdvancedToolbar';
 import { DataTableToolbar } from '@/src/component/common/DataTable/DataTableToolbar';
 import type {
-  DataTableAdvancedFilterField,
   DataTableFilterField,
   DataTableRowAction,
 } from '@/src/types/DataTable';
-import { getStatusIcon, toSentenceCase } from '@/src/utils/app.util';
+import { optionify } from '@/src/utils/app.util';
 import * as React from 'react';
 import { getColumns } from './EventTableColumns';
 import { EventStatusCode } from '@/src/lib/api/generated';
 import { useDataTable } from '@/src/hooks/useDataTable';
 import { useListingOrganizationEventsQuery } from '@/src/api/event.api';
+import { useSearchParams } from 'next/navigation';
+import queryString from 'query-string';
 
 export function EventTable() {
-  const statusCounts = undefined;
-
-  const { data: organizationEventsData } = useListingOrganizationEventsQuery();
+  const searchParams = useSearchParams();
+  const { data: organizationEventsData } = useListingOrganizationEventsQuery({
+    ...queryString.parse(searchParams.toString(), { arrayFormat: 'bracket' }),
+  });
 
   const [rowAction, setRowAction] =
     React.useState<DataTableRowAction<any> | null>(null);
@@ -28,78 +29,27 @@ export function EventTable() {
     [setRowAction],
   );
 
-  /**
-   * This component can render either a faceted filter or a search filter based on the `options` prop.
-   *
-   * @prop options - An array of objects, each representing a filter option. If provided, a faceted filter is rendered. If not, a search filter is rendered.
-   *
-   * Each `option` object has the following properties:
-   * @prop {string} label - The label for the filter option.
-   * @prop {string} value - The value for the filter option.
-   * @prop {React.ReactNode} [icon] - An optional icon to display next to the label.
-   * @prop {boolean} [withCount] - An optional boolean to display the count of the filter option.
-   */
   const filterFields: DataTableFilterField<any>[] = [
     {
-      id: 'name',
+      id: 'keyword',
       label: 'Name',
       placeholder: 'Filter names...',
     },
     {
-      id: 'status',
+      id: 'event_status[]',
       label: 'Status',
-      options: Object.keys(EventStatusCode).map((status) => ({
-        label: toSentenceCase(status),
-        value: status,
-        icon: getStatusIcon(status),
-        count: statusCounts ? statusCounts[status] : 0,
-      })),
+      options: optionify(EventStatusCode),
     },
   ];
-
-  /**
-   * Advanced filter fields for the data table.
-   * These fields provide more complex filtering options compared to the regular filterFields.
-   *
-   * Key differences from regular filterFields:
-   * 1. More field types: Includes 'text', 'multi-select', 'date', and 'boolean'.
-   * 2. Enhanced flexibility: Allows for more precise and varied filtering options.
-   * 3. Used with DataTableAdvancedToolbar: Enables a more sophisticated filtering UI.
-   * 4. Date and boolean types: Adds support for filtering by date ranges and boolean values.
-   */
-  const advancedFilterFields: DataTableAdvancedFilterField<any>[] = [
-    {
-      id: 'name',
-      label: 'Name',
-      type: 'text',
-    },
-    {
-      id: 'status',
-      label: 'Status',
-      type: 'multi-select',
-      options: Object.keys(EventStatusCode).map((status) => ({
-        label: toSentenceCase(status),
-        value: status,
-        icon: getStatusIcon(status),
-        count: statusCounts ? statusCounts[status] : 0,
-      })),
-    },
-    {
-      id: 'startAt',
-      label: 'Start At',
-      type: 'date',
-    },
-  ];
-
-  const enableAdvancedTable = false;
-  // const enableFloatingBar = true;
 
   const { table } = useDataTable({
     data: organizationEventsData?.data ?? [],
     columns,
-    pageCount: organizationEventsData?.perPage,
+    pageCount: organizationEventsData
+      ? Math.ceil(organizationEventsData.total / organizationEventsData.perPage)
+      : 0,
     filterFields,
-    enableAdvancedFilter: enableAdvancedTable,
+    enableAdvancedFilter: false,
     initialState: {
       sorting: [{ id: 'startAt', desc: true }],
       columnPinning: { right: ['actions'] },
@@ -117,22 +67,12 @@ export function EventTable() {
         //   enableFloatingBar ? <TasksTableFloatingBar table={table} /> : null
         // }
       >
-        {enableAdvancedTable ? (
-          <DataTableAdvancedToolbar
-            table={table}
-            filterFields={advancedFilterFields}
-            shallow={false}
-          >
-            {/* <TasksTableToolbarActions table={table} /> */}
-          </DataTableAdvancedToolbar>
-        ) : (
-          <DataTableToolbar
-            table={table}
-            filterFields={filterFields}
-          >
-            {/* <TasksTableToolbarActions table={table} /> */}
-          </DataTableToolbar>
-        )}
+        <DataTableToolbar
+          table={table}
+          filterFields={filterFields}
+        >
+          {/* <TasksTableToolbarActions table={table} /> */}
+        </DataTableToolbar>
       </DataTable>
       {/* <UpdateTaskSheet
         open={rowAction?.type === 'update'}

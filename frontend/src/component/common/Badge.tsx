@@ -26,7 +26,7 @@ export default function Badge({
       onClick={onClick}
     >
       {Icon && <span className={clsx('font-bold', iconColor)}>{Icon}</span>}
-      <span className={clsx('')}>#{title}</span>
+      <span className={clsx('')}>{title}</span>
     </div>
   );
 }

@@ -115,18 +115,18 @@ export function DataTableFacetedFilter<TData, TValue>({
                         aria-hidden='true'
                       />
                     </div>
-                    {option.icon && (
+                    {/* {option.icon && (
                       <option.icon
                         className='mr-2 size-4 text-muted-foreground'
                         aria-hidden='true'
                       />
-                    )}
+                    )} */}
                     <span>{option.label}</span>
-                    {option.count && (
+                    {/* {option.count && (
                       <span className='ml-auto flex size-4 items-center justify-center font-mono text-xs'>
                         {option.count}
                       </span>
-                    )}
+                    )} */}
                   </CommandItem>
                 );
               })}

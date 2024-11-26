@@ -62,7 +62,7 @@ export function getColumns({
       enableHiding: false,
     },
     {
-      accessorKey: 'name',
+      accessorKey: 'keyword',
       header: ({ column }) => (
         <DataTableColumnHeader
           column={column}
@@ -83,14 +83,14 @@ export function getColumns({
               className='min-w-[160px]'
             />
             <span className='max-w-[31.25rem] font-medium'>
-              {row.getValue('name')}
+              {row.original.name}
             </span>
           </div>
         );
       },
     },
     {
-      accessorKey: 'status',
+      accessorKey: 'event_status[]',
       header: ({ column }) => (
         <DataTableColumnHeader
           column={column}
@@ -98,7 +98,7 @@ export function getColumns({
         />
       ),
       cell: ({ row }) => {
-        const status = row.getValue('status');
+        const status = row.original.status;
 
         if (!status) return null;
 
