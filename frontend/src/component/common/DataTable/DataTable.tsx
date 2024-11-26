@@ -35,8 +35,6 @@ export function DataTable<TData>({
   className,
   ...props
 }: DataTableProps<TData>) {
-  console.log(table.getRowModel());
-
   return (
     <div
       className={cn('w-full space-y-2.5 overflow-auto', className)}
