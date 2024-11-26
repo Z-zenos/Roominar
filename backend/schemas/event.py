@@ -9,8 +9,10 @@ from backend.core.constants import (
     EventMeetingToolCode,
     EventSortByCode,
     EventStatusCode,
+    EventTimeStatusCode,
     IndustryCode,
     JobTypeCode,
+    ManageEventSortByCode,
     MyEventStatusCode,
 )
 from backend.core.error_code import ErrorCode, ErrorMessage
@@ -252,6 +254,27 @@ class PublishEventRequest(BaseModel):
             )
 
 
+class ListingOrganizationEventsQueryParams(BaseModel):
+    keyword: str | None = Field(Query(default=None, description=""))
+    tags: list[int] | None = Field(Query(default=None))
+    meeting_tool_codes: list[EventMeetingToolCode] | None = Field(Query(default=None))
+
+    start_at_from: datetime | None = Field(Query(default=None))
+    start_at_to: datetime | None = Field(Query(default=None))
+    event_status: EventStatusCode | None = Field(Query(default=None))
+    time_status: EventTimeStatusCode | None = Field(Query(default=None))
+
+    sort_by: ManageEventSortByCode | None = Field(
+        Query(default=ManageEventSortByCode.CREATED_AT)
+    )
+    per_page: int | None = Field(Query(default=10, le=100, ge=1))
+    page: int | None = Field(Query(default=1, ge=1))
+
+    @field_validator("tags", mode="before")
+    def check_list_empty(cls, v):
+        return v or []
+
+
 class ListingOrganizationEventsItem(BaseModel):
     id: int
     slug: str
@@ -271,9 +294,9 @@ class ListingOrganizationEventsItem(BaseModel):
     application_number: int
     applied_number: int | None = None
     status: EventStatusCode
-    # tags: list[TagItem] = Field([])
     # survey: SurveyDetail | None = None
     view_number: int | None = None
+    tags: list[TagItem] = Field([])
 
 
 class ListingOrganizationEventsResponse(

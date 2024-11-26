@@ -11,6 +11,7 @@ from backend.models.event import Event
 from backend.models.user import User
 from backend.schemas.auth import RegisterOrganizationRequest
 from backend.schemas.event import (
+    ListingOrganizationEventsQueryParams,
     ListingOrganizationEventsResponse,
     ListingTopOrganizationEventsResponse,
 )
@@ -52,8 +53,11 @@ async def register_organization(
 async def listing_organization_events(
     db: Session = Depends(get_read_db),
     organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+    query_params: ListingOrganizationEventsQueryParams = Depends(
+        ListingOrganizationEventsQueryParams
+    ),
 ):
-    events, total = await events_service.listing_organization_events(db, organizer)
+    events, total = await events_service.listing_organization_events(db, organizer, query_params)
     return ListingOrganizationEventsResponse(
         data=events, total=total, page=1, per_page=10
     )
