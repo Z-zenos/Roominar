@@ -131,7 +131,7 @@ export function getColumns({
       header: ({ column }) => (
         <DataTableColumnHeader
           column={column}
-          title='Archived'
+          title='Apply Info'
         />
       ),
       cell: ({ row }) => (
