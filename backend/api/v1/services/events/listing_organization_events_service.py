@@ -18,7 +18,7 @@ from backend.schemas.event import ListingOrganizationEventsQueryParams
 async def listing_organization_events(
     db: Session, organizer: User, query_params: ListingOrganizationEventsQueryParams
 ):
-    filters, sort_by = _build_filters(organizer, query_params)
+    filters, sort_by = _build_filters_sort(organizer, query_params)
     events = await _listing_events(db, filters, sort_by, query_params)
     total = await _count_events(db, filters)
 
@@ -95,7 +95,7 @@ async def _count_events(db: Session, filters: list):
     return total
 
 
-def _build_filters(
+def _build_filters_sort(
     organizer: User,
     query_params: ListingOrganizationEventsQueryParams,
 ):

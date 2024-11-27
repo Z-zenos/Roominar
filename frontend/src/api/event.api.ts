@@ -125,7 +125,6 @@ export const useListingOrganizationEventsQuery = (
   params?: OrganizationsApiListingOrganizationEventsRequest,
 ) => {
   params = toCamelCase(params);
-  console.log(params);
   const api = useApi();
   return useQuery({
     queryKey: ['search-events', params],

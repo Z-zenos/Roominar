@@ -9,7 +9,7 @@ import type {
 import { optionify } from '@/src/utils/app.util';
 import * as React from 'react';
 import { getColumns } from './EventTableColumns';
-import { EventStatusCode } from '@/src/lib/api/generated';
+import { EventStatusCode, EventTimeStatusCode } from '@/src/lib/api/generated';
 import { useDataTable } from '@/src/hooks/useDataTable';
 import { useListingOrganizationEventsQuery } from '@/src/api/event.api';
 import { useSearchParams } from 'next/navigation';
@@ -40,6 +40,12 @@ export function EventTable() {
       label: 'Status',
       options: optionify(EventStatusCode),
     },
+
+    {
+      id: 'time_status[]',
+      label: 'Timeline Status',
+      options: optionify(EventTimeStatusCode),
+    },
   ];
 
   const { table } = useDataTable({
@@ -53,6 +59,9 @@ export function EventTable() {
     initialState: {
       sorting: [{ id: 'startAt', desc: true }],
       columnPinning: { right: ['actions'] },
+      columnVisibility: {
+        'time_status[]': false,
+      },
     },
     getRowId: (originalRow, index) => `${originalRow.id}-${index}`,
     shallow: false,

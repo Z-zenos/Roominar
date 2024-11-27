@@ -36,7 +36,7 @@ async def register_organization(
                 else ORGStatusCode.PENDING
             ),
             phone=request.phone,
-            type=request.type,
+            type=request.type if request.type else OrganizationTypeCode.BUSINESS,
             address=request.address,
             representative_url=f"""
                 {settings.AUD_FRONTEND_URL}/organizations/{request.representative_url}

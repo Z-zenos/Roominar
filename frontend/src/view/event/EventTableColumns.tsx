@@ -114,6 +114,14 @@ export function getColumns({
           </div>
         );
       },
+
+      filterFn: (row, id, value) => {
+        return Array.isArray(value) && value.includes(row.getValue(id));
+      },
+    },
+
+    {
+      accessorKey: 'time_status[]',
       filterFn: (row, id, value) => {
         return Array.isArray(value) && value.includes(row.getValue(id));
       },
