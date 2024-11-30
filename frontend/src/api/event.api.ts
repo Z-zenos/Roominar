@@ -127,7 +127,7 @@ export const useListingOrganizationEventsQuery = (
   params = toCamelCase(params);
   const api = useApi();
   return useQuery({
-    queryKey: ['search-events', params],
+    queryKey: ['listing-organization-events', params],
     queryFn: async () =>
       await api.organizations.listingOrganizationEvents(params),
   });

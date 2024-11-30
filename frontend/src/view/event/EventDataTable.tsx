@@ -1,5 +1,6 @@
 'use client';
 
+import type { Key } from 'react';
 import { useCallback, useState } from 'react';
 import {
   Table,
@@ -20,6 +21,7 @@ import { useForm } from 'react-hook-form';
 import { ManageEventSortByCode } from '@/src/lib/api/generated';
 import type {
   EventMeetingToolCode,
+  ListingOrganizationEventsItem,
   OrganizationsApiListingOrganizationEventsRequest,
 } from '@/src/lib/api/generated';
 import { EventStatusCode, EventTimeStatusCode } from '@/src/lib/api/generated';
@@ -27,19 +29,21 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useListingOrganizationEventsQuery } from '@/src/api/event.api';
 import queryString from 'query-string';
 import dayjs from 'dayjs';
-import { optionify, searchQuery } from '@/src/utils/app.util';
+import { formatEventDate, optionify, searchQuery } from '@/src/utils/app.util';
 import {
   Form,
   FormCombobox,
+  FormDateRangePicker,
   FormInput,
   FormSelect,
 } from '@/src/component/form/Form';
 import { IoSearchOutline } from 'react-icons/io5';
 import debounce from 'lodash.debounce';
 import clsx from 'clsx';
-import { HiOutlineAdjustmentsHorizontal } from 'react-icons/hi2';
 import { GrPowerReset } from 'react-icons/gr';
 import ReactPaginate from 'react-paginate';
+import useWindowDimensions from '@/src/hooks/useWindowDimension';
+import { BsThreeDots } from 'react-icons/bs';
 
 const statusColorMap = {
   active: 'success',
@@ -49,19 +53,21 @@ const statusColorMap = {
 
 const columns = [
   { name: 'ID', uid: 'id', sortable: true },
-  { name: 'NAME', uid: 'name', sortable: true },
-  { name: 'AGE', uid: 'age', sortable: true },
-  { name: 'ROLE', uid: 'role', sortable: true },
-  { name: 'TEAM', uid: 'team' },
-  { name: 'EMAIL', uid: 'email' },
-  { name: 'STATUS', uid: 'status', sortable: true },
+  { name: 'Name', uid: 'name', sortable: true },
+  { name: 'status', uid: 'status', sortable: true },
+  { name: 'apply state', uid: 'apply_state', sortable: true },
+  { name: 'start at', uid: 'start_at' },
+  // { name: 'EMAIL', uid: 'email' },
+  // { name: 'STATUS', uid: 'status', sortable: true },
   { name: 'ACTIONS', uid: 'actions' },
 ];
 
 export default function EventDataTable() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { data, isLoading, isFetching } = useListingOrganizationEventsQuery({
+  const { width } = useWindowDimensions();
+
+  const { data, isFetching } = useListingOrganizationEventsQuery({
     ...queryString.parse(searchParams.toString(), { arrayFormat: 'bracket' }),
   });
 
@@ -94,8 +100,8 @@ export default function EventDataTable() {
   function handleSearch(data: any = {}) {
     if (form.getValues()['start_at_range']) {
       const start_at_range = form.getValues()['start_at_range'];
-      data.start_start_at = dayjs(start_at_range.from).format('YYYY-MM-DD');
-      data.end_start_at = dayjs(start_at_range.to).format('YYYY-MM-DD');
+      data.start_at_from = dayjs(start_at_range.from).format('YYYY-MM-DD');
+      data.start_at_to = dayjs(start_at_range.to).format('YYYY-MM-DD');
     }
     const filters: OrganizationsApiListingOrganizationEventsRequest = {
       ...form.getValues(),
@@ -107,111 +113,81 @@ export default function EventDataTable() {
     searchQuery(router, filters, searchParams, exclude_queries);
   }
 
-  // const [filterValue, setFilterValue] = useState('');
-  // const [selectedKeys, setSelectedKeys] = useState(new Set([]));
-  // const [visibleColumns, setVisibleColumns] = useState(
-  //   new Set(INITIAL_VISIBLE_COLUMNS),
-  // );
-  // const [statusFilter, setStatusFilter] = useState('all');
-  // const [rowsPerPage, setRowsPerPage] = useState(5);
-  // const [sortDescriptor, setSortDescriptor] = useState({
-  //   column: 'age',
-  //   direction: 'ascending',
-  // });
+  const [selectedKeys, setSelectedKeys] = useState<number[]>([]);
 
-  // const headerColumns = useMemo(() => {
-  //   if (visibleColumns === 'all') return columns;
+  const renderCell = useCallback(
+    (event: ListingOrganizationEventsItem, columnKey: Key) => {
+      const cellValue = event[columnKey as string];
 
-  //   return columns.filter((column) =>
-  //     Array.from(visibleColumns).includes(column.uid),
-  //   );
-  // }, [visibleColumns]);
+      switch (columnKey) {
+        case 'name':
+          return (
+            <User
+              avatarProps={{ radius: 'lg', src: event.coverImageUrl }}
+              // description={user.email}
+              name={cellValue}
+            >
+              {event.name}
+            </User>
+          );
+        case 'status':
+          return (
+            <Chip
+              className='capitalize'
+              color={statusColorMap[event.status]}
+              size='sm'
+              variant='flat'
+            >
+              {cellValue}
+            </Chip>
+          );
+        case 'apply_state':
+          return (
+            <div className='flex flex-col'>
+              <p className='text-bold text-small capitalize'>{cellValue}</p>
+              <p className='text-bold text-tiny capitalize text-default-400'>
+                {event.appliedNumber ?? 0} / {event.applicationNumber}
+              </p>
+            </div>
+          );
 
-  const renderCell = useCallback((user, columnKey) => {
-    const cellValue = user[columnKey];
+        case 'start_at':
+          return (
+            <div className='flex flex-col'>
+              <p className='text-bold text-small capitalize'>{cellValue}</p>
+              <p className='text-bold text-tiny capitalize text-default-400'>
+                {formatEventDate(event.startAt)}
+              </p>
+            </div>
+          );
 
-    switch (columnKey) {
-      case 'name':
-        return (
-          <User
-            avatarProps={{ radius: 'lg', src: user.avatar }}
-            description={user.email}
-            name={cellValue}
-          >
-            {user.email}
-          </User>
-        );
-      case 'role':
-        return (
-          <div className='flex flex-col'>
-            <p className='text-bold text-small capitalize'>{cellValue}</p>
-            <p className='text-bold text-tiny capitalize text-default-400'>
-              {user.team}
-            </p>
-          </div>
-        );
-      case 'status':
-        return (
-          <Chip
-            className='capitalize'
-            color={statusColorMap[user.status]}
-            size='sm'
-            variant='flat'
-          >
-            {cellValue}
-          </Chip>
-        );
-      case 'actions':
-        return (
-          <div className='relative flex justify-end items-center gap-2'>
-            <Dropdown>
-              <DropdownTrigger>
-                <Button
-                  isIconOnly
-                  size='sm'
-                  variant='light'
-                >
-                  {/* <VerticalDotsIcon className='text-default-300' /> */}
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu>
-                <DropdownItem>View</DropdownItem>
-                <DropdownItem>Edit</DropdownItem>
-                <DropdownItem>Delete</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
-        );
-      default:
-        return cellValue;
-    }
-  }, []);
-
-  // const onNextPage = useCallback(() => {
-  //   if (page < pages) {
-  //     setPage(page + 1);
-  //   }
-  // }, [page, pages]);
-
-  // const onPreviousPage = useCallback(() => {
-  //   if (page > 1) {
-  //     setPage(page - 1);
-  //   }
-  // }, [page]);
-
-  // const onRowsPerPageChange = useCallback((e) => {
-  //   setRowsPerPage(Number(e.target.value));
-  //   setPage(1);
-  // }, []);
-
-  // const onSearchChange = useCallback((value) => {
-  //   if (value) {
-  //     setFilterValue(value);
-  //     setPage(1);
-  //   } else {
-  //     setFilterValue('');
-  //   }
-  // }, []);
+        case 'actions':
+          return (
+            <div className='relative flex justify-end items-center gap-2'>
+              <Dropdown>
+                <DropdownTrigger>
+                  <Button
+                    isIconOnly
+                    size='sm'
+                    variant='light'
+                  >
+                    <BsThreeDots className='text-default-300' />
+                  </Button>
+                </DropdownTrigger>
+                <DropdownMenu>
+                  <DropdownItem>View</DropdownItem>
+                  <DropdownItem>Edit</DropdownItem>
+                  <DropdownItem>Delete</DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+            </div>
+          );
+        default:
+          return cellValue;
+      }
+    },
+    [],
+  );
 
   return (
     <>
@@ -219,17 +195,6 @@ export default function EventDataTable() {
         <form onSubmit={form.handleSubmit(handleSearch)}>
           <div className='flex justify-between items-center flex-wrap gap-1'>
             <div className='flex items-center justify-start gap-4 flex-wrap'>
-              <Button
-                className={clsx('gap-2 text-[17px] font-semibold text-white')}
-                type='submit'
-                color='primary'
-                radius='sm'
-                size='md'
-                startContent={<HiOutlineAdjustmentsHorizontal size={25} />}
-                isLoading={isFetching}
-              >
-                {isFetching ? 'Searching...' : 'Search'}
-              </Button>
               <Button
                 className={clsx(
                   'text-[17px] !px-3 !bg-orange-100 !text-orange-500 !hover:text-orange-500 !hover:border-orange-500 !hover:shadow-orange-100',
@@ -283,6 +248,13 @@ export default function EventDataTable() {
                 onValueChange={handleSearch}
                 title='Timeline Status'
               />
+
+              <FormDateRangePicker
+                name='start_at_range'
+                control={form.control}
+                className='w-full'
+                onValueChange={handleSearch}
+              />
             </div>
             <div className='flex items-center justify-start gap-4 400px:mt-3 mt-0'>
               {/* <Text
@@ -306,10 +278,10 @@ export default function EventDataTable() {
         isHeaderSticky
         bottomContentPlacement='outside'
         classNames={{
-          wrapper: 'max-h-[700px] mt-10',
+          wrapper: 'max-h-[600px] mt-10',
         }}
-        // selectedKeys={selectedKeys}
-        selectionMode='multiple'
+        selectedKeys={selectedKeys}
+        selectionMode='single'
         // sortDescriptor={sortDescriptor}
         topContentPlacement='outside'
         // onSelectionChange={setSelectedKeys}
@@ -327,7 +299,7 @@ export default function EventDataTable() {
           )}
         </TableHeader>
         <TableBody
-          emptyContent={'No data found'}
+          emptyContent={isFetching ? 'Loading...' : 'No data found'}
           items={data?.data ?? []}
         >
           {(item) => (
@@ -346,41 +318,22 @@ export default function EventDataTable() {
             ? 'All items selected'
             : `${selectedKeys.size} of ${filteredItems.length} selected`}
         </span> */}
-        {/* <ReactPaginate
+        <ReactPaginate
           breakLabel='...'
           nextLabel={width > 800 ? 'next >' : '>'}
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onPageChange={({ selected }: any) => onPageChange(selected + 1)}
+          onPageChange={({ selected }: any) => setPage(selected + 1)}
           pageRangeDisplayed={5}
-          pageCount={Math.ceil(total / perPage) || 0}
+          pageCount={Math.ceil(data?.total / data?.perPage) || 0}
           previousLabel={width > 800 ? '< previous' : '<'}
           renderOnZeroPageCount={null}
-          forcePage={page >= 1 ? page - 1 : 0}
+          forcePage={page >= 1 ? (page - 1 > 0 ? page - 1 : -1) : -1}
           className='mx-auto flex lg:gap-4 gap-1 mt-4 w-full items-center justify-center'
           pageClassName='lg:py-2 lg:px-4 py-1 px-2'
           nextClassName='lg:py-2 lg:px-4 py-1 px-2'
           previousClassName='lg:py-2 lg:px-4 py-1 px-2'
           disabledClassName='text-gray-400'
           activeClassName='bg-primary text-white rounded-md'
-        /> */}
-        {/* <div className='hidden sm:flex w-[30%] justify-end gap-2'>
-          <Button
-            isDisabled={pages === 1}
-            size='sm'
-            variant='flat'
-            onPress={onPreviousPage}
-          >
-            Previous
-          </Button>
-          <Button
-            isDisabled={pages === 1}
-            size='sm'
-            variant='flat'
-            onPress={onNextPage}
-          >
-            Next
-          </Button>
-        </div> */}
+        />
       </div>
     </>
   );
