@@ -59,7 +59,6 @@ function useApiConfig() {
                   return Promise.reject(context);
                 }
               }
-
               /* === RE-FORMAT QUERY PARAMS === */
               context.setUrl(
                 queryString.stringifyUrl(
@@ -68,7 +67,6 @@ function useApiConfig() {
                   }),
                 ),
               );
-
               return Promise.resolve(context);
             },
             async post(context) {

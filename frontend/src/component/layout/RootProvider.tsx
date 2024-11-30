@@ -37,12 +37,15 @@ export default function RootProvider({
         },
         queryCache: new QueryCache({
           onError: (error, query) => {
+            console.log('queryCache: ', error);
             const err = parseErrorMessage(error?.message);
             toast.error(`${+err.httpCode}: ${err?.body?.message}`);
           },
         }),
         mutationCache: new MutationCache({
           onError: (error, _, __, mutation) => {
+            console.log('mutationCache: ', error);
+
             const err = parseErrorMessage(error?.message);
             toast.error(`${+err.httpCode}: ${err?.body?.message}`);
           },

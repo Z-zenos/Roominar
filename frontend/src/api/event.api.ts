@@ -125,6 +125,10 @@ export const useListingOrganizationEventsQuery = (
   params?: OrganizationsApiListingOrganizationEventsRequest,
 ) => {
   params = toCamelCase(params);
+  if (params.startAtFrom) {
+    params.startAtFrom = new Date(params.startAtFrom);
+  }
+  if (params.startAtTo) params.startAtTo = new Date(params.startAtTo);
   const api = useApi();
   return useQuery({
     queryKey: ['listing-organization-events', params],

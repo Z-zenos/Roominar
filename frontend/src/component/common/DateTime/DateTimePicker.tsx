@@ -38,7 +38,7 @@ export function DateTimePicker({
             ),
           )
         }
-        value={parseDate(date.toISOString().split('T')[0])}
+        value={parseDate(date?.toISOString().split('T')[0])}
         showMonthAndYearPickers
       />
       <div className='flex items-end gap-2 -mt-5'>

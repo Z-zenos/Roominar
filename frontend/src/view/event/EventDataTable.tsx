@@ -82,10 +82,10 @@ export default function EventDataTable() {
         undefined,
       startAtFrom: searchParams.get('start_at_from')
         ? dayjs(searchParams.get('start_at_from')).toDate()
-        : null,
+        : undefined,
       startAtTo: searchParams.get('start_at_to')
         ? dayjs(searchParams.get('start_at_to')).toDate()
-        : null,
+        : undefined,
       eventStatus:
         (searchParams.getAll('event_status[]') as EventStatusCode[]) ||
         undefined,

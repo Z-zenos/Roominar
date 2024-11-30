@@ -71,7 +71,6 @@ async def _listing_events(
         .offset(query_params.per_page * (query_params.page - 1))
         .order_by(sort_by)
     )
-
     events = db.exec(query).mappings().all()
 
     result = {event.id: dict(event) for event in events}
@@ -112,10 +111,10 @@ def _build_filters_sort(
         filters.append(Event.meeting_tool_code.in_(query_params.meeting_tool_codes))
 
     if query_params.start_at_from:
-        filters.append(Event.start_at.cast(Date) >= query_params.start_start_at.date())
+        filters.append(Event.start_at.cast(Date) >= query_params.start_at_from.date())
 
     if query_params.start_at_to:
-        filters.append(Event.start_at.cast(Date) <= query_params.end_start_at.date())
+        filters.append(Event.start_at.cast(Date) <= query_params.start_at_to.date())
 
     if query_params.event_status:
         filters.append(Event.status.in_(query_params.event_status))
