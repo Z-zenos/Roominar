@@ -1,5 +1,10 @@
+import EventDataTable from '@/src/view/event/EventDataTable';
 import * as React from 'react';
 
 export default function Page() {
-  return <div>event</div>;
+  return (
+    <div>
+      <EventDataTable />
+    </div>
+  );
 }
