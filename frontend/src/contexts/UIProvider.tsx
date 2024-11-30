@@ -7,7 +7,6 @@ import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import type { ThemeProviderProps } from 'next-themes/dist/types';
 import { getCookie } from 'cookies-next';
 import { TooltipProvider } from '../component/common/Tooltip';
-import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 export interface UIProviderProps {
   children: React.ReactNode;
@@ -27,9 +26,7 @@ export function UIProvider({ children, themeProps }: UIProviderProps) {
       navigate={router.push}
     >
       <NextThemesProvider {...themeProps}>
-        <TooltipProvider>
-          <NuqsAdapter>{children}</NuqsAdapter>
-        </TooltipProvider>
+        <TooltipProvider>{children}</TooltipProvider>
       </NextThemesProvider>
     </NextUIProvider>
   );
