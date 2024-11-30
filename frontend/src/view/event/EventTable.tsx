@@ -1,7 +1,6 @@
 'use client';
 
 import { DataTable } from '@/src/component/common/DataTable/DataTable';
-import { DataTableToolbar } from '@/src/component/common/DataTable/DataTableToolbar';
 import type {
   DataTableFilterField,
   DataTableRowAction,
@@ -14,6 +13,8 @@ import { useDataTable } from '@/src/hooks/useDataTable';
 import { useListingOrganizationEventsQuery } from '@/src/api/event.api';
 import { useSearchParams } from 'next/navigation';
 import queryString from 'query-string';
+// import dateRangeFilterFn from '@/src/component/common/DataTable/filters/dateRangeFilter';
+import { DataTableToolbar } from '@/src/component/common/DataTable/DataTableToolbar';
 
 export function EventTable() {
   const searchParams = useSearchParams();
@@ -33,29 +34,39 @@ export function EventTable() {
     {
       id: 'keyword',
       label: 'Name',
+      type: 'text',
       placeholder: 'Filter names...',
     },
     {
       id: 'event_status[]',
       label: 'Status',
+      type: 'multiSelect',
       options: optionify(EventStatusCode),
     },
-
     {
       id: 'time_status[]',
       label: 'Timeline Status',
+      type: 'multiSelect',
       options: optionify(EventTimeStatusCode),
+    },
+    {
+      id: 'startAt',
+      type: 'dateRange',
+      label: 'Start At',
     },
   ];
 
   const { table } = useDataTable({
     data: organizationEventsData?.data ?? [],
     columns,
+    // filterFns: {
+    //   dateRangeFilterFn: dateRangeFilterFn,
+    // },
     pageCount: organizationEventsData
       ? Math.ceil(organizationEventsData.total / organizationEventsData.perPage)
       : 0,
     filterFields,
-    enableAdvancedFilter: false,
+    // enableAdvancedFilter: false,
     initialState: {
       sorting: [{ id: 'startAt', desc: true }],
       columnPinning: { right: ['actions'] },
@@ -80,7 +91,7 @@ export function EventTable() {
           table={table}
           filterFields={filterFields}
         >
-          {/* <TasksTableToolbarActions table={table} /> */}
+          {/* <TasksTableToolbarActions table={table} />  */}
         </DataTableToolbar>
       </DataTable>
       {/* <UpdateTaskSheet

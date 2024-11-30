@@ -8,6 +8,7 @@ import { cn } from '@/src/utils/app.util';
 import TextInput from '../Input/TextInput';
 import { DataTableFacetedFilter } from './DataTableFacetedFilter';
 import { Button } from '../Button/ShardButton';
+import { DataTableDateRangeFilter } from './DataTableDateRangeFilter';
 
 interface DataTableToolbarProps<TData>
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -46,13 +47,19 @@ export function DataTableToolbar<TData>({
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
 
-  // Memoize computation of searchableColumns and filterableColumns
-  const { searchableColumns, filterableColumns } = React.useMemo(() => {
-    return {
-      searchableColumns: filterFields.filter((field) => !field.options),
-      filterableColumns: filterFields.filter((field) => field.options),
-    };
-  }, [filterFields]);
+  // // Memoize computation of filterTextFields and filterMultiSelectFields
+  const { filterTextFields, filterMultiSelectFields, filterDateRangeFields } =
+    React.useMemo(() => {
+      return {
+        filterTextFields: filterFields.filter((field) => field.type === 'text'),
+        filterMultiSelectFields: filterFields.filter(
+          (field) => field.type === 'multiSelect',
+        ),
+        filterDateRangeFields: filterFields.filter(
+          (field) => field.type === 'dateRange',
+        ),
+      };
+    }, [filterFields]);
 
   return (
     <div
@@ -63,8 +70,8 @@ export function DataTableToolbar<TData>({
       {...props}
     >
       <div className='flex flex-1 items-center gap-2'>
-        {searchableColumns.length > 0 &&
-          searchableColumns.map(
+        {filterTextFields.length > 0 &&
+          filterTextFields.map(
             (column) =>
               table.getColumn(column.id ? String(column.id) : '') && (
                 <TextInput
@@ -84,8 +91,8 @@ export function DataTableToolbar<TData>({
                 />
               ),
           )}
-        {filterableColumns.length > 0 &&
-          filterableColumns.map(
+        {filterMultiSelectFields.length > 0 &&
+          filterMultiSelectFields.map(
             (column) =>
               table.getColumn(column.id ? String(column.id) : '') && (
                 <DataTableFacetedFilter
@@ -96,6 +103,23 @@ export function DataTableToolbar<TData>({
                 />
               ),
           )}
+
+        {filterDateRangeFields.length > 0 &&
+          filterDateRangeFields.map(
+            (column) =>
+              table.getColumn(column.id ? String(column.id) : '') && (
+                <DataTableDateRangeFilter
+                  key={String(column.id)}
+                  column={table.getColumn(column.id ? String(column.id) : '')}
+                  title={column.label}
+                  options={column.options ?? []}
+                  triggerClassName='ml-auto w-56 sm:w-60'
+                  align='end'
+                  shallow={false}
+                />
+              ),
+          )}
+
         {isFiltered && (
           <Button
             aria-label='Reset filters'

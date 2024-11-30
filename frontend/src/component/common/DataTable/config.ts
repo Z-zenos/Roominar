@@ -34,6 +34,18 @@ export const dataTableConfig = {
     { label: 'Is empty', value: 'isEmpty' as const },
     { label: 'Is not empty', value: 'isNotEmpty' as const },
   ],
+  dateRangeOperators: [
+    { label: 'Is', value: 'eq' as const },
+    { label: 'Is not', value: 'ne' as const },
+    { label: 'Is before', value: 'lt' as const },
+    { label: 'Is after', value: 'gt' as const },
+    { label: 'Is on or before', value: 'lte' as const },
+    { label: 'Is on or after', value: 'gte' as const },
+    { label: 'Is between', value: 'isBetween' as const },
+    { label: 'Is relative to today', value: 'isRelativeToToday' as const },
+    { label: 'Is empty', value: 'isEmpty' as const },
+    { label: 'Is not empty', value: 'isNotEmpty' as const },
+  ],
   selectOperators: [
     { label: 'Is', value: 'eq' as const },
     { label: 'Is not', value: 'ne' as const },
@@ -58,7 +70,8 @@ export const dataTableConfig = {
     'date',
     'boolean',
     'select',
-    'multi-select',
+    'multiSelect',
+    'dateRange',
   ] as const,
   globalOperators: [
     'iLike',
@@ -164,9 +177,10 @@ export function getFilterOperators(columnType: ColumnType) {
     text: dataTableConfig.textOperators,
     number: dataTableConfig.numericOperators,
     select: dataTableConfig.selectOperators,
-    'multi-select': dataTableConfig.selectOperators,
+    multiSelect: dataTableConfig.selectOperators,
     boolean: dataTableConfig.booleanOperators,
     date: dataTableConfig.dateOperators,
+    dateRange: dataTableConfig.dateRangeOperators,
   };
 
   return operatorMap[columnType] ?? dataTableConfig.textOperators;

@@ -13,9 +13,9 @@ import {
   CheckCircle2,
   CircleHelp,
   CircleIcon,
-  CircleX,
   Timer,
 } from 'lucide-react';
+import { FaGalacticRepublic } from 'react-icons/fa6';
 
 export const parseErrorMessage = (errorMessage?: string) => {
   const parts = errorMessage?.split('\n');
@@ -212,7 +212,7 @@ export function composeEventHandlers<E>(
  */
 export function getStatusIcon(status: any['status']) {
   const statusIcons = {
-    PUBLIC: CircleX,
+    PUBLIC: FaGalacticRepublic,
     DRAFT: CheckCircle2,
     PRIVATE: Timer,
     DEFERRED: CircleHelp,
@@ -235,3 +235,6 @@ export function getPriorityIcon(priority: any['priority']) {
 
   return priorityIcons[priority] || CircleIcon;
 }
+
+export const toSnakeCase = (str: string) =>
+  str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);

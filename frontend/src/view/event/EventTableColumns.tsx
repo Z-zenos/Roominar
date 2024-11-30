@@ -19,9 +19,9 @@ import type { DataTableRowAction } from '@/src/types/DataTable';
 import { formatTableDataDate, getStatusIcon } from '@/src/utils/app.util';
 import { Checkbox } from '@nextui-org/react';
 import type { ColumnDef } from '@tanstack/react-table';
-import { Ellipsis } from 'lucide-react';
 import * as React from 'react';
 import { Image } from '@nextui-org/react';
+import { FaEllipsis } from 'react-icons/fa6';
 
 interface GetColumnsProps {
   setRowAction: React.Dispatch<
@@ -161,7 +161,7 @@ export function getColumns({
                 variant='ghost'
                 className='flex size-8 p-0 data-[state=open]:bg-muted'
               >
-                <Ellipsis
+                <FaEllipsis
                   className='size-4'
                   aria-hidden='true'
                 />

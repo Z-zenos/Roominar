@@ -1,6 +1,7 @@
 import type { ColumnSort, Row } from '@tanstack/react-table';
 import { type z } from 'zod';
 import type { DataTableConfig } from '../component/common/DataTable/config';
+import type { filterSchema } from '../utils/parsers';
 
 export type Prettify<T> = {
   [K in keyof T]: T[K];
@@ -36,10 +37,6 @@ export interface DataTableFilterField<TData> {
   label: string;
   placeholder?: string;
   options?: Option[];
-}
-
-export interface DataTableAdvancedFilterField<TData>
-  extends DataTableFilterField<TData> {
   type: ColumnType;
 }
 

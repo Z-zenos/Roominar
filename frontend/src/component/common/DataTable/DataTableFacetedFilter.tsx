@@ -1,5 +1,4 @@
 import type { Column } from '@tanstack/react-table';
-import { Check, PlusCircle } from 'lucide-react';
 
 import { Popover, PopoverContent, PopoverTrigger } from '../Popover';
 import { Button } from '../Button/ShardButton';
@@ -16,6 +15,8 @@ import { cn } from '@/src/utils/app.util';
 import type { Option } from '@/src/types/DataTable';
 import Badge from '../Badge';
 import { Separator } from '../Separator';
+import { Check } from 'lucide-react';
+import { GoPlusCircle } from 'react-icons/go';
 
 interface DataTableFacetedFilterProps<TData, TValue> {
   column?: Column<TData, TValue>;
@@ -41,7 +42,7 @@ export function DataTableFacetedFilter<TData, TValue>({
           size='sm'
           className='h-8 border-dashed'
         >
-          <PlusCircle className='mr-2 size-4' />
+          <GoPlusCircle className='mr-2 size-4' />
           {title}
           {selectedValues?.size > 0 && (
             <>
