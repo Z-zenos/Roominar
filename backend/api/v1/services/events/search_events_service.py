@@ -5,6 +5,7 @@ import pytz
 from pydantic import BaseModel
 from sqlmodel import Date, Session, and_, asc, case, desc, func, or_, select
 
+from backend.api.v1.services.tags.get_event_tags_service import get_event_tags
 from backend.core.constants import EventSortByCode, EventStatusCode
 from backend.models.application import Application
 from backend.models.bookmark import Bookmark
@@ -91,7 +92,7 @@ async def search_events(
     events = db.exec(query).mappings().all()
     result = {event.id: dict(event) for event in events}
     event_ids = list(result.keys())
-    event_tags = _get_event_tags(db, event_ids=event_ids)
+    event_tags = get_event_tags(db, event_ids=event_ids)
 
     for item in event_tags:
         result[item.id]["tags"] = item.tags
@@ -273,23 +274,3 @@ def _build_filters(db: Session, user: User, query_params: SearchEventsQueryParam
         "conditions": filters,
         "sort_by": sort_by,
     }
-
-
-def _get_event_tags(db: Session, event_ids: list[int]):
-    query = (
-        select(
-            Event.id,
-            func.json_agg(
-                func.json_build_object(
-                    "id", Tag.id, "image_url", Tag.image_url, "name", Tag.name
-                )
-            ).label("tags"),
-        )
-        .join(EventTag, EventTag.event_id == Event.id)
-        .join(Tag, Tag.id == EventTag.tag_id)
-        .where(Event.id.in_(event_ids))
-        .group_by(Event.id)
-    )
-    event_tags = db.exec(query).all()
-
-    return event_tags

@@ -101,7 +101,7 @@ export function toCamelCase(obj: { [key: string]: any }) {
 }
 
 export function formatEventDate(datetime: Date) {
-  return dayjs(datetime).format('YYYY MMM d - HH:MM');
+  return dayjs(datetime).format('YYYY MMM DD - HH:MM');
 }
 
 interface OptionifyOptions {

@@ -267,3 +267,18 @@ class CityCode(str, Enum):
     VINHLONG = "VINHLONG"
     VINHPHUC = "VINHPHUC"
     YENBAI = "YENBAI"
+
+
+class EventTimeStatusCode(str, Enum):
+    APPLY_ONGOING = "APPLY_ONGOING"
+    IN_PROGRESS = "IN_PROGRESS"  # Apply ended and officially ongoing
+    ALL_ENDED = "ALL_ENDED"
+    UPCOMING = "UPCOMING"  # Near to start day
+
+
+class ManageEventSortByCode(str, Enum):
+    APPLIED_NUMBER = "APPLIED_NUMBER"
+    START_AT = "START_AT"
+    NAME = "NAME"
+    VIEW_NUMBER = "VIEW_NUMBER"
+    CREATED_AT = "CREATED_AT"

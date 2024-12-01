@@ -9,8 +9,10 @@ from backend.core.constants import (
     EventMeetingToolCode,
     EventSortByCode,
     EventStatusCode,
+    EventTimeStatusCode,
     IndustryCode,
     JobTypeCode,
+    ManageEventSortByCode,
     MyEventStatusCode,
 )
 from backend.core.error_code import ErrorCode, ErrorMessage
@@ -250,3 +252,54 @@ class PublishEventRequest(BaseModel):
                 ErrorCode.ERR_ONLINE_EVENT_MISSING_ADDRESS,
                 ErrorMessage.ERR_ONLINE_EVENT_MISSING_ADDRESS,
             )
+
+
+class ListingOrganizationEventsQueryParams(BaseModel):
+    keyword: str | None = Field(Query(default=None, description=""))
+    tags: list[int] = Field(Query(default=None))
+    meeting_tool_codes: list[EventMeetingToolCode] = Field(Query(default=[]))
+
+    start_at_from: datetime | None = Field(Query(default=None))
+    start_at_to: datetime | None = Field(Query(default=None))
+    event_status: list[EventStatusCode] = Field(Query(default=[]))
+    time_status: EventTimeStatusCode | None = Field(Query(default=None))
+
+    sort_by: ManageEventSortByCode | None = Field(
+        Query(default=ManageEventSortByCode.CREATED_AT)
+    )
+    per_page: int | None = Field(Query(default=10, le=100, ge=1))
+    page: int | None = Field(Query(default=1, ge=1))
+
+    @field_validator("tags", mode="before")
+    def check_list_empty(cls, v):
+        return v or []
+
+
+class ListingOrganizationEventsItem(BaseModel):
+    id: int
+    slug: str
+    name: str
+    cover_image_url: str
+    start_at: datetime
+    end_at: datetime
+    application_start_at: datetime
+    application_end_at: datetime
+    is_online: bool
+    is_offline: bool
+    organize_city_code: str | None = None
+    organize_place_name: str | None = None
+    meeting_url: str | None = None
+    meeting_tool_code: EventMeetingToolCode
+    # tickets: list[TicketItem] = Field([])
+    application_number: int
+    applied_number: int | None = None
+    status: EventStatusCode
+    # survey: SurveyDetail | None = None
+    view_number: int | None = None
+    tags: list[TagItem] = Field([])
+
+
+class ListingOrganizationEventsResponse(
+    PaginationResponse[ListingOrganizationEventsItem]
+):
+    pass

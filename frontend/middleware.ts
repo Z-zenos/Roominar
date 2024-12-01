@@ -20,6 +20,7 @@ export const pathPermissionMaster = {
     '/my-events',
     '/organization/login',
     '/organization/register',
+    '/icon.ico',
   ],
   SPEAKER: ['/login', '/organization/login'],
   ORGANIZER: [
@@ -29,6 +30,7 @@ export const pathPermissionMaster = {
     '/organization/events/create',
     '/organization/surveys',
     '/organization/surveys/create',
+    '/icon.ico',
   ],
   ADMIN: ['/admin/users', '/admin/organizers', '/login', '/organization/login'],
   GUEST: [
@@ -44,6 +46,7 @@ export const pathPermissionMaster = {
     '/email/revert/[token]',
     '/organization/login',
     '/organization/register',
+    '/icon.ico',
   ],
 };
 
@@ -58,6 +61,7 @@ const nextResponseRedirectUrl = (
     ) ||
     pathName === '/'
   ) {
+    console.log(roleCode, pathName, url);
     return NextResponse.redirect(new URL('/not-found', url));
   }
 };

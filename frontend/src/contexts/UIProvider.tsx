@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import type { ThemeProviderProps } from 'next-themes/dist/types';
 import { getCookie } from 'cookies-next';
+import { TooltipProvider } from '../component/common/Tooltip';
 
 export interface UIProviderProps {
   children: React.ReactNode;
@@ -24,7 +25,9 @@ export function UIProvider({ children, themeProps }: UIProviderProps) {
       }
       navigate={router.push}
     >
-      <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
+      <NextThemesProvider {...themeProps}>
+        <TooltipProvider>{children}</TooltipProvider>
+      </NextThemesProvider>
     </NextUIProvider>
   );
 }

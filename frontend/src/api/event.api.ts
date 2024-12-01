@@ -7,6 +7,7 @@ import type {
   EventsApiListingTicketsOfEventRequest,
   EventsApiPublishEventRequest,
   EventsApiSearchEventsRequest,
+  OrganizationsApiListingOrganizationEventsRequest,
   OrganizationsApiListingTopOrganizationEventsRequest,
 } from '../lib/api/generated';
 import useApi from '../lib/api/useApi';
@@ -117,5 +118,21 @@ export const useListingTicketsOfEventQuery = (
   return useQuery({
     queryKey: ['listing-tickets-of-events'],
     queryFn: async () => await api.events.listingTicketsOfEvent(params),
+  });
+};
+
+export const useListingOrganizationEventsQuery = (
+  params?: OrganizationsApiListingOrganizationEventsRequest,
+) => {
+  params = toCamelCase(params);
+  if (params.startAtFrom) {
+    params.startAtFrom = new Date(params.startAtFrom);
+  }
+  if (params.startAtTo) params.startAtTo = new Date(params.startAtTo);
+  const api = useApi();
+  return useQuery({
+    queryKey: ['listing-organization-events', params],
+    queryFn: async () =>
+      await api.organizations.listingOrganizationEvents(params),
   });
 };

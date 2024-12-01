@@ -1,16 +1,28 @@
 'use client';
 
-import React from 'react';
-import type { MenuItemStyles } from 'react-pro-sidebar';
+import * as React from 'react';
+import { ChevronRight, Command } from 'lucide-react';
 import {
-  Sidebar as ProSidebar,
-  Menu,
-  MenuItem,
-  menuClasses,
-  SubMenu,
-} from 'react-pro-sidebar';
-import { usePathname, useRouter } from 'next/navigation';
-import clsx from 'clsx';
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuAction,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
+} from '../Sidebar';
+import { SidebarUser } from './SidebarUser';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '../Collapsible';
 import OverviewIcon from '@/public/icons/overview.svg';
 import EventPlanningIcon from '@/public/icons/event-planning.svg';
 import CreateEventIcon from '@/public/icons/create-event.svg';
@@ -18,226 +30,206 @@ import AttendeesIcon from '@/public/icons/attendees.svg';
 import StaffIcon from '@/public/icons/staff.svg';
 import SurveyIcon from '@/public/icons/survey.svg';
 import TicketPaymentIcon from '@/public/icons/ticket-payment.svg';
-import { useState } from 'react';
-import {
-  TbLayoutSidebarLeftCollapse,
-  TbLayoutSidebarRightCollapse,
-} from 'react-icons/tb';
-import { styles } from '@/src/constants/styles.constant';
-import Logo from '../Logo';
-import { hexToRgba } from '@/src/utils/app.util';
-
-const themes = {
-  light: {
-    sidebar: {
-      backgroundColor: '#ffffff',
-      color: '#101828',
-    },
-    menu: {
-      menuContent: '#fbfcfd',
-      icon: '#101828',
-      hover: {
-        backgroundColor: '#e8f6ff',
-        color: '#0056D2',
-      },
-      disabled: {
-        color: '#9fb6cf',
-      },
-    },
-  },
-  dark: {
-    sidebar: {
-      backgroundColor: '#101828',
-      color: '#8ba1b7',
-    },
-    menu: {
-      menuContent: '#082440',
-      icon: '#59d0ff',
-      hover: {
-        backgroundColor: '#0056D2',
-        color: '#b6c8d9',
-      },
-      disabled: {
-        color: '#3e5e7e',
-      },
-    },
-  },
-};
+import { signOut, useSession } from 'next-auth/react';
+import { usePathname, useRouter } from 'next/navigation';
+import { RoleCode } from '@/src/constants/role_code.constant';
+import type { Session } from 'next-auth';
+import clsx from 'clsx';
 
 const sidebarMenu = [
   {
     title: 'Overview',
-    icon: <OverviewIcon width={25} />,
-    route: '/organization/overview',
+    url: '/organization/overview',
+    icon: <OverviewIcon />,
+    isActive: false,
+    // items: [
+    //   {
+    //     title: 'History',
+    //     url: '#',
+    //   },
+    //   {
+    //     title: 'Starred',
+    //     url: '#',
+    //   },
+    //   {
+    //     title: 'Settings',
+    //     url: '#',
+    //   },
+    // ],
   },
   {
     title: 'Events',
-    icon: <EventPlanningIcon width={25} />,
-    route: '/organization/events',
-    submenu: [
+    url: '/organization/events',
+    icon: <EventPlanningIcon />,
+    isActive: true,
+    items: [
       {
         title: 'Create New',
-        icon: <CreateEventIcon width={25} />,
-        route: '/organization/events/create',
+        url: '/organization/events/create',
+        icon: <CreateEventIcon />,
       },
+      {
+        title: 'Explorer',
+        url: '#',
+      },
+      // {
+      //   title: 'Quantum',
+      //   url: '#',
+      // },
     ],
   },
   {
     title: 'Attendees',
-    icon: <AttendeesIcon width={30} />,
-    route: '/organization/attendees',
+    icon: <AttendeesIcon />,
+    url: '/organization/attendees',
   },
   {
     title: 'Ticket & payments',
-    icon: <TicketPaymentIcon width={25} />,
-    route: '/organization/ticket-payments',
+    icon: <TicketPaymentIcon />,
+    url: '/organization/ticket-payments',
   },
   {
     title: 'Survey',
-    icon: <SurveyIcon width={30} />,
-    route: '/organization/surveys',
+    icon: <SurveyIcon />,
+    url: '/organization/surveys',
   },
   {
     title: 'Staff',
-    icon: <StaffIcon width={25} />,
-    route: '/organization/staff',
+    icon: <StaffIcon />,
+    url: '/organization/staff',
   },
 ];
 
-const theme = 'light';
-
-interface OrganizationSidebarProps {
-  className?: string;
-}
-
-export default function OrganizationSidebar({
-  className,
-}: OrganizationSidebarProps) {
-  const [toggled, setToggled] = React.useState(false);
-
-  const menuItemStyles: MenuItemStyles = {
-    root: {
-      fontSize: '16px',
-      fontWeight: 400,
-    },
-    icon: {
-      color: themes[theme].menu.icon,
-      [`&.${menuClasses.disabled}`]: {
-        color: themes[theme].menu.disabled.color,
-      },
-    },
-    SubMenuExpandIcon: {
-      color: '#b6b7b9',
-    },
-    subMenuContent: ({ level }) => ({
-      backgroundColor:
-        level === 0
-          ? hexToRgba(themes[theme].menu.menuContent, 1)
-          : 'transparent',
-    }),
-    button: {
-      [`&.${menuClasses.disabled}`]: {
-        color: themes[theme].menu.disabled.color,
-      },
-      '&:hover': {
-        backgroundColor: hexToRgba(themes[theme].menu.hover.backgroundColor, 1),
-        color: themes[theme].menu.hover.color,
-      },
-    },
-    label: ({ open }) => ({
-      fontWeight: open ? 600 : undefined,
-    }),
-  };
-
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { data: auth } = useSession();
+  const router = useRouter();
   const pathname = usePathname();
 
-  const [collapsed, setCollapsed] = useState<boolean>(false);
-  const router = useRouter();
+  const handleLogout = (auth: Session) => {
+    localStorage.setItem('rememberMe', 'false');
+    if (process.env.NODE_ENV === 'development') {
+      signOut({ redirect: false });
+      location.reload();
+    } else {
+      signOut(
+        auth.user?.roleCode == RoleCode.ORGANIZER
+          ? { callbackUrl: '/organization/login' }
+          : {
+              callbackUrl: '/home',
+            },
+      ).then(() => {
+        router.refresh();
+        location.reload();
+      });
+    }
+  };
 
   return (
-    <div className={clsx('flex', className)}>
-      <ProSidebar
-        collapsed={collapsed}
-        toggled={toggled}
-        onBackdropClick={() => setToggled(false)}
-        breakPoint='md'
-        backgroundColor={hexToRgba(themes[theme].sidebar.backgroundColor, 1)}
-        rootStyles={{
-          color: themes[theme].sidebar.color,
-        }}
-      >
-        <div className='flex flex-col h-full fixed w-[250px]'>
-          <div className={clsx(styles.center, 'gap-2 mt-2')}>
-            {!collapsed && <Logo className='w-[160px]' />}
-            {!collapsed ? (
-              <TbLayoutSidebarLeftCollapse
-                className='w-6 h-6 cursor-pointer text-primary mt-2'
-                onClick={() => setCollapsed(true)}
-              />
-            ) : (
-              <TbLayoutSidebarRightCollapse
-                className='w-6 h-6 cursor-pointer text-primary mt-2'
-                onClick={() => {
-                  setCollapsed(false);
-                }}
-              />
-            )}
-          </div>
-          <div className={clsx(collapsed ? 'ml-0' : '', 'flex-1 mt-[100px]')}>
-            <Menu menuItemStyles={menuItemStyles}>
-              {sidebarMenu.map((item) =>
-                item.submenu ? (
-                  <SubMenu
-                    key={`osbmn-${item.title}`}
-                    active={pathname.includes(item.route)}
+    <Sidebar
+      variant='inset'
+      collapsible='icon'
+      {...props}
+    >
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              size='lg'
+              asChild
+            >
+              <a href='#'>
+                <div className='flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground'>
+                  <Command className='size-4' />
+                </div>
+                <div className='grid flex-1 text-left text-sm leading-tight'>
+                  <span className='truncate font-semibold'>Acme Inc</span>
+                  <span className='truncate text-xs'>Enterprise</span>
+                </div>
+              </a>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>Platform</SidebarGroupLabel>
+          <SidebarMenu>
+            {sidebarMenu.map((item) => (
+              <Collapsible
+                key={item.title}
+                asChild
+                defaultOpen={item.isActive}
+              >
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    asChild
+                    tooltip={item.title}
                     className={clsx(
                       '!text-sm',
-                      pathname.includes(item.route)
-                        ? 'bg-emerald-50 !text-primary [&_svg]:fill-primary [&_g]:fill-primary [&_path]:stroke-primary font-semibold border border-primary border-r-0'
+                      pathname.includes(item.url)
+                        ? 'bg-emerald-50 !text-primary [&_svg]:fill-primary [&_g]:fill-primary [&_path]:stroke-primary font-semibold border border-primary rounded-sm'
                         : '!text-dark-main !font-light',
                     )}
-                    icon={item.icon}
-                    onClick={() => router.push(item.route)}
-                    label={item.title}
                   >
-                    {item.submenu.map((subitem) => (
-                      <MenuItem
-                        key={`osbsmn-${subitem.title}`}
-                        active={pathname.includes(subitem.route)}
-                        className={clsx(
-                          '!text-sm',
-                          pathname.includes(subitem.route)
-                            ? 'bg-emerald-50 text-primary [&_svg]:fill-primary [&_g]:fill-primary [&_path]:stroke-primary font-semibold border-r-2 border-r-primary '
-                            : '!text-dark-main !font-light',
-                        )}
-                        icon={subitem.icon}
-                        onClick={() => router.push(subitem.route)}
-                      >
-                        {!collapsed && subitem.title}
-                      </MenuItem>
-                    ))}
-                  </SubMenu>
-                ) : (
-                  <MenuItem
-                    key={`osbmn-${item.title}`}
-                    active={pathname.includes(item.route)}
-                    className={clsx(
-                      '!text-sm',
-                      pathname.includes(item.route)
-                        ? 'bg-emerald-50 text-primary [&_svg]:fill-primary [&_g]:fill-primary [&_path]:stroke-primary font-semibold border border-primary border-r-0'
-                        : '!text-dark-main !font-light',
-                    )}
-                    icon={item.icon}
-                    onClick={() => router.push(item.route)}
-                  >
-                    {!collapsed && item.title}
-                  </MenuItem>
-                ),
-              )}
-            </Menu>
-          </div>
-        </div>
-      </ProSidebar>
-    </div>
+                    <a
+                      href={item.url}
+                      className='[&_svg]:w-[25px] [&_svg]:h-[25px]'
+                    >
+                      {item.icon}
+                      <span>{item.title}</span>
+                    </a>
+                  </SidebarMenuButton>
+                  {item.items?.length ? (
+                    <>
+                      <CollapsibleTrigger asChild>
+                        <SidebarMenuAction className='data-[state=open]:rotate-90'>
+                          <ChevronRight />
+                          <span className='sr-only'>Toggle</span>
+                        </SidebarMenuAction>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <SidebarMenuSub>
+                          {item.items?.map((subItem) => (
+                            <SidebarMenuSubItem key={subItem.title}>
+                              <SidebarMenuSubButton
+                                asChild
+                                className={clsx(
+                                  pathname.includes(subItem.url)
+                                    ? 'text-primary [&_svg]:fill-primary [&_g]:fill-primary [&_path]:stroke-primary font-medium rounded-none border-b border-b-primary'
+                                    : '!text-dark-main !font-light',
+                                )}
+                              >
+                                <a
+                                  href={subItem.url}
+                                  className='[&_svg]:w-[25px] [&_svg]:h-[25px]'
+                                >
+                                  {/* {subItem.icon} */}
+                                  <span>{subItem.title}</span>
+                                </a>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          ))}
+                        </SidebarMenuSub>
+                      </CollapsibleContent>
+                    </>
+                  ) : null}
+                </SidebarMenuItem>
+              </Collapsible>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
+        {/* <NavProjects projects={data.projects} />
+        <NavSecondary
+          items={data.navSecondary}
+          className='mt-auto'
+        /> */}
+      </SidebarContent>
+      <SidebarFooter>
+        <SidebarUser
+          user={auth?.user}
+          onLogout={() => handleLogout(auth)}
+        />
+      </SidebarFooter>
+    </Sidebar>
   );
 }

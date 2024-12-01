@@ -159,32 +159,32 @@ export default function CreateEventForm() {
   });
 
   function handlePublishEvent(data: PublishEventFormSchema) {
-    trigger({
-      eventId: 11,
-      publishEventRequest: {
-        name: data.name,
-        description: data.description,
-        coverImageUrl: data.coverImageUrl,
-        surveyId: data.surveyId,
-        targetId: data.targetId,
-        comment: data.comment,
-        status: data.status,
-        ticketIds: data.ticketIds,
-        tags: data.tags,
-        applicationNumber: data.applicationNumber,
-        startAt: data.startAt,
-        endAt: data.endAt,
-        applicationEndAt: data.applicationEndAt,
-        applicationStartAt: data.applicationStartAt,
-        isOnline: data.isOnline,
-        isOffline: data.isOffline,
-        organizeAddress: data.organizeAddress,
-        organizeCityCode: PublishEventRequestOrganizeCityCodeEnum.Angiang,
-        organizePlaceName: '12 aH',
-        meetingToolCode: data.meetingToolCode,
-        meetingUrl: data.meetingUrl,
-      },
-    });
+    // trigger({
+    //   eventId: 11,
+    //   publishEventRequest: {
+    //     name: data.name,
+    //     description: data.description,
+    //     coverImageUrl: data.coverImageUrl,
+    //     surveyId: data.surveyId,
+    //     targetId: data.targetId,
+    //     comment: data.comment,
+    //     status: data.status,
+    //     ticketIds: data.ticketIds,
+    //     tags: data.tags,
+    //     applicationNumber: data.applicationNumber,
+    //     startAt: data.startAt,
+    //     endAt: data.endAt,
+    //     applicationEndAt: data.applicationEndAt,
+    //     applicationStartAt: data.applicationStartAt,
+    //     isOnline: data.isOnline,
+    //     isOffline: data.isOffline,
+    //     organizeAddress: data.organizeAddress,
+    //     organizeCityCode: PublishEventRequestOrganizeCityCodeEnum.Angiang,
+    //     organizePlaceName: '12 aH',
+    //     meetingToolCode: data.meetingToolCode,
+    //     meetingUrl: data.meetingUrl,
+    //   },
+    // });
   }
 
   const renderCell = useCallback((ticket: TicketItem, columnKey: string) => {

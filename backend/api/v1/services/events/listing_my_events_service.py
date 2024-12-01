@@ -3,7 +3,7 @@ from datetime import datetime
 import pytz
 from sqlmodel import Boolean, Session, and_, case, func, or_, select
 
-from backend.api.v1.services.events.search_events_service import _get_event_tags
+from backend.api.v1.services.tags.get_event_tags_service import get_event_tags
 from backend.core.constants import ApplicationStatusCode, EventStatusCode
 from backend.models import Application, Bookmark, Event, Organization, Ticket, User
 from backend.schemas.event import ListingMyEventsQueryParams, MyEventStatusCode
@@ -103,7 +103,7 @@ async def _listing_events(
 
     result = {event.id: dict(event) for event in events}
     event_ids = list(result.keys())
-    event_tags = _get_event_tags(db, event_ids=event_ids)
+    event_tags = get_event_tags(db, event_ids=event_ids)
 
     for item in event_tags:
         result[item.id]["tags"] = item.tags

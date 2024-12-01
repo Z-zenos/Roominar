@@ -47,7 +47,7 @@ import {
   Select,
   SelectContent,
   SelectGroup,
-  SelectElement,
+  SelectItem,
   SelectTrigger,
   SelectValue,
 } from '../common/Select';
@@ -544,7 +544,7 @@ const FormCombobox = ({
                             let newItems = null;
 
                             if (multiple) {
-                              if (field?.value.includes(option.value)) {
+                              if (field?.value?.includes(option.value)) {
                                 newItems = field?.value?.filter(
                                   (value: string) => value !== option.value,
                                 );
@@ -564,7 +564,7 @@ const FormCombobox = ({
                             className={cn(
                               'mr-2 h-4 w-4',
                               multiple
-                                ? field?.value.includes(option.value)
+                                ? field?.value?.includes(option.value)
                                   ? 'opacity-100'
                                   : 'opacity-0'
                                 : field?.value === option.value
@@ -625,7 +625,7 @@ const FormTagsInput = ({
   ) {
     let newItems = null;
 
-    if (field?.value.includes(id)) {
+    if (field?.value?.includes(id)) {
       newItems = field?.value?.filter((value: string) => value !== id);
     } else {
       newItems = field?.value ? [...field.value, id] : [id];
@@ -651,7 +651,7 @@ const FormTagsInput = ({
             <div className={clsx('max-h-[100px] overflow-y-scroll p-1')}>
               {field?.value &&
                 field?.value?.length > 0 &&
-                field?.value.map((id: string) => (
+                field?.value?.map((id: string) => (
                   <li
                     key={`selected-tag-${id}`}
                     className={clsx(
@@ -720,7 +720,7 @@ const FormTagsInput = ({
                           <Check
                             className={cn(
                               'mr-2 h-4 w-4',
-                              field?.value.includes(item.value)
+                              field?.value?.includes(item.value)
                                 ? 'opacity-100'
                                 : 'opacity-0',
                             )}
@@ -772,7 +772,7 @@ const FormTagsInput = ({
                                   onCheckedChange={() => {
                                     handleSelectTags(field, tag.id + '');
                                   }}
-                                  defaultChecked={field?.value.includes(
+                                  defaultChecked={field?.value?.includes(
                                     tag.id + '',
                                   )}
                                 >
@@ -1136,17 +1136,17 @@ const FormSelect = ({
               <SelectGroup>
                 {options && options?.length > 0 ? (
                   options?.map((option: Option) => (
-                    <SelectElement
+                    <SelectItem
                       key={option.value}
                       value={option.value}
                     >
                       {i18nPath ? t(option.label) : option.label}
-                    </SelectElement>
+                    </SelectItem>
                   ))
                 ) : (
-                  <SelectElement value='0'>
+                  <SelectItem value='0'>
                     <Nodata />
-                  </SelectElement>
+                  </SelectItem>
                 )}
               </SelectGroup>
             </SelectContent>

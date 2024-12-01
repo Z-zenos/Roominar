@@ -1,17 +1,17 @@
 import Logo from '@/src/component/common/Logo';
-import { Image } from '@nextui-org/react';
+// import { Image } from '@nextui-org/react';
 
 export default async function NotFound() {
   return (
     <main className='grid min-h-full place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8'>
       <div className='text-center'>
         <Logo />
-        <Image
+        {/* <Image
           src='/icons/not-found.png'
           width={200}
           alt='not found image'
           classNames={{ wrapper: 'block mx-auto' }}
-        />
+        /> */}
         <h1 className='mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl'>
           Page not found
         </h1>
