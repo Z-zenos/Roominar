@@ -46,7 +46,7 @@ import useWindowDimensions from '@/src/hooks/useWindowDimension';
 import { BsThreeDots } from 'react-icons/bs';
 
 const statusColorMap = {
-  active: 'success',
+  PUBLIC: 'success',
   paused: 'danger',
   vacation: 'warning',
 };
@@ -71,6 +71,7 @@ export default function EventDataTable() {
     ...queryString.parse(searchParams.toString(), { arrayFormat: 'bracket' }),
   });
 
+  const [selectedKeys, setSelectedKeys] = useState<any>(null);
   const [page, setPage] = useState<number>(data?.page || 1);
   const form = useForm<OrganizationsApiListingOrganizationEventsRequest>({
     mode: 'all',
@@ -113,8 +114,6 @@ export default function EventDataTable() {
     searchQuery(router, filters, searchParams, exclude_queries);
   }
 
-  const [selectedKeys, setSelectedKeys] = useState<number[]>([]);
-
   const renderCell = useCallback(
     (event: ListingOrganizationEventsItem, columnKey: Key) => {
       const cellValue = event[columnKey as string];
@@ -123,7 +122,11 @@ export default function EventDataTable() {
         case 'name':
           return (
             <User
-              avatarProps={{ radius: 'lg', src: event.coverImageUrl }}
+              avatarProps={{
+                radius: 'lg',
+                src: event.coverImageUrl,
+                className: 'w-[100px] h-[100px]',
+              }}
               // description={user.email}
               name={cellValue}
             >
@@ -205,15 +208,18 @@ export default function EventDataTable() {
                   form.reset({
                     tags: [],
                     eventStatus: [],
-                    // timeStatus: undefined,
+                    timeStatus: undefined,
+
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-expect-error
                     start_at_range: {
                       from: null,
                       to: null,
                     },
+                    startAtFrom: undefined,
+                    startAtTo: undefined,
                   });
-                  router.push('/search');
+                  router.push('/organization/events');
                 }}
                 startContent={<GrPowerReset />}
               >
@@ -281,11 +287,9 @@ export default function EventDataTable() {
           wrapper: 'max-h-[600px] mt-10',
         }}
         selectedKeys={selectedKeys}
-        selectionMode='single'
-        // sortDescriptor={sortDescriptor}
+        selectionMode='multiple'
         topContentPlacement='outside'
-        // onSelectionChange={setSelectedKeys}
-        // onSortChange={setSortDescriptor}
+        onSelectionChange={setSelectedKeys}
       >
         <TableHeader columns={columns}>
           {(column) => (
@@ -313,20 +317,23 @@ export default function EventDataTable() {
       </Table>
 
       <div className='py-2 px-2 flex justify-between items-center'>
-        {/* <span className='w-[30%] text-small text-default-400'>
+        <span className='w-[30%] text-small text-default-400'>
           {selectedKeys === 'all'
             ? 'All items selected'
-            : `${selectedKeys.size} of ${filteredItems.length} selected`}
-        </span> */}
+            : `${selectedKeys?.size ?? 0} of ${data?.data?.length} selected`}
+        </span>
         <ReactPaginate
           breakLabel='...'
           nextLabel={width > 800 ? 'next >' : '>'}
-          onPageChange={({ selected }: any) => setPage(selected + 1)}
+          onPageChange={({ selected }: any) => {
+            handleSearch({ page: selected + 1 });
+            setPage(selected + 1);
+          }}
           pageRangeDisplayed={5}
           pageCount={Math.ceil(data?.total / data?.perPage) || 0}
           previousLabel={width > 800 ? '< previous' : '<'}
           renderOnZeroPageCount={null}
-          forcePage={page >= 1 ? (page - 1 > 0 ? page - 1 : -1) : -1}
+          forcePage={page >= 1 ? page - 1 : 0}
           className='mx-auto flex lg:gap-4 gap-1 mt-4 w-full items-center justify-center'
           pageClassName='lg:py-2 lg:px-4 py-1 px-2'
           nextClassName='lg:py-2 lg:px-4 py-1 px-2'
