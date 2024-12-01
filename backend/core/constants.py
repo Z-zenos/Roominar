@@ -282,3 +282,14 @@ class ManageEventSortByCode(str, Enum):
     NAME = "NAME"
     VIEW_NUMBER = "VIEW_NUMBER"
     CREATED_AT = "CREATED_AT"
+
+
+class TagAssociationEntityCode(str, Enum):
+    EVENT = "EVENT"
+    ORGANIZATION = "ORGANIZATION"
+    USER = "USER"
+
+
+class FollowEntityCode(str, Enum):
+    ORGANIZATION = "ORGANIZATION"
+    SPEAKER = "SPEAKER"

@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Depends
 from sqlmodel import Session
 
-from backend.api.v1.dependencies.authentication import authorize_role, get_current_user
 import backend.api.v1.services.auth as auth_service
 import backend.api.v1.services.events as events_service
+import backend.api.v1.services.organizations as organizations_service
+from backend.api.v1.dependencies.authentication import authorize_role
 from backend.core.constants import RoleCode
-from backend.core.response import public_api_responses, authenticated_api_responses
+from backend.core.response import authenticated_api_responses, public_api_responses
 from backend.db.database import get_read_db
-from backend.models.event import Event
 from backend.models.user import User
 from backend.schemas.auth import RegisterOrganizationRequest
 from backend.schemas.event import (
@@ -15,6 +15,7 @@ from backend.schemas.event import (
     ListingOrganizationEventsResponse,
     ListingTopOrganizationEventsResponse,
 )
+from backend.schemas.organization import ListingOngoingEventOrganizationsResponse
 
 router = APIRouter()
 
@@ -57,7 +58,20 @@ async def listing_organization_events(
         ListingOrganizationEventsQueryParams
     ),
 ):
-    events, total = await events_service.listing_organization_events(db, organizer, query_params)
+    events, total = await events_service.listing_organization_events(
+        db, organizer, query_params
+    )
     return ListingOrganizationEventsResponse(
         data=events, total=total, page=1, per_page=10
     )
+
+
+@router.get(
+    "/ongoing-event-organizations",
+    response_model=ListingOngoingEventOrganizationsResponse,
+    responses=public_api_responses,
+)
+async def listing_organizations_of_ongoing_event(
+    db: Session = Depends(get_read_db),
+):
+    return await organizations_service.listing_ongoing_event_organizations(db)

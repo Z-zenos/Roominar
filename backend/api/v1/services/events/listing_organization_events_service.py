@@ -1,16 +1,17 @@
 from datetime import datetime
 
-from sqlmodel import Date, Session, func, select, text
+from sqlmodel import Date, Session, and_, func, select, text
 
 from backend.api.v1.services.tags.get_event_tags_service import get_event_tags
 from backend.core.constants import (
     ApplicationStatusCode,
     EventTimeStatusCode,
     ManageEventSortByCode,
+    TagAssociationEntityCode,
 )
 from backend.models.application import Application
 from backend.models.event import Event
-from backend.models.event_tag import EventTag
+from backend.models.tag_association import TagAssociation
 from backend.models.user import User
 from backend.schemas.event import ListingOrganizationEventsQueryParams
 
@@ -86,7 +87,13 @@ async def _listing_events(
 async def _count_events(db: Session, filters: list):
     query = (
         select(func.count(Event.id.distinct()))
-        .outerjoin(EventTag, Event.id == EventTag.event_id)
+        .outerjoin(
+            TagAssociation,
+            and_(
+                Event.id == TagAssociation.tag_id,
+                TagAssociation.entity_code == TagAssociationEntityCode.EVENT,
+            ),
+        )
         .where(*filters)
     )
     total = db.scalar(query) or 0
@@ -105,7 +112,7 @@ def _build_filters_sort(
         filters.append(Event.name.contains(query_params.keyword))
 
     if query_params.tags:
-        filters.append(EventTag.tag_id.in_(query_params.tags))
+        filters.append(TagAssociation.tag_id.in_(query_params.tags))
 
     if query_params.meeting_tool_codes:
         filters.append(Event.meeting_tool_code.in_(query_params.meeting_tool_codes))

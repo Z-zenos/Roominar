@@ -4,12 +4,13 @@ from fastapi import BackgroundTasks
 from sqlmodel import Session, select
 
 from backend.core.config import settings
+from backend.core.constants import TagAssociationEntityCode
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.mails.mail import Email
 from backend.models.tag import Tag
+from backend.models.tag_association import TagAssociation
 from backend.models.user import User
-from backend.models.user_tag import UserTag
 from backend.schemas.auth import VerifyAudienceRequest
 from backend.utils.database import save
 
@@ -36,7 +37,14 @@ async def verify_audience(
                 raise BadRequestException(
                     ErrorCode.ERR_TAG_NOT_FOUND, ErrorMessage.ERR_TAG_NOT_FOUND
                 )
-            user_tags = [UserTag(user_id=user.id, tag_id=tag) for tag in request.tags]
+            user_tags = [
+                TagAssociation(
+                    entity_id=user.id,
+                    tag_id=tag,
+                    entity_code=TagAssociationEntityCode.USER,
+                )
+                for tag in request.tags
+            ]
             db.add_all(user_tags)
 
         user.email_verified_at = datetime.now()

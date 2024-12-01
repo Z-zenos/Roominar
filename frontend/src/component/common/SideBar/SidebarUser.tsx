@@ -110,8 +110,8 @@ export function SidebarUser({ user, onLogout }: SidebarUserProps) {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOut onClick={onLogout} />
+            <DropdownMenuItem onClick={onLogout}>
+              <LogOut />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>

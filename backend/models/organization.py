@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from sqlmodel import DateTime, Enum, Field, String, Text
+from sqlmodel import ARRAY, DateTime, Enum, Field, Integer, String, Text
 
 from backend.core.constants import OrganizationTypeCode, ORGStatusCode
 from backend.models.base_model import BaseModel
@@ -29,3 +29,4 @@ class Organization(BaseModel, table=True):
     remarks: Optional[str] = Field(sa_type=String(1024))
     type: OrganizationTypeCode = Field(sa_type=Enum(OrganizationTypeCode))
     representative_url: Optional[str] = Field(sa_type=String(2048))
+    tags: Optional[list[int]] = Field(sa_type=ARRAY(Integer))
