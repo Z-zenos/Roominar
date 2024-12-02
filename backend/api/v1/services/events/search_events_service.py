@@ -65,7 +65,7 @@ async def search_events(
         .outerjoin(
             TagAssociation,
             and_(
-                TagAssociation.event_id == Event.id,
+                TagAssociation.entity_id == Event.id,
                 TagAssociation.entity_code == TagAssociationEntityCode.EVENT,
             ),
         )
