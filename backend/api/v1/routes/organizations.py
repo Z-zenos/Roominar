@@ -74,4 +74,10 @@ async def listing_organization_events(
 async def listing_organizations_of_ongoing_event(
     db: Session = Depends(get_read_db),
 ):
-    return await organizations_service.listing_ongoing_event_organizations(db)
+    organizations = await organizations_service.listing_ongoing_event_organizations(db)
+    return ListingOngoingEventOrganizationsResponse(
+        data=organizations,
+        total=len(organizations),
+        page=1,
+        per_page=len(organizations),
+    )

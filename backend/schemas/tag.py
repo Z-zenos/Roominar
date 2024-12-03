@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 class TagItem(BaseModel):
     id: int | None
     name: str | None
-    image_url: str | None
+    image_url: str | None = None
 
 
 class TagGroup(BaseModel):

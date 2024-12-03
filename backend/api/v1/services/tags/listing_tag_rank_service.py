@@ -12,7 +12,7 @@ async def listing_tag_rank(db: Session):
             .outerjoin(TagAssociation, Tag.id == TagAssociation.tag_id)
             .where(
                 TagAssociation.entity_code.in_(
-                    TagAssociationEntityCode.USER, TagAssociationEntityCode.EVENT
+                    [TagAssociationEntityCode.USER, TagAssociationEntityCode.EVENT]
                 )
             )
             .group_by(Tag.id)
