@@ -1,10 +1,16 @@
+from http import HTTPStatus
+
 from fastapi import APIRouter, Depends
 from sqlmodel import Session
 
 import backend.api.v1.services.auth as auth_service
 import backend.api.v1.services.events as events_service
 import backend.api.v1.services.organizations as organizations_service
-from backend.api.v1.dependencies.authentication import authorize_role
+from backend.api.v1.dependencies.authentication import (
+    authorize_role,
+    get_current_user,
+    get_user_if_logged_in,
+)
 from backend.core.constants import RoleCode
 from backend.core.response import authenticated_api_responses, public_api_responses
 from backend.db.database import get_read_db
@@ -73,11 +79,44 @@ async def listing_organization_events(
 )
 async def listing_organizations_of_ongoing_event(
     db: Session = Depends(get_read_db),
+    user: User | None = Depends(get_user_if_logged_in),
 ):
-    organizations = await organizations_service.listing_ongoing_event_organizations(db)
+    organizations = await organizations_service.listing_ongoing_event_organizations(
+        db, user
+    )
     return ListingOngoingEventOrganizationsResponse(
         data=organizations,
         total=len(organizations),
         page=1,
         per_page=len(organizations),
+    )
+
+
+@router.post(
+    "/{organization_id}/follow",
+    response_model=int,
+    responses=authenticated_api_responses,
+)
+async def create_organization_follow(
+    db: Session = Depends(get_read_db),
+    current_user: User = Depends(get_current_user),
+    organization_id: int = None,
+):
+    return await organizations_service.follow_organization(
+        db, current_user, organization_id
+    )
+
+
+@router.delete(
+    "/{organization_id}/follow",
+    status_code=HTTPStatus.NO_CONTENT,
+    responses=authenticated_api_responses,
+)
+async def delete_organization_follow(
+    db: Session = Depends(get_read_db),
+    current_user: User = Depends(get_current_user),
+    organization_id: int = None,
+):
+    return await organizations_service.unfollow_organization(
+        db, current_user, organization_id
     )

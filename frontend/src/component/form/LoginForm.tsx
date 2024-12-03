@@ -63,7 +63,7 @@ export default function LoginForm({ roleCode }: LoginFormProps) {
         if (searchParams.has('callback')) {
           router.back();
         } else {
-          router.push(initialScreen?.[toCamelCase(session.user).roleCode]);
+          router.push(initialScreen?.[toCamelCase(session?.user).roleCode]);
           router.refresh();
         }
         return;

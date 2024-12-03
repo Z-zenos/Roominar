@@ -9,7 +9,7 @@ export default function apiConfig(session: Session) {
   return createConfiguration({
     authMethods: session && {
       OAuth2PasswordBearer: {
-        accessToken: session.token?.accessToken,
+        accessToken: session?.token?.accessToken,
       },
     },
     baseServer: new ServerConfiguration(

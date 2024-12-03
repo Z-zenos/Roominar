@@ -284,12 +284,7 @@ export default function Home() {
             <h3 className='text-xm text-gray-600 font-light'>
               Follow us to receive the latest news from the organization.
             </h3>
-            <div
-              className={clsx(
-                'grid items-center gap-4 mt-6 ',
-                width > 1200 ? ' grid-cols-3' : ' grid-cols-2 ',
-              )}
-            >
+            <div className='grid items-center gap-4 mt-6 1200px:grid-cols-3 grid-cols-2 '>
               {ongoingEventOrganizations &&
                 ongoingEventOrganizations.data?.length > 0 &&
                 ongoingEventOrganizations.data.map((organization, i) => (

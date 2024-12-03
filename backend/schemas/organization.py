@@ -12,6 +12,7 @@ class ListingOngoingEventOrganizationsItem(BaseModel):
     tags: list[TagItem] = Field([])
     event_number: int | None = None
     follower_number: int | None = None
+    is_followed: bool | None = None
 
 
 class ListingOngoingEventOrganizationsResponse(

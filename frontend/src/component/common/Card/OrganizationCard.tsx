@@ -1,10 +1,11 @@
+'use client';
+
 import type {
   ListingOngoingEventOrganizationsItem,
   TagItem,
 } from '@/src/lib/api/generated';
 import {
   Avatar,
-  Button,
   Card,
   CardBody,
   CardFooter,
@@ -12,7 +13,7 @@ import {
   Link,
 } from '@nextui-org/react';
 import clsx from 'clsx';
-import { useState } from 'react';
+import OrganizationFollowButton from '../Button/OrganizationFollowButton';
 
 export interface Organization extends ListingOngoingEventOrganizationsItem {}
 
@@ -22,8 +23,6 @@ interface OrganizationCardProps {
 }
 
 function OrganizationCard({ organization, className }: OrganizationCardProps) {
-  const [isFollowed, setIsFollowed] = useState<boolean>(false);
-
   return (
     <Card className={clsx('', className)}>
       <CardHeader className='justify-between'>
@@ -43,20 +42,10 @@ function OrganizationCard({ organization, className }: OrganizationCardProps) {
             </h5> */}
           </div>
         </div>
-        <Button
-          className={
-            isFollowed
-              ? 'bg-transparent text-foreground border-default-200'
-              : ''
-          }
-          color='primary'
-          radius='full'
-          size='sm'
-          variant={isFollowed ? 'bordered' : 'solid'}
-          onPress={() => setIsFollowed(!isFollowed)}
-        >
-          {isFollowed ? 'Unfollow' : 'Follow'}
-        </Button>
+        <OrganizationFollowButton
+          organizationId={organization.id}
+          isFollowed={organization.isFollowed}
+        />
       </CardHeader>
       <CardBody className='px-3 py-0 text-small text-default-400'>
         <p className='line-clamp-2 min-h-10 max-h-10'>

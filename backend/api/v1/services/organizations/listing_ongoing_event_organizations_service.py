@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlmodel import Session, and_, func, select
+from sqlmodel import Session, and_, case, func, select
 
 from backend.core.constants import FollowEntityCode, TagAssociationEntityCode
 from backend.models.event import Event
@@ -8,9 +8,10 @@ from backend.models.follow import Follow
 from backend.models.organization import Organization
 from backend.models.tag import Tag
 from backend.models.tag_association import TagAssociation
+from backend.models.user import User
 
 
-async def listing_ongoing_event_organizations(db: Session):
+async def listing_ongoing_event_organizations(db: Session, user: User):
     OrganizationTag = (
         select(
             Organization.id,
@@ -33,8 +34,8 @@ async def listing_ongoing_event_organizations(db: Session):
     OrganizationEventFollowCount = (
         select(
             Organization.id,
-            func.count(Event.id).label("event_number"),
-            func.count(Follow.follower_id).label("follower_number"),
+            func.count(Event.id.distinct()).label("event_number"),
+            func.count(Follow.follower_id.distinct()).label("follower_number"),
         )
         .outerjoin(Event, Event.organization_id == Organization.id)
         .outerjoin(
@@ -63,6 +64,20 @@ async def listing_ongoing_event_organizations(db: Session):
                 OrganizationTag.c.tags,
                 OrganizationEventFollowCount.c.event_number,
                 OrganizationEventFollowCount.c.follower_number,
+                case(
+                    (
+                        user and Follow.follower_id == user.id,
+                        True,
+                    ),
+                    else_=False,
+                ).label("is_followed"),
+            )
+            .outerjoin(
+                Follow,
+                and_(
+                    Follow.following_id == Organization.id,
+                    Follow.entity_code == FollowEntityCode.ORGANIZATION,
+                ),
             )
             .join(OrganizationTag, OrganizationTag.c.id == Organization.id)
             .join(

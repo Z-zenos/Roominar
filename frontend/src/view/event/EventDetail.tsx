@@ -62,7 +62,7 @@ import Head from '@/src/component/common/Head';
 import { formatEventDate, groupIntoPairs } from '@/src/utils/app.util';
 import Chip from '@/src/component/common/Chip';
 import { useSession } from 'next-auth/react';
-import EventBookmark from './EventBookmark';
+import EventBookmark from '../../component/common/Button/EventBookmarkButton';
 
 const rows = [
   {

@@ -19,7 +19,7 @@ import type {
 } from '@/src/lib/api/generated';
 import { formatEventDate } from '@/src/utils/app.util';
 import dayjs from 'dayjs';
-import EventBookmark from '@/src/view/event/EventBookmark';
+import EventBookmark from '@/src/component/common/Button/EventBookmarkButton';
 import { useSession } from 'next-auth/react';
 import toast from 'react-hot-toast';
 import { IoMdLogIn } from 'react-icons/io';
