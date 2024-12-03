@@ -38,6 +38,7 @@ import EventCardSkeleton from '@/src/component/common/Card/EventCardSkeleton';
 import { useListingTagRankQuery } from '@/src/api/tag.api';
 import Marquee from 'react-fast-marquee';
 import { useListingOngoingEventOrganizationsQuery } from '@/src/api/organization.api';
+import OrganizationCardSkeleton from '@/src/component/common/Card/OrganizationCardSkeleton';
 
 interface HeadingGroupProps {
   heading: string | ReactNode;
@@ -275,13 +276,8 @@ export default function Home() {
 
       {/* === ORGANIZATION SECTION === */}
       <section className='px-[15%] mb-7'>
-        <div
-          className={clsx(
-            'flex flex-wrap justify-between items-start gap-10',
-            width > 1200 ? 'flex-row' : 'flex-col',
-          )}
-        >
-          <div className={clsx(width > 1200 ? 'w-[70%]' : 'w-full')}>
+        <div className='flex flex-wrap justify-between items-start gap-10 1200px:flex-row flex-col'>
+          <div className='1200px:w-[70%] w-full'>
             <h2 className='text-xl text-primary font-semibold flex justify-start items-center gap-2'>
               Organization <GoOrganization />
             </h2>
@@ -302,6 +298,14 @@ export default function Home() {
                     organization={organization}
                   />
                 ))}
+
+              {isOngoingEventOrganizationLoading && (
+                <>
+                  <OrganizationCardSkeleton />
+                  <OrganizationCardSkeleton />
+                  <OrganizationCardSkeleton />
+                </>
+              )}
             </div>
             <div className='flex justify-between gap-2 items-center bg-info-sub mt-8 rounded-md px-10 py-8'>
               <div>
@@ -323,17 +327,17 @@ export default function Home() {
               </Button>
             </div>
           </div>
-          <div className={clsx(width > 1200 ? 'w-[25%]' : 'w-full')}>
+          <div className='1200px:w-[25%] w-full'>
             <h2 className='text-xl flex justify-end gap-1 items-center text-warning-main font-semibold'>
               Ranking <PiRankingFill />
             </h2>
-            <div className='flex gap-5 items-center justify-between overflow-x-scroll w-full pt-8'>
+            <div className='flex gap-5 items-center justify-between  w-full pt-8'>
               <RankingList
                 data={tagRankData?.tags}
                 title='Tags'
               />
             </div>
-            <div className='flex gap-5 items-center justify-between overflow-x-scroll w-full pt-8'>
+            <div className='flex gap-5 items-center justify-between  w-full pt-8'>
               <RankingList
                 data={eventRankData?.events}
                 title='Events'
