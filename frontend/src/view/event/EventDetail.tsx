@@ -63,6 +63,7 @@ import { formatEventDate, groupIntoPairs } from '@/src/utils/app.util';
 import Chip from '@/src/component/common/Chip';
 import { useSession } from 'next-auth/react';
 import EventBookmark from '../../component/common/Button/EventBookmarkButton';
+import OrganizationFollowButton from '@/src/component/common/Button/OrganizationFollowButton';
 
 const rows = [
   {
@@ -122,7 +123,6 @@ function EventDetail({ slug }: EventDetailProps) {
 
   const [showMore, setShowMore] = useState<boolean>(false);
   const [isCopied, setIsCopied] = useState<boolean>(false);
-  const [isFollowed, setIsFollowed] = useState<boolean>(false);
 
   const sectionNavigationMenuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -472,23 +472,13 @@ function EventDetail({ slug }: EventDetailProps) {
                   {event?.organizationName}
                 </h3>
                 <div className='text-right mt-3'>
-                  <Button
-                    className={
-                      isFollowed
-                        ? 'bg-transparent text-foreground border-default-200'
-                        : ''
-                    }
-                    color='primary'
-                    radius='none'
-                    size='sm'
-                    variant={isFollowed ? 'bordered' : 'solid'}
-                    onPress={() => setIsFollowed(!isFollowed)}
-                  >
-                    {isFollowed ? 'Unfollow' : 'Follow'}
-                  </Button>
+                  <OrganizationFollowButton
+                    organizationId={event.organizationId}
+                    isFollowed={event.isOrganizationFollowed}
+                  />
                   <p className='mt-2'>
                     <span className='underline font-medium text-sm text-red-500 mr-2'>
-                      1231
+                      {event.organizationFollowerNumber ?? 0}
                     </span>
                     <span className='font-light opacity-80 text-sm'>
                       Follower
@@ -502,7 +492,7 @@ function EventDetail({ slug }: EventDetailProps) {
                 </p>
 
                 <h3 className='font-semibold text-gray-700 text-nm cursor-pointer my-3'>
-                  Events
+                  Events ({event?.organizationEventNumber ?? 0})
                 </h3>
                 {topOrganizationEventsData &&
                   topOrganizationEventsData.events.map(

@@ -1,6 +1,6 @@
-from sqlmodel import Session, exists, func, select, update
+from sqlmodel import Session, and_, case, exists, func, select, update
 
-from backend.core.constants import TagAssociationEntityCode
+from backend.core.constants import FollowEntityCode, TagAssociationEntityCode
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.models import (
@@ -15,12 +15,34 @@ from backend.models import (
     Ticket,
     User,
 )
+from backend.models.follow import Follow
 from backend.models.tag_association import TagAssociation
 from backend.schemas.answer import AnswerItem
 from backend.schemas.survey import SurveyDetail
 
 
 async def get_event_detail(db: Session, current_user: User, slug: str):
+    OrganizationEventFollowCount = (
+        select(
+            Organization.id,
+            func.count(Event.id.distinct()).label("organization_event_number"),
+            func.count(Follow.follower_id.distinct()).label(
+                "organization_follower_number"
+            ),
+        )
+        .outerjoin(Event, Event.organization_id == Organization.id)
+        .outerjoin(
+            Follow,
+            and_(
+                Follow.following_id == Organization.id,
+                Follow.entity_code == FollowEntityCode.ORGANIZATION,
+            ),
+        )
+        .where(Event.published_at.isnot(None))
+        .group_by(Organization.id)
+        .subquery()
+    )
+
     event = (
         db.exec(
             select(
@@ -32,12 +54,32 @@ async def get_event_detail(db: Session, current_user: User, slug: str):
                 Organization.contact_url.label("organization_contact_url"),
                 Organization.avatar_url.label("organization_avatar_url"),
                 Organization.description.label("organization_description"),
+                OrganizationEventFollowCount.c.organization_event_number,
+                OrganizationEventFollowCount.c.organization_follower_number,
+                case(
+                    (
+                        current_user and Follow.follower_id == current_user.id,
+                        True,
+                    ),
+                    else_=False,
+                ).label("is_organization_followed"),
             )
             .where(
                 Event.slug == slug,
                 Event.published_at.isnot(None),
             )
             .join(Organization, Event.organization_id == Organization.id)
+            .outerjoin(
+                Follow,
+                and_(
+                    Follow.following_id == Organization.id,
+                    Follow.follower_id == current_user.id,
+                ),
+            )
+            .join(
+                OrganizationEventFollowCount,
+                OrganizationEventFollowCount.c.id == Organization.id,
+            )
         )
         .mappings()
         .one_or_none()
