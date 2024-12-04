@@ -11,7 +11,7 @@ from backend.api.v1.dependencies.authentication import (
     get_user_if_logged_in,
     validate_encrypted_token,
 )
-from backend.core.constants import RoleCode
+from backend.core.constants import RoleCode, TagAssociationEntityCode
 from backend.core.error_code import ErrorCode
 from backend.core.exception import BadRequestException, UnauthorizedException
 from backend.core.response import authenticated_api_responses, public_api_responses
@@ -111,7 +111,9 @@ async def me(
             industry_code=current_user.industry_code,
             job_type_code=current_user.job_type_code,
             avatar_url=current_user.avatar_url,
-            tags=tags_service.get_user_tags(db, current_user.id),
+            tags=tags_service.get_tag_association(
+                db, current_user.id, TagAssociationEntityCode.USER
+            ),
         )
     )
 

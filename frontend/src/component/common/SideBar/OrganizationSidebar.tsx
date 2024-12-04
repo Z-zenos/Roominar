@@ -105,22 +105,27 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const handleLogout = (auth: Session) => {
+  const handleLogout = async (auth: Session) => {
     localStorage.setItem('rememberMe', 'false');
-    if (process.env.NODE_ENV === 'development') {
-      signOut({ redirect: false });
-      location.reload();
-    } else {
-      signOut(
-        auth.user?.roleCode == RoleCode.ORGANIZER
-          ? { callbackUrl: '/organization/login' }
-          : {
-              callbackUrl: '/home',
-            },
-      ).then(() => {
-        router.refresh();
+
+    // Ensure signOut runs and resolves before reloading or refreshing
+    try {
+      if (process.env.NODE_ENV === 'development') {
+        await signOut({ redirect: false });
         location.reload();
-      });
+      } else {
+        await signOut(
+          auth.user?.roleCode === RoleCode.ORGANIZER
+            ? { callbackUrl: '/organization/login' }
+            : { callbackUrl: '/home' },
+        );
+      }
+    } catch (error) {
+      console.error('Logout failed:', error);
+    } finally {
+      // Ensure the refresh and reload happen only after signOut resolves
+      router.refresh();
+      location.reload();
     }
   };
 

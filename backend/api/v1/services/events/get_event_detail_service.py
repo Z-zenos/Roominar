@@ -1,5 +1,6 @@
 from sqlmodel import Session, exists, func, select, update
 
+from backend.core.constants import TagAssociationEntityCode
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.models import (
@@ -7,7 +8,6 @@ from backend.models import (
     Application,
     Bookmark,
     Event,
-    EventTag,
     Organization,
     Question,
     Survey,
@@ -15,6 +15,7 @@ from backend.models import (
     Ticket,
     User,
 )
+from backend.models.tag_association import TagAssociation
 from backend.schemas.answer import AnswerItem
 from backend.schemas.survey import SurveyDetail
 
@@ -142,8 +143,11 @@ def _get_event_tags(db: Session, event_id: int):
             Tag.image_url,
             Tag.name,
         )
-        .join(EventTag, Tag.id == EventTag.tag_id)
-        .where(EventTag.event_id == event_id)
+        .join(TagAssociation, Tag.id == TagAssociation.tag_id)
+        .where(
+            TagAssociation.entity_id == event_id,
+            TagAssociation.entity_code == TagAssociationEntityCode.EVENT,
+        )
     ).all()
 
     return event_tags

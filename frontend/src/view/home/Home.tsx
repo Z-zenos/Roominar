@@ -24,7 +24,6 @@ import { Image, Kbd } from '@nextui-org/react';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import type { Organization } from '@/src/component/common/Card/OrganizationCard';
 import useWindowDimensions from '@/src/hooks/useWindowDimension';
 import OrganizationCard from '@/src/component/common/Card/OrganizationCard';
 import RankingList from '@/src/component/common/Ranking/RankingList';
@@ -38,6 +37,8 @@ import EventCard from '@/src/component/common/Card/EventCard';
 import EventCardSkeleton from '@/src/component/common/Card/EventCardSkeleton';
 import { useListingTagRankQuery } from '@/src/api/tag.api';
 import Marquee from 'react-fast-marquee';
+import { useListingOngoingEventOrganizationsQuery } from '@/src/api/organization.api';
+import OrganizationCardSkeleton from '@/src/component/common/Card/OrganizationCardSkeleton';
 
 interface HeadingGroupProps {
   heading: string | ReactNode;
@@ -58,14 +59,6 @@ const HeadingGroup = ({
   );
 };
 
-const organizations: Organization[] = [
-  { id: 1, name: 'Viettel', avatar_url: '' },
-  { id: 2, name: 'HUST', avatar_url: '' },
-  { id: 3, name: 'Theinfitech', avatar_url: '' },
-  { id: 4, name: 'VinGroup', avatar_url: '' },
-  { id: 5, name: 'Google', avatar_url: '' },
-];
-
 export default function Home() {
   const { data: upcomingEvents, isLoading: isUpcomingEventsLoading } =
     useSearchEventsQuery({
@@ -80,6 +73,11 @@ export default function Home() {
     sortBy: EventSortByCode.ApplicationEndAt,
     perPage: 8,
   });
+
+  const {
+    data: ongoingEventOrganizations,
+    isLoading: isOngoingEventOrganizationLoading,
+  } = useListingOngoingEventOrganizationsQuery();
 
   const { data: tagRankData } = useListingTagRankQuery();
   const { data: eventRankData } = useListingEventRankQuery();
@@ -278,31 +276,31 @@ export default function Home() {
 
       {/* === ORGANIZATION SECTION === */}
       <section className='px-[15%] mb-7'>
-        <div
-          className={clsx(
-            'flex flex-wrap justify-between items-start gap-10',
-            width > 1200 ? 'flex-row' : 'flex-col',
-          )}
-        >
-          <div className={clsx(width > 1200 ? 'w-[70%]' : 'w-full')}>
+        <div className='flex flex-wrap justify-between items-start gap-10 1200px:flex-row flex-col'>
+          <div className='1200px:w-[70%] w-full'>
             <h2 className='text-xl text-primary font-semibold flex justify-start items-center gap-2'>
               Organization <GoOrganization />
             </h2>
             <h3 className='text-xm text-gray-600 font-light'>
               Follow us to receive the latest news from the organization.
             </h3>
-            <div
-              className={clsx(
-                'grid items-center gap-4 mt-6 ',
-                width > 1200 ? ' grid-cols-3' : ' grid-cols-2 ',
+            <div className='grid items-center gap-4 mt-6 1200px:grid-cols-3 grid-cols-2 '>
+              {ongoingEventOrganizations &&
+                ongoingEventOrganizations.data?.length > 0 &&
+                ongoingEventOrganizations.data.map((organization, i) => (
+                  <OrganizationCard
+                    key={`org-${i}`}
+                    organization={organization}
+                  />
+                ))}
+
+              {isOngoingEventOrganizationLoading && (
+                <>
+                  <OrganizationCardSkeleton />
+                  <OrganizationCardSkeleton />
+                  <OrganizationCardSkeleton />
+                </>
               )}
-            >
-              {organizations.map((org, i) => (
-                <OrganizationCard
-                  key={`org-${i}`}
-                  organization={org}
-                />
-              ))}
             </div>
             <div className='flex justify-between gap-2 items-center bg-info-sub mt-8 rounded-md px-10 py-8'>
               <div>
@@ -324,17 +322,17 @@ export default function Home() {
               </Button>
             </div>
           </div>
-          <div className={clsx(width > 1200 ? 'w-[25%]' : 'w-full')}>
+          <div className='1200px:w-[25%] w-full'>
             <h2 className='text-xl flex justify-end gap-1 items-center text-warning-main font-semibold'>
               Ranking <PiRankingFill />
             </h2>
-            <div className='flex gap-5 items-center justify-between overflow-x-scroll w-full pt-8'>
+            <div className='flex gap-5 items-center justify-between  w-full pt-8'>
               <RankingList
                 data={tagRankData?.tags}
                 title='Tags'
               />
             </div>
-            <div className='flex gap-5 items-center justify-between overflow-x-scroll w-full pt-8'>
+            <div className='flex gap-5 items-center justify-between  w-full pt-8'>
               <RankingList
                 data={eventRankData?.events}
                 title='Events'

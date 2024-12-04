@@ -6,13 +6,16 @@ from pydantic import BaseModel
 from sqlmodel import Date, Session, and_, asc, case, desc, func, or_, select
 
 from backend.api.v1.services.tags.get_event_tags_service import get_event_tags
-from backend.core.constants import EventSortByCode, EventStatusCode
+from backend.core.constants import (
+    EventSortByCode,
+    EventStatusCode,
+    TagAssociationEntityCode,
+)
 from backend.models.application import Application
 from backend.models.bookmark import Bookmark
 from backend.models.event import Event
-from backend.models.event_tag import EventTag
 from backend.models.organization import Organization
-from backend.models.tag import Tag
+from backend.models.tag_association import TagAssociation
 from backend.models.target import Target
 from backend.models.user import User
 from backend.schemas.event import SearchEventsQueryParams
@@ -59,7 +62,13 @@ async def search_events(
             Application,
             and_(Application.event_id == Event.id, Application.canceled_at.is_(None)),
         )
-        .outerjoin(EventTag, EventTag.event_id == Event.id)
+        .outerjoin(
+            TagAssociation,
+            and_(
+                TagAssociation.entity_id == Event.id,
+                TagAssociation.entity_code == TagAssociationEntityCode.EVENT,
+            ),
+        )
         .group_by(
             Event.id,
             case(
@@ -109,7 +118,13 @@ def count_events(
         select(func.count(Event.id.distinct()))
         .join(Organization, Event.organization_id == Organization.id)
         .join(Target, Event.target_id == Target.id)
-        .outerjoin(EventTag, Event.id == EventTag.event_id)
+        .outerjoin(
+            TagAssociation,
+            and_(
+                Event.id == TagAssociation.entity_id,
+                TagAssociation.entity_code == TagAssociationEntityCode.EVENT,
+            ),
+        )
         .where(and_(*filters["conditions"]))
     )
     total = db.scalars(query).one()
@@ -221,7 +236,7 @@ def _build_filters(db: Session, user: User, query_params: SearchEventsQueryParam
         filters.append(Event.organize_city_code.in_(query_params.city_codes))
 
     if query_params.tags:
-        filters.append(EventTag.tag_id.in_(query_params.tags))
+        filters.append(TagAssociation.tag_id.in_(query_params.tags))
 
     if query_params.start_start_at:
         filters.append(Event.start_at.cast(Date) >= query_params.start_start_at.date())

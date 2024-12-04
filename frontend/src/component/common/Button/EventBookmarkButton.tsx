@@ -14,12 +14,15 @@ import toast from 'react-hot-toast';
 import { IoMdLogIn } from 'react-icons/io';
 import { IoBookmarkOutline, IoBookmark } from 'react-icons/io5';
 
-interface EventBookmarkProps {
+interface EventBookmarkButtonProps {
   eventId: number;
   isBookmarked: boolean;
 }
 
-function EventBookmark({ eventId, isBookmarked }: EventBookmarkProps) {
+function EventBookmarkButton({
+  eventId,
+  isBookmarked,
+}: EventBookmarkButtonProps) {
   const { status } = useSession();
   const [bookmark, setBookmark] = useState<boolean>(isBookmarked);
 
@@ -82,4 +85,4 @@ function EventBookmark({ eventId, isBookmarked }: EventBookmarkProps) {
   );
 }
 
-export default EventBookmark;
+export default EventBookmarkButton;

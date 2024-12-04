@@ -1,8 +1,9 @@
-from sqlmodel import Session, select, func
+from sqlmodel import Session, func, select
 
+from backend.core.constants import TagAssociationEntityCode
 from backend.models.event import Event
-from backend.models.event_tag import EventTag
 from backend.models.tag import Tag
+from backend.models.tag_association import TagAssociation
 
 
 def get_event_tags(db: Session, event_ids: list[int]):
@@ -15,9 +16,12 @@ def get_event_tags(db: Session, event_ids: list[int]):
                 )
             ).label("tags"),
         )
-        .join(EventTag, EventTag.event_id == Event.id)
-        .join(Tag, Tag.id == EventTag.tag_id)
-        .where(Event.id.in_(event_ids))
+        .join(TagAssociation, TagAssociation.entity_id == Event.id)
+        .join(Tag, Tag.id == TagAssociation.tag_id)
+        .where(
+            Event.id.in_(event_ids),
+            TagAssociation.entity_code == TagAssociationEntityCode.EVENT,
+        )
         .group_by(Event.id)
     )
     event_tags = db.exec(query).all()

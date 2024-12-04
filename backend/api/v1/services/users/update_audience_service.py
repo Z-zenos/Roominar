@@ -1,10 +1,11 @@
 from sqlmodel import Session, delete, select
 
+from backend.core.constants import TagAssociationEntityCode
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.models.tag import Tag
+from backend.models.tag_association import TagAssociation
 from backend.models.user import User
-from backend.models.user_tag import UserTag
 from backend.schemas.user import UpdateUserRequest
 from backend.utils.database import save
 
@@ -17,7 +18,12 @@ async def update_audience(
             if attr != "tags" and value is not None:
                 setattr(current_user, attr, value)
 
-        db.exec(delete(UserTag).where(UserTag.user_id == current_user.id))
+        db.exec(
+            delete(TagAssociation).where(
+                TagAssociation.entity_id == current_user.id,
+                TagAssociation.entity_code == TagAssociationEntityCode.USER,
+            )
+        )
 
         if request.tags:
             tags = db.exec(select(Tag.id).where(Tag.id.in_(request.tags))).all()
@@ -26,7 +32,12 @@ async def update_audience(
                     ErrorCode.ERR_TAG_NOT_FOUND, ErrorMessage.ERR_TAG_NOT_FOUND
                 )
             user_tags = [
-                UserTag(user_id=current_user.id, tag_id=tag) for tag in request.tags
+                TagAssociation(
+                    entity_id=current_user.id,
+                    tag_id=tag,
+                    entity_code=TagAssociationEntityCode.USER,
+                )
+                for tag in request.tags
             ]
             db.add_all(user_tags)
 

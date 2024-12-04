@@ -1,17 +1,20 @@
 from sqlmodel import Session, desc, func, select
 
-from backend.models.event_tag import EventTag
+from backend.core.constants import TagAssociationEntityCode
 from backend.models.tag import Tag
-from backend.models.user_tag import UserTag
+from backend.models.tag_association import TagAssociation
 
 
 async def listing_tag_rank(db: Session):
-    UsedTag = select(EventTag.tag_id).union_all(select(UserTag.tag_id))
     tags = (
         db.exec(
             select(Tag.id, Tag.name, Tag.image_url)
-            .select_from(UsedTag)
-            .join(Tag, Tag.id == UsedTag.c.tag_id)
+            .outerjoin(TagAssociation, Tag.id == TagAssociation.tag_id)
+            .where(
+                TagAssociation.entity_code.in_(
+                    [TagAssociationEntityCode.USER, TagAssociationEntityCode.EVENT]
+                )
+            )
             .group_by(Tag.id)
             .order_by(desc(func.count(Tag.id)))
             .limit(5)
