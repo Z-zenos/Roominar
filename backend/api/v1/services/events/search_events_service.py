@@ -48,13 +48,6 @@ async def search_events(
             Event.meeting_tool_code,
             Event.published_at,
             func.count(Application.id).label("applied_number"),
-            case(
-                (
-                    user and Bookmark.user_id == user.id,
-                    True,
-                ),
-                else_=False,
-            ).label("is_bookmarked"),
         )
         .join(Organization, Event.organization_id == Organization.id)
         .join(Target, Event.target_id == Target.id)
@@ -83,7 +76,15 @@ async def search_events(
     )
 
     if user:
-        query = query.outerjoin(
+        query = query.add_columns(
+            case(
+                (
+                    user and Bookmark.user_id == user.id,
+                    True,
+                ),
+                else_=False,
+            ).label("is_bookmarked")
+        ).outerjoin(
             Bookmark, and_(Event.id == Bookmark.event_id, Bookmark.user_id == user.id)
         )
 
@@ -99,6 +100,7 @@ async def search_events(
     )
 
     events = db.exec(query).mappings().all()
+
     result = {event.id: dict(event) for event in events}
     event_ids = list(result.keys())
     event_tags = get_event_tags(db, event_ids=event_ids)
@@ -209,18 +211,18 @@ def _build_filters(db: Session, user: User, query_params: SearchEventsQueryParam
         )
 
     if query_params.is_apply_ongoing:
-        filters.extend(
-            [
-                and_(Event.application_start_at <= datetime.now()),
-                Event.application_end_at >= datetime.now(),
-            ]
+        filters.append(
+            and_(
+                Event.application_start_at <= datetime.now(pytz.utc),
+                Event.application_end_at >= datetime.now(pytz.utc),
+            ),
         )
 
     if query_params.is_apply_ended:
         filters.append(Event.application_end_at < datetime.now(pytz.utc))
 
     if query_params.is_today:
-        filters.append(Event.start_at.date() == datetime.now().date())
+        filters.append(Event.start_at.date() == datetime.now(pytz.utc).date())
 
     if query_params.job_type_codes:
         filters.append(
@@ -245,14 +247,14 @@ def _build_filters(db: Session, user: User, query_params: SearchEventsQueryParam
         filters.append(Event.start_at.cast(Date) <= query_params.end_start_at.date())
 
     if query_params.sort_by == EventSortByCode.PUBLISHED_AT:
-        filters.append(Event.end_at > datetime.now())
+        filters.append(Event.end_at > datetime.now(pytz.utc))
 
     if query_params.sort_by == EventSortByCode.START_AT:
-        filters.append(Event.start_at >= datetime.now())
+        filters.append(Event.start_at >= datetime.now(pytz.utc))
         sort_by = Event.start_at
 
     if query_params.sort_by == EventSortByCode.APPLICATION_END_AT:
-        filters.append(Event.application_end_at >= datetime.now())
+        filters.append(Event.application_end_at >= datetime.now(pytz.utc))
         sort_by = Event.application_end_at
 
     if (
@@ -279,7 +281,7 @@ def _build_filters(db: Session, user: User, query_params: SearchEventsQueryParam
 
         filters.extend(
             [
-                Event.application_end_at > datetime.now(),
+                Event.application_end_at > datetime.now(pytz.utc),
                 or_(*conditions),
             ]
         )
