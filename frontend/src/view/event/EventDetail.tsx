@@ -218,7 +218,10 @@ function EventDetail({ slug }: EventDetailProps) {
           </div>
           <Image
             src={event?.coverImageUrl}
-            className={clsx(width > 1200 ? 'w-[90%]' : 'w-full')}
+            className={clsx(
+              width > 1200 ? 'w-[90%]' : 'w-full',
+              'aspect-video',
+            )}
             classNames={{ wrapper: '!max-w-full' }}
             alt='Event banner image'
           />
@@ -350,6 +353,7 @@ function EventDetail({ slug }: EventDetailProps) {
           <div>
             <h3 className='font-semibold text-lg '>Offline address</h3>
             <div className='mt-3'>
+              {/* https://maps.google.com/?saddr=Current+Location&daddr=${lat},${lng} */}
               <p className='font-light'>{event?.organizationAddress}</p>
               <Link
                 className={styles.flexStart}
@@ -499,7 +503,8 @@ function EventDetail({ slug }: EventDetailProps) {
                     (topOrganizationEvent) => (
                       <div
                         key={`toe-${topOrganizationEvent.id}`}
-                        className='flex justify-start gap-3 my-6 items-start'
+                        className='flex justify-start gap-3 my-6 items-start cursor-pointer'
+                        onClick={() => router.push(topOrganizationEvent?.slug)}
                       >
                         <Image
                           src={topOrganizationEvent.coverImageUrl}
@@ -520,6 +525,17 @@ function EventDetail({ slug }: EventDetailProps) {
                       </div>
                     ),
                   )}
+                <button
+                  className='w-full px-3 py-2 border border-transparent transition-all font-light bg-green-sub border-t border-t-green-sub text-green-main hover:border hover:border-green-main'
+                  // TODO: List events of profiel organization
+                  // onClick={() =>
+                  //   router.push(
+                  //     `/organizations/?keyword=${event.organizationName}`,
+                  //   )
+                  // }
+                >
+                  More event +
+                </button>
               </div>
             </div>
           </div>
@@ -557,7 +573,10 @@ function EventDetail({ slug }: EventDetailProps) {
                       key={`re-${relatedEventPair[0]?.id}`}
                       className={clsx('dark:rounded-lg dark:p-0')}
                     >
-                      <div className='mt-3 border border-gray-200 shadow-sm p-2'>
+                      <div
+                        className='mt-3 border border-gray-200 shadow-sm p-2 cursor-pointer'
+                        onClick={() => router.push(relatedEventPair[0]?.slug)}
+                      >
                         <Image
                           src={relatedEventPair[0]?.coverImageUrl}
                           className='w-full h-[200px]'
@@ -574,7 +593,10 @@ function EventDetail({ slug }: EventDetailProps) {
                         </div>
                       </div>
 
-                      <div className='mt-3 border border-gray-200 shadow-sm p-2'>
+                      <div
+                        className='mt-3 border border-gray-200 shadow-sm p-2 cursor-pointer'
+                        onClick={() => router.push(relatedEventPair[1]?.slug)}
+                      >
                         <Image
                           src={relatedEventPair[1]?.coverImageUrl}
                           className='w-full h-[200px] aspect-video'

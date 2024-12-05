@@ -43,47 +43,48 @@ async def get_event_detail(db: Session, current_user: User, slug: str):
         .subquery()
     )
 
-    event = (
-        db.exec(
-            select(
-                *Event.__table__.columns,
-                Organization.name.label("organization_name"),
-                Organization.address.label("organization_address"),
-                Organization.hp_url.label("organization_url"),
-                Organization.contact_email.label("organization_contact_email"),
-                Organization.contact_url.label("organization_contact_url"),
-                Organization.avatar_url.label("organization_avatar_url"),
-                Organization.description.label("organization_description"),
-                OrganizationEventFollowCount.c.organization_event_number,
-                OrganizationEventFollowCount.c.organization_follower_number,
-                case(
-                    (
-                        current_user and Follow.follower_id == current_user.id,
-                        True,
-                    ),
-                    else_=False,
-                ).label("is_organization_followed"),
-            )
-            .where(
-                Event.slug == slug,
-                Event.published_at.isnot(None),
-            )
-            .join(Organization, Event.organization_id == Organization.id)
-            .outerjoin(
-                Follow,
-                and_(
-                    Follow.following_id == Organization.id,
-                    Follow.follower_id == current_user.id,
-                ),
-            )
-            .join(
-                OrganizationEventFollowCount,
-                OrganizationEventFollowCount.c.id == Organization.id,
-            )
+    query = (
+        select(
+            *Event.__table__.columns,
+            Organization.name.label("organization_name"),
+            Organization.address.label("organization_address"),
+            Organization.hp_url.label("organization_url"),
+            Organization.contact_email.label("organization_contact_email"),
+            Organization.contact_url.label("organization_contact_url"),
+            Organization.avatar_url.label("organization_avatar_url"),
+            Organization.description.label("organization_description"),
+            OrganizationEventFollowCount.c.organization_event_number,
+            OrganizationEventFollowCount.c.organization_follower_number,
         )
-        .mappings()
-        .one_or_none()
+        .where(
+            Event.slug == slug,
+            Event.published_at.isnot(None),
+        )
+        .join(Organization, Event.organization_id == Organization.id)
+        .join(
+            OrganizationEventFollowCount,
+            OrganizationEventFollowCount.c.id == Organization.id,
+        )
     )
+
+    if current_user:
+        query = query.add_columns(
+            case(
+                (
+                    current_user and Follow.follower_id == current_user.id,
+                    True,
+                ),
+                else_=False,
+            ).label("is_organization_followed"),
+        ).outerjoin(
+            Follow,
+            and_(
+                Follow.following_id == Organization.id,
+                Follow.follower_id == (current_user.id if current_user else None),
+            ),
+        )
+
+    event = db.exec(query).mappings().one_or_none()
 
     if not event:
         raise BadRequestException(
