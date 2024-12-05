@@ -114,6 +114,9 @@ class GetEventDetailResponse(BaseModel):
     tags: list[TagItem] = Field([])
     survey: SurveyDetail | None
     view_number: int | None = None
+    is_organization_followed: bool | None = None
+    organization_event_number: int | None = None
+    organization_follower_number: int | None = None
 
 
 class ListingTopOrganizationEventsItem(BaseModel):

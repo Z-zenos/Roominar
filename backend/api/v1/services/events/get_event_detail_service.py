@@ -1,6 +1,6 @@
-from sqlmodel import Session, exists, func, select, update
+from sqlmodel import Session, and_, case, exists, func, select, update
 
-from backend.core.constants import TagAssociationEntityCode
+from backend.core.constants import FollowEntityCode, TagAssociationEntityCode
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.models import (
@@ -15,33 +15,76 @@ from backend.models import (
     Ticket,
     User,
 )
+from backend.models.follow import Follow
 from backend.models.tag_association import TagAssociation
 from backend.schemas.answer import AnswerItem
 from backend.schemas.survey import SurveyDetail
 
 
 async def get_event_detail(db: Session, current_user: User, slug: str):
-    event = (
-        db.exec(
-            select(
-                *Event.__table__.columns,
-                Organization.name.label("organization_name"),
-                Organization.address.label("organization_address"),
-                Organization.hp_url.label("organization_url"),
-                Organization.contact_email.label("organization_contact_email"),
-                Organization.contact_url.label("organization_contact_url"),
-                Organization.avatar_url.label("organization_avatar_url"),
-                Organization.description.label("organization_description"),
-            )
-            .where(
-                Event.slug == slug,
-                Event.published_at.isnot(None),
-            )
-            .join(Organization, Event.organization_id == Organization.id)
+    OrganizationEventFollowCount = (
+        select(
+            Organization.id,
+            func.count(Event.id.distinct()).label("organization_event_number"),
+            func.count(Follow.follower_id.distinct()).label(
+                "organization_follower_number"
+            ),
         )
-        .mappings()
-        .one_or_none()
+        .outerjoin(Event, Event.organization_id == Organization.id)
+        .outerjoin(
+            Follow,
+            and_(
+                Follow.following_id == Organization.id,
+                Follow.entity_code == FollowEntityCode.ORGANIZATION,
+            ),
+        )
+        .where(Event.published_at.isnot(None))
+        .group_by(Organization.id)
+        .subquery()
     )
+
+    query = (
+        select(
+            *Event.__table__.columns,
+            Organization.name.label("organization_name"),
+            Organization.address.label("organization_address"),
+            Organization.hp_url.label("organization_url"),
+            Organization.contact_email.label("organization_contact_email"),
+            Organization.contact_url.label("organization_contact_url"),
+            Organization.avatar_url.label("organization_avatar_url"),
+            Organization.description.label("organization_description"),
+            OrganizationEventFollowCount.c.organization_event_number,
+            OrganizationEventFollowCount.c.organization_follower_number,
+        )
+        .where(
+            Event.slug == slug,
+            Event.published_at.isnot(None),
+        )
+        .join(Organization, Event.organization_id == Organization.id)
+        .join(
+            OrganizationEventFollowCount,
+            OrganizationEventFollowCount.c.id == Organization.id,
+        )
+    )
+
+    if current_user:
+        query = query.add_columns(
+            case(
+                (
+                    current_user and Follow.follower_id == current_user.id,
+                    True,
+                ),
+                else_=False,
+            ).label("is_organization_followed"),
+        ).outerjoin(
+            Follow,
+            and_(
+                Follow.following_id == Organization.id,
+                Follow.follower_id == (current_user.id if current_user else None),
+            ),
+        )
+
+    event = db.exec(query).mappings().one_or_none()
 
     if not event:
         raise BadRequestException(
