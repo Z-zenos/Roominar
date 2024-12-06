@@ -470,10 +470,7 @@ const FormCombobox = ({
       name={name}
       render={({ field }) => (
         <FormItem
-          className={clsx(
-            'flex flex-col shadow-[2px_2px_10px_rgba(0,_0,_0,_0.075)] bg-white',
-            props.classNames?.wrapper,
-          )}
+          className={clsx('flex flex-col bg-white', props.classNames?.wrapper)}
         >
           {props.label && (
             <FormCustomLabel
@@ -493,7 +490,7 @@ const FormCombobox = ({
                   variant='outline'
                   role='combobox'
                   className={cn(
-                    'w-[200px] justify-between px-2',
+                    'w-[200px] justify-between px-2 shadow-[2px_2px_10px_rgba(0,_0,_0,_0.075)]',
                     !field?.value && 'text-muted-foreground',
                     className,
                   )}
