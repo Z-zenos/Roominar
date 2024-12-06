@@ -20,7 +20,7 @@ import {
 import Button from '@/src/component/common/Button/Button';
 import { useGetEventDetailQuery } from '@/src/api/event.api';
 import { optionify } from '@/src/utils/app.util';
-import { MdOutlineOnlinePrediction, MdOutlineSecurity } from 'react-icons/md';
+import { MdOutlineOnlinePrediction } from 'react-icons/md';
 import Chip from '@/src/component/common/Chip';
 import { FaUserFriends } from 'react-icons/fa';
 import { Image, Link } from '@nextui-org/react';
