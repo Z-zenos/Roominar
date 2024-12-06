@@ -307,6 +307,7 @@ function EventDetail({ slug }: EventDetailProps) {
                 onClick={() =>
                   router.push(auth?.user ? `${pathname}/apply` : '/login')
                 }
+                isDisabled={event?.applicationEndAt < new Date()}
               >
                 Apply Now
               </Button>

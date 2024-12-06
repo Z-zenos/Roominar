@@ -40,7 +40,6 @@ import Checkbox from '@/src/component/common/Input/Checkbox';
 import { useApplyEventMutation } from '@/src/api/application.api';
 import toast from 'react-hot-toast';
 import { useSession } from 'next-auth/react';
-import { useState } from 'react';
 import { BiSolidSchool } from 'react-icons/bi';
 import { FaPhone } from 'react-icons/fa6';
 import useWindowDimensions from '@/src/hooks/useWindowDimension';
@@ -55,7 +54,6 @@ interface EventApplicationFormProps {
 export default function EventApplicationForm({
   slug,
 }: EventApplicationFormProps) {
-  useState<boolean>(false);
   const { data: event } = useGetEventDetailQuery({ slug });
   const { data: auth, status } = useSession();
   const { width } = useWindowDimensions();
@@ -163,7 +161,7 @@ export default function EventApplicationForm({
                   {event.organizationAddress}
                 </p>
 
-                <div className={clsx(styles.between)}>
+                <div className={clsx(styles.between, 'mt-3')}>
                   <Chip
                     content={
                       event.appliedNumber + ' / ' + event.applicationNumber
@@ -215,8 +213,10 @@ export default function EventApplicationForm({
                                 )}
                               >
                                 <div className='font-normal cursor-pointer'>
-                                  <h4 className='text-nm'>{ticket.name}</h4>
-                                  <p className='font-light opacity-80 text-sm mt-2'>
+                                  <h4 className='text-sm font-semibold leading-6'>
+                                    {ticket.name}
+                                  </h4>
+                                  <p className='font-light opacity-80 leading-5 text-ss mt-2'>
                                     {ticket.description}
                                   </p>
                                 </div>
