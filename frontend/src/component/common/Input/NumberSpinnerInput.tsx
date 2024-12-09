@@ -2,7 +2,6 @@
 
 import clsx from 'clsx';
 import './Input.css';
-import { useState } from 'react';
 
 interface NumberSpinnerInputProps {
   className?: string;
@@ -17,8 +16,6 @@ export default function NumberSpinnerInput({
   value = 0,
   max,
 }: NumberSpinnerInputProps) {
-  console.log(value);
-  const [inputValue, setInputValue] = useState<string>(value + '');
   return (
     <div className={clsx('custom-number-input h-7 w-28', className)}>
       <div className='flex flex-row h-7 w-full rounded-lg relative bg-transparent mt-1'>
@@ -27,8 +24,7 @@ export default function NumberSpinnerInput({
           className=' bg-slate-200 text-gray-500 hover:text-gray-600 hover:bg-gray-400 h-full w-20 rounded-l cursor-pointer outline-none'
           onClick={(e) => {
             e.preventDefault();
-            setInputValue(String(+inputValue - 1 > 0 ? +inputValue - 1 : 0));
-            onChange?.(+inputValue - 1 > 0 ? +inputValue - 1 : 0);
+            onChange?.(+value - 1 > 0 ? +value - 1 : 0);
           }}
         >
           <span className='m-auto text-2xl font-thin'>−</span>
@@ -39,20 +35,16 @@ export default function NumberSpinnerInput({
           name='custom-input-number'
           onClick={(e) => e.currentTarget.focus()}
           onChange={(e) => {
-            setInputValue(e.target.value);
             onChange?.(Number(e.target.value));
           }}
-          value={inputValue}
+          value={value}
         />
         <button
           data-action='increment'
           className='bg-gray-200 text-gray-500 hover:text-gray-600 hover:bg-gray-400 h-full w-20 rounded-r cursor-pointer'
           onClick={(e) => {
             e.preventDefault();
-            setInputValue(
-              String(+inputValue + 1 < max ? +inputValue + 1 : max),
-            );
-            onChange?.(+inputValue + 1 < max ? +inputValue + 1 : max);
+            onChange?.(+value + 1 < max ? +value + 1 : max);
           }}
         >
           <span className='m-auto text-2xl font-thin'>+</span>

@@ -47,6 +47,7 @@ import Timeline from '@/src/component/common/Timeline';
 import { Alert, AlertDescription, AlertTitle } from '../common/Alert';
 import DotLoader from '../common/Loader/DotLoader';
 import NumberSpinnerInput from '../common/Input/NumberSpinnerInput';
+import { useMemo, useState } from 'react';
 
 interface EventApplicationFormProps {
   slug: string;
@@ -75,6 +76,18 @@ export default function EventApplicationForm({
     },
     resolver: zodResolver(eventApplicationFormSchema),
   });
+
+  const totalAmount = useMemo(() => {
+    return form.getValues('tickets').reduce((acc, ticket) => {
+      return acc + ticket.price * ticket.quantity;
+    }, 0);
+  }, [JSON.stringify(form.getValues('tickets'))]);
+
+  const totalTickets = useMemo(() => {
+    return form.getValues('tickets').reduce((acc, ticket) => {
+      return acc + ticket.quantity;
+    }, 0);
+  }, [JSON.stringify(form.getValues('tickets'))]);
 
   const { trigger, isMutating: isApplying } = useApplyEventMutation({
     onSuccess() {
@@ -108,8 +121,6 @@ export default function EventApplicationForm({
       },
     });
   }
-
-  console.log(form.getValues('tickets'));
 
   return (
     <Form {...form}>
@@ -184,7 +195,7 @@ export default function EventApplicationForm({
                 </div>
               </div>
             )}
-            <div className='rounded-md py-5 shadow-[rgba(0,_0,_0,_0.02)_0px_1px_3px_0px,_rgba(27,_31,_35,_0.15)_0px_0px_0px_1px] my-6 bg-white'>
+            <div className='rounded-md pt-5 shadow-[rgba(0,_0,_0,_0.02)_0px_1px_3px_0px,_rgba(27,_31,_35,_0.15)_0px_0px_0px_1px] my-6 bg-white'>
               <h3 className='text-md font-semibold px-5 text-orange-500'>
                 Ticket 🎟
               </h3>
@@ -195,11 +206,11 @@ export default function EventApplicationForm({
                 <div
                   className={clsx(
                     styles.flexStart,
-                    'border mx-5 py-1 gap-2 px-3 rounded-sm border-yellow-500 bg-yellow-50',
+                    'border mx-5 py-1 gap-2 px-3 rounded-sm border-yellow-500 bg-yellow-50 mb-2',
                   )}
                 >
                   <span>⚠️</span>
-                  <p className='text-sm font-light mb-2'>
+                  <p className='text-sm font-light'>
                     You can only select max{' '}
                     <span className='text-red-500 font-bold text-nm'>
                       {event.maxTicketNumberPerAccount}
@@ -229,6 +240,7 @@ export default function EventApplicationForm({
                           {
                             id: ticket.id,
                             quantity: 0,
+                            price: ticket.price,
                           },
                           { shouldValidate: true },
                         );
@@ -276,11 +288,23 @@ export default function EventApplicationForm({
 
                         <NumberSpinnerInput
                           onChange={(value) => {
+                            if (
+                              totalTickets + 1 >
+                              event.maxTicketNumberPerAccount
+                            ) {
+                              toast.error(
+                                'You can only select max ' +
+                                  event.maxTicketNumberPerAccount +
+                                  ' tickets',
+                              );
+                              return;
+                            }
                             form.setValue(
                               `tickets.${index}`,
                               {
                                 id: ticket.id,
                                 quantity: value,
+                                price: ticket.price,
                               },
                               { shouldValidate: true },
                             );
@@ -292,9 +316,16 @@ export default function EventApplicationForm({
                     </div>
                   </UICheckbox>
                 ))}
-              <p className='px-5 underline font-light'>
-                Total amount / tickets:{' '}
-              </p>
+              <div className='grid grid-cols-3'>
+                <div className='col-span-2 py-2 px-4 bg-success-sub text-success-main border border-success-main border-r-0'>
+                  <p className='font-semibold'>Amount</p>
+                  <p>{totalAmount}</p>
+                </div>
+                <div className='bg-primary py-2 px-4 text-white'>
+                  <p className='font-semibold'>Tickets</p>
+                  <p>{totalTickets}</p>
+                </div>
+              </div>
             </div>
           </div>
 

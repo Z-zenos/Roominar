@@ -8,6 +8,7 @@ const eventApplicationFormSchema = z.object({
     z.object({
       id: z.number(),
       quantity: z.number(),
+      price: z.number(),
     }),
   ),
 
