@@ -9,7 +9,6 @@ interface NumberSpinnerInputProps {
   onChange?: (value: number) => void;
   value?: number;
   max?: number;
-  onClick?: () => void;
 }
 
 export default function NumberSpinnerInput({
@@ -17,19 +16,17 @@ export default function NumberSpinnerInput({
   onChange,
   value = 0,
   max,
-  onClick,
 }: NumberSpinnerInputProps) {
+  console.log(value);
   const [inputValue, setInputValue] = useState<string>(value + '');
   return (
-    <div
-      className={clsx('custom-number-input h-7 w-28', className)}
-      onClick={onClick}
-    >
+    <div className={clsx('custom-number-input h-7 w-28', className)}>
       <div className='flex flex-row h-7 w-full rounded-lg relative bg-transparent mt-1'>
         <button
           data-action='decrement'
           className=' bg-slate-200 text-gray-500 hover:text-gray-600 hover:bg-gray-400 h-full w-20 rounded-l cursor-pointer outline-none'
-          onClick={() => {
+          onClick={(e) => {
+            e.preventDefault();
             setInputValue(String(+inputValue - 1 > 0 ? +inputValue - 1 : 0));
             onChange?.(+inputValue - 1 > 0 ? +inputValue - 1 : 0);
           }}
@@ -50,7 +47,8 @@ export default function NumberSpinnerInput({
         <button
           data-action='increment'
           className='bg-gray-200 text-gray-500 hover:text-gray-600 hover:bg-gray-400 h-full w-20 rounded-r cursor-pointer'
-          onClick={() => {
+          onClick={(e) => {
+            e.preventDefault();
             setInputValue(
               String(+inputValue + 1 < max ? +inputValue + 1 : max),
             );

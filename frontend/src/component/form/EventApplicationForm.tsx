@@ -224,20 +224,28 @@ export default function EventApplicationForm({
                     }}
                     onValueChange={(selected: boolean) => {
                       if (selected) {
-                        form.setValue(`tickets.${index}`, {
-                          id: ticket.id,
-                          quantity: 0,
-                        });
+                        form.setValue(
+                          `tickets.${index}`,
+                          {
+                            id: ticket.id,
+                            quantity: 0,
+                          },
+                          { shouldValidate: true },
+                        );
                       } else {
                         form.setValue(
                           'tickets',
                           form
                             .getValues('tickets')
                             .filter((t) => t.id !== ticket.id),
+                          { shouldValidate: true },
                         );
                       }
                     }}
                     key={`t-${ticket.id}`}
+                    isSelected={form
+                      .getValues('tickets')
+                      .some((t) => t.id === ticket.id)}
                   >
                     <div className='w-full flex justify-between items-center gap-2'>
                       <div className='font-normal'>
@@ -268,14 +276,17 @@ export default function EventApplicationForm({
 
                         <NumberSpinnerInput
                           onChange={(value) => {
-                            form.setValue(`tickets.${index}`, {
-                              id: ticket.id,
-                              quantity: value,
-                            });
+                            form.setValue(
+                              `tickets.${index}`,
+                              {
+                                id: ticket.id,
+                                quantity: value,
+                              },
+                              { shouldValidate: true },
+                            );
                           }}
                           value={form.getValues(`tickets.${index}`)?.quantity}
                           max={event.maxTicketNumberPerAccount}
-                          onClick={() => {}}
                         />
                       </div>
                     </div>
