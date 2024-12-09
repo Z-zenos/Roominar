@@ -61,7 +61,6 @@ const nextResponseRedirectUrl = (
     ) ||
     pathName === '/'
   ) {
-    console.log(roleCode, pathName, url);
     return NextResponse.redirect(new URL('/not-found', url));
   }
 };

@@ -442,7 +442,7 @@ export default function CreateEventForm() {
 
             <div className='border-y border-y-primary py-[2px] mt-4 col-span-2'>
               <div className='border-y border-y-primary py-2'>
-                <h3 className='text-center text-md '>Description 🗒</h3>
+                <h3 className='text-center text-md'>Description 🗒</h3>
               </div>
             </div>
 

@@ -45,7 +45,6 @@ const RadioGroupItem = React.forwardRef<
 RadioGroupItem.displayName = RadioGroupPrimitive.Item.displayName;
 
 const TicketTypeRadio = (props: RadioProps) => {
-  console.log(props);
   const {
     Component,
     children,

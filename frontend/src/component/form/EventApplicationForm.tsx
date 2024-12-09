@@ -46,6 +46,7 @@ import useWindowDimensions from '@/src/hooks/useWindowDimension';
 import Timeline from '@/src/component/common/Timeline';
 import { Alert, AlertDescription, AlertTitle } from '../common/Alert';
 import DotLoader from '../common/Loader/DotLoader';
+import NumberSpinnerInput from '../common/Input/NumberSpinnerInput';
 
 interface EventApplicationFormProps {
   slug: string;
@@ -62,7 +63,7 @@ export default function EventApplicationForm({
     mode: 'all',
     defaultValues: {
       email: auth?.user?.email || '',
-      ticketId: undefined,
+      tickets: [],
       firstName: auth?.user?.firstName || '',
       lastName: auth?.user?.lastName || '',
       workplaceName: auth?.user?.workplaceName || '',
@@ -102,11 +103,13 @@ export default function EventApplicationForm({
         jobTypeCode: data.jobTypeCode,
         surveyResponseResults:
           data.surveyResponseResults as SurveyResponseResultItem[],
-        ticketId: +data.ticketId,
+        ticketId: 0,
         isAgreed: data.isAgreed,
       },
     });
   }
+
+  console.log(form.getValues('tickets'));
 
   return (
     <Form {...form}>
@@ -188,27 +191,56 @@ export default function EventApplicationForm({
               <p className='font-light text-sm my-3 opacity-80 px-5'>
                 Check description to see which ticket type is right for you.
               </p>
+              {event.maxTicketNumberPerAccount && (
+                <div
+                  className={clsx(
+                    styles.flexStart,
+                    'border mx-5 py-1 gap-2 px-3 rounded-sm border-yellow-500 bg-yellow-50',
+                  )}
+                >
+                  <span>⚠️</span>
+                  <p className='text-sm font-light mb-2'>
+                    You can only select max{' '}
+                    <span className='text-red-500 font-bold text-nm'>
+                      {event.maxTicketNumberPerAccount}
+                    </span>{' '}
+                    tickets
+                  </p>
+                </div>
+              )}
               {event &&
-                event.tickets.map((ticket: TicketItem) => (
+                event.tickets.map((ticket: TicketItem, index: number) => (
                   <UICheckbox
-                    aria-label='isOnline'
-                    name='isOnline'
+                    aria-label='tickets'
+                    name='tickets'
                     classNames={{
                       base: cn(
                         'inline-flex mx-0 my-1 w-full bg-content1',
                         'hover:bg-content2 items-center justify-start',
                         'cursor-pointer rounded-lg gap-2 p-4 border-2 border-transparent',
-                        'data-[selected=true]:border-primary',
+                        'data-[selected=true]:border-primary ',
                       ),
                       label: 'w-full m-0',
                     }}
-                    onValueChange={() =>
-                      form.setValue('ticketId', ticket.id + '')
-                    }
+                    onValueChange={(selected: boolean) => {
+                      if (selected) {
+                        form.setValue(`tickets.${index}`, {
+                          id: ticket.id,
+                          quantity: 0,
+                        });
+                      } else {
+                        form.setValue(
+                          'tickets',
+                          form
+                            .getValues('tickets')
+                            .filter((t) => t.id !== ticket.id),
+                        );
+                      }
+                    }}
                     key={`t-${ticket.id}`}
                   >
                     <div className='w-full flex justify-between items-center gap-2'>
-                      <div className='font-normal cursor-pointer'>
+                      <div className='font-normal'>
                         <h4 className='text-sm font-medium leading-5'>
                           {ticket.name}
                         </h4>
@@ -227,12 +259,24 @@ export default function EventApplicationForm({
                             <span>Free</span>
                           )}
                           <p className='text-sm'>
-                            <span className='text-orange-500 font-semibold'>
+                            <span className='text-orange-500 font-semibold mr-1'>
                               {ticket.quantity}
-                            </span>{' '}
+                            </span>
                             tickets
                           </p>
                         </div>
+
+                        <NumberSpinnerInput
+                          onChange={(value) => {
+                            form.setValue(`tickets.${index}`, {
+                              id: ticket.id,
+                              quantity: value,
+                            });
+                          }}
+                          value={form.getValues(`tickets.${index}`)?.quantity}
+                          max={event.maxTicketNumberPerAccount}
+                          onClick={() => {}}
+                        />
                       </div>
                     </div>
                   </UICheckbox>
