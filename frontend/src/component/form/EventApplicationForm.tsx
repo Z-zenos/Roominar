@@ -47,7 +47,7 @@ import Timeline from '@/src/component/common/Timeline';
 import { Alert, AlertDescription, AlertTitle } from '../common/Alert';
 import DotLoader from '../common/Loader/DotLoader';
 import NumberSpinnerInput from '../common/Input/NumberSpinnerInput';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 interface EventApplicationFormProps {
   slug: string;
@@ -292,13 +292,44 @@ export default function EventApplicationForm({
                               totalTickets + 1 >
                               event.maxTicketNumberPerAccount
                             ) {
-                              toast.error(
-                                'You can only select max ' +
-                                  event.maxTicketNumberPerAccount +
-                                  ' tickets',
+                              toast(
+                                () => (
+                                  <span
+                                    className={clsx(styles.between, 'gap-2')}
+                                  >
+                                    <span>
+                                      You can only select max{' '}
+                                      <b>{event.maxTicketNumberPerAccount}</b>{' '}
+                                      tickets
+                                    </span>
+                                  </span>
+                                ),
+                                {
+                                  icon: '⚠️',
+                                },
                               );
                               return;
                             }
+                            if (value > ticket.quantity) {
+                              toast(
+                                () => (
+                                  <span
+                                    className={clsx(styles.between, 'gap-2')}
+                                  >
+                                    <span>
+                                      You can only select max{' '}
+                                      <b>{ticket.quantity}</b> {ticket.name}{' '}
+                                      tickets
+                                    </span>
+                                  </span>
+                                ),
+                                {
+                                  icon: '⚠️',
+                                },
+                              );
+                              return;
+                            }
+
                             form.setValue(
                               `tickets.${index}`,
                               {
