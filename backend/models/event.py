@@ -63,3 +63,4 @@ class Event(BaseModel, table=True):
     published_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
     application_form_url: Optional[str] = Field(sa_type=String(2048))
     view_number: Optional[int] = Field(default=0)
+    max_application_number_per_account: Optional[int] = Field(default=10)

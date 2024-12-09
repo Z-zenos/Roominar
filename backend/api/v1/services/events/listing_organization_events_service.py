@@ -40,7 +40,7 @@ async def _listing_events(
         .outerjoin(Application, Event.id == Application.event_id)
         .where(
             Application.canceled_at.is_(None),
-            Application.status == ApplicationStatusCode.CONFIRMED,
+            Application.status == ApplicationStatusCode.APPROVED,
         )
         .group_by(Event.id)
         .subquery()

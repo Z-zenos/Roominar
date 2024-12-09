@@ -1,6 +1,11 @@
 from sqlmodel import Session, and_, case, exists, func, select, update
 
-from backend.core.constants import FollowEntityCode, TagAssociationEntityCode
+from backend.core.constants import (
+    ApplicationStatusCode,
+    FollowEntityCode,
+    TagAssociationEntityCode,
+    TransactionStatusCode,
+)
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.models import (
@@ -17,6 +22,7 @@ from backend.models import (
 )
 from backend.models.follow import Follow
 from backend.models.tag_association import TagAssociation
+from backend.models.transaction import Transaction
 from backend.schemas.answer import AnswerItem
 from backend.schemas.survey import SurveyDetail
 
@@ -138,9 +144,9 @@ def _get_tickets(db: Session, event_id: int):
             select(
                 Ticket.id,
                 Ticket.name,
-                func.greatest((Ticket.quantity - func.count(Application.id)), 0).label(
-                    "remain"
-                ),
+                func.greatest(
+                    (Ticket.quantity - func.sum(Transaction.quantity)), 0
+                ).label("remain"),
                 Ticket.quantity,
                 Ticket.description,
                 Ticket.price,
@@ -152,13 +158,15 @@ def _get_tickets(db: Session, event_id: int):
                 Ticket.delivery_method,
                 Ticket.is_refundable,
             )
-            .outerjoin(
-                Application,
-                Application.ticket_id == Ticket.id,
-            )
             .where(
                 Ticket.event_id == event_id,
-                Application.canceled_at.is_(None),
+            )
+            .outerjoin(
+                Transaction,
+                and_(
+                    Transaction.ticket_id == Ticket.id,
+                    Transaction.status == TransactionStatusCode.PURCHASED,
+                ),
             )
             .order_by(Ticket.id)
             .group_by(Ticket.id)
@@ -173,7 +181,8 @@ def _get_tickets(db: Session, event_id: int):
 def _get_applied_number(db: Session, event_id: int):
     applied_number = db.scalar(
         select(func.count()).where(
-            Application.event_id == event_id, Application.canceled_at.is_(None)
+            Application.event_id == event_id,
+            Application.status == ApplicationStatusCode.APPROVED,
         )
     )
     return applied_number

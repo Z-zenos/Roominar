@@ -19,11 +19,11 @@ import {
 } from '@/src/component/form/Form';
 import Button from '@/src/component/common/Button/Button';
 import { useGetEventDetailQuery } from '@/src/api/event.api';
-import { optionify } from '@/src/utils/app.util';
+import { cn, optionify } from '@/src/utils/app.util';
 import { MdOutlineOnlinePrediction } from 'react-icons/md';
 import Chip from '@/src/component/common/Chip';
 import { FaUserFriends } from 'react-icons/fa';
-import { Image, Link } from '@nextui-org/react';
+import { Image, Link, Checkbox as UICheckbox } from '@nextui-org/react';
 import type {
   AnswerItem,
   ApiException,
@@ -182,56 +182,64 @@ export default function EventApplicationForm({
               </div>
             )}
             <div className='rounded-md py-5 shadow-[rgba(0,_0,_0,_0.02)_0px_1px_3px_0px,_rgba(27,_31,_35,_0.15)_0px_0px_0px_1px] my-6 bg-white'>
-              <FormField
-                control={form.control}
-                name='ticketId'
-                render={({ field }) => (
-                  <FormItem className='space-y-3'>
-                    <h3 className='text-md font-semibold px-5 text-orange-500'>
-                      Ticket 🎟
-                    </h3>
-                    <p className='font-light text-sm my-3 opacity-80 px-5'>
-                      Check description to see which ticket type is right for
-                      you.
-                    </p>
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        defaultValue={field.value + ''}
-                        className='flex flex-col space-y-1'
-                      >
-                        {event &&
-                          event.tickets.map((ticket: TicketItem) => (
-                            <FormItem key={`t-${ticket.id}`}>
-                              <FormLabel
-                                className={clsx(
-                                  styles.between,
-                                  'gap-3 border-t border-t-gray-200 py-3 cursor-pointer transition-all px-5 hover:bg-emerald-50 hover:border-emerald-100',
-                                  form.getValues('ticketId') ===
-                                    ticket.id + '' &&
-                                    'bg-emerald-50 border-b border-b-gray-300',
-                                )}
-                              >
-                                <div className='font-normal cursor-pointer'>
-                                  <h4 className='text-sm font-semibold leading-6'>
-                                    {ticket.name}
-                                  </h4>
-                                  <p className='font-light opacity-80 leading-5 text-ss mt-2'>
-                                    {ticket.description}
-                                  </p>
-                                </div>
-                                <FormControl>
-                                  <RadioGroupItem value={ticket.id + ''} />
-                                </FormControl>
-                              </FormLabel>
-                            </FormItem>
-                          ))}
-                      </RadioGroup>
-                    </FormControl>
-                    {/* <FormMessage /> */}
-                  </FormItem>
-                )}
-              />
+              <h3 className='text-md font-semibold px-5 text-orange-500'>
+                Ticket 🎟
+              </h3>
+              <p className='font-light text-sm my-3 opacity-80 px-5'>
+                Check description to see which ticket type is right for you.
+              </p>
+              {event &&
+                event.tickets.map((ticket: TicketItem) => (
+                  <UICheckbox
+                    aria-label='isOnline'
+                    name='isOnline'
+                    classNames={{
+                      base: cn(
+                        'inline-flex mx-0 my-1 w-full bg-content1',
+                        'hover:bg-content2 items-center justify-start',
+                        'cursor-pointer rounded-lg gap-2 p-4 border-2 border-transparent',
+                        'data-[selected=true]:border-primary',
+                      ),
+                      label: 'w-full m-0',
+                    }}
+                    onValueChange={() =>
+                      form.setValue('ticketId', ticket.id + '')
+                    }
+                    key={`t-${ticket.id}`}
+                  >
+                    <div className='w-full flex justify-between items-center gap-2'>
+                      <div className='font-normal cursor-pointer'>
+                        <h4 className='text-sm font-medium leading-5'>
+                          {ticket.name}
+                        </h4>
+                        {/* <p className='font-light opacity-80 leading-5 text-ss mt-1'>
+                          {ticket.description}
+                        </p> */}
+                        <div className={clsx(styles.between)}>
+                          {ticket.price ? (
+                            <div className='text-sm'>
+                              <span>Price: </span>
+                              <span className='text-primary font-semibold ml-2'>
+                                {ticket.price}
+                              </span>
+                            </div>
+                          ) : (
+                            <span>Free</span>
+                          )}
+                          <p className='text-sm'>
+                            <span className='text-orange-500 font-semibold'>
+                              {ticket.quantity}
+                            </span>{' '}
+                            tickets
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </UICheckbox>
+                ))}
+              <p className='px-5 underline font-light'>
+                Total amount / tickets:{' '}
+              </p>
             </div>
           </div>
 

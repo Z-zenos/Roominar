@@ -76,7 +76,7 @@ async def create_application(
             workplace_name=request.workplace_name,
             phone=request.phone,
             ticket_id=request.ticket_id,
-            status=ApplicationStatusCode.CONFIRMED,
+            status=ApplicationStatusCode.APPROVED,
         )
 
         save(db, application)

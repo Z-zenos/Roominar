@@ -33,7 +33,7 @@ async def cancel_application(db: Session, current_user: User, application_id: in
 
     try:
         application.canceled_at = datetime.now()
-        application.status = ApplicationStatusCode.CANCELED
+        application.status = ApplicationStatusCode.REJECTED
         save(db, application)
 
         event = db.exec(

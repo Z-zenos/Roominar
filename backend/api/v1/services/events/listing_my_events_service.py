@@ -32,7 +32,7 @@ async def _listing_events(
         .outerjoin(Application, Event.id == Application.event_id)
         .where(
             Application.canceled_at.is_(None),
-            Application.status == ApplicationStatusCode.CONFIRMED,
+            Application.status == ApplicationStatusCode.APPROVED,
         )
         .group_by(Event.id)
         .subquery()
@@ -159,7 +159,7 @@ async def _build_filters(current_user: User, query_params: ListingMyEventsQueryP
             and_(
                 Application.canceled_at.is_(None),
                 Application.user_id == current_user.id,
-                Application.status == ApplicationStatusCode.CONFIRMED,
+                Application.status == ApplicationStatusCode.APPROVED,
             )
         )
 
@@ -179,7 +179,7 @@ async def _build_filters(current_user: User, query_params: ListingMyEventsQueryP
             and_(
                 Application.canceled_at.isnot(None),
                 Application.user_id == current_user.id,
-                Application.status == ApplicationStatusCode.CANCELED,
+                Application.status == ApplicationStatusCode.REJECTED,
             )
         )
     else:
@@ -187,7 +187,7 @@ async def _build_filters(current_user: User, query_params: ListingMyEventsQueryP
             and_(
                 Application.canceled_at.is_(None),
                 or_(
-                    Application.status != ApplicationStatusCode.CANCELED,
+                    Application.status != ApplicationStatusCode.REJECTED,
                     Application.status.is_(None),
                 ),
             )
