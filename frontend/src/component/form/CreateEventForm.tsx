@@ -171,7 +171,7 @@ export default function CreateEventForm() {
     //     status: data.status,
     //     ticketIds: data.ticketIds,
     //     tags: data.tags,
-    //     applicationNumber: data.applicationNumber,
+    //     applicationNumber: data.totalTicketNumber,
     //     startAt: data.startAt,
     //     endAt: data.endAt,
     //     applicationEndAt: data.applicationEndAt,

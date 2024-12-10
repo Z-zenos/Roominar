@@ -149,7 +149,7 @@ export default function EventDataTable() {
             <div className='flex flex-col'>
               <p className='text-bold text-small capitalize'>{cellValue}</p>
               <p className='text-bold text-tiny capitalize text-default-400'>
-                {event.appliedNumber ?? 0} / {event.applicationNumber}
+                {event.appliedNumber ?? 0} / {event.totalTicketNumber}
               </p>
             </div>
           );

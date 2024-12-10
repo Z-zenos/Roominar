@@ -116,7 +116,10 @@ export default function EventApplicationForm({
         jobTypeCode: data.jobTypeCode,
         surveyResponseResults:
           data.surveyResponseResults as SurveyResponseResultItem[],
-        ticketId: 0,
+        tickets: data.tickets.map((ticket) => ({
+          id: ticket.id,
+          quantity: ticket.quantity,
+        })),
         isAgreed: data.isAgreed,
       },
     });
@@ -178,7 +181,7 @@ export default function EventApplicationForm({
                 <div className={clsx(styles.between, 'mt-3')}>
                   <Chip
                     content={
-                      event.appliedNumber + ' / ' + event.applicationNumber
+                      event.appliedNumber + ' / ' + event.totalTicketNumber
                     }
                     leftIcon={<FaUserFriends className='text-sm' />}
                     type='info'

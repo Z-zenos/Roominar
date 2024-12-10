@@ -297,7 +297,7 @@ function EventDetail({ slug }: EventDetailProps) {
               >
                 <BsFillPeopleFill className='text-primary w-6 h-6' />
                 <span className='font-light'>
-                  {event?.appliedNumber} applied / {event?.applicationNumber}
+                  {event?.appliedNumber} applied / {event?.totalTicketNumber}
                 </span>
               </div>
               <Button
