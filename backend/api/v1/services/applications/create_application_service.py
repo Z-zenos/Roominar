@@ -2,16 +2,14 @@ from datetime import datetime
 
 from sqlmodel import Session, func, select
 
-from backend.core.config import settings
-from backend.core.constants import ApplicationStatusCode
+from backend.core.constants import TransactionStatusCode
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
-from backend.mails.mail import Email
 from backend.models.application import Application
 from backend.models.event import Event
-from backend.models.organization import Organization
 from backend.models.survey_response_result import SurveyResponseResult
 from backend.models.ticket import Ticket
+from backend.models.transaction import Transaction
 from backend.models.user import User
 from backend.schemas.application import CreateApplicationRequest
 from backend.utils.database import save
@@ -24,7 +22,7 @@ async def create_application(
     event_id: int,
 ):
     try:
-        # VERIFY APPLICATION
+        # CHECK IF EVENT IS STILL OPEN FOR APPLY
         event = db.exec(
             select(Event).where(
                 Event.id == event_id, Event.application_end_at >= datetime.now()
@@ -37,49 +35,90 @@ async def create_application(
                 ErrorMessage.ERR_EVENT_NO_LONGER_OPEN_APPLY,
             )
 
+        tickets = db.exec(
+            select(
+                Ticket.__table__.columns,
+                func.greatest(
+                    Ticket.quantity - func.sum(Transaction.quantity), 0
+                ).label("remain_quantity"),
+            )
+            .outerjoin(Transaction, Transaction.ticket_id == Ticket.id)
+            .where(
+                Ticket.id.in_([ticket.id for ticket in request.tickets]),
+                Transaction.status == TransactionStatusCode.PURCHASED,
+            )
+            .group_by(Ticket.id)
+        ).all()
+
+        for ticket in tickets:
+            if next(
+                (
+                    request_ticket
+                    for request_ticket in request.tickets
+                    if request_ticket.id == ticket.id
+                    and request_ticket.quantity > ticket.remain_quantity
+                ),
+                None,
+            ):
+                raise BadRequestException(
+                    ErrorCode.ERR_TICKET_SOLD_OUT, ErrorMessage.ERR_TICKET_SOLD_OUT
+                )
+
         application = db.exec(
             select(Application).where(
                 Application.event_id == event_id,
-                Application.email == request.email,
-                Application.ticket_id == request.ticket_id,
-                Application.canceled_at.is_(None),
+                Application.user_id == current_user.id,
             )
         ).one_or_none()
 
-        if application:
+        if application and (
+            application.successful_purchased_ticket_number
+            + sum(map(lambda ticket: ticket.quantity, request.tickets))
+            > event.max_ticket_number_per_account
+        ):
             raise BadRequestException(
-                ErrorCode.ERR_APPLICATION_ALREADY_EXISTED,
-                ErrorMessage.ERR_APPLICATION_ALREADY_EXISTED,
-            )
-
-        remain_ticket_number = db.scalar(
-            select(func.greatest((Ticket.quantity - func.count(Application.id)), 0))
-            .outerjoin(Application, Application.ticket_id == Ticket.id)
-            .where(Ticket.id == request.ticket_id, Application.canceled_at.is_(None))
-            .group_by(Ticket.id)
-        )
-
-        if remain_ticket_number == 0:
-            raise BadRequestException(
-                ErrorCode.ERR_TICKET_SOLD_OUT,
-                ErrorMessage.ERR_TICKET_SOLD_OUT,
+                ErrorCode.ERR_MAXIMUM_TICKETS_PER_APPLICATION_REACHED,
+                ErrorMessage.ERR_MAXIMUM_TICKETS_PER_APPLICATION_REACHED,
             )
 
         # CREATE NEW APPLICATION
-        application = Application(
-            event_id=event_id,
-            event_name=event.name,
-            user_id=current_user.id,
-            email=request.email,
-            first_name=request.first_name,
-            last_name=request.last_name,
-            workplace_name=request.workplace_name,
-            phone=request.phone,
-            ticket_id=request.ticket_id,
-            status=ApplicationStatusCode.APPROVED,
-        )
+        if not application:
+            application = Application(
+                event_id=event_id,
+                user_id=current_user.id,
+                email=request.email,
+                first_name=request.first_name,
+                last_name=request.last_name,
+                workplace_name=request.workplace_name,
+                phone=request.phone,
+                industry_code=request.industry_code,
+                job_type_code=request.job_type_code,
+            )
 
-        save(db, application)
+            save(db, application)
+
+        if len(request.tickets) > 0:
+            transactions = []
+
+            transactions.extend(
+                [
+                    Transaction(
+                        application_id=application.id,
+                        ticket_id=ticket.id,
+                        quantity=ticket.quantity,
+                        status=(
+                            TransactionStatusCode.PURCHASED
+                            if event.max_ticket_number_per_account == 1
+                            else TransactionStatusCode.PENDING
+                        ),
+                        total_amount=ticket.quantity
+                        * next(t.price for t in tickets if t.id == ticket.id),
+                    )
+                    for ticket in request.tickets
+                ]
+            )
+
+            db.bulk_insert_mappings(Transaction, transactions)
 
         if len(request.survey_response_results) > 0:
             survey_response_results = []
@@ -99,65 +138,10 @@ async def create_application(
             )
 
             db.bulk_insert_mappings(SurveyResponseResult, survey_response_results)
-            db.flush()
-            db.commit()
+
+        db.flush()
+        db.commit()
 
     except Exception as e:
         db.rollback()
-        raise e
-
-    try:
-        organization = db.exec(
-            select(Organization).where(Organization.id == event.organization_id)
-        ).first()
-
-        # organization_emails = db.exec(
-        #     select(User.email).where(
-        #         User.organization_id == event.organization_id,
-        #         User.deleted_at.is_(None),
-        #     )
-        # ).all()
-
-        ticket = db.get(Ticket, request.ticket_id)
-        audience_context = {
-            "username": current_user.first_name + current_user.last_name,
-            "event_name": event.name,
-            "ticket_name": ticket.name,
-            "ticket_url": ticket.access_link_url,
-            "organization_name": organization.name,
-            "contact_email": organization.contact_email,
-            "datetime": f"{event.start_at}, {event.end_at}",
-            "address": event.organize_address,
-            "meeting_tool": event.meeting_tool_code,
-            "detail_event_url": f"{settings.AUD_FRONTEND_URL}/events/{event.slug}",
-            "mypage_url": f"{settings.AUD_FRONTEND_URL}/mypage",
-            "message": event.comment,
-        }
-        # organizer_context = {
-        #     "name_org_company": organization.name,
-        #     "name_aud_company": current_user.company_name,
-        #     "event_name": event.name,
-        #     "ticket_name": ticket.name,
-        #     "list_apply_event_url": f"{settings.FRONTEND_ORG_URL}/applications",
-        #     "event_detail_url": f"{settings.FRONTEND_AUD_URL}/events/{event.slug}",
-        # }
-        # Add the meeting_tool_code to the context
-
-        mailer = Email()
-        await mailer.send_aud_email(
-            request.email,
-            "apply_event_success.html",
-            "Thanks to apply our event.",
-            audience_context,
-        )
-
-        # mailer.send_bulk_organization_email(
-        #     organization_emails,
-        #     "to_organizer_event_apply_success.html",
-        #     organizer_context,
-        # )
-
-        return application.id
-
-    except Exception as e:
         raise e

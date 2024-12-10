@@ -4,7 +4,6 @@ from sqlmodel import Date, Session, and_, func, select, text
 
 from backend.api.v1.services.tags.get_event_tags_service import get_event_tags
 from backend.core.constants import (
-    ApplicationStatusCode,
     EventTimeStatusCode,
     ManageEventSortByCode,
     TagAssociationEntityCode,
@@ -40,7 +39,7 @@ async def _listing_events(
         .outerjoin(Application, Event.id == Application.event_id)
         .where(
             Application.canceled_at.is_(None),
-            Application.status == ApplicationStatusCode.APPROVED,
+            # Application.status == ApplicationStatusCode.APPROVED,
         )
         .group_by(Event.id)
         .subquery()
@@ -60,7 +59,7 @@ async def _listing_events(
             Event.is_offline,
             Event.organize_city_code,
             Event.organize_place_name,
-            Event.application_number,
+            Event.total_ticket_number,
             AppliedNumber.c.applied_number,
             Event.status,
             Event.view_number,

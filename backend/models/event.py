@@ -32,7 +32,7 @@ class Event(BaseModel, table=True):
 
     status: Optional[EventStatusCode] = Field(sa_type=Enum(EventStatusCode))
 
-    application_number: Optional[int]
+    total_ticket_number: Optional[int]
 
     cover_image_url: Optional[str] = Field(sa_type=String(2048))
     gallery: Optional[list[str]] = Field(sa_type=ARRAY(String(2048)))

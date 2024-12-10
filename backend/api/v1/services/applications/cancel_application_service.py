@@ -3,7 +3,6 @@ from datetime import datetime
 from sqlmodel import Session, select
 
 from backend.core.config import settings
-from backend.core.constants import ApplicationStatusCode
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.mails.mail import Email
@@ -33,7 +32,7 @@ async def cancel_application(db: Session, current_user: User, application_id: in
 
     try:
         application.canceled_at = datetime.now()
-        application.status = ApplicationStatusCode.REJECTED
+        # application.status = ApplicationStatusCode.REJECTED
         save(db, application)
 
         event = db.exec(

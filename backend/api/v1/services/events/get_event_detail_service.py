@@ -1,7 +1,6 @@
 from sqlmodel import Session, and_, case, exists, func, select, update
 
 from backend.core.constants import (
-    ApplicationStatusCode,
     FollowEntityCode,
     TagAssociationEntityCode,
     TransactionStatusCode,
@@ -182,7 +181,7 @@ def _get_applied_number(db: Session, event_id: int):
     applied_number = db.scalar(
         select(func.count()).where(
             Application.event_id == event_id,
-            Application.status == ApplicationStatusCode.APPROVED,
+            # Application.status == ApplicationStatusCode.APPROVED,
         )
     )
     return applied_number

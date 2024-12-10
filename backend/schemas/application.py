@@ -1,19 +1,25 @@
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
+from backend.core.constants import IndustryCode, JobTypeCode
 from backend.schemas.common import industry_code_validator, job_type_code_validator
 from backend.schemas.survey_response_result import SurveyResponseResultItem
+
+
+class ApplicationTicket(BaseModel):
+    id: int
+    quantity: int
 
 
 class CreateApplicationRequest(BaseModel):
     email: EmailStr
     first_name: str = Field(max_length=255)
-    last_name: str = Field(max_length=255)
+    last_name: str | None = Field(max_length=255)
     workplace_name: str = Field(max_length=255)
     phone: str = Field(max_length=20)
-    industry_code: str = Field(max_length=50)
-    job_type_code: str = Field(max_length=20)
+    industry_code: IndustryCode | None = None
+    job_type_code: JobTypeCode | None = None
     survey_response_results: list[SurveyResponseResultItem] = Field([])
-    ticket_id: int
+    tickets: list[ApplicationTicket] = Field([])
     is_agreed: bool
 
     @field_validator(

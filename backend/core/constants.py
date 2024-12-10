@@ -165,12 +165,6 @@ class TicketStatusCode(str, Enum):
     CANCELED = "CANCELED"
 
 
-class ApplicationStatusCode(str, Enum):
-    PENDING = "PENDING"
-    APPROVED = "APPROVED"
-    REJECTED = "REJECTED"
-
-
 class TransactionStatusCode(str, Enum):
     PENDING = "PENDING"
     PURCHASED = "PURCHASED"
