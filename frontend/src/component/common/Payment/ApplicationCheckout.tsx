@@ -29,7 +29,6 @@ export default function ApplicationCheckout({
   eventId,
   tickets,
 }: ApplicationCheckoutProps) {
-  console.log(stripePromise);
   const [clientSecret, setClientSecret] = useState('');
 
   const { trigger } = useCreateApplicationCheckoutSessionMutation({
@@ -54,16 +53,14 @@ export default function ApplicationCheckout({
     });
   }, [trigger, JSON.stringify(tickets), eventId]);
 
-  const options = { clientSecret };
-
   return (
     <div id='checkout'>
       {clientSecret && (
         <EmbeddedCheckoutProvider
           stripe={stripePromise}
-          options={options}
+          options={{ clientSecret }}
         >
-          <EmbeddedCheckout />
+          <EmbeddedCheckout className='max-h-[600px] overflow-y-scroll' />
         </EmbeddedCheckoutProvider>
       )}
     </div>

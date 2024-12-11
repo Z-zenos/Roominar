@@ -137,8 +137,6 @@ export default function EventApplicationForm({
   //   });
   // }
 
-  console.log(form.formState.errors, form.getValues(), form.formState.isValid);
-
   return (
     <Form {...form}>
       {event?.applicationEndAt < new Date() && (

@@ -94,6 +94,7 @@ async def create_application_checkout_session(
                         },
                         "unit_amount": int(ticket["price"] * 100),
                     },
+                    # max(ticket["requested_quantity"], 1)
                     "quantity": ticket["requested_quantity"],
                 }
                 for ticket in tickets
@@ -113,10 +114,10 @@ async def create_application_checkout_session(
 
         return session.client_secret
     except stripe.error.StripeError as e:
-        print(e)
+        print("Stripe Err: ", e)
         # raise BadRequestException(
         #     ErrorCode.ERR_STRIPE_ERROR, ErrorMessage.ERR_STRIPE_ERROR
         # )
     except Exception as e:
-        print("Excpeto: ", e)
+        print("Exception Err: ", e)
         raise e
