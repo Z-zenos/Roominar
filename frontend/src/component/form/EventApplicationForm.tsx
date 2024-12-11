@@ -23,13 +23,23 @@ import { cn, optionify } from '@/src/utils/app.util';
 import { MdOutlineOnlinePrediction } from 'react-icons/md';
 import Chip from '@/src/component/common/Chip';
 import { FaUserFriends } from 'react-icons/fa';
-import { Image, Link, Checkbox as UICheckbox } from '@nextui-org/react';
+import {
+  Image,
+  Link,
+  Modal,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  Checkbox as UICheckbox,
+  useDisclosure,
+  Button as UIButton,
+  ModalBody,
+} from '@nextui-org/react';
 import type {
   AnswerItem,
   ApiException,
   ErrorResponse400,
   QuestionAnswerItem,
-  SurveyResponseResultItem,
   TicketItem,
 } from '@/src/lib/api/generated';
 import { JobTypeCode } from '@/src/lib/api/generated';
@@ -48,6 +58,7 @@ import { Alert, AlertDescription, AlertTitle } from '../common/Alert';
 import DotLoader from '../common/Loader/DotLoader';
 import NumberSpinnerInput from '../common/Input/NumberSpinnerInput';
 import { useMemo } from 'react';
+import ApplicationCheckout from '../common/Payment/ApplicationCheckout';
 
 interface EventApplicationFormProps {
   slug: string;
@@ -59,6 +70,7 @@ export default function EventApplicationForm({
   const { data: event } = useGetEventDetailQuery({ slug });
   const { data: auth, status } = useSession();
   const { width } = useWindowDimensions();
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const form = useForm<EventApplicationFormSchema>({
     mode: 'all',
@@ -103,27 +115,29 @@ export default function EventApplicationForm({
     },
   });
 
-  function handleApplyEvent(data: EventApplicationFormSchema) {
-    trigger({
-      eventId: event.id,
-      createApplicationRequest: {
-        email: data.email,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        workplaceName: data.workplaceName,
-        phone: data.phone,
-        industryCode: data.industryCode,
-        jobTypeCode: data.jobTypeCode,
-        surveyResponseResults:
-          data.surveyResponseResults as SurveyResponseResultItem[],
-        tickets: data.tickets.map((ticket) => ({
-          id: ticket.id,
-          quantity: ticket.quantity,
-        })),
-        isAgreed: data.isAgreed,
-      },
-    });
-  }
+  // function handleApplyEvent(data: EventApplicationFormSchema) {
+  //   trigger({
+  //     eventId: event.id,
+  //     createApplicationRequest: {
+  //       email: data.email,
+  //       firstName: data.firstName,
+  //       lastName: data.lastName,
+  //       workplaceName: data.workplaceName,
+  //       phone: data.phone,
+  //       industryCode: data.industryCode,
+  //       jobTypeCode: data.jobTypeCode,
+  //       surveyResponseResults:
+  //         data.surveyResponseResults as SurveyResponseResultItem[],
+  //       tickets: data.tickets.map((ticket) => ({
+  //         id: ticket.id,
+  //         quantity: ticket.quantity,
+  //       })),
+  //       isAgreed: data.isAgreed,
+  //     },
+  //   });
+  // }
+
+  console.log(form.formState.errors);
 
   return (
     <Form {...form}>
@@ -146,7 +160,8 @@ export default function EventApplicationForm({
 
       {event ? (
         <form
-          onSubmit={form.handleSubmit(handleApplyEvent)}
+          // onSubmit={form.handleSubmit(handleApplyEvent)}
+          onSubmit={form.handleSubmit(onOpen)}
           className={clsx(
             'grid grid-cols-7 w-full items-start gap-10 mx-auto py-20',
             width < 1000 && 'px-[5%]',
@@ -268,8 +283,8 @@ export default function EventApplicationForm({
                           {ticket.name}
                         </h4>
                         {/* <p className='font-light opacity-80 leading-5 text-ss mt-1'>
-                          {ticket.description}
-                        </p> */}
+                            {ticket.description}
+                          </p> */}
                         <div className={clsx(styles.between)}>
                           {ticket.price ? (
                             <div className='text-sm'>
@@ -445,7 +460,6 @@ export default function EventApplicationForm({
                     id='workplaceName'
                     name='workplaceName'
                     label='workplaceName'
-                    required
                     placeholder='Place you work or learn'
                     className={clsx(
                       status === 'authenticated' &&
@@ -487,7 +501,6 @@ export default function EventApplicationForm({
                 <div className='self-start'>
                   <FormCombobox
                     label='jobTypeCode'
-                    required
                     options={optionify(JobTypeCode)}
                     i18nPath='code.jobType'
                     name='jobTypeCode'
@@ -496,7 +509,8 @@ export default function EventApplicationForm({
                     multiple={false}
                     className={clsx(
                       'w-full',
-                      status === 'authenticated' &&
+                      auth.user.jobTypeCode &&
+                        status === 'authenticated' &&
                         'bg-slate-100 text-gray-500 pointer-events-none',
                     )}
                   />
@@ -504,7 +518,6 @@ export default function EventApplicationForm({
                 <div className='self-start'>
                   <FormCombobox
                     label='industryCode'
-                    required
                     options={optionify(IndustryCode)}
                     i18nPath='code.industry'
                     name='industryCode'
@@ -513,7 +526,8 @@ export default function EventApplicationForm({
                     multiple={false}
                     className={clsx(
                       'w-full',
-                      status === 'authenticated' &&
+                      auth.user.industryCode &&
+                        status === 'authenticated' &&
                         'bg-slate-100 text-gray-500 pointer-events-none',
                     )}
                   />
@@ -703,15 +717,59 @@ export default function EventApplicationForm({
               </FormCheckBox>
             </div>
             <Button
-              title='Apply Event'
+              title='Go To Payment'
               type='submit'
               className='w-80 mt-5 mx-auto'
               disabled={
                 !form.formState.isValid || event?.applicationEndAt < new Date()
               }
-              isLoading={isApplying}
+              // isLoading={isApplying}
             />
           </div>
+
+          <Modal
+            isOpen={isOpen}
+            onOpenChange={onOpenChange}
+            placement='top-center'
+            size='2xl'
+          >
+            <ModalContent>
+              {(onClose) => (
+                <>
+                  <ModalHeader className='flex flex-col gap-1'>
+                    Payment
+                  </ModalHeader>
+                  <ModalBody>
+                    <ApplicationCheckout
+                      eventId={event.id}
+                      tickets={form.getValues('tickets').map((ticket) => ({
+                        id: ticket.id,
+                        quantity: ticket.quantity,
+                      }))}
+                    />
+                  </ModalBody>
+                  <ModalFooter>
+                    <UIButton
+                      color='danger'
+                      variant='flat'
+                      onPress={onClose}
+                    >
+                      Close
+                    </UIButton>
+                    <UIButton
+                      color='primary'
+                      onPress={() => {
+                        // if (onValueChange) onValueChange();
+                        onClose();
+                      }}
+                    >
+                      Pay Now
+                    </UIButton>
+                  </ModalFooter>
+                </>
+              )}
+            </ModalContent>
+          </Modal>
         </form>
       ) : (
         <DotLoader />

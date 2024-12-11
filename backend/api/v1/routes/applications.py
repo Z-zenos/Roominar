@@ -9,7 +9,11 @@ from backend.core.constants import RoleCode
 from backend.core.response import authenticated_api_responses, public_api_responses
 from backend.db.database import get_read_db
 from backend.models.user import User
-from backend.schemas.application import CreateApplicationRequest
+from backend.schemas.application import (
+    CreateApplicationCheckoutSessionRequest,
+    CreateApplicationCheckoutSessionResponse,
+    CreateApplicationRequest,
+)
 
 router = APIRouter()
 
@@ -41,4 +45,20 @@ async def cancel_application(
 ):
     return await application_service.cancel_application(
         db, current_user, application_id
+    )
+
+
+@router.post(
+    "/checkout-session/{event_id}",
+    responses=public_api_responses,
+    response_model=CreateApplicationCheckoutSessionResponse,
+)
+async def create_application_checkout_session(
+    db: Session = Depends(get_read_db),
+    current_user: User = Depends(get_current_user),
+    create_application_checkout_session_request: CreateApplicationCheckoutSessionRequest = None,
+    event_id: int = None,
+):
+    return await application_service.create_application_checkout_session(
+        db, current_user, create_application_checkout_session_request, event_id
     )

@@ -47,3 +47,11 @@ class CreateApplicationRequest(BaseModel):
     @field_validator("job_type_code")
     def job_type_code_validator(cls, v):
         return job_type_code_validator(v)
+
+
+class CreateApplicationCheckoutSessionRequest(BaseModel):
+    tickets: list[ApplicationTicket] = Field([])
+
+
+class CreateApplicationCheckoutSessionResponse(BaseModel):
+    client_secret: str | None = None
