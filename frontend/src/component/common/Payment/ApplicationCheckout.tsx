@@ -49,7 +49,7 @@ export default function ApplicationCheckout({
     trigger({
       eventId,
       createApplicationCheckoutSessionRequest: {
-        tickets,
+        tickets: tickets.filter((ticket) => ticket),
       },
     });
   }, [trigger, JSON.stringify(tickets), eventId]);

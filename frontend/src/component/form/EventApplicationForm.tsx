@@ -137,7 +137,7 @@ export default function EventApplicationForm({
   //   });
   // }
 
-  console.log(form.formState.errors);
+  console.log(form.formState.errors, form.getValues(), form.formState.isValid);
 
   return (
     <Form {...form}>
@@ -465,7 +465,9 @@ export default function EventApplicationForm({
                       status === 'authenticated' &&
                         'bg-slate-100 text-gray-500',
                     )}
-                    disabled={status === 'authenticated'}
+                    disabled={
+                      auth.user.workplaceName && status === 'authenticated'
+                    }
                     control={form.control}
                     showError={true}
                     rightIcon={
@@ -720,10 +722,11 @@ export default function EventApplicationForm({
               title='Go To Payment'
               type='submit'
               className='w-80 mt-5 mx-auto'
-              disabled={
-                !form.formState.isValid || event?.applicationEndAt < new Date()
-              }
+              // disabled={
+              //   !form.formState.isValid || event?.applicationEndAt < new Date()
+              // }
               // isLoading={isApplying}
+              onClick={onOpen}
             />
           </div>
 

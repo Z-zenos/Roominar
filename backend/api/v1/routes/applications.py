@@ -59,6 +59,7 @@ async def create_application_checkout_session(
     create_application_checkout_session_request: CreateApplicationCheckoutSessionRequest = None,
     event_id: int = None,
 ):
-    return await application_service.create_application_checkout_session(
+    client_secret = await application_service.create_application_checkout_session(
         db, current_user, create_application_checkout_session_request, event_id
     )
+    return CreateApplicationCheckoutSessionResponse(client_secret=client_secret)
