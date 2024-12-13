@@ -18,21 +18,6 @@ from backend.schemas.application import (
 router = APIRouter()
 
 
-@router.post("/{event_id}", response_model=int, responses=public_api_responses)
-async def create_application(
-    event_id: int,
-    request: CreateApplicationRequest,
-    current_user: User = Depends(authorize_role(RoleCode.AUDIENCE)),
-    db: Session = Depends(get_read_db),
-):
-    return await application_service.create_application(
-        db,
-        request,
-        current_user,
-        event_id,
-    )
-
-
 @router.delete(
     "/{application_id}",
     status_code=HTTPStatus.NO_CONTENT,
@@ -63,3 +48,15 @@ async def create_application_checkout_session(
         db, current_user, create_application_checkout_session_request, event_id
     )
     return CreateApplicationCheckoutSessionResponse(client_secret=client_secret)
+
+
+@router.post("checkout-webhook/{event_id}", status_code=HTTPStatus.NO_CONTENT)
+async def listen_application_checkout_webhook(
+    db: Session = Depends(get_read_db),
+    current_user: User = Depends(authorize_role(RoleCode.AUDIENCE)),
+    request: CreateApplicationRequest = None,
+    event_id: int = None,
+):
+    return await application_service.listen_application_checkout_webhook(
+        db, current_user, request, event_id
+    )

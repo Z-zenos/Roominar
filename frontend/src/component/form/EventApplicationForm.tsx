@@ -464,7 +464,7 @@ export default function EventApplicationForm({
                         'bg-slate-100 text-gray-500',
                     )}
                     disabled={
-                      auth.user.workplaceName && status === 'authenticated'
+                      auth?.user?.workplaceName && status === 'authenticated'
                     }
                     control={form.control}
                     showError={true}
@@ -509,7 +509,7 @@ export default function EventApplicationForm({
                     multiple={false}
                     className={clsx(
                       'w-full',
-                      auth.user.jobTypeCode &&
+                      auth?.user?.jobTypeCode &&
                         status === 'authenticated' &&
                         'bg-slate-100 text-gray-500 pointer-events-none',
                     )}
@@ -526,7 +526,7 @@ export default function EventApplicationForm({
                     multiple={false}
                     className={clsx(
                       'w-full',
-                      auth.user.industryCode &&
+                      auth?.user?.industryCode &&
                         status === 'authenticated' &&
                         'bg-slate-100 text-gray-500 pointer-events-none',
                     )}
