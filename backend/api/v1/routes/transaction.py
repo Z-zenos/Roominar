@@ -24,6 +24,7 @@ async def create_application_transaction(
     current_user: User = Depends(authorize_role(RoleCode.AUDIENCE)),
     request: CreateApplicationRequest = None,
 ):
+    print(request)
     return await transaction_service.create_application_transaction(
         db, current_user, request
     )

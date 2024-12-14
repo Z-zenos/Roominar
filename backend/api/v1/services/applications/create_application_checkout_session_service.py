@@ -46,7 +46,7 @@ async def create_application_checkout_session(
         for ticket in tickets:
             ticket["requested_quantity"] = next(
                 filter(
-                    lambda ticket: ticket.id == ticket.id,
+                    lambda x: x.id == ticket["id"],
                     create_application_checkout_session_request.tickets,
                 )
             ).quantity

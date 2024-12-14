@@ -1,3 +1,4 @@
+from fastapi import Request
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
 from backend.core.constants import IndustryCode, JobTypeCode
@@ -10,7 +11,7 @@ class ApplicationTicket(BaseModel):
     quantity: int
 
 
-class CreateApplicationRequest(BaseModel):
+class CreateApplicationRequest(BaseModel, Request):
     email: EmailStr
     first_name: str = Field(max_length=255)
     last_name: str | None = Field(max_length=255)

@@ -86,6 +86,7 @@ class Settings(BaseSettings):
 
     STRIPE_SECRET_KEY: Optional[str]
     STRIPE_DEVICE_NAME: Optional[str]
+    STRIPE_WEBHOOK_SECRET: Optional[str]
 
     ENVIRONMENT: Literal["dev", "staging", "production"] = "dev"
 

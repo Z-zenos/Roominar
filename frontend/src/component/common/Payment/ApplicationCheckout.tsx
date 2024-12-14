@@ -13,6 +13,7 @@ import type {
   ErrorResponse400,
 } from '@/src/lib/api/generated';
 import toast from 'react-hot-toast';
+import DotLoader from '../Loader/DotLoader';
 
 // Make sure to call 'loadStripe' outside of a component's render to avoid
 // recreating the 'Stripe' object on every render
@@ -55,13 +56,15 @@ export default function ApplicationCheckout({
 
   return (
     <div id='checkout'>
-      {clientSecret && (
+      {clientSecret ? (
         <EmbeddedCheckoutProvider
           stripe={stripePromise}
           options={{ clientSecret }}
         >
           <EmbeddedCheckout className='max-h-[600px] overflow-y-scroll' />
         </EmbeddedCheckoutProvider>
+      ) : (
+        <DotLoader />
       )}
     </div>
   );

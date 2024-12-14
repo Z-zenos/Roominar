@@ -236,134 +236,136 @@ export default function EventApplicationForm({
                   </p>
                 </div>
               )}
-              {event &&
-                event.tickets.map((ticket: TicketItem, index: number) => (
-                  <UICheckbox
-                    aria-label='tickets'
-                    name='tickets'
-                    classNames={{
-                      base: cn(
-                        'inline-flex mx-0 my-1 w-full bg-content1',
-                        'hover:bg-content2 items-center justify-start',
-                        'cursor-pointer rounded-lg gap-2 p-4 border-2 border-transparent',
-                        'data-[selected=true]:border-primary ',
-                      ),
-                      label: 'w-full m-0',
-                    }}
-                    onValueChange={(selected: boolean) => {
-                      if (selected) {
-                        form.setValue(
-                          `tickets.${index}`,
-                          {
-                            id: ticket.id,
-                            quantity: 0,
-                            price: ticket.price,
-                          },
-                          { shouldValidate: true },
-                        );
-                      } else {
-                        form.setValue(
-                          'tickets',
-                          form
-                            .getValues('tickets')
-                            .filter((t) => t.id !== ticket.id),
-                          { shouldValidate: true },
-                        );
-                      }
-                    }}
-                    key={`t-${ticket.id}`}
-                    isSelected={form
-                      .getValues('tickets')
-                      .some((t) => t.id === ticket.id)}
-                  >
-                    <div className='w-full flex justify-between items-center gap-2'>
-                      <div className='font-normal'>
-                        <h4 className='text-sm font-medium leading-5'>
-                          {ticket.name}
-                        </h4>
-                        {/* <p className='font-light opacity-80 leading-5 text-ss mt-1'>
+              <div className='grid 1200px:grid-cols-1 grid-cols-2'>
+                {event &&
+                  event.tickets.map((ticket: TicketItem, index: number) => (
+                    <UICheckbox
+                      aria-label='tickets'
+                      name='tickets'
+                      classNames={{
+                        base: cn(
+                          'flex max-w-full mx-0 my-1 w-full bg-content1',
+                          'hover:bg-content2 items-center justify-start',
+                          'cursor-pointer rounded-lg gap-2 p-4 border-2 border-transparent',
+                          'data-[selected=true]:border-primary ',
+                        ),
+                        label: 'w-full m-0',
+                      }}
+                      onValueChange={(selected: boolean) => {
+                        if (selected) {
+                          form.setValue(
+                            `tickets.${index}`,
+                            {
+                              id: ticket.id,
+                              quantity: 1,
+                              price: ticket.price,
+                            },
+                            { shouldValidate: true },
+                          );
+                        } else {
+                          form.setValue(
+                            'tickets',
+                            form
+                              .getValues('tickets')
+                              .filter((t) => t.id !== ticket.id),
+                            { shouldValidate: true },
+                          );
+                        }
+                      }}
+                      key={`t-${ticket.id}`}
+                      isSelected={form
+                        .getValues('tickets')
+                        .some((t) => t.id === ticket.id)}
+                    >
+                      <div className='w-full flex justify-between items-center gap-2'>
+                        <div className='font-normal'>
+                          <h4 className='text-sm font-medium leading-5'>
+                            {ticket.name}
+                          </h4>
+                          {/* <p className='font-light opacity-80 leading-5 text-ss mt-1'>
                             {ticket.description}
                           </p> */}
-                        <div className={clsx(styles.between)}>
-                          {ticket.price ? (
-                            <div className='text-sm'>
-                              <span>Price: </span>
-                              <span className='text-primary font-semibold ml-2'>
-                                {ticket.price}
+                          <div className={clsx(styles.between)}>
+                            {ticket.price ? (
+                              <div className='text-sm'>
+                                <span>Price: </span>
+                                <span className='text-primary font-semibold ml-2'>
+                                  {ticket.price}
+                                </span>
+                              </div>
+                            ) : (
+                              <span>Free</span>
+                            )}
+                            <p className='text-sm'>
+                              <span className='text-orange-500 font-semibold mr-1'>
+                                {ticket.quantity}
                               </span>
-                            </div>
-                          ) : (
-                            <span>Free</span>
-                          )}
-                          <p className='text-sm'>
-                            <span className='text-orange-500 font-semibold mr-1'>
-                              {ticket.quantity}
-                            </span>
-                            tickets
-                          </p>
+                              tickets
+                            </p>
+                          </div>
+
+                          <NumberSpinnerInput
+                            onChange={(value) => {
+                              if (
+                                totalTickets + 1 >
+                                event.maxTicketNumberPerAccount
+                              ) {
+                                toast(
+                                  () => (
+                                    <span
+                                      className={clsx(styles.between, 'gap-2')}
+                                    >
+                                      <span>
+                                        You can only select max{' '}
+                                        <b>{event.maxTicketNumberPerAccount}</b>{' '}
+                                        tickets
+                                      </span>
+                                    </span>
+                                  ),
+                                  {
+                                    icon: '⚠️',
+                                  },
+                                );
+                                return;
+                              }
+                              if (value > ticket.quantity) {
+                                toast(
+                                  () => (
+                                    <span
+                                      className={clsx(styles.between, 'gap-2')}
+                                    >
+                                      <span>
+                                        You can only select max{' '}
+                                        <b>{ticket.quantity}</b> {ticket.name}{' '}
+                                        tickets
+                                      </span>
+                                    </span>
+                                  ),
+                                  {
+                                    icon: '⚠️',
+                                  },
+                                );
+                                return;
+                              }
+
+                              form.setValue(
+                                `tickets.${index}`,
+                                {
+                                  id: ticket.id,
+                                  quantity: value,
+                                  price: ticket.price,
+                                },
+                                { shouldValidate: true },
+                              );
+                            }}
+                            value={form.getValues(`tickets.${index}`)?.quantity}
+                            max={event.maxTicketNumberPerAccount}
+                          />
                         </div>
-
-                        <NumberSpinnerInput
-                          onChange={(value) => {
-                            if (
-                              totalTickets + 1 >
-                              event.maxTicketNumberPerAccount
-                            ) {
-                              toast(
-                                () => (
-                                  <span
-                                    className={clsx(styles.between, 'gap-2')}
-                                  >
-                                    <span>
-                                      You can only select max{' '}
-                                      <b>{event.maxTicketNumberPerAccount}</b>{' '}
-                                      tickets
-                                    </span>
-                                  </span>
-                                ),
-                                {
-                                  icon: '⚠️',
-                                },
-                              );
-                              return;
-                            }
-                            if (value > ticket.quantity) {
-                              toast(
-                                () => (
-                                  <span
-                                    className={clsx(styles.between, 'gap-2')}
-                                  >
-                                    <span>
-                                      You can only select max{' '}
-                                      <b>{ticket.quantity}</b> {ticket.name}{' '}
-                                      tickets
-                                    </span>
-                                  </span>
-                                ),
-                                {
-                                  icon: '⚠️',
-                                },
-                              );
-                              return;
-                            }
-
-                            form.setValue(
-                              `tickets.${index}`,
-                              {
-                                id: ticket.id,
-                                quantity: value,
-                                price: ticket.price,
-                              },
-                              { shouldValidate: true },
-                            );
-                          }}
-                          value={form.getValues(`tickets.${index}`)?.quantity}
-                          max={event.maxTicketNumberPerAccount}
-                        />
                       </div>
-                    </div>
-                  </UICheckbox>
-                ))}
+                    </UICheckbox>
+                  ))}
+              </div>
               <div className='grid grid-cols-3'>
                 <div className='col-span-2 py-2 px-4 bg-success-sub text-success-main border border-success-main border-r-0'>
                   <p className='font-semibold'>Amount</p>
@@ -757,15 +759,6 @@ export default function EventApplicationForm({
                       onPress={onClose}
                     >
                       Close
-                    </UIButton>
-                    <UIButton
-                      color='primary'
-                      onPress={() => {
-                        // if (onValueChange) onValueChange();
-                        onClose();
-                      }}
-                    >
-                      Pay Now
                     </UIButton>
                   </ModalFooter>
                 </>
