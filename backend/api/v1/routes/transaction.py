@@ -15,11 +15,11 @@ router = APIRouter()
 
 
 @router.post(
-    "webhook",
+    "/webhook",
     status_code=HTTPStatus.NO_CONTENT,
     responses=authenticated_api_responses,
 )
-async def listen_application_checkout_webhook(
+async def create_application_transaction(
     db: Session = Depends(get_read_db),
     current_user: User = Depends(authorize_role(RoleCode.AUDIENCE)),
     request: CreateApplicationRequest = None,

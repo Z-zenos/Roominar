@@ -51,10 +51,7 @@ async def search_events(
         )
         .join(Organization, Event.organization_id == Organization.id)
         .join(Target, Event.target_id == Target.id)
-        .outerjoin(
-            Application,
-            and_(Application.event_id == Event.id, Application.canceled_at.is_(None)),
-        )
+        .outerjoin(Application, Application.event_id == Event.id)
         .outerjoin(
             TagAssociation,
             and_(

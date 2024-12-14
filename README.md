@@ -26,7 +26,7 @@
 - In root folder, run backend:
 
   ```bash
-    uvicorn backend.main:app --reload
+    uvicorn backend.main:app --reload [--host 0.0.0.0]
   ```
 
 - Open browser and type `http://127.0.0.1:8000/docs`. If the Swagger docs screen appears, it means it has been run

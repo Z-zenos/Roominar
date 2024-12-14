@@ -47,7 +47,6 @@ import { IndustryCode } from '@/src/lib/api/generated';
 import { QuestionTypeCode } from '@/src/lib/api/generated';
 import { RadioGroup, RadioGroupItem } from '@/src/component/common/RadioGroup';
 import Checkbox from '@/src/component/common/Input/Checkbox';
-import { useApplyEventMutation } from '@/src/api/application.api';
 import toast from 'react-hot-toast';
 import { useSession } from 'next-auth/react';
 import { BiSolidSchool } from 'react-icons/bi';
@@ -59,6 +58,7 @@ import DotLoader from '../common/Loader/DotLoader';
 import NumberSpinnerInput from '../common/Input/NumberSpinnerInput';
 import { useMemo } from 'react';
 import ApplicationCheckout from '../common/Payment/ApplicationCheckout';
+import { useCreateApplicationTransactionMutation } from '@/src/api/transaction.api';
 
 interface EventApplicationFormProps {
   slug: string;
@@ -101,19 +101,20 @@ export default function EventApplicationForm({
     }, 0);
   }, [JSON.stringify(form.getValues('tickets'))]);
 
-  const { trigger, isMutating: isApplying } = useApplyEventMutation({
-    onSuccess() {
-      toast.success('Apply event successfully!');
-      form.reset();
-    },
-    onError(error: ApiException<unknown>) {
-      toast.error(
-        (error.body as ErrorResponse400)?.message ??
-          (error.body as ErrorResponse400)?.errorCode ??
-          'Unknown Error 😵',
-      );
-    },
-  });
+  const { trigger, isMutating: isApplying } =
+    useCreateApplicationTransactionMutation({
+      onSuccess() {
+        toast.success('Apply event successfully!');
+        form.reset();
+      },
+      onError(error: ApiException<unknown>) {
+        toast.error(
+          (error.body as ErrorResponse400)?.message ??
+            (error.body as ErrorResponse400)?.errorCode ??
+            'Unknown Error 😵',
+        );
+      },
+    });
 
   // function handleApplyEvent(data: EventApplicationFormSchema) {
   //   trigger({

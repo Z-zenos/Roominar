@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from sqlmodel import Session, select
 
 from backend.core.config import settings
@@ -20,7 +18,7 @@ async def cancel_application(db: Session, current_user: User, application_id: in
         select(Application).where(
             Application.id == application_id,
             Application.user_id == current_user.id,
-            Application.canceled_at.is_(None),
+            # Application.canceled_at.is_(None),
         )
     ).one_or_none()
 
@@ -31,7 +29,7 @@ async def cancel_application(db: Session, current_user: User, application_id: in
         )
 
     try:
-        application.canceled_at = datetime.now()
+        # application.canceled_at = datetime.now()
         # application.status = ApplicationStatusCode.REJECTED
         save(db, application)
 

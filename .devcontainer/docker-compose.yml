@@ -45,9 +45,10 @@ services:
 
   stripe:
     image: stripe/stripe-cli
+    container_name: stripe-cli
     # In case Stripe CLI is used to perform local webhook testing, set x-fastapistripe-webhook-secret custom header to output of Stripe CLI.
     network_mode: host
-    command: listen --forward-to ${APP_URL}/api/v1/transactions/webhook
+    command: listen --forward-to ${APP_URL}:${APP_PORT}/api/v1/transactions/webhook
     depends_on:
       - app
     environment:

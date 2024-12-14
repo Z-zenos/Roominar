@@ -37,10 +37,10 @@ async def _listing_events(
             func.coalesce(func.count(Application.event_id), 0).label("applied_number"),
         )
         .outerjoin(Application, Event.id == Application.event_id)
-        .where(
-            Application.canceled_at.is_(None),
-            # Application.status == ApplicationStatusCode.APPROVED,
-        )
+        # .where(
+        #     Application.canceled_at.is_(None),
+        #     Application.status == ApplicationStatusCode.APPROVED,
+        # )
         .group_by(Event.id)
         .subquery()
     )

@@ -31,7 +31,7 @@ async def listing_top_organization_events(db: Session, organization_id: int):
                 Event.published_at.isnot(None),
                 Event.organization_id == organization_id,
                 Event.status == EventStatusCode.PUBLIC,
-                Application.canceled_at.is_(None),
+                # Application.canceled_at.is_(None),
             )
             .group_by(Event.id, Application.id, Bookmark.id)
             .order_by(desc(column("rank")))

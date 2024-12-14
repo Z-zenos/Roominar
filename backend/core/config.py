@@ -85,6 +85,7 @@ class Settings(BaseSettings):
     AUD_FRONTEND_URL: Optional[str]
 
     STRIPE_SECRET_KEY: Optional[str]
+    STRIPE_DEVICE_NAME: Optional[str]
 
     ENVIRONMENT: Literal["dev", "staging", "production"] = "dev"
 
