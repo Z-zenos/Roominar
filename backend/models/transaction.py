@@ -12,6 +12,18 @@ class Transaction(BaseModel, table=True):
     application_id: int = Field(foreign_key="applications.id")
     ticket_id: int = Field(foreign_key="tickets.id")
     quantity: int
-    status: Optional[TransactionStatusCode] = Field(sa_type=Enum(TransactionStatusCode))
+    total_amount: float  # Total amount for the transaction
+    refunded_amount: Optional[float] = Field(default=0.0)  # Amount refunded (if any)
+    status: TransactionStatusCode = Field(
+        sa_type=Enum(TransactionStatusCode), default=TransactionStatusCode.PENDING
+    )  # Default status
     type: Optional[TransactionTypeCode] = Field(sa_type=Enum(TransactionTypeCode))
-    total_amount: Optional[float]
+
+    # Stripe-related fields
+    stripe_payment_intent_id: Optional[str] = Field(
+        default=None
+    )  # Stripe payment intent ID
+    stripe_checkout_session_id: Optional[str] = Field(default=None)  # Stripe session ID
+
+    # Metadata and tracking
+    reference: str = Field(unique=True, nullable=False)  # Unique transaction reference

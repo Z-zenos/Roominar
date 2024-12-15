@@ -47,8 +47,8 @@ export default function ApplicationCheckout({
 
   useEffect(() => {
     trigger({
-      eventId,
       createApplicationCheckoutSessionRequest: {
+        eventId,
         tickets: tickets.filter((ticket) => ticket),
       },
     });

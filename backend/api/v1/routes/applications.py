@@ -32,7 +32,7 @@ async def cancel_application(
 
 
 @router.post(
-    "/checkout-session/{event_id}",
+    "/checkout-session",
     responses=public_api_responses,
     response_model=CreateApplicationCheckoutSessionResponse,
 )
@@ -40,9 +40,8 @@ async def create_application_checkout_session(
     db: Session = Depends(get_read_db),
     current_user: User = Depends(get_current_user),
     create_application_checkout_session_request: CreateApplicationCheckoutSessionRequest = None,
-    event_id: int = None,
 ):
     client_secret = await application_service.create_application_checkout_session(
-        db, current_user, create_application_checkout_session_request, event_id
+        db, current_user, create_application_checkout_session_request
     )
     return CreateApplicationCheckoutSessionResponse(client_secret=client_secret)

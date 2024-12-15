@@ -40,6 +40,8 @@ class ErrorCode:
     ERR_MAXIMUM_TICKETS_PER_APPLICATION_REACHED = (
         "ERR_MAXIMUM_TICKETS_PER_APPLICATION_REACHED"
     )
+    ERR_STRIPE_ERROR = "ERR_STRIPE_ERROR"
+    ERR_INVALID_TICKET = "ERR_INVALID_TICKET"
 
 
 class ErrorMessage:
@@ -86,3 +88,5 @@ class ErrorMessage:
     ERR_MAXIMUM_TICKETS_PER_APPLICATION_REACHED = (
         "The maximum tickets per application reached."
     )
+    ERR_STRIPE_ERROR = "An error occurred while processing the payment with Stripe."
+    ERR_INVALID_TICKET = "Invalid ticket."

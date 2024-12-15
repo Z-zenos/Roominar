@@ -1,8 +1,11 @@
-from fastapi import Request
-from pydantic import BaseModel, EmailStr, Field, field_validator
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
 from backend.core.constants import IndustryCode, JobTypeCode
-from backend.schemas.common import industry_code_validator, job_type_code_validator
+from backend.schemas.common import (
+    industry_code_validator,
+    job_type_code_validator,
+    phone_validator,
+)
 from backend.schemas.survey_response_result import SurveyResponseResultItem
 
 
@@ -11,11 +14,14 @@ class ApplicationTicket(BaseModel):
     quantity: int
 
 
-class CreateApplicationRequest(BaseModel, Request):
+class CreateApplicationCheckoutSessionRequest(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    event_id: int
     email: EmailStr
     first_name: str = Field(max_length=255)
     last_name: str | None = Field(max_length=255)
-    workplace_name: str = Field(max_length=255)
+    workplace_name: str | None = Field(max_length=255)
     phone: str = Field(max_length=20)
     industry_code: IndustryCode | None = None
     job_type_code: JobTypeCode | None = None
@@ -23,11 +29,7 @@ class CreateApplicationRequest(BaseModel, Request):
     tickets: list[ApplicationTicket] = Field([])
     is_agreed: bool
 
-    @field_validator(
-        "first_name",
-        "last_name",
-        "workplace_name",
-    )
+    @field_validator("first_name", "phone", "email")
     def validate_empty(cls, v):
         if not v.strip():
             raise ValueError("Fields can't be empty")
@@ -41,6 +43,10 @@ class CreateApplicationRequest(BaseModel, Request):
             )
         return v
 
+    @field_validator("phone")
+    def phone_validator(cls, v):
+        return phone_validator(v)
+
     @field_validator("industry_code")
     def industry_code_validator(cls, v):
         return industry_code_validator(v)
@@ -48,10 +54,6 @@ class CreateApplicationRequest(BaseModel, Request):
     @field_validator("job_type_code")
     def job_type_code_validator(cls, v):
         return job_type_code_validator(v)
-
-
-class CreateApplicationCheckoutSessionRequest(BaseModel):
-    tickets: list[ApplicationTicket] = Field([])
 
 
 class CreateApplicationCheckoutSessionResponse(BaseModel):
