@@ -40,6 +40,7 @@ import type {
   ApiException,
   ErrorResponse400,
   QuestionAnswerItem,
+  SurveyResponseResultItem,
   TicketItem,
 } from '@/src/lib/api/generated';
 import { JobTypeCode } from '@/src/lib/api/generated';
@@ -58,7 +59,6 @@ import DotLoader from '../common/Loader/DotLoader';
 import NumberSpinnerInput from '../common/Input/NumberSpinnerInput';
 import { useMemo } from 'react';
 import ApplicationCheckout from '../common/Payment/ApplicationCheckout';
-import { useCreateApplicationTransactionMutation } from '@/src/api/transaction.api';
 
 interface EventApplicationFormProps {
   slug: string;
@@ -100,43 +100,6 @@ export default function EventApplicationForm({
       return acc + ticket.quantity;
     }, 0);
   }, [JSON.stringify(form.getValues('tickets'))]);
-
-  const { trigger, isMutating: isApplying } =
-    useCreateApplicationTransactionMutation({
-      onSuccess() {
-        toast.success('Apply event successfully!');
-        form.reset();
-      },
-      onError(error: ApiException<unknown>) {
-        toast.error(
-          (error.body as ErrorResponse400)?.message ??
-            (error.body as ErrorResponse400)?.errorCode ??
-            'Unknown Error 😵',
-        );
-      },
-    });
-
-  // function handleApplyEvent(data: EventApplicationFormSchema) {
-  //   trigger({
-  //     eventId: event.id,
-  //     createApplicationRequest: {
-  //       email: data.email,
-  //       firstName: data.firstName,
-  //       lastName: data.lastName,
-  //       workplaceName: data.workplaceName,
-  //       phone: data.phone,
-  //       industryCode: data.industryCode,
-  //       jobTypeCode: data.jobTypeCode,
-  //       surveyResponseResults:
-  //         data.surveyResponseResults as SurveyResponseResultItem[],
-  //       tickets: data.tickets.map((ticket) => ({
-  //         id: ticket.id,
-  //         quantity: ticket.quantity,
-  //       })),
-  //       isAgreed: data.isAgreed,
-  //     },
-  //   });
-  // }
 
   return (
     <Form {...form}>
@@ -750,6 +713,19 @@ export default function EventApplicationForm({
                         id: ticket.id,
                         quantity: ticket.quantity,
                       }))}
+                      email={form.getValues('email')}
+                      firstName={form.getValues('firstName')}
+                      lastName={form.getValues('lastName')}
+                      phone={form.getValues('phone')}
+                      workplaceName={form.getValues('workplaceName')}
+                      industryCode={form.getValues('industryCode')}
+                      jobTypeCode={form.getValues('jobTypeCode')}
+                      surveyResponseResults={
+                        form.getValues(
+                          'surveyResponseResults',
+                        ) as SurveyResponseResultItem[]
+                      }
+                      isAgreed={form.getValues('isAgreed')}
                     />
                   </ModalBody>
                   <ModalFooter>

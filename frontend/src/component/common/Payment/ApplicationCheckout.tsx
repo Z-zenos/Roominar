@@ -11,6 +11,9 @@ import type {
   ApiException,
   ApplicationTicket,
   ErrorResponse400,
+  IndustryCode,
+  JobTypeCode,
+  SurveyResponseResultItem,
 } from '@/src/lib/api/generated';
 import toast from 'react-hot-toast';
 import DotLoader from '../Loader/DotLoader';
@@ -24,11 +27,19 @@ const stripePromise = loadStripe(
 interface ApplicationCheckoutProps {
   eventId: number;
   tickets: ApplicationTicket[];
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  workplaceName: string;
+  industryCode: IndustryCode;
+  jobTypeCode: JobTypeCode;
+  surveyResponseResults: SurveyResponseResultItem[];
+  isAgreed: boolean;
 }
 
 export default function ApplicationCheckout({
-  eventId,
-  tickets,
+  ...props
 }: ApplicationCheckoutProps) {
   const [clientSecret, setClientSecret] = useState('');
 
@@ -48,11 +59,20 @@ export default function ApplicationCheckout({
   useEffect(() => {
     trigger({
       createApplicationCheckoutSessionRequest: {
-        eventId,
-        tickets: tickets.filter((ticket) => ticket),
+        eventId: props.eventId,
+        tickets: props.tickets.filter((ticket) => ticket),
+        firstName: props.firstName,
+        lastName: props.lastName,
+        email: props.email,
+        phone: props.phone,
+        workplaceName: props.workplaceName,
+        industryCode: props.industryCode,
+        jobTypeCode: props.jobTypeCode,
+        surveyResponseResults: props.surveyResponseResults,
+        isAgreed: props.isAgreed,
       },
     });
-  }, [trigger, JSON.stringify(tickets), eventId]);
+  }, [trigger, JSON.stringify(props)]);
 
   return (
     <div id='checkout'>
