@@ -1,5 +1,4 @@
 import json
-from datetime import datetime, timezone
 from uuid import uuid4
 
 import stripe
@@ -29,16 +28,8 @@ async def handle_application_transaction(db: Session, request: Request):
         event = stripe.Webhook.construct_event(
             payload, sig, settings.STRIPE_WEBHOOK_SECRET
         )
-    except (ValueError, stripe.SignatureVerificationError):
-        raise HTTPException(status_code=400, detail="Invalid Stripe webhook signature")
 
-    # Handle checkout session completion
-    if (
-        event["type"] == "checkout.session.completed"
-        or event["type"] == "payment_intent.succeeded"
-    ):
         session = event["data"]["object"]
-
         # Extract metadata
         metadata = session.get("metadata", {})
         transaction_reference = metadata["transaction_reference"]
@@ -56,47 +47,51 @@ async def handle_application_transaction(db: Session, request: Request):
         )
         tickets = json.loads(metadata.get("tickets", []))
 
-        try:
-            # Fetch the event
-            event = db.exec(select(Event).where(Event.id == event_id)).one_or_none()
-            if not event:
-                raise BadRequestException(
-                    ErrorCode.ERR_EVENT_NOT_FOUND, ErrorMessage.ERR_EVENT_NOT_FOUND
-                )
-
-            # Create Application
-            application = Application(
-                event_id=event_id,
-                user_id=user_id,
-                email=email,
-                first_name=first_name,
-                last_name=last_name,
-                workplace_name=workplace_name,
-                phone=phone,
-                industry_code=(
-                    IndustryCode(industry_code.split(".")[1]) if industry_code else None
-                ),
-                job_type_code=(
-                    JobTypeCode(job_type_code.split(".")[1]) if job_type_code else None
-                ),
+        # Fetch the event
+        event = db.exec(select(Event).where(Event.id == event_id)).one_or_none()
+        if not event:
+            raise BadRequestException(
+                ErrorCode.ERR_EVENT_NOT_FOUND, ErrorMessage.ERR_EVENT_NOT_FOUND
             )
-            application = save(db, application)
 
-            # Create Survey Response Results
-            if survey_response_results:
-                survey_responses = [
-                    SurveyResponseResult(
-                        event_id=event_id,
-                        application_id=application.id,
-                        email=email,
-                        question_id=srr["question_id"],
-                        answers_ids=srr["answers_ids"],
-                        answer_text=srr.get("answer_text"),
-                    )
-                    for srr in survey_response_results
-                ]
-                db.bulk_save_objects(survey_responses)
+        # Create Application
+        application = Application(
+            event_id=event_id,
+            user_id=user_id,
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+            workplace_name=workplace_name,
+            phone=phone,
+            industry_code=(
+                IndustryCode(industry_code.split(".")[1]) if industry_code else None
+            ),
+            job_type_code=(
+                JobTypeCode(job_type_code.split(".")[1]) if job_type_code else None
+            ),
+        )
+        application = save(db, application)
 
+        # Create Survey Response Results
+        if survey_response_results:
+            survey_responses = [
+                SurveyResponseResult(
+                    event_id=event_id,
+                    application_id=application.id,
+                    email=email,
+                    question_id=srr["question_id"],
+                    answers_ids=srr["answers_ids"],
+                    answer_text=srr.get("answer_text"),
+                )
+                for srr in survey_response_results
+            ]
+            db.bulk_save_objects(survey_responses)
+
+        # Handle checkout session completion
+        if (
+            event["type"] == "checkout.session.completed"
+            or event["type"] == "payment_intent.succeeded"
+        ):
             # Create Transactions for each ticket in the session
             new_transactions = []
             for ticket_data in tickets:
@@ -139,15 +134,35 @@ async def handle_application_transaction(db: Session, request: Request):
                         stripe_payment_intent_id=session["payment_intent"],
                         stripe_checkout_session_id=session["id"],
                         reference=f"{transaction_reference}-{uuid4()}",
-                        completed_at=datetime.now(timezone.utc),
                     )
                 )
 
             db.bulk_save_objects(new_transactions)
             db.commit()
 
-        except Exception as e:
-            db.rollback()
-            raise HTTPException(status_code=500, detail=str(e))
+            return {"status": "success"}
 
-    return {"status": "success"}
+        elif event["type"] == "payment_intent.payment_failed":
+            new_transactions = []
+            for ticket_data in tickets:
+                new_transactions.append(
+                    Transaction(
+                        application_id=application.id,
+                        ticket_id=ticket_id,
+                        quantity=requested_quantity,
+                        total_amount=ticket.price * requested_quantity,
+                        status=TransactionStatusCode.FAILED,
+                        stripe_payment_intent_id=session["payment_intent"],
+                        stripe_checkout_session_id=session["id"],
+                        reference=f"{transaction_reference}-{uuid4()}",
+                    )
+                )
+
+            db.bulk_save_objects(new_transactions)
+            db.commit()
+
+    except (ValueError, stripe.SignatureVerificationError):
+        raise HTTPException(status_code=400, detail="Invalid Stripe webhook signature")
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
