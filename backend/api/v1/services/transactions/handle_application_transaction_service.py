@@ -1,4 +1,5 @@
-from datetime import datetime
+import json
+from datetime import datetime, timezone
 from uuid import uuid4
 
 import stripe
@@ -6,6 +7,7 @@ from fastapi import HTTPException, Request
 from sqlmodel import Session, func, select
 
 from backend.core.config import settings
+from backend.core.constants import IndustryCode, JobTypeCode
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.models.application import Application
@@ -31,7 +33,10 @@ async def handle_application_transaction(db: Session, request: Request):
         raise HTTPException(status_code=400, detail="Invalid Stripe webhook signature")
 
     # Handle checkout session completion
-    if event["type"] == "checkout.session.completed":
+    if (
+        event["type"] == "checkout.session.completed"
+        or event["type"] == "payment_intent.succeeded"
+    ):
         session = event["data"]["object"]
 
         # Extract metadata
@@ -46,8 +51,10 @@ async def handle_application_transaction(db: Session, request: Request):
         phone = metadata.get("phone")
         industry_code = metadata.get("industry_code")
         job_type_code = metadata.get("job_type_code")
-        survey_response_results = metadata.get("survey_response_results", [])
-        tickets = metadata.get("tickets", [])
+        survey_response_results = json.loads(
+            metadata.get("survey_response_results", [])
+        )
+        tickets = json.loads(metadata.get("tickets", []))
 
         try:
             # Fetch the event
@@ -66,8 +73,12 @@ async def handle_application_transaction(db: Session, request: Request):
                 last_name=last_name,
                 workplace_name=workplace_name,
                 phone=phone,
-                industry_code=industry_code,
-                job_type_code=job_type_code,
+                industry_code=(
+                    IndustryCode(industry_code.split(".")[1]) if industry_code else None
+                ),
+                job_type_code=(
+                    JobTypeCode(job_type_code.split(".")[1]) if job_type_code else None
+                ),
             )
             application = save(db, application)
 
@@ -125,8 +136,10 @@ async def handle_application_transaction(db: Session, request: Request):
                         quantity=requested_quantity,
                         total_amount=ticket.price * requested_quantity,
                         status=TransactionStatusCode.PURCHASED,
+                        stripe_payment_intent_id=session["payment_intent"],
+                        stripe_checkout_session_id=session["id"],
                         reference=f"{transaction_reference}-{uuid4()}",
-                        completed_at=datetime.utcnow(),
+                        completed_at=datetime.now(timezone.utc),
                     )
                 )
 

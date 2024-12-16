@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 from uuid import uuid4
 
@@ -20,9 +21,9 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 async def create_application_checkout_session(
     db: Session,
     current_user: User,
-    create_application_checkout_session_request: CreateApplicationCheckoutSessionRequest,
+    cre_app_ch_ss_request: CreateApplicationCheckoutSessionRequest,
 ):
-    event_id = create_application_checkout_session_request.event_id
+    event_id = cre_app_ch_ss_request.event_id
     try:
         # CHECK IF EVENT IS STILL OPEN FOR APPLY
         event = db.exec(
@@ -57,10 +58,7 @@ async def create_application_checkout_session(
                 .outerjoin(Transaction, Transaction.ticket_id == Ticket.id)
                 .where(
                     Ticket.id.in_(
-                        [
-                            ticket.id
-                            for ticket in create_application_checkout_session_request.tickets
-                        ]
+                        [ticket.id for ticket in cre_app_ch_ss_request.tickets]
                     )
                 )
                 .group_by(Ticket.id)
@@ -70,18 +68,25 @@ async def create_application_checkout_session(
         )
 
         application = db.exec(
-            select(Application).where(
+            select(
+                Application.__table__.columns,
+                func.count(Transaction.id).label("purchased_ticket_number"),
+            )
+            .where(
                 Application.event_id == event_id,
                 Application.user_id == current_user.id,
             )
+            .outerjoin(Transaction, Transaction.application_id == Application.id)
+            .where(Transaction.status == TransactionStatusCode.PURCHASED)
+            .group_by(Application.id)
         ).one_or_none()
 
         if application and (
-            application.successful_purchased_ticket_number
+            application.purchased_ticket_number
             + sum(
                 map(
                     lambda ticket: ticket.quantity,
-                    create_application_checkout_session_request.tickets,
+                    cre_app_ch_ss_request.tickets,
                 )
             )
             > event.max_ticket_number_per_account
@@ -101,7 +106,7 @@ async def create_application_checkout_session(
             if next(
                 (
                     request_ticket
-                    for request_ticket in create_application_checkout_session_request.tickets
+                    for request_ticket in cre_app_ch_ss_request.tickets
                     if request_ticket.id == ticket["id"]
                     and request_ticket.quantity > ticket["remain_quantity"]
                 ),
@@ -114,7 +119,7 @@ async def create_application_checkout_session(
             ticket["requested_quantity"] = next(
                 filter(
                     lambda x: x.id == ticket["id"],
-                    create_application_checkout_session_request.tickets,
+                    cre_app_ch_ss_request.tickets,
                 )
             ).quantity
             total_amount += ticket["price"] * ticket["requested_quantity"]
@@ -141,24 +146,31 @@ async def create_application_checkout_session(
                 "transaction_reference": transaction_reference,
                 "event_id": event_id,
                 "user_id": current_user.id,
-                "email": create_application_checkout_session_request.email,
-                "first_name": create_application_checkout_session_request.first_name,
-                "last_name": create_application_checkout_session_request.last_name,
-                "workplace_name": create_application_checkout_session_request.workplace_name,
-                "phone": create_application_checkout_session_request.phone,
-                "industry_code": create_application_checkout_session_request.industry_code,
-                "job_type_code": create_application_checkout_session_request.job_type_code,
-                "tickets": create_application_checkout_session_request.tickets,
+                "email": cre_app_ch_ss_request.email,
+                "first_name": cre_app_ch_ss_request.first_name,
+                "last_name": cre_app_ch_ss_request.last_name,
+                "workplace_name": cre_app_ch_ss_request.workplace_name,
+                "phone": cre_app_ch_ss_request.phone,
+                "industry_code": cre_app_ch_ss_request.industry_code,
+                "job_type_code": cre_app_ch_ss_request.job_type_code,
+                "tickets": json.dumps(
+                    [ticket.model_dump() for ticket in cre_app_ch_ss_request.tickets],
+                    separators=(",", ":"),
+                ),
                 "survey_response_results": (
-                    create_application_checkout_session_request.survey_response_results
+                    json.dumps(
+                        [
+                            srr.model_dump()
+                            for srr in cre_app_ch_ss_request.survey_response_results
+                        ],
+                        separators=(",", ":"),
+                    )
                 ),
             },
             client_reference_id=transaction_reference,
             mode="payment",
             ui_mode="embedded",
-            return_url=f"""
-                {settings.AUD_FRONTEND_URL}/events/{event.slug}/apply/result
-            """,
+            return_url=f"{settings.AUD_FRONTEND_URL}/events/{event.slug}/apply/result",
         )
 
         return session.client_secret

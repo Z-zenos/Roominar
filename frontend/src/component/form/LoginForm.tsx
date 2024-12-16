@@ -60,7 +60,7 @@ export default function LoginForm({ roleCode }: LoginFormProps) {
       if (res.status === 200) {
         const session = await getSession();
         setIsLoading(false);
-        if (searchParams.has('callback')) {
+        if (searchParams.has('callbackUrl')) {
           router.back();
         } else {
           router.push(initialScreen?.[toCamelCase(session?.user).roleCode]);

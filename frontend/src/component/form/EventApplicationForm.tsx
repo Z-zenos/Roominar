@@ -37,8 +37,6 @@ import {
 } from '@nextui-org/react';
 import type {
   AnswerItem,
-  ApiException,
-  ErrorResponse400,
   QuestionAnswerItem,
   SurveyResponseResultItem,
   TicketItem,

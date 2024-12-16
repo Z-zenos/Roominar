@@ -16,6 +16,5 @@ class Application(BaseModel, table=True):
     last_name: Optional[str] = Field(sa_type=String(255))
     workplace_name: Optional[str] = Field(sa_type=String(255))
     phone: Optional[str] = Field(sa_type=String(20))
-    successful_purchased_ticket_number: Optional[int]
     industry_code: Optional[IndustryCode] = Field(sa_type=Enum(IndustryCode))
     job_type_code: Optional[JobTypeCode] = Field(sa_type=Enum(JobTypeCode))
