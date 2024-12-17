@@ -55,7 +55,7 @@ import Timeline from '@/src/component/common/Timeline';
 import { Alert, AlertDescription, AlertTitle } from '../common/Alert';
 import DotLoader from '../common/Loader/DotLoader';
 import NumberSpinnerInput from '../common/Input/NumberSpinnerInput';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import ApplicationCheckout from '../common/Payment/ApplicationCheckout';
 
 interface EventApplicationFormProps {
@@ -71,7 +71,7 @@ export default function EventApplicationForm({
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const form = useForm<EventApplicationFormSchema>({
-    mode: 'all',
+    mode: 'onChange',
     defaultValues: {
       email: auth?.user?.email || '',
       tickets: [],
@@ -79,10 +79,10 @@ export default function EventApplicationForm({
       lastName: auth?.user?.lastName || '',
       workplaceName: auth?.user?.workplaceName || '',
       phone: auth?.user?.phone || '',
-      industryCode: (auth?.user?.industryCode as IndustryCode) || undefined,
-      jobTypeCode: (auth?.user?.jobTypeCode as JobTypeCode) || undefined,
+      industryCode: (auth?.user?.industryCode as IndustryCode) || null,
+      jobTypeCode: (auth?.user?.jobTypeCode as JobTypeCode) || null,
       surveyResponseResults: [],
-      isAgreed: false,
+      isAgreed: null,
     },
     resolver: zodResolver(eventApplicationFormSchema),
   });
@@ -684,10 +684,11 @@ export default function EventApplicationForm({
               title='Go To Payment'
               type='submit'
               className='w-80 mt-5 mx-auto'
-              // disabled={
-              //   !form.formState.isValid || event?.applicationEndAt < new Date()
-              // }
-              // isLoading={isApplying}
+              disabled={
+                !form.getValues('isAgreed') ||
+                event?.applicationEndAt < new Date() ||
+                form.getValues('tickets').length === 0
+              }
               onClick={onOpen}
             />
           </div>
