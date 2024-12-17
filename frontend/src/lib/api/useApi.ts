@@ -9,6 +9,7 @@ import {
   TagsApi,
   TargetsApi,
   TicketsApi,
+  TransactionsApi,
   UsersApi,
 } from '@/src/lib/api/generated';
 
@@ -24,6 +25,7 @@ function useApi() {
     surveys: new SurveysApi(config),
     targets: new TargetsApi(config),
     tickets: new TicketsApi(config),
+    transactions: new TransactionsApi(config),
   };
 }
 

@@ -524,7 +524,7 @@ def upgrade() -> None:
         sa.Column("ticket_id", sa.Integer(), nullable=False),
         sa.Column(
             "status",
-            sa.Enum("PENDING", "CONFIRMED", "CANCELED", name="applicationstatuscode"),
+            sa.Enum("PENDING", "APPROVED", "REJECTED", name="applicationstatuscode"),
             nullable=True,
         ),
         sa.Column("canceled_at", sa.DateTime(timezone=True), nullable=True),

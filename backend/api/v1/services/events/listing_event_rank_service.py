@@ -24,7 +24,7 @@ async def listing_event_rank(db: Session):
             .where(
                 Event.published_at.isnot(None),
                 Event.status == EventStatusCode.PUBLIC,
-                Application.canceled_at.is_(None),
+                # Application.canceled_at.is_(None),
             )
             .group_by(Event.id, Application.id, Bookmark.id)
             .order_by(desc(column("rank")))

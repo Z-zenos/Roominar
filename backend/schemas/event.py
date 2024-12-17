@@ -4,7 +4,6 @@ from fastapi import Query
 from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, field_validator
 
 from backend.core.constants import (
-    ApplicationStatusCode,
     CityCode,
     EventMeetingToolCode,
     EventSortByCode,
@@ -30,7 +29,7 @@ class SearchEventsItem(BaseModel):
     name: str
     start_at: datetime
     end_at: datetime
-    application_number: int
+    total_ticket_number: int
     application_start_at: datetime
     application_end_at: datetime
     cover_image_url: str
@@ -107,7 +106,7 @@ class GetEventDetailResponse(BaseModel):
     organization_description: str | None = None
     tickets: list[TicketItem]
     organization_contact_url: str | None = None
-    application_number: int
+    total_ticket_number: int
     applied_number: int
     status: EventStatusCode
     application_form_url: str | None = None
@@ -117,6 +116,7 @@ class GetEventDetailResponse(BaseModel):
     is_organization_followed: bool | None = None
     organization_event_number: int | None = None
     organization_follower_number: int | None = None
+    max_ticket_number_per_account: int | None = None
 
 
 class ListingTopOrganizationEventsItem(BaseModel):
@@ -163,7 +163,7 @@ class MyEventItem(BaseModel):
     application_start_at: datetime
     application_end_at: datetime
     applied_number: int | None = None
-    application_number: int
+    total_ticket_number: int
     application_id: int | None = None
     cover_image_url: str
     organize_place_name: str | None = None
@@ -178,7 +178,6 @@ class MyEventItem(BaseModel):
     published_at: datetime
     tags: list[TagItem] = Field([])
     canceled_at: datetime | None = None
-    application_status: ApplicationStatusCode | None = None
 
 
 class ListingMyEventsQueryParams(BaseModel):
@@ -205,7 +204,7 @@ class PublishEventRequest(BaseModel):
     application_start_at: datetime
     application_end_at: datetime
 
-    application_number: int
+    total_ticket_number: int
     cover_image_url: str = Field(max_length=2048)
     gallery: list[str] | None = Field([])
 
@@ -294,7 +293,7 @@ class ListingOrganizationEventsItem(BaseModel):
     meeting_url: str | None = None
     meeting_tool_code: EventMeetingToolCode
     # tickets: list[TicketItem] = Field([])
-    application_number: int
+    total_ticket_number: int
     applied_number: int | None = None
     status: EventStatusCode
     # survey: SurveyDetail | None = None

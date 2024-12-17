@@ -27,7 +27,7 @@ function CustomInput(
   return (
     <div
       className={clsx(
-        'group-input h-11 bg-white overflow-hidden cursor-pointer shadow-[2px_2px_10px_rgba(0,_0,_0,_0.075)] border  rounded-lg relative flex justify-between pl-1 gap-1 items-center hover:shadow-[0_1px_6px_rgb(0, 111, 238)]  transition-all',
+        'text-input-id group-input h-11 bg-white overflow-hidden cursor-pointer shadow-[2px_2px_10px_rgba(0,_0,_0,_0.075)] border  rounded-lg relative flex justify-between pl-1 gap-1 items-center hover:shadow-[0_1px_6px_rgb(0, 111, 238)]  transition-all',
         error?.message
           ? 'border-error-main hover:border-error-main'
           : 'border-gray-main hover:border-primary',

@@ -19,14 +19,14 @@
 
 - Use keyboard shortcut `Ctrl + Shift + P` -> type: `Dev Containers: Open Folder in Container` and enter. This command
   will reopen vscode, run project in Dev Container Environment and install all necessary packages for backend and frontend
-  environment. Wait 4-5 minutes for completely installing.
+  environment. Wait about ~7 minutes for completely installing.
 
 ### 3. Test run backend.
 
 - In root folder, run backend:
 
   ```bash
-    uvicorn backend.main:app --reload
+    uvicorn backend.main:app --reload --host 0.0.0.0
   ```
 
 - Open browser and type `http://127.0.0.1:8000/docs`. If the Swagger docs screen appears, it means it has been run
@@ -91,5 +91,32 @@
   ```bash
     pnpm dev
   ```
-# Roominar
-# Roominar
+
+### 9. Run Stripe CLI
+
+- Get `STRIPE_SECRET_KEY` from Stripe Dashboard Developer API Key.
+- Start `stripe/stripe-cli` container. It will show logs below:
+
+  ```bash
+    You have not configured API keys yet. Running `stripe login`...
+    Your pairing code is: glee-zeal-evenly-amazed
+    This pairing code verifies your authentication with Stripe.
+    To authenticate with Stripe, please go to: https://dashboard.stripe.com/stripecli/confirm_auth?t=jfasjflasjfslfjasjfdlfjas
+    Waiting for confirmation...
+  ```
+
+- Click link and authorize your stripe cli running in your container. If log show:
+
+  ```bash
+  > Done! The Stripe CLI is configured for Roominar with account id acct_1QUqPiC....
+
+  Please note: this key will expire after 90 days, at which point you'll need to re-authenticate.
+  Checking for new versions...
+
+  Getting ready...
+  Ready! You are using Stripe API Version [2024-11-20.acacia]. Your webhook signing secret is whsec_57d2370ec7a0865c8... (^C to quit)
+  ```
+
+  That means you are successfully can testing stripe with your app!
+
+# ROOMINAR

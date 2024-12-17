@@ -14,7 +14,6 @@ class ErrorCode:
     ERR_INVALID_PASSWORD = "ERR_INVALID_PASSWORD"
     ERR_INVALID_URL = "ERR_INVALID_URL"
     ERR_EVENT_NO_LONGER_OPEN_APPLY = "ERR_EVENT_NO_LONGER_OPEN_APPLY"
-    ERR_APPLICATION_ALREADY_EXISTED = "ERR_APPLICATION_ALREADY_EXISTED"
     ERR_TICKET_SOLD_OUT = "ERR_TICKET_SOLD_OUT"
     ERR_USER_NOT_VERIFIED = "ERR_USER_NOT_VERIFIED"
     ERR_GOOGLE_ACCOUNT_NOT_VERIFIED = "ERR_GOOGLE_ACCOUNT_NOT_VERIFIED"
@@ -38,6 +37,11 @@ class ErrorCode:
     ERR_TARGET_ALREADY_EXISTED = "ERR_TARGET_ALREADY_EXISTED"
     ERR_ORGANIZATION_FOLLOW_EXISTED = "ERR_ORGANIZATION_FOLLOW_EXISTED"
     ERR_ORGANIZATION_FOLLOW_NOT_FOUND = "ERR_ORGANIZATION_FOLLOW_NOT_FOUND"
+    ERR_MAXIMUM_TICKETS_PER_APPLICATION_REACHED = (
+        "ERR_MAXIMUM_TICKETS_PER_APPLICATION_REACHED"
+    )
+    ERR_STRIPE_ERROR = "ERR_STRIPE_ERROR"
+    ERR_INVALID_TICKET = "ERR_INVALID_TICKET"
 
 
 class ErrorMessage:
@@ -54,7 +58,6 @@ class ErrorMessage:
     ERR_INVALID_PASSWORD = "Invalid password."
     ERR_INVALID_URL = "Invalid url."
     ERR_EVENT_NO_LONGER_OPEN_APPLY = "The event was no longer open apply."
-    ERR_APPLICATION_ALREADY_EXISTED = "The application has already existed."
     ERR_TICKET_SOLD_OUT = "Ticket sold out."
     ERR_USER_NOT_VERIFIED = "The user has not verified."
     ERR_GOOGLE_ACCOUNT_NOT_VERIFIED = "The google account is not verified."
@@ -82,3 +85,8 @@ class ErrorMessage:
     ERR_TARGET_ALREADY_EXISTED = "The target already existed."
     ERR_ORGANIZATION_FOLLOW_EXISTED = "The organization follow existed."
     ERR_ORGANIZATION_FOLLOW_NOT_FOUND = "The organization follow doesn't exist."
+    ERR_MAXIMUM_TICKETS_PER_APPLICATION_REACHED = (
+        "The maximum tickets per application reached."
+    )
+    ERR_STRIPE_ERROR = "An error occurred while processing the payment with Stripe."
+    ERR_INVALID_TICKET = "Invalid ticket."

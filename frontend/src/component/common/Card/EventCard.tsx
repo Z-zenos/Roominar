@@ -126,8 +126,8 @@ function EventCard({
                 <Chip
                   content={
                     status === 'authenticated'
-                      ? `${event?.appliedNumber || 0} / ${event?.applicationNumber}`
-                      : event.applicationNumber + ''
+                      ? `${event?.appliedNumber || 0} / ${event?.totalTicketNumber}`
+                      : event.totalTicketNumber + ''
                   }
                   leftIcon={<FaUserFriends className='text-sm' />}
                   type='info'
@@ -176,8 +176,8 @@ function EventCard({
                   <Chip
                     content={
                       status === 'authenticated'
-                        ? `${event?.appliedNumber || 0} / ${event?.applicationNumber}`
-                        : event.applicationNumber + ''
+                        ? `${event?.appliedNumber || 0} / ${event?.totalTicketNumber}`
+                        : event.totalTicketNumber + ''
                     }
                     leftIcon={<FaUserFriends className='text-sm' />}
                     type='info'

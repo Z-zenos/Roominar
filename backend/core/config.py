@@ -7,7 +7,6 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from backend.utils.logging import CustomFormatter
 
-
 # create logger with 'spam_application'
 logger = logging.getLogger("Roominar")
 logger.setLevel(logging.DEBUG)
@@ -84,6 +83,10 @@ class Settings(BaseSettings):
     APP_URL: Optional[str]
 
     AUD_FRONTEND_URL: Optional[str]
+
+    STRIPE_SECRET_KEY: Optional[str]
+    STRIPE_DEVICE_NAME: Optional[str]
+    STRIPE_WEBHOOK_SECRET: Optional[str]
 
     ENVIRONMENT: Literal["dev", "staging", "production"] = "dev"
 

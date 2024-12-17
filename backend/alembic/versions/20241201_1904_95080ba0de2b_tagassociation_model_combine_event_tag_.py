@@ -71,10 +71,6 @@ def upgrade() -> None:
             sa.Enum("EVENT", "ORGANIZATION", "USER", name="tagassociationentitycode"),
             nullable=False,
         ),
-        sa.ForeignKeyConstraint(
-            ["tag_id"],
-            ["tags.id"],
-        ),
         sa.PrimaryKeyConstraint("id"),
     )
     op.drop_table("user_tags")

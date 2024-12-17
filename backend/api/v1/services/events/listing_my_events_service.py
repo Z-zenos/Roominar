@@ -4,7 +4,7 @@ import pytz
 from sqlmodel import Boolean, Session, and_, case, func, or_, select
 
 from backend.api.v1.services.tags.get_event_tags_service import get_event_tags
-from backend.core.constants import ApplicationStatusCode, EventStatusCode
+from backend.core.constants import EventStatusCode
 from backend.models import Application, Bookmark, Event, Organization, Ticket, User
 from backend.schemas.event import ListingMyEventsQueryParams, MyEventStatusCode
 
@@ -32,7 +32,7 @@ async def _listing_events(
         .outerjoin(Application, Event.id == Application.event_id)
         .where(
             Application.canceled_at.is_(None),
-            Application.status == ApplicationStatusCode.CONFIRMED,
+            # Application.status == ApplicationStatusCode.APPROVED,
         )
         .group_by(Event.id)
         .subquery()
@@ -51,7 +51,7 @@ async def _listing_events(
             Event.application_end_at,
             AppliedNumber.c.applied_number,
             Application.id.label("application_id"),
-            Event.application_number,
+            Event.total_ticket_number,
             Event.cover_image_url,
             Event.organize_place_name,
             Event.organize_address,
@@ -159,7 +159,7 @@ async def _build_filters(current_user: User, query_params: ListingMyEventsQueryP
             and_(
                 Application.canceled_at.is_(None),
                 Application.user_id == current_user.id,
-                Application.status == ApplicationStatusCode.CONFIRMED,
+                # Application.status == ApplicationStatusCode.APPROVED,
             )
         )
 
@@ -179,7 +179,7 @@ async def _build_filters(current_user: User, query_params: ListingMyEventsQueryP
             and_(
                 Application.canceled_at.isnot(None),
                 Application.user_id == current_user.id,
-                Application.status == ApplicationStatusCode.CANCELED,
+                # Application.status == ApplicationStatusCode.REJECTED,
             )
         )
     else:
@@ -187,7 +187,7 @@ async def _build_filters(current_user: User, query_params: ListingMyEventsQueryP
             and_(
                 Application.canceled_at.is_(None),
                 or_(
-                    Application.status != ApplicationStatusCode.CANCELED,
+                    # Application.status != ApplicationStatusCode.REJECTED,
                     Application.status.is_(None),
                 ),
             )
@@ -197,7 +197,7 @@ async def _build_filters(current_user: User, query_params: ListingMyEventsQueryP
         filters.append(
             and_(
                 Application.user_id == current_user.id,
-                Application.status == ApplicationStatusCode.PENDING,
+                # Application.status == ApplicationStatusCode.PENDING,
             )
         )
 

@@ -1,0 +1,3 @@
+from .handle_application_transaction_service import handle_application_transaction
+
+all = handle_application_transaction

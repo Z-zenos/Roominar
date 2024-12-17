@@ -165,16 +165,17 @@ class TicketStatusCode(str, Enum):
     CANCELED = "CANCELED"
 
 
-class ApplicationStatusCode(str, Enum):
+class TransactionStatusCode(str, Enum):
     PENDING = "PENDING"
-    CONFIRMED = "CONFIRMED"
+    PURCHASED = "PURCHASED"
     CANCELED = "CANCELED"
-
-
-class ApplicationPaymentStatusCode(str, Enum):
-    PENDING = "PENDING"
-    PAID = "PAID"
     FAILED = "FAILED"
+
+
+class TransactionTypeCode(str, Enum):
+    DONATE = "DONATE"
+    REFUND_CANCEL_TICKET = "REFUND_CANCEL_TICKET"
+    PURCHASED_TICKET = "PURCHASED_TICKET"
 
 
 class LoginMethodCode(str, Enum):

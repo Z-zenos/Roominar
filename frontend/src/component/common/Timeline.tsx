@@ -99,7 +99,7 @@ function Timeline({
               <div
                 className={clsx(
                   'w-10 h-10 mx-auto rounded-full text-lg flex items-center',
-                  progress[0] === 100
+                  progress[0] >= 100
                     ? 'bg-green-500 text-white'
                     : 'bg-white text-black border border-gray-200',
                 )}
@@ -142,7 +142,7 @@ function Timeline({
               <div
                 className={clsx(
                   'w-10 h-10 mx-auto rounded-full text-lg flex items-center',
-                  progress[1] === 100
+                  progress[1] >= 100
                     ? 'bg-green-500 text-white'
                     : 'bg-white text-black border border-gray-200',
                 )}
@@ -183,7 +183,7 @@ function Timeline({
               <div
                 className={clsx(
                   'w-10 h-10 mx-auto rounded-full text-lg flex items-center',
-                  progress[2] === 100
+                  progress[2] >= 100
                     ? 'bg-green-500 text-white'
                     : 'bg-white text-black border border-gray-200',
                 )}

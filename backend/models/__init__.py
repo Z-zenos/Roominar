@@ -12,6 +12,7 @@ from .tag_association import TagAssociation
 from .tag_group import TagGroup
 from .target import Target
 from .ticket import Ticket
+from .transaction import Transaction
 from .user import User
 
 all = (
@@ -30,4 +31,5 @@ all = (
     Question,
     TagAssociation,
     Follow,
+    Transaction,
 )
