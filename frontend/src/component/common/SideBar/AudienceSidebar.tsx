@@ -63,9 +63,9 @@ export default function AudienceSidebar({
       className='sticky h-screen'
       {...props}
     >
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarMenu className='mt-16'>
+      <SidebarContent className='bg-slate-50 border-l border-l-primary'>
+        <SidebarGroup className='p-0'>
+          <SidebarMenu className='mt-20'>
             {sidebarMenu.map((item) => (
               <Collapsible
                 key={item.title}
@@ -77,15 +77,15 @@ export default function AudienceSidebar({
                     asChild
                     tooltip={item.title}
                     className={clsx(
-                      '!text-sm',
+                      '!text-sm py-6 my-1',
                       pathname.includes(item.url)
-                        ? 'bg-emerald-50 !text-primary [&_svg]:fill-primary [&_g]:fill-primary [&_path]:stroke-primary font-semibold border border-primary rounded-sm'
+                        ? 'bg-emerald-50 !text-primary [&_svg]:fill-primary [&_g]:fill-primary [&_path]:stroke-primary font-semibold border border-primary border-l-0 rounded-none'
                         : '!text-dark-main !font-light',
                     )}
                   >
                     <a
                       href={item.url}
-                      className='[&_svg]:w-[25px] [&_svg]:h-[25px]'
+                      className='[&_svg]:w-[30px] [&_svg]:h-[30px]'
                     >
                       {item.icon}
                       <span>{item.title}</span>

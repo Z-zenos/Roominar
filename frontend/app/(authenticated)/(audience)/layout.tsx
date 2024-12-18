@@ -15,7 +15,7 @@ export default function RootLayout({ children }) {
     <div>
       <Navbar />
 
-      <div className='flex 1400px:px-[15%] px-0 w-full'>
+      <div className='flex 1400px:px-[15%] px-0 w-full max-h-screen overflow-y-clip'>
         <SidebarProvider>
           <AudienceSidebar />
           <SidebarInset>
