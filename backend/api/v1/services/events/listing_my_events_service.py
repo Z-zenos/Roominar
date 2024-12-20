@@ -1,11 +1,11 @@
-from datetime import datetime
+from sqlmodel import Boolean, Session, and_, case, desc, func, or_, select
 
-import pytz
-from sqlmodel import Boolean, Session, and_, case, func, or_, select
-
-from backend.api.v1.services.tags.get_event_tags_service import get_event_tags
-from backend.core.constants import EventStatusCode
-from backend.models import Application, Bookmark, Event, Organization, Ticket, User
+from backend.core.constants import EventStatusCode, TagAssociationEntityCode
+from backend.models import Bookmark, Event, Organization, Ticket, User
+from backend.models.application import Application
+from backend.models.tag import Tag
+from backend.models.tag_association import TagAssociation
+from backend.models.transaction import Transaction
 from backend.schemas.event import ListingMyEventsQueryParams, MyEventStatusCode
 
 
@@ -24,18 +24,55 @@ async def _listing_events(
     filters: list,
     query_params: ListingMyEventsQueryParams,
 ):
-    AppliedNumber = (
+    TicketTransactions = (
         select(
-            Event.id.label("event_id"),
-            func.coalesce(func.count(Application.event_id), 0).label("applied_number"),
+            Application.event_id.label("event_id"),
+            func.json_agg(
+                func.json_build_object(
+                    "ticket_id",
+                    Ticket.id,
+                    "ticket_name",
+                    Ticket.name,
+                    "ticket_price",
+                    Ticket.price,
+                    "ticket_type",
+                    Ticket.type,
+                    "event_access_link_url",
+                    Ticket.access_link_url,
+                    "ticket_description",
+                    Ticket.description,
+                    "transaction_id",
+                    Transaction.id,
+                    "purchased_quantity",
+                    Transaction.quantity,
+                    "total_amount",
+                    Transaction.total_amount,
+                    "purchased_at",
+                    Transaction.created_at,
+                    "transaction_status",
+                    Transaction.status,
+                )
+            ).label("ticket_transactions"),
         )
-        .outerjoin(Application, Event.id == Application.event_id)
-        .where(
-            Application.canceled_at.is_(None),
-            # Application.status == ApplicationStatusCode.APPROVED,
+        .join(Transaction, Transaction.ticket_id == Ticket.id)
+        .join(Application, Application.id == Transaction.application_id)
+        .where(Application.user_id == current_user.id)
+        .group_by(Application.event_id, Transaction.created_at)
+        .order_by(desc(Transaction.created_at))
+        .cte()
+    )
+
+    EventTags = (
+        select(
+            TagAssociation.entity_id.label("event_id"),
+            func.json_agg(func.json_build_object("id", Tag.id, "name", Tag.name)).label(
+                "tags"
+            ),
         )
-        .group_by(Event.id)
-        .subquery()
+        .join(Tag, Tag.id == TagAssociation.tag_id)
+        .where(TagAssociation.entity_code == TagAssociationEntityCode.EVENT)
+        .group_by(TagAssociation.entity_id)
+        .cte()
     )
 
     query = (
@@ -43,14 +80,11 @@ async def _listing_events(
             Event.id,
             Event.slug,
             Organization.name.label("organization_name"),
-            Ticket.name.label("ticket_name"),
             Event.name,
             Event.start_at,
             Event.end_at,
             Event.application_start_at,
             Event.application_end_at,
-            AppliedNumber.c.applied_number,
-            Application.id.label("application_id"),
             Event.total_ticket_number,
             Event.cover_image_url,
             Event.organize_place_name,
@@ -62,53 +96,32 @@ async def _listing_events(
             Event.published_at,
             case(
                 (
-                    Application.user_id.cast(Boolean),
-                    True,
-                ),
-                else_=False,
-            ).label("is_applied"),
-            case(
-                (
                     Bookmark.user_id.cast(Boolean),
                     True,
                 ),
                 else_=False,
             ).label("is_bookmarked"),
-            Application.canceled_at,
-            Application.status.label("application_status"),
+            TicketTransactions.c.ticket_transactions,
+            EventTags.c.tags,
         )
         .join(Organization, Event.organization_id == Organization.id)
-        .outerjoin(AppliedNumber, Event.id == AppliedNumber.c.event_id)
-        .outerjoin(
-            Application,
-            and_(
-                Application.event_id == Event.id, Application.user_id == current_user.id
-            ),
-        )
-        .outerjoin(
-            Ticket,
-            and_(Ticket.event_id == Event.id, Application.ticket_id == Ticket.id),
-        )
         .outerjoin(
             Bookmark,
             and_(Bookmark.event_id == Event.id, Bookmark.user_id == current_user.id),
         )
+        .outerjoin(TicketTransactions, TicketTransactions.c.event_id == Event.id)
+        .outerjoin(EventTags, EventTags.c.event_id == Event.id)
         .where(*filters)
         .limit(query_params.per_page)
         .offset(query_params.per_page * (query_params.page - 1))
         .order_by(Event.start_at)
     )
 
-    events = db.exec(query).mappings().all()
+    print(query)
 
-    result = {event.id: dict(event) for event in events}
-    event_ids = list(result.keys())
-    event_tags = get_event_tags(db, event_ids=event_ids)
+    my_events = db.exec(query).mappings().all()
 
-    for item in event_tags:
-        result[item.id]["tags"] = item.tags
-
-    return list(result.values())
+    return my_events
 
 
 async def _count_events(
@@ -119,19 +132,8 @@ async def _count_events(
     total = (
         db.scalar(
             select(func.count(Event.id))
-            .outerjoin(
-                Application,
-                and_(
-                    Event.id == Application.event_id,
-                    Application.user_id == current_user.id,
-                ),
-            )
-            .outerjoin(
-                Bookmark,
-                and_(
-                    Event.id == Bookmark.event_id, Bookmark.user_id == current_user.id
-                ),
-            )
+            .outerjoin(Bookmark, Event.id == Bookmark.event_id)
+            .outerjoin(Application, Application.event_id == Event.id)
             .where(*filters)
         )
         or 0
@@ -154,75 +156,75 @@ async def _build_filters(current_user: User, query_params: ListingMyEventsQueryP
     if query_params.status == MyEventStatusCode.BOOKMARKED:
         filters.append(Bookmark.user_id == current_user.id)
 
-    if query_params.status == MyEventStatusCode.APPLIED:
-        filters.append(
-            and_(
-                Application.canceled_at.is_(None),
-                Application.user_id == current_user.id,
-                # Application.status == ApplicationStatusCode.APPROVED,
-            )
-        )
+    # if query_params.status == MyEventStatusCode.APPLIED:
+    #     filters.append(
+    #         and_(
+    #             Application.canceled_at.is_(None),
+    #             Application.user_id == current_user.id,
+    #             # Application.status == ApplicationStatusCode.APPROVED,
+    #         )
+    #     )
 
-    if query_params.status == MyEventStatusCode.ENDED:
-        filters.append(
-            and_(
-                or_(
-                    Application.user_id == current_user.id,
-                    Bookmark.user_id == current_user.id,
-                ),
-                Event.end_at < datetime.now(pytz.utc),
-            )
-        )
+    # if query_params.status == MyEventStatusCode.ENDED:
+    #     filters.append(
+    #         and_(
+    #             or_(
+    #                 Application.user_id == current_user.id,
+    #                 Bookmark.user_id == current_user.id,
+    #             ),
+    #             Event.end_at < datetime.now(pytz.utc),
+    #         )
+    #     )
 
-    if query_params.status == MyEventStatusCode.CANCELED:
-        filters.append(
-            and_(
-                Application.canceled_at.isnot(None),
-                Application.user_id == current_user.id,
-                # Application.status == ApplicationStatusCode.REJECTED,
-            )
-        )
-    else:
-        filters.append(
-            and_(
-                Application.canceled_at.is_(None),
-                or_(
-                    # Application.status != ApplicationStatusCode.REJECTED,
-                    Application.status.is_(None),
-                ),
-            )
-        )
+    # if query_params.status == MyEventStatusCode.CANCELED:
+    #     filters.append(
+    #         and_(
+    #             Application.canceled_at.isnot(None),
+    #             Application.user_id == current_user.id,
+    #             # Application.status == ApplicationStatusCode.REJECTED,
+    #         )
+    #     )
+    # else:
+    #     filters.append(
+    #         and_(
+    #             Application.canceled_at.is_(None),
+    #             or_(
+    #                 # Application.status != ApplicationStatusCode.REJECTED,
+    #                 Application.status.is_(None),
+    #             ),
+    #         )
+    #     )
 
-    if query_params.status == MyEventStatusCode.PENDING:
-        filters.append(
-            and_(
-                Application.user_id == current_user.id,
-                # Application.status == ApplicationStatusCode.PENDING,
-            )
-        )
+    # if query_params.status == MyEventStatusCode.PENDING:
+    #     filters.append(
+    #         and_(
+    #             Application.user_id == current_user.id,
+    #             # Application.status == ApplicationStatusCode.PENDING,
+    #         )
+    #     )
 
-    if query_params.status == MyEventStatusCode.IN_PROGRESS:
-        filters.append(
-            and_(
-                or_(
-                    Application.user_id == current_user.id,
-                    Bookmark.user_id == current_user.id,
-                ),
-                Event.start_at < datetime.now(pytz.utc),
-                Event.end_at > datetime.now(pytz.utc),
-            )
-        )
+    # if query_params.status == MyEventStatusCode.IN_PROGRESS:
+    #     filters.append(
+    #         and_(
+    #             or_(
+    #                 Application.user_id == current_user.id,
+    #                 Bookmark.user_id == current_user.id,
+    #             ),
+    #             Event.start_at < datetime.now(pytz.utc),
+    #             Event.end_at > datetime.now(pytz.utc),
+    #         )
+    #     )
 
-    if query_params.status == MyEventStatusCode.DEFERRED:
-        filters.append(
-            and_(
-                or_(
-                    Application.user_id == current_user.id,
-                    Bookmark.user_id == current_user.id,
-                ),
-                Event.end_at > datetime.now(pytz.utc),
-                Event.status == EventStatusCode.DEFERRED,
-            )
-        )
+    # if query_params.status == MyEventStatusCode.DEFERRED:
+    #     filters.append(
+    #         and_(
+    #             or_(
+    #                 Application.user_id == current_user.id,
+    #                 Bookmark.user_id == current_user.id,
+    #             ),
+    #             Event.end_at > datetime.now(pytz.utc),
+    #             Event.status == EventStatusCode.DEFERRED,
+    #         )
+    #     )
 
     return filters

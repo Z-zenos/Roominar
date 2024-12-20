@@ -111,7 +111,7 @@ async def handle_application_transaction(db: Session, request: Request):
                     db.scalar(
                         select(func.sum(Transaction.quantity)).where(
                             Transaction.ticket_id == ticket_id,
-                            Transaction.status == TransactionStatusCode.PURCHASED,
+                            Transaction.status == TransactionStatusCode.SUCCESS,
                         )
                     )
                     or 0
@@ -130,7 +130,7 @@ async def handle_application_transaction(db: Session, request: Request):
                         ticket_id=ticket_id,
                         quantity=requested_quantity,
                         total_amount=ticket.price * requested_quantity,
-                        status=TransactionStatusCode.PURCHASED,
+                        status=TransactionStatusCode.SUCCESS,
                         stripe_payment_intent_id=session["payment_intent"],
                         stripe_checkout_session_id=session["id"],
                         reference=f"{transaction_reference}-{uuid4()}",

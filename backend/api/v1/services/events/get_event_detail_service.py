@@ -164,7 +164,7 @@ def _get_tickets(db: Session, event_id: int):
                 Transaction,
                 and_(
                     Transaction.ticket_id == Ticket.id,
-                    Transaction.status == TransactionStatusCode.PURCHASED,
+                    Transaction.status == TransactionStatusCode.SUCCESS,
                 ),
             )
             .order_by(Ticket.id)

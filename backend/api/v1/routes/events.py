@@ -18,6 +18,8 @@ from backend.models import User
 from backend.schemas.event import (
     GetEventDetailResponse,
     ListingEventRankResponse,
+    ListingMyEventsQueryParams,
+    ListingMyEventsResponse,
     ListingRelatedEventsResponse,
     PublishEventRequest,
     SearchEventsQueryParams,
@@ -83,6 +85,27 @@ async def listing_event_rank(db: Session = Depends(get_read_db)):
 #         total=total,
 #         data=events
 #     )
+
+
+@router.get(
+    "/my-events",
+    response_model=ListingMyEventsResponse,
+    responses=authenticated_api_responses,
+)
+async def listing_my_events(
+    db: Session = Depends(get_read_db),
+    current_user: User = Depends(authorize_role(RoleCode.AUDIENCE)),
+    query_params: ListingMyEventsQueryParams = Depends(ListingMyEventsQueryParams),
+):
+    events, total = await events_service.listing_my_events(
+        db, current_user, query_params
+    )
+    return ListingMyEventsResponse(
+        page=query_params.page,
+        per_page=query_params.per_page,
+        total=total,
+        data=events,
+    )
 
 
 @router.get(

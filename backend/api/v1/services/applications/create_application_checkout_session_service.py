@@ -46,7 +46,7 @@ async def create_application_checkout_session(
                         (
                             (
                                 func.max(Transaction.status)
-                                == TransactionStatusCode.PURCHASED
+                                == TransactionStatusCode.SUCCESS
                             ),
                             func.greatest(
                                 Ticket.quantity - func.sum(Transaction.quantity), 0
@@ -77,7 +77,7 @@ async def create_application_checkout_session(
                 Application.user_id == current_user.id,
             )
             .outerjoin(Transaction, Transaction.application_id == Application.id)
-            .where(Transaction.status == TransactionStatusCode.PURCHASED)
+            .where(Transaction.status == TransactionStatusCode.SUCCESS)
             .group_by(Application.id)
         ).one_or_none()
 

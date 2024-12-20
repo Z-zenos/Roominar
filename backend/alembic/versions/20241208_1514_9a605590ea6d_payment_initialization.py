@@ -45,7 +45,7 @@ def upgrade() -> None:
             "status",
             sa.Enum(
                 "PENDING",
-                "PURCHASED",
+                "SUCCESS",
                 "CANCELED",
                 "FAILED",
                 name="transactionstatuscode",

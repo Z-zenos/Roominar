@@ -55,7 +55,7 @@ function MyEvents() {
   return (
     <Form {...form}>
       <form
-        className='1400px:px-[5%] px-0 w-full'
+        className='px-5 w-full mt-3'
         onSubmit={form.handleSubmit(handleSearch)}
       >
         <div className={clsx(styles.between, 'flex-wrap gap-6')}>

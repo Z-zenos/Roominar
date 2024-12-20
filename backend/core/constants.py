@@ -167,7 +167,7 @@ class TicketStatusCode(str, Enum):
 
 class TransactionStatusCode(str, Enum):
     PENDING = "PENDING"
-    PURCHASED = "PURCHASED"
+    SUCCESS = "SUCCESS"
     CANCELED = "CANCELED"
     FAILED = "FAILED"
 
