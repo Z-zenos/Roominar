@@ -294,3 +294,8 @@ class TagAssociationEntityCode(str, Enum):
 class FollowEntityCode(str, Enum):
     ORGANIZATION = "ORGANIZATION"
     SPEAKER = "SPEAKER"
+
+
+class AttendeeSortByCode(str, Enum):
+    APPLY_AT = "APPLY_AT"
+    NAME = "NAME"

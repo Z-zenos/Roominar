@@ -28,7 +28,7 @@ async def listing_organization_events(
 async def _listing_events(
     db: Session,
     filters: list,
-    sort_by,
+    sort_by: ManageEventSortByCode,
     query_params: ListingOrganizationEventsQueryParams,
 ):
     AppliedNumber = (

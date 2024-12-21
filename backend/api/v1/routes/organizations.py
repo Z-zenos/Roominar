@@ -21,22 +21,13 @@ from backend.schemas.event import (
     ListingOrganizationEventsResponse,
     ListingTopOrganizationEventsResponse,
 )
-from backend.schemas.organization import ListingOngoingEventOrganizationsResponse
+from backend.schemas.organization import (
+    ListingAttendeesQueryParams,
+    ListingAttendeesResponse,
+    ListingOngoingEventOrganizationsResponse,
+)
 
 router = APIRouter()
-
-
-@router.get(
-    "/{organization_id}/top-events",
-    response_model=ListingTopOrganizationEventsResponse,
-    responses=public_api_responses,
-)
-async def listing_top_organization_events(
-    organization_id: int = None,
-    db: Session = Depends(get_read_db),
-):
-    events = await events_service.listing_top_organization_events(db, organization_id)
-    return ListingTopOrganizationEventsResponse(events=events)
 
 
 @router.post(
@@ -73,6 +64,22 @@ async def listing_organization_events(
 
 
 @router.get(
+    "/attendees",
+    response_model=ListingAttendeesResponse,
+    responses=authenticated_api_responses,
+)
+async def listing_attendees(
+    db: Session = Depends(get_read_db),
+    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+    query_params: ListingAttendeesQueryParams = Depends(ListingAttendeesQueryParams),
+):
+    attendees, total = await organizations_service.listing_attendees(
+        db, organizer, query_params
+    )
+    return ListingAttendeesResponse(data=attendees, total=total, page=1, per_page=10)
+
+
+@router.get(
     "/ongoing-event-organizations",
     response_model=ListingOngoingEventOrganizationsResponse,
     responses=public_api_responses,
@@ -90,6 +97,19 @@ async def listing_organizations_of_ongoing_event(
         page=1,
         per_page=len(organizations),
     )
+
+
+@router.get(
+    "/{organization_id}/top-events",
+    response_model=ListingTopOrganizationEventsResponse,
+    responses=public_api_responses,
+)
+async def listing_top_organization_events(
+    organization_id: int = None,
+    db: Session = Depends(get_read_db),
+):
+    events = await events_service.listing_top_organization_events(db, organization_id)
+    return ListingTopOrganizationEventsResponse(events=events)
 
 
 @router.post(
