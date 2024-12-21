@@ -3,6 +3,7 @@ import type {
   EventsApiCreateEventBookmarkRequest,
   EventsApiDeleteEventBookmarkRequest,
   EventsApiGetEventDetailRequest,
+  EventsApiListingMyEventsRequest,
   EventsApiListingRelatedEventsRequest,
   EventsApiListingTicketsOfEventRequest,
   EventsApiPublishEventRequest,
@@ -134,5 +135,16 @@ export const useListingOrganizationEventsQuery = (
     queryKey: ['listing-organization-events', params],
     queryFn: async () =>
       await api.organizations.listingOrganizationEvents(params),
+  });
+};
+
+export const useListingMyEventsQuery = (
+  params?: EventsApiListingMyEventsRequest,
+) => {
+  params = toCamelCase(params);
+  const api = useApi();
+  return useQuery({
+    queryKey: ['listing-my-events', params],
+    queryFn: async () => await api.events.listingMyEvents(params),
   });
 };

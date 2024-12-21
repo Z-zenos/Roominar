@@ -175,9 +175,10 @@ class MyEventItem(BaseModel):
     is_applied: bool | None = None
     is_bookmarked: bool | None = None
     published_at: datetime
-    tags: list[TagItem] | None = Field([])
-    ticket_transactions: list[TicketTransaction] | None = Field([])
+    tags: list[TagItem] = Field([])
+    ticket_transactions: list[TicketTransaction] = Field([])
     # canceled_at: datetime | None = None
+    total_tickets_sold: int | None = 0
 
 
 class ListingMyEventsQueryParams(BaseModel):

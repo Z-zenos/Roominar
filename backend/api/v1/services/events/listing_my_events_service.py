@@ -1,4 +1,4 @@
-from sqlmodel import Boolean, Session, and_, case, desc, func, or_, select
+from sqlmodel import Boolean, Session, and_, case, desc, func, literal, or_, select
 
 from backend.core.constants import EventStatusCode, TagAssociationEntityCode
 from backend.models import Bookmark, Event, Organization, Ticket, User
@@ -14,7 +14,7 @@ async def listing_my_events(
 ):
     filters = await _build_filters(current_user, query_params)
     events = await _listing_events(db, current_user, filters, query_params)
-    total = await _count_events(db, current_user, filters)
+    total = await _count_events(db, filters)
     return events, total
 
 
@@ -75,6 +75,18 @@ async def _listing_events(
         .cte()
     )
 
+    # Only take care of the total tickets sold of events that the user has applied
+    TotalTicketsSold = (
+        select(
+            Application.event_id,
+            func.sum(Transaction.quantity).label("total_tickets_sold"),
+        )
+        .join(Application, Application.id == Transaction.application_id)
+        .where(Application.user_id == current_user.id)
+        .group_by(Application.event_id)
+        .cte()
+    )
+
     query = (
         select(
             Event.id,
@@ -101,23 +113,37 @@ async def _listing_events(
                 ),
                 else_=False,
             ).label("is_bookmarked"),
-            TicketTransactions.c.ticket_transactions,
-            EventTags.c.tags,
+            case(
+                (TicketTransactions.c.ticket_transactions.is_(None), literal("[]")),
+                else_=TicketTransactions.c.ticket_transactions,
+            ).label("ticket_transactions"),
+            case(
+                (EventTags.c.tags.is_(None), literal("[]")),
+                else_=EventTags.c.tags,
+            ).label("tags"),
+            case(
+                (
+                    TicketTransactions.c.ticket_transactions.is_(None),
+                    False,
+                ),
+                else_=True,
+            ).label("is_applied"),
+            TotalTicketsSold.c.total_tickets_sold,
         )
         .join(Organization, Event.organization_id == Organization.id)
         .outerjoin(
             Bookmark,
             and_(Bookmark.event_id == Event.id, Bookmark.user_id == current_user.id),
         )
+        .outerjoin(Application, Application.event_id == Event.id)
         .outerjoin(TicketTransactions, TicketTransactions.c.event_id == Event.id)
         .outerjoin(EventTags, EventTags.c.event_id == Event.id)
+        .outerjoin(TotalTicketsSold, TotalTicketsSold.c.event_id == Event.id)
         .where(*filters)
         .limit(query_params.per_page)
         .offset(query_params.per_page * (query_params.page - 1))
         .order_by(Event.start_at)
     )
-
-    print(query)
 
     my_events = db.exec(query).mappings().all()
 
@@ -126,7 +152,6 @@ async def _listing_events(
 
 async def _count_events(
     db: Session,
-    current_user: User,
     filters: list,
 ):
     total = (

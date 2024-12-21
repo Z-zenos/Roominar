@@ -1,6 +1,5 @@
 'use client';
 
-import { useListingMyEventsQuery } from '@/src/api/user.api';
 import EventCard from '@/src/component/common/Card/EventCard';
 import DotLoader from '@/src/component/common/Loader/DotLoader';
 import Nodata from '@/src/component/common/Nodata';
@@ -9,8 +8,8 @@ import { Form, FormInput } from '@/src/component/form/Form';
 import { styles } from '@/src/constants/styles.constant';
 import useWindowDimensions from '@/src/hooks/useWindowDimension';
 import type {
+  EventsApiListingMyEventsRequest,
   MyEventItem,
-  UsersApiListingMyEventsRequest,
 } from '@/src/lib/api/generated';
 import { MyEventStatusCode } from '@/src/lib/api/generated';
 import { searchQuery } from '@/src/utils/app.util';
@@ -22,6 +21,7 @@ import { IoSearchOutline } from 'react-icons/io5';
 import debounce from 'lodash.debounce';
 import ReactPaginate from 'react-paginate';
 import { useState } from 'react';
+import { useListingMyEventsQuery } from '@/src/api/event.api';
 
 function MyEvents() {
   const searchParams = useSearchParams();
@@ -33,7 +33,7 @@ function MyEvents() {
   const [page, setPage] = useState<number>(data?.page || 1);
   const { width } = useWindowDimensions();
 
-  const form = useForm<UsersApiListingMyEventsRequest>({
+  const form = useForm<EventsApiListingMyEventsRequest>({
     mode: 'all',
     defaultValues: {
       keyword: searchParams.get('keyword') || '',
@@ -43,8 +43,8 @@ function MyEvents() {
     },
   });
 
-  function handleSearch(data: UsersApiListingMyEventsRequest = {}) {
-    const filters: UsersApiListingMyEventsRequest = {
+  function handleSearch(data: EventsApiListingMyEventsRequest = {}) {
+    const filters: EventsApiListingMyEventsRequest = {
       ...form.getValues(),
       ...data,
     };
