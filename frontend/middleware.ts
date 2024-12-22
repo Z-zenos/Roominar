@@ -36,6 +36,7 @@ export const pathPermissionMaster = {
     '/organization/events/create',
     '/organization/surveys',
     '/organization/surveys/create',
+    '/organization/attendees',
     '/icon.ico',
   ],
   ADMIN: ['/admin/users', '/admin/organizers', '/login', '/organization/login'],

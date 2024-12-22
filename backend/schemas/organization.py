@@ -28,7 +28,6 @@ class ListingOngoingEventOrganizationsResponse(
 class ListingAttendeesQueryParams(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True)
 
-    event_id: int | None = Field(Query(None))
     keyword: str | None = Field(
         Query(None, description="user name | event name | phone | email")
     )
@@ -45,8 +44,9 @@ class ListingAttendeesQueryParams(BaseModel):
 
 
 class ListingAttendeesItem(BaseModel):
-    user_id: int
+    id: int
     user_name: str
+    email: str
     event_id: int
     event_name: str
     job_type_code: JobTypeCode | None = None

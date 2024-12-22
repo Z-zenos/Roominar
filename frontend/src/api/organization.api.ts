@@ -4,9 +4,11 @@ import useSWRMutation from 'swr/mutation';
 import type {
   OrganizationsApiCreateOrganizationFollowRequest,
   OrganizationsApiDeleteOrganizationFollowRequest,
+  OrganizationsApiListingAttendeesRequest,
   OrganizationsApiRegisterOrganizationRequest,
 } from '../lib/api/generated';
 import { useQuery } from '@tanstack/react-query';
+import { toCamelCase } from '../utils/app.util';
 
 export const useRegisterOrganizationMutation = <T>(
   options?: SWRMutationConfiguration<number, T>,
@@ -69,4 +71,19 @@ export const useDeleteOrganizationFollowMutation = <T>(
       await api.organizations.deleteOrganizationFollow(arg),
     options,
   );
+};
+
+export const useListingAttendeesQuery = (
+  params?: OrganizationsApiListingAttendeesRequest,
+) => {
+  params = toCamelCase(params);
+  if (params.applyAtFrom) {
+    params.applyAtFrom = new Date(params.applyAtFrom);
+  }
+  if (params.applyAtTo) params.applyAtTo = new Date(params.applyAtTo);
+  const api = useApi();
+  return useQuery({
+    queryKey: ['listing-attendees', params],
+    queryFn: async () => await api.organizations.listingAttendees(params),
+  });
 };

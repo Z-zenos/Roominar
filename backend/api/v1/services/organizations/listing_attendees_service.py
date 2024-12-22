@@ -1,4 +1,4 @@
-from sqlmodel import Date, Session, func, or_, select
+from sqlmodel import Date, Session, String, func, or_, select
 
 from backend.core.constants import AttendeeSortByCode
 from backend.models.application import Application
@@ -38,8 +38,9 @@ async def _get_attendees(
 ):
     query = (
         select(
-            User.id.label("user_id"),
+            User.id,
             func.concat(User.first_name, " ", User.last_name).label("user_name"),
+            Application.email,
             Event.id.label("event_id"),
             Event.name.label("event_name"),
             Application.job_type_code,
@@ -74,7 +75,7 @@ def _build_filters_sort(organizer: User, query_params: ListingAttendeesQueryPara
                 Event.name.contains(query_params.keyword),
                 Application.phone.contains(query_params.keyword),
                 Application.email.contains(query_params.keyword),
-                Event.id.contains(query_params.keyword),
+                Event.id.cast(String).contains(query_params.keyword),
             )
         )
 
