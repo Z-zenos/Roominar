@@ -42,6 +42,7 @@ class ErrorCode:
     )
     ERR_STRIPE_ERROR = "ERR_STRIPE_ERROR"
     ERR_INVALID_TICKET = "ERR_INVALID_TICKET"
+    ERR_TICKET_NOT_FREE = "ERR_TICKET_NOT_FREE"
 
 
 class ErrorMessage:
@@ -90,3 +91,4 @@ class ErrorMessage:
     )
     ERR_STRIPE_ERROR = "An error occurred while processing the payment with Stripe."
     ERR_INVALID_TICKET = "Invalid ticket."
+    ERR_TICKET_NOT_FREE = "Ticket not free."

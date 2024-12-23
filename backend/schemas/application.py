@@ -14,7 +14,7 @@ class ApplicationTicket(BaseModel):
     quantity: int
 
 
-class CreateApplicationCheckoutSessionRequest(BaseModel):
+class CreateApplicationRequest(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True)
 
     event_id: int

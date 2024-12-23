@@ -55,7 +55,7 @@ import Timeline from '@/src/component/common/Timeline';
 import { Alert, AlertDescription, AlertTitle } from '../common/Alert';
 import DotLoader from '../common/Loader/DotLoader';
 import NumberSpinnerInput from '../common/Input/NumberSpinnerInput';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import ApplicationCheckout from '../common/Payment/ApplicationCheckout';
 
 interface EventApplicationFormProps {

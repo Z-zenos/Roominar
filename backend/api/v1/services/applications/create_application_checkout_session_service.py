@@ -2,6 +2,7 @@ import json
 from datetime import datetime
 from uuid import uuid4
 
+import pytz
 import stripe
 from sqlmodel import Session, case, func, select
 
@@ -13,7 +14,7 @@ from backend.models.event import Event
 from backend.models.ticket import Ticket
 from backend.models.transaction import Transaction, TransactionStatusCode
 from backend.models.user import User
-from backend.schemas.application import CreateApplicationCheckoutSessionRequest
+from backend.schemas.application import CreateApplicationRequest
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -21,14 +22,14 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 async def create_application_checkout_session(
     db: Session,
     current_user: User,
-    cre_app_ch_ss_request: CreateApplicationCheckoutSessionRequest,
+    create_application_request: CreateApplicationRequest,
 ):
-    event_id = cre_app_ch_ss_request.event_id
+    event_id = create_application_request.event_id
     try:
         # CHECK IF EVENT IS STILL OPEN FOR APPLY
         event = db.exec(
             select(Event).where(
-                Event.id == event_id, Event.application_end_at >= datetime.now()
+                Event.id == event_id, Event.application_end_at >= datetime.now(pytz.utc)
             )
         ).one_or_none()
 
@@ -58,7 +59,7 @@ async def create_application_checkout_session(
                 .outerjoin(Transaction, Transaction.ticket_id == Ticket.id)
                 .where(
                     Ticket.id.in_(
-                        [ticket.id for ticket in cre_app_ch_ss_request.tickets]
+                        [ticket.id for ticket in create_application_request.tickets]
                     )
                 )
                 .group_by(Ticket.id)
@@ -86,7 +87,7 @@ async def create_application_checkout_session(
             + sum(
                 map(
                     lambda ticket: ticket.quantity,
-                    cre_app_ch_ss_request.tickets,
+                    create_application_request.tickets,
                 )
             )
             > event.max_ticket_number_per_account
@@ -106,7 +107,7 @@ async def create_application_checkout_session(
             if next(
                 (
                     request_ticket
-                    for request_ticket in cre_app_ch_ss_request.tickets
+                    for request_ticket in create_application_request.tickets
                     if request_ticket.id == ticket["id"]
                     and request_ticket.quantity > ticket["remain_quantity"]
                 ),
@@ -119,7 +120,7 @@ async def create_application_checkout_session(
             ticket["requested_quantity"] = next(
                 filter(
                     lambda x: x.id == ticket["id"],
-                    cre_app_ch_ss_request.tickets,
+                    create_application_request.tickets,
                 )
             ).quantity
             total_amount += ticket["price"] * ticket["requested_quantity"]
@@ -146,22 +147,25 @@ async def create_application_checkout_session(
                 "transaction_reference": transaction_reference,
                 "event_id": event_id,
                 "user_id": current_user.id,
-                "email": cre_app_ch_ss_request.email,
-                "first_name": cre_app_ch_ss_request.first_name,
-                "last_name": cre_app_ch_ss_request.last_name,
-                "workplace_name": cre_app_ch_ss_request.workplace_name,
-                "phone": cre_app_ch_ss_request.phone,
-                "industry_code": cre_app_ch_ss_request.industry_code,
-                "job_type_code": cre_app_ch_ss_request.job_type_code,
+                "email": create_application_request.email,
+                "first_name": create_application_request.first_name,
+                "last_name": create_application_request.last_name,
+                "workplace_name": create_application_request.workplace_name,
+                "phone": create_application_request.phone,
+                "industry_code": create_application_request.industry_code,
+                "job_type_code": create_application_request.job_type_code,
                 "tickets": json.dumps(
-                    [ticket.model_dump() for ticket in cre_app_ch_ss_request.tickets],
+                    [
+                        ticket.model_dump()
+                        for ticket in create_application_request.tickets
+                    ],
                     separators=(",", ":"),
                 ),
                 "survey_response_results": (
                     json.dumps(
                         [
                             srr.model_dump()
-                            for srr in cre_app_ch_ss_request.survey_response_results
+                            for srr in create_application_request.survey_response_results
                         ],
                         separators=(",", ":"),
                     )

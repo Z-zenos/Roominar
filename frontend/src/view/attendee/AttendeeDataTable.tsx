@@ -15,6 +15,7 @@ import {
   DropdownMenu,
   DropdownItem,
   User,
+  Link,
 } from '@nextui-org/react';
 import { useForm } from 'react-hook-form';
 import type {
@@ -42,6 +43,7 @@ import useWindowDimensions from '@/src/hooks/useWindowDimension';
 import { BsThreeDots } from 'react-icons/bs';
 import { useListingAttendeesQuery } from '@/src/api/organization.api';
 import { useTranslations } from 'next-intl';
+import useHighlightMatchedText from '@/src/hooks/useHighlightMatchedText';
 
 const columns = [
   { name: 'Apply Time', uid: 'apply_time', sortable: false },
@@ -58,6 +60,7 @@ export default function AttendeeDataTable() {
   const router = useRouter();
   const { width } = useWindowDimensions();
   const t = useTranslations();
+  const highlightMatchedText = useHighlightMatchedText();
 
   const { data, isFetching } = useListingAttendeesQuery({
     ...queryString.parse(searchParams.toString(), { arrayFormat: 'bracket' }),
@@ -108,7 +111,7 @@ export default function AttendeeDataTable() {
 
       switch (columnKey) {
         case 'apply_time':
-          return <p className=''>{formatEventDate(attendee.appliedAt)}</p>;
+          return <p>{formatEventDate(attendee.appliedAt)}</p>;
 
         case 'name':
           return (
@@ -119,8 +122,18 @@ export default function AttendeeDataTable() {
               }}
               name={
                 <div className='ml-2'>
-                  <p>{attendee.userName}</p>
-                  <p className='font-semibold'>{attendee.email}</p>
+                  <p>
+                    {highlightMatchedText(
+                      attendee.userName,
+                      form.getValues('keyword'),
+                    )}
+                  </p>
+                  <p className='font-semibold'>
+                    {highlightMatchedText(
+                      attendee.email,
+                      form.getValues('keyword'),
+                    )}
+                  </p>
                 </div>
               }
             />
@@ -128,22 +141,45 @@ export default function AttendeeDataTable() {
 
         case 'event_name':
           return (
-            <p className='max-w-[300px] break-words'>{attendee.eventName}</p>
+            <Link
+              underline='hover'
+              className='max-w-[300px] text-sm break-words'
+              href={`/organization/events/${attendee.eventId}`}
+            >
+              {highlightMatchedText(
+                attendee.eventName,
+                form.getValues('keyword'),
+              )}
+            </Link>
           );
 
         case 'phone':
-          return <p>{cellValue}</p>;
+          return (
+            <p>{highlightMatchedText(cellValue, form.getValues('keyword'))}</p>
+          );
 
         case 'industry_job':
           return (
             <p className='text-bold text-sm capitalize text-default-500'>
-              {t(`code.industry.${attendee.industryCode}`)} /{' '}
-              {t(`code.jobType.${attendee.jobTypeCode}`)}
+              {attendee.industryCode
+                ? t(`code.industry.${attendee.industryCode}`)
+                : '---'}{' '}
+              /{' '}
+              {attendee.jobTypeCode
+                ? t(`code.jobType.${attendee.jobTypeCode}`)
+                : '---'}
             </p>
           );
 
         case 'workplace_name':
-          return <p>{attendee.workplaceName}</p>;
+          return (
+            <p>
+              {highlightMatchedText(
+                attendee.workplaceName,
+                form.getValues('keyword'),
+              )}
+            </p>
+          );
 
         case 'actions':
           return (

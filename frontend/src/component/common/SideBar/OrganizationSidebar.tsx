@@ -100,7 +100,8 @@ export function OrganizationSidebar({
       } else {
         await signOut(
           auth.user?.roleCode === RoleCode.ORGANIZER
-            ? { callbackUrl: '/organization/login' }
+            ? // ? { callbackUrl: '/organization/login' }
+              { callbackUrl: '/home' }
             : { callbackUrl: '/home' },
         );
       }
