@@ -3,7 +3,6 @@ from datetime import datetime
 import pytz
 from sqlmodel import Session, case, func, select
 
-from backend.core.constants import IndustryCode, JobTypeCode
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.models.application import Application
@@ -121,27 +120,28 @@ async def create_free_application(
                 ErrorMessage.ERR_MAXIMUM_TICKETS_PER_APPLICATION_REACHED,
             )
 
-        # Create Application
-        application = Application(
-            event_id=event_id,
-            user_id=current_user.id,
-            email=create_application_request.email,
-            first_name=create_application_request.first_name,
-            last_name=create_application_request.last_name,
-            workplace_name=create_application_request.workplace_name,
-            phone=create_application_request.phone,
-            industry_code=(
-                IndustryCode(create_application_request.industry_code.split(".")[1])
-                if create_application_request.industry_code
-                else None
-            ),
-            job_type_code=(
-                JobTypeCode(create_application_request.job_type_code.split(".")[1])
-                if create_application_request.job_type_code
-                else None
-            ),
-        )
-        application = save(db, application)
+        if not application:
+            # Create Application
+            application = Application(
+                event_id=event_id,
+                user_id=current_user.id,
+                email=create_application_request.email,
+                first_name=create_application_request.first_name,
+                last_name=create_application_request.last_name,
+                workplace_name=create_application_request.workplace_name,
+                phone=create_application_request.phone,
+                industry_code=(
+                    create_application_request.industry_code
+                    if create_application_request.industry_code
+                    else None
+                ),
+                job_type_code=(
+                    create_application_request.job_type_code
+                    if create_application_request.job_type_code
+                    else None
+                ),
+            )
+            application = save(db, application)
 
         # Create Survey Response Results
         if create_application_request.survey_response_results:
@@ -161,8 +161,12 @@ async def create_free_application(
         # Create Transactions for each ticket in the session
         new_transactions = []
         for ticket in tickets:
-            ticket_id = int(ticket["id"])
-            requested_quantity = int(ticket["quantity"])
+            ticket_id = ticket["id"]
+            requested_quantity = next(
+                request_ticket.quantity
+                for request_ticket in create_application_request.tickets
+                if request_ticket.id == ticket_id
+            )
 
             # Create the transaction
             new_transactions.append(

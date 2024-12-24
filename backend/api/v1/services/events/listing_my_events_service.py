@@ -76,10 +76,10 @@ async def _listing_events(
     )
 
     # Only take care of the total tickets sold of events that the user has applied
-    TotalTicketsSold = (
+    SoldTicketsNumber = (
         select(
             Application.event_id,
-            func.sum(Transaction.quantity).label("total_tickets_sold"),
+            func.sum(Transaction.quantity).label("sold_tickets_number"),
         )
         .join(Application, Application.id == Transaction.application_id)
         .where(Application.user_id == current_user.id)
@@ -128,7 +128,7 @@ async def _listing_events(
                 ),
                 else_=True,
             ).label("is_applied"),
-            TotalTicketsSold.c.total_tickets_sold,
+            SoldTicketsNumber.c.sold_tickets_number,
         )
         .join(Organization, Event.organization_id == Organization.id)
         .outerjoin(
@@ -138,7 +138,7 @@ async def _listing_events(
         .outerjoin(Application, Application.event_id == Event.id)
         .outerjoin(TicketTransactions, TicketTransactions.c.event_id == Event.id)
         .outerjoin(EventTags, EventTags.c.event_id == Event.id)
-        .outerjoin(TotalTicketsSold, TotalTicketsSold.c.event_id == Event.id)
+        .outerjoin(SoldTicketsNumber, SoldTicketsNumber.c.event_id == Event.id)
         .where(*filters)
         .limit(query_params.per_page)
         .offset(query_params.per_page * (query_params.page - 1))

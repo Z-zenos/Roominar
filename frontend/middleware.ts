@@ -47,7 +47,6 @@ export const pathPermissionMaster = {
     '/search',
     '/events/[slug]',
     '/events/[slug]/apply',
-    '/events/[slug]/apply/result',
     '/not-found',
     '/forgot-password',
     '/email/verify/[token]',

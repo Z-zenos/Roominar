@@ -1,5 +1,6 @@
 from sqlmodel import Session, and_, case, exists, func, select, update
 
+import backend.api.v1.services.tickets as tickets_service
 from backend.core.constants import (
     FollowEntityCode,
     TagAssociationEntityCode,
@@ -9,7 +10,6 @@ from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.models import (
     Answer,
-    Application,
     Bookmark,
     Event,
     Organization,
@@ -24,9 +24,17 @@ from backend.models.tag_association import TagAssociation
 from backend.models.transaction import Transaction
 from backend.schemas.answer import AnswerItem
 from backend.schemas.survey import SurveyDetail
+from backend.utils.database import fetch_one
 
 
 async def get_event_detail(db: Session, current_user: User, slug: str):
+    event = fetch_one(db, select(Event).where(Event.slug == slug))
+
+    if not event:
+        raise BadRequestException(
+            ErrorCode.ERR_EVENT_NOT_FOUND, ErrorMessage.ERR_EVENT_NOT_FOUND
+        )
+
     OrganizationEventFollowCount = (
         select(
             Organization.id,
@@ -48,6 +56,10 @@ async def get_event_detail(db: Session, current_user: User, slug: str):
         .subquery()
     )
 
+    SoldTicketsNumber = tickets_service.get_sold_tickets_number_query(
+        event_id=event["id"], user_id=None
+    )
+
     query = (
         select(
             *Event.__table__.columns,
@@ -60,6 +72,7 @@ async def get_event_detail(db: Session, current_user: User, slug: str):
             Organization.description.label("organization_description"),
             OrganizationEventFollowCount.c.organization_event_number,
             OrganizationEventFollowCount.c.organization_follower_number,
+            SoldTicketsNumber.c.sold_tickets_number,
         )
         .where(
             Event.slug == slug,
@@ -70,6 +83,7 @@ async def get_event_detail(db: Session, current_user: User, slug: str):
             OrganizationEventFollowCount,
             OrganizationEventFollowCount.c.id == Organization.id,
         )
+        .outerjoin(SoldTicketsNumber, SoldTicketsNumber.c.event_id == Event.id)
     )
 
     if current_user:
@@ -90,11 +104,6 @@ async def get_event_detail(db: Session, current_user: User, slug: str):
         )
 
     event = db.exec(query).mappings().one_or_none()
-
-    if not event:
-        raise BadRequestException(
-            ErrorCode.ERR_EVENT_NOT_FOUND, ErrorMessage.ERR_EVENT_NOT_FOUND
-        )
     event = dict(event)
 
     event.update(
@@ -106,7 +115,6 @@ async def get_event_detail(db: Session, current_user: User, slug: str):
             ),
             "tickets": _get_tickets(db, event["id"]),
             "organization_contact_url": event["organization_contact_url"],
-            "applied_number": _get_applied_number(db, event["id"]),
             "tags": _get_event_tags(db, event["id"]),
         }
     )
@@ -175,16 +183,6 @@ def _get_tickets(db: Session, event_id: int):
     )
 
     return tickets
-
-
-def _get_applied_number(db: Session, event_id: int):
-    applied_number = db.scalar(
-        select(func.count()).where(
-            Application.event_id == event_id,
-            # Application.status == ApplicationStatusCode.APPROVED,
-        )
-    )
-    return applied_number
 
 
 def _get_event_tags(db: Session, event_id: int):

@@ -126,7 +126,7 @@ function EventCard({
                 {/* <Chip
                   content={
                     status === 'authenticated'
-                      ? `${event?.totalTicketsSold || 0} / ${event?.totalTicketNumber}`
+                      ? `${event?.soldTicketsNumber || 0} / ${event?.totalTicketNumber}`
                       : event.totalTicketNumber + ''
                   }
                   leftIcon={<FaUserFriends className='text-sm' />}
@@ -176,7 +176,7 @@ function EventCard({
                   <Chip
                     content={
                       status === 'authenticated'
-                        ? `${event['totalTicketsSold'] || 0} / ${event?.totalTicketNumber}`
+                        ? `${event['soldTicketsNumber'] || 0} / ${event?.totalTicketNumber}`
                         : event.totalTicketNumber + ''
                     }
                     leftIcon={<FaUserFriends className='text-sm' />}

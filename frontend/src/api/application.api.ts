@@ -1,6 +1,7 @@
 import type {
   ApplicationsApiCancelApplicationRequest,
   ApplicationsApiCreateApplicationCheckoutSessionRequest,
+  ApplicationsApiCreateFreeApplicationRequest,
   CreateApplicationCheckoutSessionResponse,
 } from '../lib/api/generated';
 import useApi from '../lib/api/useApi';
@@ -41,6 +42,24 @@ export const useCreateApplicationCheckoutSessionMutation = <T>(
     key,
     async (_: string, { arg }) =>
       await api.applications.createApplicationCheckoutSession(arg),
+    options,
+  );
+};
+
+export const useCreateFreeApplicationMutation = <T>(
+  options?: SWRMutationConfiguration<number, T>,
+) => {
+  const api = useApi();
+  const key = 'create-free-application';
+  return useSWRMutation<
+    number,
+    T,
+    typeof key,
+    ApplicationsApiCreateFreeApplicationRequest
+  >(
+    key,
+    async (_: string, { arg }) =>
+      await api.applications.createFreeApplication(arg),
     options,
   );
 };

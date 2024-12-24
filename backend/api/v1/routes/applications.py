@@ -40,10 +40,10 @@ async def cancel_application(
 async def create_application_checkout_session(
     db: Session = Depends(get_read_db),
     current_user: User = Depends(authorize_role(RoleCode.AUDIENCE)),
-    create_application_checkout_session_request: CreateApplicationRequest = None,
+    create_application_request: CreateApplicationRequest = None,
 ):
     client_secret = await application_service.create_application_checkout_session(
-        db, current_user, create_application_checkout_session_request
+        db, current_user, create_application_request
     )
     return CreateApplicationCheckoutSessionResponse(client_secret=client_secret)
 
@@ -56,8 +56,8 @@ async def create_application_checkout_session(
 async def create_free_application(
     db: Session = Depends(get_read_db),
     current_user: User = Depends(authorize_role(RoleCode.AUDIENCE)),
-    create_free_application_request: CreateApplicationRequest = None,
+    create_application_request: CreateApplicationRequest = None,
 ):
     return await application_service.create_free_application(
-        db, current_user, create_free_application_request
+        db, current_user, create_application_request
     )

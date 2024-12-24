@@ -108,7 +108,7 @@ class GetEventDetailResponse(BaseModel):
     tickets: list[TicketItem]
     organization_contact_url: str | None = None
     total_ticket_number: int
-    applied_number: int
+    sold_tickets_number: int
     status: EventStatusCode
     application_form_url: str | None = None
     tags: list[TagItem] = Field([])
@@ -178,7 +178,7 @@ class MyEventItem(BaseModel):
     tags: list[TagItem] = Field([])
     ticket_transactions: list[TicketTransaction] = Field([])
     # canceled_at: datetime | None = None
-    total_tickets_sold: int | None = 0
+    sold_tickets_number: int | None = 0
 
 
 class ListingMyEventsQueryParams(BaseModel):

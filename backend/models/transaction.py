@@ -26,4 +26,4 @@ class Transaction(BaseModel, table=True):
     stripe_checkout_session_id: Optional[str] = Field(default=None)  # Stripe session ID
 
     # Metadata and tracking
-    reference: str = Field(unique=True, nullable=False)  # Unique transaction reference
+    reference: Optional[str]

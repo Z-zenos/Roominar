@@ -58,7 +58,7 @@ export default function ApplicationCheckout({
 
   useEffect(() => {
     trigger({
-      createApplicationCheckoutSessionRequest: {
+      createApplicationRequest: {
         eventId: props.eventId,
         tickets: props.tickets.filter((ticket) => ticket),
         firstName: props.firstName,

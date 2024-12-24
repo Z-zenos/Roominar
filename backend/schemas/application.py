@@ -49,11 +49,15 @@ class CreateApplicationRequest(BaseModel):
 
     @field_validator("industry_code")
     def industry_code_validator(cls, v):
-        return industry_code_validator(v)
+        if v:
+            return industry_code_validator(v)
+        return None
 
     @field_validator("job_type_code")
     def job_type_code_validator(cls, v):
-        return job_type_code_validator(v)
+        if v:
+            return job_type_code_validator(v)
+        return None
 
 
 class CreateApplicationCheckoutSessionResponse(BaseModel):

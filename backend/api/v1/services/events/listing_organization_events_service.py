@@ -2,13 +2,13 @@ from datetime import datetime
 
 from sqlmodel import Date, Session, and_, func, select, text
 
+import backend.api.v1.services.tickets as tickets_service
 from backend.api.v1.services.tags.get_event_tags_service import get_event_tags
 from backend.core.constants import (
     EventTimeStatusCode,
     ManageEventSortByCode,
     TagAssociationEntityCode,
 )
-from backend.models.application import Application
 from backend.models.event import Event
 from backend.models.tag_association import TagAssociation
 from backend.models.user import User
@@ -31,18 +31,8 @@ async def _listing_events(
     sort_by: ManageEventSortByCode,
     query_params: ListingOrganizationEventsQueryParams,
 ):
-    AppliedNumber = (
-        select(
-            Event.id.label("event_id"),
-            func.coalesce(func.count(Application.event_id), 0).label("applied_number"),
-        )
-        .outerjoin(Application, Event.id == Application.event_id)
-        # .where(
-        #     Application.canceled_at.is_(None),
-        #     Application.status == ApplicationStatusCode.APPROVED,
-        # )
-        .group_by(Event.id)
-        .subquery()
+    SoldTicketsNumber = tickets_service.get_sold_tickets_number_query(
+        event_id=None, user_id=None
     )
 
     query = (
@@ -60,12 +50,12 @@ async def _listing_events(
             Event.organize_city_code,
             Event.organize_place_name,
             Event.total_ticket_number,
-            AppliedNumber.c.applied_number,
+            SoldTicketsNumber.c.sold_tickets_number,
             Event.status,
             Event.view_number,
             Event.meeting_tool_code,
         )
-        .outerjoin(AppliedNumber, Event.id == AppliedNumber.c.event_id)
+        .outerjoin(SoldTicketsNumber, Event.id == SoldTicketsNumber.c.event_id)
         .where(*filters)
         .limit(query_params.per_page)
         .offset(query_params.per_page * (query_params.page - 1))
