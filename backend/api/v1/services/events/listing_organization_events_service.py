@@ -132,8 +132,8 @@ def _build_filters_sort(
     if query_params.time_status == EventTimeStatusCode.ALL_ENDED:
         filters.append(Event.end_at < datetime.now())
 
-    if query_params.sort_by == ManageEventSortByCode.APPLIED_NUMBER:
-        sort_by = text("applied_numbers.applied_number")
+    if query_params.sort_by == ManageEventSortByCode.SOLD_TICKETS_NUMBER:
+        sort_by = text("sold_tickets_number.sold_tickets_number")
 
     if query_params.sort_by == ManageEventSortByCode.START_AT:
         sort_by = Event.start_at

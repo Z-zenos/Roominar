@@ -127,7 +127,7 @@
         "UPCOMING": "up coming"
       },
       "manageSortBy": {
-        "APPLIED_NUMBER": "applied number",
+        "SOLD_TICKETS_NUMBER": "sold tickets number",
         "START_AT": "start time",
         "NAME": "name",
         "VIEW_NUMBER": "view number",

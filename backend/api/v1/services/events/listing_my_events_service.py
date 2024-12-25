@@ -1,5 +1,6 @@
 from sqlmodel import Boolean, Session, and_, case, desc, func, literal, or_, select
 
+import backend.api.v1.services.tickets as tickets_service
 from backend.core.constants import EventStatusCode, TagAssociationEntityCode
 from backend.models import Bookmark, Event, Organization, Ticket, User
 from backend.models.application import Application
@@ -76,15 +77,8 @@ async def _listing_events(
     )
 
     # Only take care of the total tickets sold of events that the user has applied
-    SoldTicketsNumber = (
-        select(
-            Application.event_id,
-            func.sum(Transaction.quantity).label("sold_tickets_number"),
-        )
-        .join(Application, Application.id == Transaction.application_id)
-        .where(Application.user_id == current_user.id)
-        .group_by(Application.event_id)
-        .cte()
+    SoldTicketsNumber = tickets_service.get_sold_tickets_number_query(
+        event_id=None, user_id=current_user.id
     )
 
     query = (

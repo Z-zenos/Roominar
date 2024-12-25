@@ -278,7 +278,7 @@ class EventTimeStatusCode(str, Enum):
 
 
 class ManageEventSortByCode(str, Enum):
-    APPLIED_NUMBER = "APPLIED_NUMBER"
+    SOLD_TICKETS_NUMBER = "SOLD_TICKETS_NUMBER"
     START_AT = "START_AT"
     NAME = "NAME"
     VIEW_NUMBER = "VIEW_NUMBER"

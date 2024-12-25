@@ -41,7 +41,7 @@ class SearchEventsItem(BaseModel):
     is_offline: bool | None = None
     is_bookmarked: bool | None = None
     meeting_tool_code: str | None = None
-    applied_number: int | None = None
+    sold_tickets_number: int | None = None
     tags: list[TagItem] = Field([])
     published_at: datetime
 
@@ -295,7 +295,7 @@ class ListingOrganizationEventsItem(BaseModel):
     meeting_tool_code: EventMeetingToolCode
     # tickets: list[TicketItem] = Field([])
     total_ticket_number: int
-    applied_number: int | None = None
+    sold_tickets_number: int | None = None
     status: EventStatusCode
     # survey: SurveyDetail | None = None
     view_number: int | None = None

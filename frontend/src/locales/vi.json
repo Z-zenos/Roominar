@@ -126,9 +126,8 @@
         "ALL_ENDED": "đã kết thúc",
         "UPCOMING": "sắp diễn ra"
       },
-
       "manageSortBy": {
-        "APPLIED_NUMBER": "số lượng đăng ký",
+        "SOLD_TICKETS_NUMBER": "số vé đã bán (đăng ký)",
         "START_AT": "thời gian bắt đầu sự kiện",
         "NAME": "tên sự kiện",
         "VIEW_NUMBER": "số lượt truy cập trang",
