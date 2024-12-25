@@ -9,14 +9,13 @@ def get_sold_tickets_number_query(event_id: int, user_id: int):
     query = (
         select(
             Application.event_id,
-            func.sum(Transaction.quantity).label("sold_tickets_number,"),
+            func.sum(Transaction.quantity).label("sold_tickets_number"),
         )
         .join(Application, Application.id == Transaction.application_id)
         .where(
             Transaction.status == TransactionStatusCode.SUCCESS,
         )
         .group_by(Application.event_id)
-        .subquery()
     )
 
     if event_id:
@@ -25,4 +24,4 @@ def get_sold_tickets_number_query(event_id: int, user_id: int):
     if user_id:
         query = query.where(Application.user_id == user_id)
 
-    return query
+    return query.subquery()

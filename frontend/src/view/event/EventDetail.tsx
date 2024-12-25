@@ -297,7 +297,8 @@ function EventDetail({ slug }: EventDetailProps) {
               >
                 <BsFillPeopleFill className='text-primary w-6 h-6' />
                 <span className='font-light'>
-                  {event?.soldTicketsNumber} sold / {event?.totalTicketNumber}
+                  {event?.soldTicketsNumber ?? 0} sold /{' '}
+                  {event?.totalTicketNumber}
                 </span>
               </div>
               <Button
@@ -307,7 +308,10 @@ function EventDetail({ slug }: EventDetailProps) {
                 onClick={() =>
                   router.push(auth?.user ? `${pathname}/apply` : '/login')
                 }
-                isDisabled={event?.applicationEndAt < new Date()}
+                isDisabled={
+                  event?.applicationEndAt < new Date() ||
+                  event?.applicationStartAt > new Date()
+                }
               >
                 Apply Now
               </Button>

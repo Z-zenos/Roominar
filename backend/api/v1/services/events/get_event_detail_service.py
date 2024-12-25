@@ -57,7 +57,7 @@ async def get_event_detail(db: Session, current_user: User, slug: str):
     )
 
     SoldTicketsNumber = tickets_service.get_sold_tickets_number_query(
-        event_id=event["id"], user_id=None
+        event_id=event.id, user_id=None
     )
 
     query = (

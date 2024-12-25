@@ -123,7 +123,7 @@ function EventCard({
             </span>
             {direction === 'vertical' && (
               <div className={clsx(styles.between)}>
-                {/* <Chip
+                <Chip
                   content={
                     status === 'authenticated'
                       ? `${event?.soldTicketsNumber || 0} / ${event?.totalTicketNumber}`
@@ -131,7 +131,7 @@ function EventCard({
                   }
                   leftIcon={<FaUserFriends className='text-sm' />}
                   type='info'
-                /> */}
+                />
                 {event.meetingToolCode && (
                   <Chip
                     content={event.meetingToolCode}

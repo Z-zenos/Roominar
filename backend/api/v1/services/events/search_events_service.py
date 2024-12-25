@@ -52,7 +52,9 @@ async def search_events(
             Event.is_offline,
             Event.meeting_tool_code,
             Event.published_at,
-            SoldTicketsNumber.c.sold_tickets_number,
+            func.max(SoldTicketsNumber.c.sold_tickets_number).label(
+                "sold_tickets_number"
+            ),
         )
         .join(Organization, Event.organization_id == Organization.id)
         .join(Target, Event.target_id == Target.id)

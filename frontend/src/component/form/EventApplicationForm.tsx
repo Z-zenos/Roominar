@@ -204,7 +204,7 @@ export default function EventApplicationForm({
                 <div className={clsx(styles.between, 'mt-3')}>
                   <Chip
                     content={
-                      event.soldTicketsNumber + ' / ' + event.totalTicketNumber
+                      (event.soldTicketsNumber ?? 0) + ' / ' + event.totalTicketNumber
                     }
                     leftIcon={<FaUserFriends className='text-sm' />}
                     type='info'

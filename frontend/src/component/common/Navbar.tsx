@@ -20,9 +20,7 @@ import {
 } from '@nextui-org/react';
 import Logo from './Logo';
 import { signOut, useSession } from 'next-auth/react';
-import type { Session } from 'next-auth';
-import { usePathname, useRouter } from 'next/navigation';
-import { RoleCode } from '@/src/constants/role_code.constant';
+import { usePathname } from 'next/navigation';
 import useWindowDimensions from '@/src/hooks/useWindowDimension';
 import { maskEmail } from '@/src/utils/app.util';
 import { useTranslations } from 'next-intl';
@@ -83,24 +81,16 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
   );
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const { data: auth, status } = useSession();
-  const router = useRouter();
   const { width } = useWindowDimensions();
   const pathname = usePathname();
 
-  const handleLogout = (auth: Session) => {
+  const handleLogout = () => {
     localStorage.setItem('rememberMe', 'false');
     if (process.env.NODE_ENV === 'development') {
       signOut({ redirect: false });
       location.reload();
     } else {
-      signOut(
-        auth.user.roleCode == RoleCode.ORGANIZER
-          ? { callbackUrl: '/organization/login' }
-          : {
-              callbackUrl: '/home',
-            },
-      ).then(() => {
-        router.refresh();
+      signOut({ redirect: false }).then(() => {
         location.reload();
       });
     }
@@ -239,7 +229,7 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
                 <DropdownItem
                   key='logout'
                   color='danger'
-                  onClick={() => handleLogout(auth)}
+                  onClick={() => handleLogout()}
                 >
                   Log Out
                 </DropdownItem>

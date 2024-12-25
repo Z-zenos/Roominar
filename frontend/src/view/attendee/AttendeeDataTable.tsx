@@ -16,6 +16,7 @@ import {
   DropdownItem,
   User,
   Link,
+  Checkbox,
 } from '@nextui-org/react';
 import { useForm } from 'react-hook-form';
 import type {
@@ -44,6 +45,7 @@ import { BsThreeDots } from 'react-icons/bs';
 import { useListingAttendeesQuery } from '@/src/api/organization.api';
 import { useTranslations } from 'next-intl';
 import useHighlightMatchedText from '@/src/hooks/useHighlightMatchedText';
+import { styles } from '@/src/constants/styles.constant';
 
 const columns = [
   { name: 'Apply Time', uid: 'apply_time', sortable: false },
@@ -51,7 +53,7 @@ const columns = [
   { name: 'Event Name', uid: 'event_name', sortable: false },
   { name: 'Phone', uid: 'phone', sortable: false },
   { name: 'Industry / Job', uid: 'industry_job', sortable: false },
-  { name: 'Workplace Name', uid: 'workplace_name', sortable: false },
+  { name: 'Checkin Status', uid: 'checkin', sortable: false },
   { name: 'Actions', uid: 'actions' },
 ];
 
@@ -171,13 +173,10 @@ export default function AttendeeDataTable() {
             </p>
           );
 
-        case 'workplace_name':
+        case 'checkin':
           return (
-            <p>
-              {highlightMatchedText(
-                attendee.workplaceName,
-                form.getValues('keyword'),
-              )}
+            <p className={styles.center}>
+              {attendee.checkInAt ? <Checkbox checked /> : <Checkbox />}
             </p>
           );
 
@@ -191,7 +190,7 @@ export default function AttendeeDataTable() {
                     size='sm'
                     variant='light'
                   >
-                    <BsThreeDots className='text-default-300' />
+                    <BsThreeDots className='text-default-500' />
                   </Button>
                 </DropdownTrigger>
                 <DropdownMenu>
@@ -232,7 +231,7 @@ export default function AttendeeDataTable() {
                     applyAtFrom: undefined,
                     applyAtTo: undefined,
                   });
-                  router.push('/organization/atendees');
+                  router.push('/organization/attendees');
                 }}
                 startContent={<GrPowerReset />}
               >
