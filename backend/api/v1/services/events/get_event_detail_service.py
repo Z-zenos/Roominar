@@ -1,11 +1,6 @@
 from sqlmodel import Session, and_, case, exists, func, select, update
 
-import backend.api.v1.services.tickets as tickets_service
-from backend.core.constants import (
-    FollowEntityCode,
-    TagAssociationEntityCode,
-    TransactionStatusCode,
-)
+from backend.core.constants import FollowEntityCode, TagAssociationEntityCode
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.models import (
@@ -21,7 +16,7 @@ from backend.models import (
 )
 from backend.models.follow import Follow
 from backend.models.tag_association import TagAssociation
-from backend.models.transaction import Transaction
+from backend.models.ticket_inventory import TicketInventory
 from backend.schemas.answer import AnswerItem
 from backend.schemas.survey import SurveyDetail
 from backend.utils.database import fetch_one
@@ -56,8 +51,14 @@ async def get_event_detail(db: Session, current_user: User, slug: str):
         .subquery()
     )
 
-    SoldTicketsNumber = tickets_service.get_sold_tickets_number_query(
-        event_id=event.id, user_id=None
+    SoldTicketsNumber = (
+        select(
+            Event.id,
+            func.sum(TicketInventory.sold_quantity).label("sold_tickets_number"),
+        )
+        .join(TicketInventory, TicketInventory.event_id == Event.id)
+        .group_by(Event.id)
+        .subquery()
     )
 
     query = (
@@ -83,7 +84,7 @@ async def get_event_detail(db: Session, current_user: User, slug: str):
             OrganizationEventFollowCount,
             OrganizationEventFollowCount.c.id == Organization.id,
         )
-        .outerjoin(SoldTicketsNumber, SoldTicketsNumber.c.event_id == Event.id)
+        .join(SoldTicketsNumber, SoldTicketsNumber.c.id == Event.id)
     )
 
     if current_user:
@@ -151,9 +152,7 @@ def _get_tickets(db: Session, event_id: int):
             select(
                 Ticket.id,
                 Ticket.name,
-                func.greatest(
-                    (Ticket.quantity - func.sum(Transaction.quantity)), 0
-                ).label("remain"),
+                TicketInventory.available_quantity,
                 Ticket.quantity,
                 Ticket.description,
                 Ticket.price,
@@ -168,15 +167,8 @@ def _get_tickets(db: Session, event_id: int):
             .where(
                 Ticket.event_id == event_id,
             )
-            .outerjoin(
-                Transaction,
-                and_(
-                    Transaction.ticket_id == Ticket.id,
-                    Transaction.status == TransactionStatusCode.SUCCESS,
-                ),
-            )
+            .join(TicketInventory, TicketInventory.ticket_id == Ticket.id)
             .order_by(Ticket.id)
-            .group_by(Ticket.id)
         )
         .mappings()
         .all()

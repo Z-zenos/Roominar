@@ -1,7 +1,6 @@
-from datetime import datetime
 from typing import Optional
 
-from sqlmodel import DateTime, Enum, Field, String
+from sqlmodel import Enum, Field, String
 
 from backend.core.constants import IndustryCode, JobTypeCode
 from backend.models.base_model import BaseModel
@@ -19,4 +18,4 @@ class Application(BaseModel, table=True):
     phone: Optional[str] = Field(sa_type=String(20))
     industry_code: Optional[IndustryCode] = Field(sa_type=Enum(IndustryCode))
     job_type_code: Optional[JobTypeCode] = Field(sa_type=Enum(JobTypeCode))
-    check_in_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
+    note: Optional[str] = Field(sa_type=String(255))

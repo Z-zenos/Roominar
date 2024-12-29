@@ -299,3 +299,22 @@ class FollowEntityCode(str, Enum):
 class AttendeeSortByCode(str, Enum):
     APPLY_AT = "APPLY_AT"
     NAME = "NAME"
+
+
+class CheckInMethodCode(str, Enum):
+    MANUAL = "MANUAL"
+    QR = "QR"
+    # NFC = "NFC"
+    FACE = "FACE"
+    OTHER = "OTHER"
+
+
+class RefundReasonCode(str, Enum):
+    CUSTOMER_REQUEST = "CUSTOMER_REQUEST"  # Yêu cầu từ khách hàng
+    EVENT_CANCELED = "EVENT_CANCELED"  # Sự kiện bị hủy
+    EVENT_RESCHEDULED = "EVENT_RESCHEDULED"  # Thay đổi lịch trình
+    TECHNICAL_ERROR = "TECHNICAL_ERROR"  # Lỗi hệ thống
+    DUPLICATE_PAYMENT = "DUPLICATE_PAYMENT"  # Thanh toán trùng lặp
+    POLICY_CHANGE = "POLICY_CHANGE"  # Thay đổi chính sách
+    FRAUDULENT_TRANSACTION = "FRAUDULENT_TRANSACTION"  # Giao dịch gian lận
+    LEGAL_ISSUE = "LEGAL_ISSUE"  # Vấn đề pháp lý

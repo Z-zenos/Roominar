@@ -13,7 +13,7 @@ from backend.core.constants import (
 class TicketItem(BaseModel):
     id: int
     name: str
-    remain: int
+    available_quantity: int
     quantity: int
     description: Optional[str]
     price: Optional[float]
