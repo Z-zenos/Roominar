@@ -70,14 +70,16 @@ export default function AttendeeDataTable() {
   const { width } = useWindowDimensions();
   const t = useTranslations();
   const highlightMatchedText = useHighlightMatchedText();
-  const [checkedInAttendees, setCheckedInAttendees] = useState<number[]>([]);
+  const [checkedInAttendees, setCheckedInAttendees] = useState<Set<number>>(
+    new Set(),
+  );
 
+  const [selectedKeys, setSelectedKeys] = useState<any>(null);
   const { data, isFetching } = useListingAttendeesQuery({
     ...queryString.parse(searchParams.toString(), { arrayFormat: 'bracket' }),
   });
-
-  const [selectedKeys, setSelectedKeys] = useState<any>(null);
   const [page, setPage] = useState<number>(data?.page || 1);
+
   const form = useForm<OrganizationsApiListingAttendeesRequest>({
     mode: 'all',
     defaultValues: {
@@ -101,10 +103,13 @@ export default function AttendeeDataTable() {
 
   useEffect(() => {
     if (data) {
-      setCheckedInAttendees(() =>
-        data?.data
-          ?.filter((item) => item.checkInId)
-          ?.map((item) => item.applicationId),
+      setCheckedInAttendees(
+        () =>
+          new Set(
+            data?.data
+              ?.filter((item) => item.checkInId)
+              ?.map((item) => item.applicationId),
+          ),
       );
     }
   }, [data]);
@@ -147,32 +152,29 @@ export default function AttendeeDataTable() {
     },
   });
 
-  console.log(checkedInAttendees);
-
-  function handleCheckIn(attendee: ListingAttendeesItem) {
-    if (checkedInAttendees.includes(attendee.applicationId)) {
-      setCheckedInAttendees(() =>
-        checkedInAttendees.filter((item) => item !== attendee.applicationId),
-      );
-      deleteCheckIn({
-        eventId: attendee.eventId,
-        checkInId: attendee.checkInId,
-      });
-    } else {
-      setCheckedInAttendees(() => [
-        ...checkedInAttendees,
-        attendee.applicationId,
-      ]);
-      createCheckIn({
-        eventId: attendee.eventId,
-        createCheckInRequest: {
-          applicationId: attendee.applicationId,
-          ticketId: null,
-          transactionItemId: null,
-        },
-      });
-    }
-  }
+  const handleCheckIn = (attendee: ListingAttendeesItem) => {
+    setCheckedInAttendees((prev) => {
+      const newCheckedIn = new Set(prev);
+      if (newCheckedIn.has(attendee.applicationId)) {
+        newCheckedIn.delete(attendee.applicationId);
+        deleteCheckIn({
+          eventId: attendee.eventId,
+          checkInId: attendee.checkInId,
+        });
+      } else {
+        newCheckedIn.add(attendee.applicationId);
+        createCheckIn({
+          eventId: attendee.eventId,
+          createCheckInRequest: {
+            applicationId: attendee.applicationId,
+            ticketId: null,
+            transactionItemId: null,
+          },
+        });
+      }
+      return newCheckedIn;
+    });
+  };
 
   const renderCell = useCallback(
     (attendee: ListingAttendeesItem, columnKey: Key) => {
@@ -244,10 +246,8 @@ export default function AttendeeDataTable() {
           return (
             <p className={styles.center}>
               <Checkbox
-                defaultSelected={checkedInAttendees.includes(
-                  attendee.applicationId,
-                )}
-                onClick={() => handleCheckIn(attendee)}
+                defaultSelected={checkedInAttendees.has(attendee.applicationId)}
+                onChange={() => handleCheckIn(attendee)}
               />
             </p>
           );
@@ -277,7 +277,7 @@ export default function AttendeeDataTable() {
           return cellValue;
       }
     },
-    [],
+    [JSON.stringify(checkedInAttendees)],
   );
 
   return (
