@@ -15,6 +15,7 @@ from backend.core.constants import RoleCode
 from backend.core.response import authenticated_api_responses, public_api_responses
 from backend.db.database import get_read_db
 from backend.models import User
+from backend.schemas.check_in import CreateCheckInRequest
 from backend.schemas.event import (
     GetEventDetailResponse,
     ListingEventRankResponse,
@@ -176,3 +177,30 @@ async def listing_tickets_of_event(
     event_id: int = None,
 ):
     return await tickets_service.listing_tickets_of_event(db, organizer, event_id)
+
+
+@router.post(
+    "/{event_id}/check-in",
+    response_model=int,
+    responses=authenticated_api_responses,
+)
+async def create_check_in(
+    db: Session = Depends(get_read_db),
+    request: CreateCheckInRequest = None,
+    event_id: int = None,
+):
+    return await events_service.create_check_in(db, request, event_id)
+
+
+@router.delete(
+    "/{event_id}/check-in/{check_in_id}",
+    status_code=HTTPStatus.NO_CONTENT,
+    responses=authenticated_api_responses,
+)
+async def delete_check_in(
+    db: Session = Depends(get_read_db),
+    user: User = Depends(get_current_user),
+    event_id: int = None,
+    check_in_id: int = None,
+):
+    return await events_service.delete_check_in(db, user, event_id, check_in_id)

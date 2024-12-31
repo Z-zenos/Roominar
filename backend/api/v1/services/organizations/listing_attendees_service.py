@@ -2,7 +2,9 @@ from sqlmodel import Date, Session, String, func, or_, select
 
 from backend.core.constants import AttendeeSortByCode
 from backend.models.application import Application
+from backend.models.check_in import CheckIn
 from backend.models.event import Event
+from backend.models.transaction import Transaction
 from backend.models.user import User
 from backend.schemas.organization import ListingAttendeesQueryParams
 
@@ -49,10 +51,15 @@ async def _get_attendees(
             Application.phone,
             User.avatar_url,
             Application.created_at.label("applied_at"),
-            Application.check_in_at,
+            CheckIn.created_at.label("checked_in_at"),
+            Application.id.label("application_id"),
+            Transaction.status.label("transaction_status"),
+            CheckIn.id.label("check_in_id"),
         )
         .join(Application, Application.user_id == User.id)
+        .outerjoin(CheckIn, CheckIn.application_id == Application.id)
         .join(Event, Event.id == Application.event_id)
+        .join(Transaction, Transaction.application_id == Application.id)
         .where(*filters)
         .limit(query_params.per_page)
         .offset(query_params.per_page * (query_params.page - 1))

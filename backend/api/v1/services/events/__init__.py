@@ -1,5 +1,6 @@
 from .create_check_in_service import create_check_in
 from .create_event_bookmark_service import create_event_bookmark
+from .delete_check_in_service import delete_check_in
 from .delete_event_bookmark_service import delete_event_bookmark
 from .get_event_detail_service import get_event_detail
 from .listing_event_rank_service import listing_event_rank
@@ -22,4 +23,5 @@ all = (
     publish_event,
     listing_organization_events,
     create_check_in,
+    delete_check_in,
 )

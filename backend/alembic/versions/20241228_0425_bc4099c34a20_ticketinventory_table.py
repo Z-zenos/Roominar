@@ -37,7 +37,7 @@ def upgrade() -> None:
         ),
         sa.Column("created_by", sa.Integer(), nullable=True),
         sa.Column("updated_by", sa.Integer(), nullable=True),
-        sa.Column("ticket_id", sa.Integer(), nullable=False),
+        sa.Column("ticket_id", sa.Integer(), nullable=True),
         sa.Column("available_quantity", sa.Integer(), nullable=False),
         sa.Column("reserved_quantity", sa.Integer(), nullable=False),
         sa.Column("sold_quantity", sa.Integer(), nullable=False),

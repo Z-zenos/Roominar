@@ -44,6 +44,8 @@ class ErrorCode:
     ERR_INVALID_TICKET = "ERR_INVALID_TICKET"
     ERR_TICKET_NOT_FREE = "ERR_TICKET_NOT_FREE"
     ERR_NOT_ENOUGH_TICKETS_FOR_REQUEST = "ERR_NOT_ENOUGH_TICKETS_FOR_REQUEST"
+    ERR_CHECK_IN_ALREADY_EXISTED = "ERR_CHECK_IN_ALREADY_EXISTED"
+    ERR_CHECK_IN_NOT_FOUND = "ERR_CHECK_IN_NOT_FOUND"
 
 
 class ErrorMessage:
@@ -94,3 +96,5 @@ class ErrorMessage:
     ERR_INVALID_TICKET = "Invalid ticket."
     ERR_TICKET_NOT_FREE = "Ticket not free."
     ERR_NOT_ENOUGH_TICKETS_FOR_REQUEST = "Not enough tickets for request."
+    ERR_CHECK_IN_ALREADY_EXISTED = "The check-in already existed."
+    ERR_CHECK_IN_NOT_FOUND = "The check-in doesn't exist."

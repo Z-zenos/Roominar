@@ -1,7 +1,7 @@
 'use client';
 
 import type { Key } from 'react';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   Table,
   TableHeader,
@@ -20,7 +20,9 @@ import {
 } from '@nextui-org/react';
 import { useForm } from 'react-hook-form';
 import type {
+  ApiException,
   AttendeeSortByCode,
+  ErrorResponse400,
   ListingAttendeesItem,
   OrganizationsApiListingAttendeesRequest,
 } from '@/src/lib/api/generated';
@@ -46,6 +48,11 @@ import { useListingAttendeesQuery } from '@/src/api/organization.api';
 import { useTranslations } from 'next-intl';
 import useHighlightMatchedText from '@/src/hooks/useHighlightMatchedText';
 import { styles } from '@/src/constants/styles.constant';
+import {
+  useCreateCheckInMutation,
+  useDeleteCheckInMutation,
+} from '@/src/api/event.api';
+import toast from 'react-hot-toast';
 
 const columns = [
   { name: 'Apply Time', uid: 'apply_time', sortable: false },
@@ -63,6 +70,7 @@ export default function AttendeeDataTable() {
   const { width } = useWindowDimensions();
   const t = useTranslations();
   const highlightMatchedText = useHighlightMatchedText();
+  const [checkedInAttendees, setCheckedInAttendees] = useState<number[]>([]);
 
   const { data, isFetching } = useListingAttendeesQuery({
     ...queryString.parse(searchParams.toString(), { arrayFormat: 'bracket' }),
@@ -91,6 +99,16 @@ export default function AttendeeDataTable() {
     },
   });
 
+  useEffect(() => {
+    if (data) {
+      setCheckedInAttendees(() =>
+        data?.data
+          ?.filter((item) => item.checkInId)
+          ?.map((item) => item.applicationId),
+      );
+    }
+  }, [data]);
+
   function handleSearch(data: any = {}) {
     if (form.getValues()['apply_at_range']) {
       const apply_at_range = form.getValues()['apply_at_range'];
@@ -105,6 +123,55 @@ export default function AttendeeDataTable() {
     const exclude_queries = ['apply_at_range'];
 
     searchQuery(router, filters, searchParams, exclude_queries);
+  }
+
+  const { trigger: createCheckIn } = useCreateCheckInMutation({
+    onSuccess() {},
+    onError(error: ApiException<unknown>) {
+      toast.error(
+        (error.body as ErrorResponse400)?.message ??
+          (error.body as ErrorResponse400)?.errorCode ??
+          'Unknown Error 😵',
+      );
+    },
+  });
+
+  const { trigger: deleteCheckIn } = useDeleteCheckInMutation({
+    onSuccess() {},
+    onError(error: ApiException<unknown>) {
+      toast.error(
+        (error.body as ErrorResponse400)?.message ??
+          (error.body as ErrorResponse400)?.errorCode ??
+          'Unknown Error 😵',
+      );
+    },
+  });
+
+  console.log(checkedInAttendees);
+
+  function handleCheckIn(attendee: ListingAttendeesItem) {
+    if (checkedInAttendees.includes(attendee.applicationId)) {
+      setCheckedInAttendees(() =>
+        checkedInAttendees.filter((item) => item !== attendee.applicationId),
+      );
+      deleteCheckIn({
+        eventId: attendee.eventId,
+        checkInId: attendee.checkInId,
+      });
+    } else {
+      setCheckedInAttendees(() => [
+        ...checkedInAttendees,
+        attendee.applicationId,
+      ]);
+      createCheckIn({
+        eventId: attendee.eventId,
+        createCheckInRequest: {
+          applicationId: attendee.applicationId,
+          ticketId: null,
+          transactionItemId: null,
+        },
+      });
+    }
   }
 
   const renderCell = useCallback(
@@ -176,7 +243,12 @@ export default function AttendeeDataTable() {
         case 'checkin':
           return (
             <p className={styles.center}>
-              {attendee.checkInAt ? <Checkbox checked /> : <Checkbox />}
+              <Checkbox
+                defaultSelected={checkedInAttendees.includes(
+                  attendee.applicationId,
+                )}
+                onClick={() => handleCheckIn(attendee)}
+              />
             </p>
           );
 

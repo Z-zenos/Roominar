@@ -3,7 +3,12 @@ from datetime import datetime
 from fastapi import Query
 from pydantic import BaseModel, ConfigDict, Field
 
-from backend.core.constants import AttendeeSortByCode, IndustryCode, JobTypeCode
+from backend.core.constants import (
+    AttendeeSortByCode,
+    IndustryCode,
+    JobTypeCode,
+    TransactionStatusCode,
+)
 from backend.schemas.common import PaginationResponse
 from backend.schemas.tag import TagItem
 
@@ -55,7 +60,10 @@ class ListingAttendeesItem(BaseModel):
     phone: str | None = None
     avatar_url: str | None = None
     applied_at: datetime
-    check_in_at: datetime | None = None
+    checked_in_at: datetime | None = None
+    application_id: int
+    transaction_status: TransactionStatusCode
+    check_in_id: int | None = None
 
 
 class ListingAttendeesResponse(PaginationResponse[ListingAttendeesItem]):
