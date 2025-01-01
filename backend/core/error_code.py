@@ -46,6 +46,7 @@ class ErrorCode:
     ERR_NOT_ENOUGH_TICKETS_FOR_REQUEST = "ERR_NOT_ENOUGH_TICKETS_FOR_REQUEST"
     ERR_CHECK_IN_ALREADY_EXISTED = "ERR_CHECK_IN_ALREADY_EXISTED"
     ERR_CHECK_IN_NOT_FOUND = "ERR_CHECK_IN_NOT_FOUND"
+    ERR_ATTENDEE_NOT_FOUND = "ERR_ATTENDEE_NOT_FOUND"
 
 
 class ErrorMessage:
@@ -98,3 +99,4 @@ class ErrorMessage:
     ERR_NOT_ENOUGH_TICKETS_FOR_REQUEST = "Not enough tickets for request."
     ERR_CHECK_IN_ALREADY_EXISTED = "The check-in already existed."
     ERR_CHECK_IN_NOT_FOUND = "The check-in doesn't exist."
+    ERR_ATTENDEE_NOT_FOUND = "The attendee doesn't exist."

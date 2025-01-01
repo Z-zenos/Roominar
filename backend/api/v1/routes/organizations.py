@@ -24,6 +24,7 @@ from backend.schemas.event import (
 )
 from backend.schemas.organization import (
     DownloadAttendeesRequest,
+    GetAttendeeDetailResponse,
     ListingAttendeesQueryParams,
     ListingAttendeesResponse,
     ListingOngoingEventOrganizationsResponse,
@@ -102,6 +103,19 @@ async def download_attendees_csv(
     response = StreamingResponse(iter([stream.getvalue()]), media_type="text/csv")
     response.headers["Content-Disposition"] = "attachment; filename=attendees.csv"
     return response
+
+
+@router.get(
+    "/attendees/{attendee_id}",
+    response_model=GetAttendeeDetailResponse,
+    responses=authenticated_api_responses,
+)
+async def get_attendee_detail(
+    db: Session = Depends(get_read_db),
+    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+    attendee_id: int = None,
+):
+    return await organizations_service.get_attendee_detail(db, organizer, attendee_id)
 
 
 @router.get(

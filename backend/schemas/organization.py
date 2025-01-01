@@ -10,7 +10,9 @@ from backend.core.constants import (
     TransactionStatusCode,
 )
 from backend.schemas.common import PaginationResponse
+from backend.schemas.survey_response_result import AttendeeSurveyResponseResultItem
 from backend.schemas.tag import TagItem
+from backend.schemas.transaction import AttendeeTicketTransaction
 
 
 class ListingOngoingEventOrganizationsItem(BaseModel):
@@ -83,3 +85,33 @@ class DownloadAttendeesRequest(BaseModel):
     with_filter: bool | None = Field(None)
     page: int | None = Field(None)
     per_page: int | None = Field(None)
+
+
+class AttendeeAppliedEvent(BaseModel):
+    id: int
+    application_id: int
+    applied_at: datetime
+    name: str
+    cover_image_url: str | None = None
+    start_at: datetime
+    end_at: datetime
+    application_start_at: datetime
+    application_end_at: datetime
+    check_in_id: int | None = None
+    checked_in_at: datetime | None = None
+    survey_response_results: list[AttendeeSurveyResponseResultItem] = Field([])
+    is_bookmarked: bool | None = None
+    transaction_histories: list[AttendeeTicketTransaction] = Field([])
+
+
+class GetAttendeeDetailResponse(BaseModel):
+    id: int
+    user_name: str
+    email: str
+    phone: str | None = None
+    applied_events: list[AttendeeAppliedEvent] = Field([])
+    job_type_code: JobTypeCode | None = None
+    industry_code: IndustryCode | None = None
+    workplace_name: str | None = None
+    avatar_url: str | None = None
+    is_followed: bool | None = None
