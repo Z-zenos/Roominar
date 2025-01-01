@@ -68,7 +68,9 @@ async def download_attendees_csv(
 
             attendees = db.exec(query).mappings().all()
 
-        df = pd.DataFrame(attendees)
+        df = pd.DataFrame(attendees, columns=csv_headers.keys())
+        df["applied_at"] = df["applied_at"].dt.strftime("%Y-%m-%d %H:%M:%S")
+        df["checked_in_at"] = df["checked_in_at"].dt.strftime("%Y-%m-%d %H:%M:%S")
         df.rename(columns=csv_headers, inplace=True)
 
         stream = io.StringIO()
