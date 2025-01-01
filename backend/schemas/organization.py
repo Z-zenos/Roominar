@@ -68,3 +68,18 @@ class ListingAttendeesItem(BaseModel):
 
 class ListingAttendeesResponse(PaginationResponse[ListingAttendeesItem]):
     pass
+
+
+class DownloadAttendeesRequest(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    keyword: str | None = Field(None)
+    apply_at_from: datetime | None = Field(None)
+    apply_at_to: datetime | None = Field(None)
+    is_checked_in: bool | None = Field(None)
+    job_type_code: JobTypeCode | None = Field(None)
+    industry_code: IndustryCode | None = Field(None)
+    sort_by: AttendeeSortByCode | None = Field(None)
+    with_filter: bool | None = Field(None)
+    page: int | None = Field(None)
+    per_page: int | None = Field(None)

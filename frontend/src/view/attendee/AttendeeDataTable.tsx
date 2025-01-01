@@ -24,13 +24,19 @@ import type {
   AttendeeSortByCode,
   ErrorResponse400,
   ListingAttendeesItem,
+  OrganizationsApiDownloadAttendeesCsvRequest,
   OrganizationsApiListingAttendeesRequest,
 } from '@/src/lib/api/generated';
 import { IndustryCode, JobTypeCode } from '@/src/lib/api/generated';
 import { useRouter, useSearchParams } from 'next/navigation';
 import queryString from 'query-string';
 import dayjs from 'dayjs';
-import { formatEventDate, optionify, searchQuery } from '@/src/utils/app.util';
+import {
+  formatEventDate,
+  optionify,
+  searchQuery,
+  toCamelCase,
+} from '@/src/utils/app.util';
 import {
   Form,
   FormCombobox,
@@ -53,6 +59,9 @@ import {
   useDeleteCheckInMutation,
 } from '@/src/api/event.api';
 import toast from 'react-hot-toast';
+import { TbFileTypeCsv } from 'react-icons/tb';
+import axios from 'axios';
+import { useSession } from 'next-auth/react';
 
 const columns = [
   { name: 'Apply Time', uid: 'apply_time', sortable: false },
@@ -65,6 +74,8 @@ const columns = [
 ];
 
 export default function AttendeeDataTable() {
+  const [isDownloadAttendeesCSVLoading, setIsDownloadAttendeesCSVLoading] =
+    useState<boolean>(false);
   const searchParams = useSearchParams();
   const router = useRouter();
   const { width } = useWindowDimensions();
@@ -79,6 +90,7 @@ export default function AttendeeDataTable() {
     ...queryString.parse(searchParams.toString(), { arrayFormat: 'bracket' }),
   });
   const [page, setPage] = useState<number>(data?.page || 1);
+  const { data: auth } = useSession();
 
   const form = useForm<OrganizationsApiListingAttendeesRequest>({
     mode: 'all',
@@ -151,6 +163,42 @@ export default function AttendeeDataTable() {
       );
     },
   });
+
+  function handleDownloadAttendeesCSV() {
+    setIsDownloadAttendeesCSVLoading(true);
+    let params = {
+      ...queryString.parse(searchParams.toString(), { arrayFormat: 'bracket' }),
+    } as OrganizationsApiDownloadAttendeesCsvRequest;
+
+    params = toCamelCase(params);
+    if (params.applyAtFrom) {
+      params.applyAtFrom = new Date(params.applyAtFrom);
+    }
+    if (params.applyAtTo) params.applyAtTo = new Date(params.applyAtTo);
+    params.withFilter = true;
+
+    axios
+      .get(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/organizations/attendees/csv`,
+        {
+          params: params,
+          headers: {
+            Authorization: `Bearer ${auth.token.accessToken}`,
+          },
+        },
+      )
+      .then((response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `attendees-${Date.now()}.csv`);
+        document.body.appendChild(link);
+        link.click();
+      })
+      .finally(() => {
+        setIsDownloadAttendeesCSVLoading(false);
+      });
+  }
 
   const handleCheckIn = (attendee: ListingAttendeesItem) => {
     setCheckedInAttendees((prev) => {
@@ -346,20 +394,19 @@ export default function AttendeeDataTable() {
                 onValueChange={handleSearch}
               />
             </div>
-            {/* <div className='flex items-center justify-start gap-4 400px:mt-3 mt-0'> */}
-            {/* <Text
-                content='Sort by:'
-                className='font-light text-gray-500'
-              /> */}
-            {/* <FormSelect
-                options={optionify(AttendeeSortByCode)}
-                i18nPath='code.attendee.sortBy'
-                control={form.control}
-                onValueChange={handleSearch}
-                defaultValue={form.getValues('sortBy')}
-                name='sortBy'
-              /> */}
-            {/* </div> */}
+            <div className='flex items-center justify-start gap-4 mt-0'>
+              <Button
+                type='button'
+                className='bg-success-500 text-white'
+                radius='sm'
+                size='md'
+                onClick={handleDownloadAttendeesCSV}
+                endContent={<TbFileTypeCsv size={36} />}
+                isLoading={isDownloadAttendeesCSVLoading}
+              >
+                Download
+              </Button>
+            </div>
           </div>
         </form>
       </Form>

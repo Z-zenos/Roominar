@@ -13,10 +13,10 @@ async def listing_attendees(
     db: Session, organizer: User, query_params: ListingAttendeesQueryParams
 ):
     filters, sort_by = _build_filters_sort(organizer, query_params)
-    events = await _get_attendees(db, filters, sort_by, query_params)
+    attendees = await _get_attendees(db, filters, sort_by, query_params)
     total = await count_attendees(db, filters)
 
-    return events, total
+    return attendees, total
 
 
 async def count_attendees(db: Session, filters: list):
@@ -61,10 +61,13 @@ async def _get_attendees(
         .join(Event, Event.id == Application.event_id)
         .join(Transaction, Transaction.application_id == Application.id)
         .where(*filters)
-        .limit(query_params.per_page)
-        .offset(query_params.per_page * (query_params.page - 1))
         .order_by(sort_by)
     )
+
+    if query_params.per_page:
+        query = query.limit(query_params.per_page)
+    if query_params.page:
+        query = query.offset(query_params.per_page * (query_params.page - 1))
 
     attendees = db.exec(query).mappings().all()
     return attendees

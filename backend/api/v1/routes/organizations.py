@@ -1,6 +1,7 @@
 from http import HTTPStatus
 
 from fastapi import APIRouter, Depends
+from fastapi.responses import StreamingResponse
 from sqlmodel import Session
 
 import backend.api.v1.services.auth as auth_service
@@ -22,6 +23,7 @@ from backend.schemas.event import (
     ListingTopOrganizationEventsResponse,
 )
 from backend.schemas.organization import (
+    DownloadAttendeesRequest,
     ListingAttendeesQueryParams,
     ListingAttendeesResponse,
     ListingOngoingEventOrganizationsResponse,
@@ -77,6 +79,29 @@ async def listing_attendees(
         db, organizer, query_params
     )
     return ListingAttendeesResponse(data=attendees, total=total, page=1, per_page=10)
+
+
+@router.get(
+    "/attendees/csv",
+    response_class=StreamingResponse,
+    responses={
+        200: {
+            "content": {"text/csv": {}},
+            "description": "Stream plain text using utf8 charset.",
+        },
+        **authenticated_api_responses,
+    },
+)
+async def download_attendees_csv(
+    db: Session = Depends(get_read_db),
+    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+    request: DownloadAttendeesRequest = Depends(DownloadAttendeesRequest),
+):
+    stream = await organizations_service.download_attendees_csv(db, organizer, request)
+
+    response = StreamingResponse(iter([stream.getvalue()]), media_type="text/csv")
+    response.headers["Content-Disposition"] = "attachment; filename=attendees.csv"
+    return response
 
 
 @router.get(

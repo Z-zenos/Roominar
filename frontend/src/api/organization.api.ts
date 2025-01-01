@@ -1,14 +1,15 @@
-import type { SWRMutationConfiguration } from 'swr/dist/mutation';
 import useApi from '../lib/api/useApi';
-import useSWRMutation from 'swr/mutation';
+import useSWRMutation, { type SWRMutationConfiguration } from 'swr/mutation';
 import type {
   OrganizationsApiCreateOrganizationFollowRequest,
   OrganizationsApiDeleteOrganizationFollowRequest,
+  OrganizationsApiDownloadAttendeesCsvRequest,
   OrganizationsApiListingAttendeesRequest,
   OrganizationsApiRegisterOrganizationRequest,
 } from '../lib/api/generated';
 import { useQuery } from '@tanstack/react-query';
 import { toCamelCase } from '../utils/app.util';
+import axios from 'axios';
 
 export const useRegisterOrganizationMutation = <T>(
   options?: SWRMutationConfiguration<number, T>,
