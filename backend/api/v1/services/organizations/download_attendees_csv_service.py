@@ -15,7 +15,7 @@ from backend.models.user import User
 from backend.schemas.organization import DownloadAttendeesRequest
 
 csv_headers = {
-    "user_id": "User ID",
+    "id": "User ID",
     "user_name": "User Name",
     "email": "Email",
     "event_id": "Event ID",

@@ -32,6 +32,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import queryString from 'query-string';
 import dayjs from 'dayjs';
 import {
+  camelToSnake,
   formatEventDate,
   optionify,
   searchQuery,
@@ -77,6 +78,7 @@ export default function AttendeeDataTable() {
   const [isDownloadAttendeesCSVLoading, setIsDownloadAttendeesCSVLoading] =
     useState<boolean>(false);
   const searchParams = useSearchParams();
+  const [isWithFilterData, setIsWithFilterData] = useState<boolean>(false);
   const router = useRouter();
   const { width } = useWindowDimensions();
   const t = useTranslations();
@@ -168,6 +170,7 @@ export default function AttendeeDataTable() {
     setIsDownloadAttendeesCSVLoading(true);
     let params = {
       ...queryString.parse(searchParams.toString(), { arrayFormat: 'bracket' }),
+      withFilter: isWithFilterData,
     } as OrganizationsApiDownloadAttendeesCsvRequest;
 
     params = toCamelCase(params);
@@ -175,13 +178,12 @@ export default function AttendeeDataTable() {
       params.applyAtFrom = new Date(params.applyAtFrom);
     }
     if (params.applyAtTo) params.applyAtTo = new Date(params.applyAtTo);
-    params.withFilter = true;
 
     axios
       .get(
         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/organizations/attendees/csv`,
         {
-          params: params,
+          params: camelToSnake(params),
           headers: {
             Authorization: `Bearer ${auth.token.accessToken}`,
           },
@@ -395,17 +397,30 @@ export default function AttendeeDataTable() {
               />
             </div>
             <div className='flex items-center justify-start gap-4 mt-0'>
-              <Button
-                type='button'
-                className='bg-success-500 text-white'
-                radius='sm'
-                size='md'
-                onClick={handleDownloadAttendeesCSV}
-                endContent={<TbFileTypeCsv size={36} />}
-                isLoading={isDownloadAttendeesCSVLoading}
-              >
-                Download
-              </Button>
+              <div className='flex flex-col justify-start gap-2'>
+                <Button
+                  type='button'
+                  className='bg-success-500 text-white'
+                  radius='sm'
+                  size='md'
+                  onClick={handleDownloadAttendeesCSV}
+                  endContent={<TbFileTypeCsv size={36} />}
+                  isLoading={isDownloadAttendeesCSVLoading}
+                >
+                  Download
+                </Button>
+                <Checkbox
+                  size='sm'
+                  className='text-ss font-light text-gray-600'
+                  radius='none'
+                  isSelected={isWithFilterData}
+                  onValueChange={(value) => {
+                    setIsWithFilterData(value);
+                  }}
+                >
+                  With Filter Data
+                </Checkbox>
+              </div>
             </div>
           </div>
         </form>
