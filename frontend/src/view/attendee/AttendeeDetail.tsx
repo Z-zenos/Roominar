@@ -9,6 +9,8 @@ import { styles } from '@/src/constants/styles.constant';
 import clsx from 'clsx';
 import Chip from '@/src/component/common/Chip';
 import { RiChatFollowUpLine } from 'react-icons/ri';
+import { GoHistory } from 'react-icons/go';
+import VerticalTimeline from '@/src/component/common/DateTime/VerticalTimeline';
 
 interface AttendeeDetailProps {
   id: number;
@@ -42,7 +44,7 @@ export default function AttendeeDetail({ id }: AttendeeDetailProps) {
             Basic Info
           </div>
         </div>
-        <div className={clsx(styles.between, 'mt-4')}>
+        <div className='mt-4 grid grid-cols-2'>
           {attendee.isFollowed && (
             <Chip
               content='Following your organization'
@@ -76,6 +78,20 @@ export default function AttendeeDetail({ id }: AttendeeDetailProps) {
             }
           />
         </div>
+      </div>
+
+      <div>
+        <div
+          className={clsx(
+            styles.center,
+            'mt-5 p-2 border border-primary text-primary font-semibold rounded-sm gap-2',
+          )}
+        >
+          <GoHistory size={24} />
+          Activation History
+        </div>
+
+        <VerticalTimeline />
       </div>
     </div>
   ) : (

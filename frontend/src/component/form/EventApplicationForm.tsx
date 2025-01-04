@@ -53,7 +53,7 @@ import { useSession } from 'next-auth/react';
 import { BiSolidSchool } from 'react-icons/bi';
 import { FaPhone } from 'react-icons/fa6';
 import useWindowDimensions from '@/src/hooks/useWindowDimension';
-import Timeline from '@/src/component/common/Timeline';
+import HorizontalTimeline from '@/src/component/common/DateTime/HorizontalTimeline';
 import { Alert, AlertDescription, AlertTitle } from '../common/Alert';
 import DotLoader from '../common/Loader/DotLoader';
 import NumberSpinnerInput from '../common/Input/NumberSpinnerInput';
@@ -204,7 +204,9 @@ export default function EventApplicationForm({
                 <div className={clsx(styles.between, 'mt-3')}>
                   <Chip
                     content={
-                      (event.soldTicketsNumber ?? 0) + ' / ' + event.totalTicketNumber
+                      (event.soldTicketsNumber ?? 0) +
+                      ' / ' +
+                      event.totalTicketNumber
                     }
                     leftIcon={<FaUserFriends className='text-sm' />}
                     type='info'
@@ -395,7 +397,7 @@ export default function EventApplicationForm({
               </h2>
 
               {event && (
-                <Timeline
+                <HorizontalTimeline
                   applicationStartAt={event.applicationStartAt}
                   applicationEndAt={event.applicationEndAt}
                   startAt={event.startAt}
