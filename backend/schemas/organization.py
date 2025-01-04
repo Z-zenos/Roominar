@@ -64,7 +64,7 @@ class ListingAttendeesItem(BaseModel):
     applied_at: datetime
     checked_in_at: datetime | None = None
     application_id: int
-    transaction_status: TransactionStatusCode
+    transaction_status: TransactionStatusCode | None = None
     check_in_id: int | None = None
 
 

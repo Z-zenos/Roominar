@@ -1,4 +1,4 @@
-from sqlmodel import Date, Session, String, func, or_, select
+from sqlmodel import Date, Session, String, and_, func, or_, select
 
 from backend.core.constants import AttendeeSortByCode
 from backend.models.application import Application
@@ -59,7 +59,13 @@ async def _get_attendees(
         .join(Application, Application.user_id == User.id)
         .outerjoin(CheckIn, CheckIn.application_id == Application.id)
         .join(Event, Event.id == Application.event_id)
-        .join(Transaction, Transaction.application_id == Application.id)
+        .outerjoin(
+            Transaction,
+            and_(
+                Transaction.application_id == Application.id,
+                Event.max_ticket_number_per_account == 1,
+            ),
+        )
         .where(*filters)
         .order_by(sort_by)
     )

@@ -3,6 +3,7 @@ import useSWRMutation, { type SWRMutationConfiguration } from 'swr/mutation';
 import type {
   OrganizationsApiCreateOrganizationFollowRequest,
   OrganizationsApiDeleteOrganizationFollowRequest,
+  OrganizationsApiGetAttendeeDetailRequest,
   OrganizationsApiListingAttendeesRequest,
   OrganizationsApiRegisterOrganizationRequest,
 } from '../lib/api/generated';
@@ -84,5 +85,15 @@ export const useListingAttendeesQuery = (
   return useQuery({
     queryKey: ['listing-attendees', params],
     queryFn: async () => await api.organizations.listingAttendees(params),
+  });
+};
+
+export const useGetAttendeeDetailQuery = (
+  params: OrganizationsApiGetAttendeeDetailRequest,
+) => {
+  const api = useApi();
+  return useQuery({
+    queryKey: ['get-attendee-detail'],
+    queryFn: async () => await api.organizations.getAttendeeDetail(params),
   });
 };

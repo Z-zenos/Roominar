@@ -28,7 +28,13 @@ async def get_attendee_detail(db: Session, organizer: User, attendee_id: int):
             User.industry_code,
             User.workplace_name,
             User.avatar_url,
-            func.max(Follow.id).label("is_followed"),
+            case(
+                (
+                    func.max(Follow.id).isnot(None),
+                    True,
+                ),
+                else_=False,
+            ).label("is_followed"),
             func.count(Application.id).label("applied_event_number"),
         )
         .outerjoin(

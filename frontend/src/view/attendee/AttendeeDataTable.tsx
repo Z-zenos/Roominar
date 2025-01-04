@@ -1,7 +1,7 @@
 'use client';
 
 import type { Key } from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Table,
   TableHeader,
@@ -10,10 +10,6 @@ import {
   TableRow,
   TableCell,
   Button,
-  DropdownTrigger,
-  Dropdown,
-  DropdownMenu,
-  DropdownItem,
   User,
   Link,
   Checkbox,
@@ -63,6 +59,24 @@ import toast from 'react-hot-toast';
 import { TbFileTypeCsv } from 'react-icons/tb';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
+import { AiOutlineEye } from 'react-icons/ai';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetOverlay,
+  SheetTitle,
+  SheetTrigger,
+} from '@/src/component/common/Sheet';
+import AttendeeDetail from './AttendeeDetail';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from '@/src/component/common/DropdownMenu';
 
 const columns = [
   { name: 'Apply Time', uid: 'apply_time', sortable: false },
@@ -88,11 +102,17 @@ export default function AttendeeDataTable() {
   );
 
   const [selectedKeys, setSelectedKeys] = useState<any>(null);
+  const [selectedAttendeeId, setSelectedAttendeeId] = useState<number | null>(
+    null,
+  );
   const { data, isFetching } = useListingAttendeesQuery({
     ...queryString.parse(searchParams.toString(), { arrayFormat: 'bracket' }),
   });
   const [page, setPage] = useState<number>(data?.page || 1);
   const { data: auth } = useSession();
+  const [rightSidebarContent, setRightSidebarContent] = useState<
+    'ATTENDEE_DETAIL' | null
+  >();
 
   const form = useForm<OrganizationsApiListingAttendeesRequest>({
     mode: 'all',
@@ -226,6 +246,25 @@ export default function AttendeeDataTable() {
     });
   };
 
+  const rightSidebar = useMemo(() => {
+    switch (rightSidebarContent) {
+      case 'ATTENDEE_DETAIL':
+        return {
+          title: 'ATTENDEE DETAIL',
+          body: <AttendeeDetail id={selectedAttendeeId} />,
+          footer: null,
+        };
+
+      // case 'TARGET':
+      //   return {
+      //     title: 'TARGET',
+      //     body: <CreateTargetForm />,
+      //     footer: null,
+      //   };
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rightSidebarContent]);
+
   const renderCell = useCallback(
     (attendee: ListingAttendeesItem, columnKey: Key) => {
       const cellValue = attendee[columnKey as string];
@@ -304,34 +343,39 @@ export default function AttendeeDataTable() {
 
         case 'actions':
           return (
-            <div className='relative flex justify-end items-center gap-2'>
-              <Dropdown>
-                <DropdownTrigger>
-                  <Button
-                    isIconOnly
-                    size='sm'
-                    variant='light'
-                  >
-                    <BsThreeDots className='text-default-500' />
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu>
-                  <DropdownItem>View</DropdownItem>
-                  <DropdownItem>Edit</DropdownItem>
-                  <DropdownItem>Delete</DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
+            <div className='relative flex justify-center items-center gap-2 hover:bg-gray-200'>
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  className={clsx(styles.center, 'w-full h-10')}
+                >
+                  <BsThreeDots className='text-default-500 cursor-pointer' />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuLabel>
+                    <SheetTrigger
+                      onClick={() => {
+                        setRightSidebarContent('ATTENDEE_DETAIL');
+                        setSelectedAttendeeId(attendee.id);
+                      }}
+                      className={clsx(styles.between, 'gap-2')}
+                    >
+                      <AiOutlineEye className='w-5 h-5' />
+                      View Detail
+                    </SheetTrigger>
+                  </DropdownMenuLabel>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           );
         default:
           return cellValue;
       }
     },
-    [JSON.stringify(checkedInAttendees)],
+    [],
   );
 
   return (
-    <>
+    <Sheet>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSearch)}>
           <div className='flex justify-between items-center flex-wrap gap-1'>
@@ -488,6 +532,22 @@ export default function AttendeeDataTable() {
           activeClassName='bg-primary text-white rounded-md'
         />
       </div>
-    </>
+
+      <SheetOverlay>
+        <SheetContent
+          side='right'
+          className='min-w-[600px]'
+        >
+          <SheetHeader>
+            <SheetTitle className='text-primary'>
+              {rightSidebar?.title}
+            </SheetTitle>
+            <SheetDescription />
+          </SheetHeader>
+          {rightSidebar?.body}
+          <SheetFooter>{rightSidebar?.footer}</SheetFooter>
+        </SheetContent>
+      </SheetOverlay>
+    </Sheet>
   );
 }
