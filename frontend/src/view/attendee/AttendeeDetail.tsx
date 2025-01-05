@@ -11,6 +11,7 @@ import Chip from '@/src/component/common/Chip';
 import { RiChatFollowUpLine } from 'react-icons/ri';
 import { GoHistory } from 'react-icons/go';
 import VerticalTimeline from '@/src/component/common/DateTime/VerticalTimeline';
+import { formatEventDate } from '@/src/utils/app.util';
 
 interface AttendeeDetailProps {
   id: number;
@@ -50,9 +51,10 @@ export default function AttendeeDetail({ id }: AttendeeDetailProps) {
               content='Following your organization'
               leftIcon={<RiChatFollowUpLine className='text-md' />}
               type='success'
+              className='w-fit'
             />
           )}
-          <span className='text-ss font-light translate-y-3 text-primary'>
+          <span className='text-ss font-light translate-y-3 text-primary text-right'>
             Click to Copy
           </span>
         </div>
@@ -91,7 +93,7 @@ export default function AttendeeDetail({ id }: AttendeeDetailProps) {
           Activation History
         </div>
 
-        <VerticalTimeline />
+        <VerticalTimeline events={attendee.appliedEvents} />
       </div>
     </div>
   ) : (

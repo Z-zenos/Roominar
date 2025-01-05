@@ -163,7 +163,7 @@ async def _get_applied_events(db: Session, attendee_id: int):
                     [],
                 ),
                 else_=AttendeeSurveyResponseResult.c.survey_response_results,
-            ),
+            ).label("survey_response_results"),
         )
         .join(Application, Application.event_id == Event.id)
         .outerjoin(CheckIn, CheckIn.application_id == Application.id)
