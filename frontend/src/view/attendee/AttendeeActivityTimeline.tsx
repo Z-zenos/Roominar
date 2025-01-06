@@ -1,15 +1,26 @@
-import { styles } from '@/src/constants/styles.constant';
 import type { AttendeeAppliedEvent } from '@/src/lib/api/generated';
-import { formatEventDate } from '@/src/utils/app.util';
+import { formatEventDate, formatTransactionDate } from '@/src/utils/app.util';
 import { Image } from '@nextui-org/react';
 import clsx from 'clsx';
-import { Tabs } from '../Tabs';
+import { Tabs } from '../../component/common/Tabs';
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '../../component/common/Table';
+import { MdBookmarkAdded, MdBookmarkBorder } from 'react-icons/md';
 
-interface VerticalTimelineProps {
+interface AttendeeActivityTimelineProps {
   events: AttendeeAppliedEvent[];
 }
 
-export default function VerticalTimeline({ events }: VerticalTimelineProps) {
+export default function AttendeeActivityTimeline({
+  events,
+}: AttendeeActivityTimelineProps) {
   return (
     <div className='bg-white'>
       <div className='max-w-xl py-8'>
@@ -51,7 +62,7 @@ export default function VerticalTimeline({ events }: VerticalTimelineProps) {
                               <div className='text-gray-900 mr-2 text-nm'>
                                 {event.name}
 
-                                <p className='my-1 ml-3 relative inline-flex items-center bg-white rounded-full border border-gray-300 px-3 py-0.5 text-sm'>
+                                <div className='my-1 ml-3 relative inline-flex items-center bg-white rounded-full border border-gray-300 px-3 py-0.5 text-sm'>
                                   <div className='absolute flex-shrink-0 flex items-center justify-center'>
                                     <span
                                       className={clsx(
@@ -73,7 +84,18 @@ export default function VerticalTimeline({ events }: VerticalTimelineProps) {
                                   >
                                     {event.checkInId ? 'Checked In' : 'Uncheck'}
                                   </div>
-                                </p>
+                                </div>
+
+                                <span className=' inline-block ml-2 translate-y-1'>
+                                  {event.isBookmarked ? (
+                                    <MdBookmarkAdded
+                                      size={20}
+                                      className='text-primary'
+                                    />
+                                  ) : (
+                                    <MdBookmarkBorder size={20} />
+                                  )}
+                                </span>
 
                                 <p className='whitespace-nowrap text-sm text-gray-700 mt-2'>
                                   Applied at {formatEventDate(event.appliedAt)}
@@ -97,7 +119,65 @@ export default function VerticalTimeline({ events }: VerticalTimelineProps) {
                             tabs={[
                               {
                                 value: 'transactions',
-                                content: <p>Transaction History</p>,
+                                content: event.transactionHistories.length >
+                                  0 && (
+                                  <Table>
+                                    <TableCaption>
+                                      A list of transaction histories.
+                                    </TableCaption>
+                                    <TableHeader>
+                                      <TableRow>
+                                        <TableHead className='w-[100px]'>
+                                          Status
+                                        </TableHead>
+                                        <TableHead>Amount</TableHead>
+                                        <TableHead>Purchased At</TableHead>
+                                        <TableHead className='text-right'>
+                                          Quantity
+                                        </TableHead>
+                                        <TableHead>Identity Code</TableHead>
+                                      </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                      {event.transactionHistories.map((th) => (
+                                        <TableRow
+                                          key={th.id}
+                                          className='text-center'
+                                        >
+                                          <TableCell className='font-semibold text-sm text-green-500'>
+                                            {th.transactionStatus}
+                                          </TableCell>
+                                          <TableCell>
+                                            {th.totalAmount}
+                                          </TableCell>
+                                          <TableCell>
+                                            {formatTransactionDate(
+                                              th.purchasedAt,
+                                            )}
+                                          </TableCell>
+                                          <TableCell className='text-right'>
+                                            {th.quantity}
+                                          </TableCell>
+                                          <TableCell>
+                                            {th.ticketTransactionItems
+                                              .map((tti) => tti.id)
+                                              .join(', ')}
+                                          </TableCell>
+                                        </TableRow>
+                                      ))}
+                                    </TableBody>
+                                    {/* <TableFooter>
+                                          <TableRow>
+                                            <TableCell colSpan={3}>
+                                              Total
+                                            </TableCell>
+                                            <TableCell className='text-right'>
+                                              $2,500.00
+                                            </TableCell>
+                                          </TableRow>
+                                        </TableFooter> */}
+                                  </Table>
+                                ),
                               },
                               {
                                 value: 'surveys',
@@ -108,8 +188,8 @@ export default function VerticalTimeline({ events }: VerticalTimelineProps) {
                                       key={`svr-${i}`}
                                       className='mt-5'
                                     >
-                                      <div className='font-light text-nm'>
-                                        {i + '. ' + svr.question}
+                                      <div className='text-nm text-gray-700'>
+                                        {i + 1 + '. ' + svr.question}
                                       </div>
                                       <div className='text-gray-600 font-light text-sm'>
                                         {' - ' + svr.answers.join(', ')}

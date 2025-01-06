@@ -10,8 +10,7 @@ import clsx from 'clsx';
 import Chip from '@/src/component/common/Chip';
 import { RiChatFollowUpLine } from 'react-icons/ri';
 import { GoHistory } from 'react-icons/go';
-import VerticalTimeline from '@/src/component/common/DateTime/VerticalTimeline';
-import { formatEventDate } from '@/src/utils/app.util';
+import AttendeeActivityTimeline from '@/src/view/attendee/AttendeeActivityTimeline';
 
 interface AttendeeDetailProps {
   id: number;
@@ -93,7 +92,7 @@ export default function AttendeeDetail({ id }: AttendeeDetailProps) {
           Activation History
         </div>
 
-        <VerticalTimeline events={attendee.appliedEvents} />
+        <AttendeeActivityTimeline events={attendee.appliedEvents} />
       </div>
     </div>
   ) : (
