@@ -126,7 +126,7 @@ function EventCard({
                 <Chip
                   content={
                     status === 'authenticated'
-                      ? `${event?.appliedNumber || 0} / ${event?.totalTicketNumber}`
+                      ? `${event?.soldTicketsNumber || 0} / ${event?.totalTicketNumber}`
                       : event.totalTicketNumber + ''
                   }
                   leftIcon={<FaUserFriends className='text-sm' />}
@@ -176,7 +176,7 @@ function EventCard({
                   <Chip
                     content={
                       status === 'authenticated'
-                        ? `${event?.appliedNumber || 0} / ${event?.totalTicketNumber}`
+                        ? `${event['soldTicketsNumber'] || 0} / ${event?.totalTicketNumber}`
                         : event.totalTicketNumber + ''
                     }
                     leftIcon={<FaUserFriends className='text-sm' />}
@@ -301,7 +301,7 @@ function EventCard({
                 className={clsx('flex justify-end items-center !gap-4 mt-2')}
               >
                 {event?.ticketName && <Ticket name={event?.ticketName} />}
-                {!isCanceled && !event?.canceledAt && (
+                {/* {!isCanceled && !event?.canceledAt && (
                   <Button
                     color='danger'
                     radius='sm'
@@ -317,7 +317,7 @@ function EventCard({
                   <p className='opacity-60 italic text-sm'>
                     Canceled at {formatEventDate(event?.canceledAt)}
                   </p>
-                )}
+                )} */}
 
                 <ConfirmDialog
                   content={
@@ -332,9 +332,9 @@ function EventCard({
                   isOpen={isOpen}
                   onOpenChange={onOpenChange}
                   onConfirm={() => {
-                    cancelEventApplication({
-                      applicationId: event?.applicationId,
-                    });
+                    // cancelEventApplication({
+                    //   applicationId: event?.applicationId,
+                    // });
                     router.refresh();
                   }}
                   confirmLabel='Cancel'

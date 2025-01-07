@@ -3,17 +3,16 @@ from uuid import uuid4
 
 import stripe
 from fastapi import HTTPException, Request
-from sqlmodel import Session, func, select
+from sqlmodel import Session
 
+import backend.api.v1.services.applications as applications_service
 from backend.core.config import settings
 from backend.core.constants import IndustryCode, JobTypeCode
-from backend.core.error_code import ErrorCode, ErrorMessage
-from backend.core.exception import BadRequestException
 from backend.models.application import Application
-from backend.models.event import Event
 from backend.models.survey_response_result import SurveyResponseResult
-from backend.models.ticket import Ticket
+from backend.models.ticket_inventory import TicketInventory
 from backend.models.transaction import Transaction, TransactionStatusCode
+from backend.models.transaction_item import TransactionItem
 from backend.utils.database import save
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -25,11 +24,11 @@ async def handle_application_transaction(db: Session, request: Request):
 
     try:
         # Verify the Stripe event
-        event = stripe.Webhook.construct_event(
+        stripe_event = stripe.Webhook.construct_event(
             payload, sig, settings.STRIPE_WEBHOOK_SECRET
         )
 
-        session = event["data"]["object"]
+        session = stripe_event["data"]["object"]
         # Extract metadata
         metadata = session.get("metadata", {})
         transaction_reference = metadata["transaction_reference"]
@@ -47,119 +46,120 @@ async def handle_application_transaction(db: Session, request: Request):
         )
         tickets = json.loads(metadata.get("tickets", []))
 
-        # Fetch the event
-        event = db.exec(select(Event).where(Event.id == event_id)).one_or_none()
-        if not event:
-            raise BadRequestException(
-                ErrorCode.ERR_EVENT_NOT_FOUND, ErrorMessage.ERR_EVENT_NOT_FOUND
-            )
+        result = applications_service.validate_application_tickets(
+            db,
+            user_id,
+            {
+                "event_id": event_id,
+                "tickets": tickets,
+            },
+        )
+
+        tickets = result["tickets"]
+        total_requested_quantity = result["total_requested_quantity"]
+        application = result["application"]
 
         # Create Application
-        application = Application(
-            event_id=event_id,
-            user_id=user_id,
-            email=email,
-            first_name=first_name,
-            last_name=last_name,
-            workplace_name=workplace_name,
-            phone=phone,
-            industry_code=(
-                IndustryCode(industry_code.split(".")[1]) if industry_code else None
-            ),
-            job_type_code=(
-                JobTypeCode(job_type_code.split(".")[1]) if job_type_code else None
-            ),
-        )
-        application = save(db, application)
+        if not application:
+            application = Application(
+                event_id=event_id,
+                user_id=user_id,
+                email=email,
+                first_name=first_name,
+                last_name=last_name,
+                workplace_name=workplace_name,
+                phone=phone,
+                industry_code=(
+                    IndustryCode(industry_code.split(".")[1]) if industry_code else None
+                ),
+                job_type_code=(
+                    JobTypeCode(job_type_code.split(".")[1]) if job_type_code else None
+                ),
+            )
+            application = save(db, application)
 
-        # Create Survey Response Results
-        if survey_response_results:
-            survey_responses = [
-                SurveyResponseResult(
-                    event_id=event_id,
-                    application_id=application.id,
-                    email=email,
-                    question_id=srr["question_id"],
-                    answers_ids=srr["answers_ids"],
-                    answer_text=srr.get("answer_text"),
-                )
-                for srr in survey_response_results
-            ]
-            db.bulk_save_objects(survey_responses)
+            # Create Survey Response Results
+            if survey_response_results:
+                survey_responses = [
+                    SurveyResponseResult(
+                        event_id=event_id,
+                        application_id=application.id,
+                        email=email,
+                        question_id=srr["question_id"],
+                        answers_ids=srr["answers_ids"],
+                        answer_text=srr.get("answer_text"),
+                    )
+                    for srr in survey_response_results
+                ]
+                db.bulk_save_objects(survey_responses)
 
         # Handle checkout session completion
         if (
-            event["type"] == "checkout.session.completed"
-            or event["type"] == "payment_intent.succeeded"
+            stripe_event["type"] == "checkout.session.completed"
+            or stripe_event["type"] == "payment_intent.succeeded"
         ):
-            # Create Transactions for each ticket in the session
-            new_transactions = []
-            for ticket_data in tickets:
-                ticket_id = int(ticket_data["id"])
-                requested_quantity = int(ticket_data["quantity"])
-                ticket = db.exec(
-                    select(Ticket).where(Ticket.id == ticket_id)
-                ).one_or_none()
+            # Create Transaction
+            transaction = Transaction(
+                event_id=event_id,
+                application_id=application.id,
+                quantity=total_requested_quantity,
+                total_amount=sum(
+                    ticket["price"] * ticket["requested_quantity"] for ticket in tickets
+                ),
+                status=TransactionStatusCode.SUCCESS,
+                stripe_payment_intent_id=session["payment_intent"],
+                stripe_checkout_session_id=session["id"],
+                reference=f"{transaction_reference}-{uuid4()}",
+            )
 
-                if not ticket:
-                    raise BadRequestException(
-                        ErrorCode.ERR_INVALID_TICKET, ErrorMessage.ERR_INVALID_TICKET
-                    )
+            transaction = save(db, transaction)
+            new_transaction_items = []
+            update_ticket_inventories = []
+            for ticket in tickets:
+                update_ticket_inventories.append(
+                    {
+                        "id": ticket["ticket_inventory_id"],
+                        "available_quantity": ticket["available_quantity"]
+                        - ticket["requested_quantity"],
+                        "sold_quantity": ticket["sold_quantity"]
+                        + ticket["requested_quantity"],
+                        "ticket_id": ticket["id"],
+                        "event_id": event_id,
+                    }
+                )
 
-                # Verify ticket availability
-                ticket_transactions = (
-                    db.scalar(
-                        select(func.sum(Transaction.quantity)).where(
-                            Transaction.ticket_id == ticket_id,
-                            Transaction.status == TransactionStatusCode.PURCHASED,
+                for _ in range(ticket["quantity"]):
+                    # Create the transaction item
+                    new_transaction_items.append(
+                        TransactionItem(
+                            transaction_id=transaction.id,
+                            ticket_id=ticket["id"],
+                            amount=ticket["price"],
                         )
                     )
-                    or 0
-                )
 
-                remaining_quantity = max(ticket.quantity - ticket_transactions, 0)
-                if requested_quantity > remaining_quantity:
-                    raise BadRequestException(
-                        ErrorCode.ERR_TICKET_SOLD_OUT, ErrorMessage.ERR_TICKET_SOLD_OUT
-                    )
-
-                # Create the transaction
-                new_transactions.append(
-                    Transaction(
-                        application_id=application.id,
-                        ticket_id=ticket_id,
-                        quantity=requested_quantity,
-                        total_amount=ticket.price * requested_quantity,
-                        status=TransactionStatusCode.PURCHASED,
-                        stripe_payment_intent_id=session["payment_intent"],
-                        stripe_checkout_session_id=session["id"],
-                        reference=f"{transaction_reference}-{uuid4()}",
-                    )
-                )
-
-            db.bulk_save_objects(new_transactions)
+            db.bulk_update_mappings(TicketInventory, update_ticket_inventories)
+            db.bulk_save_objects(new_transaction_items)
             db.commit()
 
             return {"status": "success"}
 
-        elif event["type"] == "payment_intent.payment_failed":
-            new_transactions = []
-            for ticket_data in tickets:
-                new_transactions.append(
-                    Transaction(
-                        application_id=application.id,
-                        ticket_id=ticket_id,
-                        quantity=requested_quantity,
-                        total_amount=ticket.price * requested_quantity,
-                        status=TransactionStatusCode.FAILED,
-                        stripe_payment_intent_id=session["payment_intent"],
-                        stripe_checkout_session_id=session["id"],
-                        reference=f"{transaction_reference}-{uuid4()}",
-                    )
-                )
+        elif stripe_event["type"] == "payment_intent.payment_failed":
+            # Create Transaction
+            transaction = Transaction(
+                event_id=event_id,
+                application_id=application.id,
+                quantity=total_requested_quantity,
+                total_amount=sum(
+                    ticket["price"] * ticket["requested_quantity"] for ticket in tickets
+                ),
+                status=TransactionStatusCode.PENDING,
+                stripe_payment_intent_id=session["payment_intent"],
+                stripe_checkout_session_id=session["id"],
+                reference=f"{transaction_reference}-{uuid4()}",
+            )
 
-            db.bulk_save_objects(new_transactions)
-            db.commit()
+            transaction = save(db, transaction)
 
     except (ValueError, stripe.SignatureVerificationError):
         raise HTTPException(status_code=400, detail="Invalid Stripe webhook signature")

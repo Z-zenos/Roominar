@@ -20,6 +20,7 @@ from backend.schemas.common import PaginationResponse
 from backend.schemas.survey import SurveyDetail
 from backend.schemas.tag import TagItem
 from backend.schemas.ticket import TicketItem
+from backend.schemas.transaction import TicketTransaction
 
 
 class SearchEventsItem(BaseModel):
@@ -40,7 +41,7 @@ class SearchEventsItem(BaseModel):
     is_offline: bool | None = None
     is_bookmarked: bool | None = None
     meeting_tool_code: str | None = None
-    applied_number: int | None = None
+    sold_tickets_number: int | None = None
     tags: list[TagItem] = Field([])
     published_at: datetime
 
@@ -107,7 +108,7 @@ class GetEventDetailResponse(BaseModel):
     tickets: list[TicketItem]
     organization_contact_url: str | None = None
     total_ticket_number: int
-    applied_number: int
+    sold_tickets_number: int | None = None
     status: EventStatusCode
     application_form_url: str | None = None
     tags: list[TagItem] = Field([])
@@ -162,9 +163,7 @@ class MyEventItem(BaseModel):
     end_at: datetime
     application_start_at: datetime
     application_end_at: datetime
-    applied_number: int | None = None
     total_ticket_number: int
-    application_id: int | None = None
     cover_image_url: str
     organize_place_name: str | None = None
     organize_address: str | None = None
@@ -177,7 +176,9 @@ class MyEventItem(BaseModel):
     is_bookmarked: bool | None = None
     published_at: datetime
     tags: list[TagItem] = Field([])
-    canceled_at: datetime | None = None
+    ticket_transactions: list[TicketTransaction] = Field([])
+    # canceled_at: datetime | None = None
+    sold_tickets_number: int | None = 0
 
 
 class ListingMyEventsQueryParams(BaseModel):
@@ -294,7 +295,7 @@ class ListingOrganizationEventsItem(BaseModel):
     meeting_tool_code: EventMeetingToolCode
     # tickets: list[TicketItem] = Field([])
     total_ticket_number: int
-    applied_number: int | None = None
+    sold_tickets_number: int | None = None
     status: EventStatusCode
     # survey: SurveyDetail | None = None
     view_number: int | None = None

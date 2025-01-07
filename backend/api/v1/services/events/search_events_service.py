@@ -5,6 +5,7 @@ import pytz
 from pydantic import BaseModel
 from sqlmodel import Date, Session, and_, asc, case, desc, func, or_, select
 
+import backend.api.v1.services.tickets as tickets_service
 from backend.api.v1.services.tags.get_event_tags_service import get_event_tags
 from backend.core.constants import (
     EventSortByCode,
@@ -28,6 +29,10 @@ async def search_events(
 ):
     filters = _build_filters(db, user, query_params)
 
+    SoldTicketsNumber = tickets_service.get_sold_tickets_number_query(
+        event_id=None, user_id=None
+    )
+
     query = (
         select(
             Event.id,
@@ -47,7 +52,9 @@ async def search_events(
             Event.is_offline,
             Event.meeting_tool_code,
             Event.published_at,
-            func.count(Application.id).label("applied_number"),
+            func.max(SoldTicketsNumber.c.sold_tickets_number).label(
+                "sold_tickets_number"
+            ),
         )
         .join(Organization, Event.organization_id == Organization.id)
         .join(Target, Event.target_id == Target.id)
@@ -59,6 +66,7 @@ async def search_events(
                 TagAssociation.entity_code == TagAssociationEntityCode.EVENT,
             ),
         )
+        .outerjoin(SoldTicketsNumber, Event.id == SoldTicketsNumber.c.event_id)
         .group_by(
             Event.id,
             case(

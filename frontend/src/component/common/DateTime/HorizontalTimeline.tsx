@@ -8,7 +8,7 @@ import { CiLogout } from 'react-icons/ci';
 import clsx from 'clsx';
 import { useMemo } from 'react';
 
-interface TimelineProps {
+interface HorizontalTimelineProps {
   applicationStartAt?: Date;
   applicationEndAt?: Date;
   startAt?: Date;
@@ -32,13 +32,13 @@ function getTodayProgressBetweenTwoDates(
   );
 }
 
-function Timeline({
+function HorizontalTimeline({
   applicationStartAt,
   applicationEndAt,
   startAt,
   endAt,
   className,
-}: TimelineProps) {
+}: HorizontalTimelineProps) {
   const progress = useMemo(() => {
     return [
       getTodayProgressBetweenTwoDates(applicationStartAt, applicationEndAt),
@@ -208,4 +208,4 @@ function Timeline({
   );
 }
 
-export default Timeline;
+export default HorizontalTimeline;

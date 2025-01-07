@@ -1,6 +1,7 @@
 from http import HTTPStatus
 
 from fastapi import APIRouter, Depends
+from fastapi.responses import StreamingResponse
 from sqlmodel import Session
 
 import backend.api.v1.services.auth as auth_service
@@ -21,22 +22,15 @@ from backend.schemas.event import (
     ListingOrganizationEventsResponse,
     ListingTopOrganizationEventsResponse,
 )
-from backend.schemas.organization import ListingOngoingEventOrganizationsResponse
+from backend.schemas.organization import (
+    DownloadAttendeesRequest,
+    GetAttendeeDetailResponse,
+    ListingAttendeesQueryParams,
+    ListingAttendeesResponse,
+    ListingOngoingEventOrganizationsResponse,
+)
 
 router = APIRouter()
-
-
-@router.get(
-    "/{organization_id}/top-events",
-    response_model=ListingTopOrganizationEventsResponse,
-    responses=public_api_responses,
-)
-async def listing_top_organization_events(
-    organization_id: int = None,
-    db: Session = Depends(get_read_db),
-):
-    events = await events_service.listing_top_organization_events(db, organization_id)
-    return ListingTopOrganizationEventsResponse(events=events)
 
 
 @router.post(
@@ -73,6 +67,58 @@ async def listing_organization_events(
 
 
 @router.get(
+    "/attendees",
+    response_model=ListingAttendeesResponse,
+    responses=authenticated_api_responses,
+)
+async def listing_attendees(
+    db: Session = Depends(get_read_db),
+    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+    query_params: ListingAttendeesQueryParams = Depends(ListingAttendeesQueryParams),
+):
+    attendees, total = await organizations_service.listing_attendees(
+        db, organizer, query_params
+    )
+    return ListingAttendeesResponse(data=attendees, total=total, page=1, per_page=10)
+
+
+@router.get(
+    "/attendees/csv",
+    response_class=StreamingResponse,
+    responses={
+        200: {
+            "content": {"text/csv": {}},
+            "description": "Stream plain text using utf8 charset.",
+        },
+        **authenticated_api_responses,
+    },
+)
+async def download_attendees_csv(
+    db: Session = Depends(get_read_db),
+    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+    request: DownloadAttendeesRequest = Depends(DownloadAttendeesRequest),
+):
+    stream = await organizations_service.download_attendees_csv(db, organizer, request)
+
+    response = StreamingResponse(iter([stream.getvalue()]), media_type="text/csv")
+    response.headers["Content-Disposition"] = "attachment; filename=attendees.csv"
+    return response
+
+
+@router.get(
+    "/attendees/{attendee_id}",
+    response_model=GetAttendeeDetailResponse,
+    responses=authenticated_api_responses,
+)
+async def get_attendee_detail(
+    db: Session = Depends(get_read_db),
+    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+    attendee_id: int = None,
+):
+    return await organizations_service.get_attendee_detail(db, organizer, attendee_id)
+
+
+@router.get(
     "/ongoing-event-organizations",
     response_model=ListingOngoingEventOrganizationsResponse,
     responses=public_api_responses,
@@ -90,6 +136,19 @@ async def listing_organizations_of_ongoing_event(
         page=1,
         per_page=len(organizations),
     )
+
+
+@router.get(
+    "/{organization_id}/top-events",
+    response_model=ListingTopOrganizationEventsResponse,
+    responses=public_api_responses,
+)
+async def listing_top_organization_events(
+    organization_id: int = None,
+    db: Session = Depends(get_read_db),
+):
+    events = await events_service.listing_top_organization_events(db, organization_id)
+    return ListingTopOrganizationEventsResponse(events=events)
 
 
 @router.post(

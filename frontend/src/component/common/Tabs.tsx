@@ -64,13 +64,20 @@ interface TabsProps extends HTMLAttributes<HTMLDivElement> {
   tabs: { value: string; content?: ReactNode }[];
 }
 
-export function Tabs({ defaultValue, className, tabs }: TabsProps) {
+export function Tabs({
+  defaultValue,
+  className,
+  tabs,
+  tabClassName,
+}: TabsProps) {
   return (
     <BaseTabs
       defaultValue={defaultValue}
-      className={clsx('w-full mx-auto', className)}
+      className={clsx('w-full', className)}
     >
-      <TabsList className='max-w-[400px] mx-auto grid grid-cols-3'>
+      <TabsList
+        className={clsx('grid', `grid-cols-${tabs.length}`, tabClassName)}
+      >
         {tabs.map((tab) => (
           <TabsTrigger
             value={tab.value}

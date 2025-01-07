@@ -1,8 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import type {
+  EventsApiCreateCheckInRequest,
   EventsApiCreateEventBookmarkRequest,
+  EventsApiDeleteCheckInRequest,
   EventsApiDeleteEventBookmarkRequest,
   EventsApiGetEventDetailRequest,
+  EventsApiListingMyEventsRequest,
   EventsApiListingRelatedEventsRequest,
   EventsApiListingTicketsOfEventRequest,
   EventsApiPublishEventRequest,
@@ -135,4 +138,39 @@ export const useListingOrganizationEventsQuery = (
     queryFn: async () =>
       await api.organizations.listingOrganizationEvents(params),
   });
+};
+
+export const useListingMyEventsQuery = (
+  params?: EventsApiListingMyEventsRequest,
+) => {
+  params = toCamelCase(params);
+  const api = useApi();
+  return useQuery({
+    queryKey: ['listing-my-events', params],
+    queryFn: async () => await api.events.listingMyEvents(params),
+  });
+};
+
+export const useCreateCheckInMutation = <T>(
+  options?: SWRMutationConfiguration<number, T>,
+) => {
+  const api = useApi();
+  const key = 'create-event-check-in';
+  return useSWRMutation<number, T, typeof key, EventsApiCreateCheckInRequest>(
+    key,
+    async (_: string, { arg }) => await api.events.createCheckIn(arg),
+    options,
+  );
+};
+
+export const useDeleteCheckInMutation = <T>(
+  options?: SWRMutationConfiguration<void, T>,
+) => {
+  const api = useApi();
+  const key = 'delete-event-check-in';
+  return useSWRMutation<void, T, typeof key, EventsApiDeleteCheckInRequest>(
+    key,
+    async (_: string, { arg }) => await api.events.deleteCheckIn(arg),
+    options,
+  );
 };

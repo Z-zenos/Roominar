@@ -37,6 +37,8 @@ import {
 } from '@nextui-org/react';
 import type {
   AnswerItem,
+  ApiException,
+  ErrorResponse400,
   QuestionAnswerItem,
   SurveyResponseResultItem,
   TicketItem,
@@ -51,12 +53,14 @@ import { useSession } from 'next-auth/react';
 import { BiSolidSchool } from 'react-icons/bi';
 import { FaPhone } from 'react-icons/fa6';
 import useWindowDimensions from '@/src/hooks/useWindowDimension';
-import Timeline from '@/src/component/common/Timeline';
+import HorizontalTimeline from '@/src/component/common/DateTime/HorizontalTimeline';
 import { Alert, AlertDescription, AlertTitle } from '../common/Alert';
 import DotLoader from '../common/Loader/DotLoader';
 import NumberSpinnerInput from '../common/Input/NumberSpinnerInput';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import ApplicationCheckout from '../common/Payment/ApplicationCheckout';
+import { useCreateFreeApplicationMutation } from '@/src/api/application.api';
+import { useRouter } from 'next/navigation';
 
 interface EventApplicationFormProps {
   slug: string;
@@ -69,6 +73,7 @@ export default function EventApplicationForm({
   const { data: auth, status } = useSession();
   const { width } = useWindowDimensions();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const router = useRouter();
 
   const form = useForm<EventApplicationFormSchema>({
     mode: 'onChange',
@@ -82,7 +87,7 @@ export default function EventApplicationForm({
       industryCode: (auth?.user?.industryCode as IndustryCode) || null,
       jobTypeCode: (auth?.user?.jobTypeCode as JobTypeCode) || null,
       surveyResponseResults: [],
-      isAgreed: null,
+      isAgreed: false,
     },
     resolver: zodResolver(eventApplicationFormSchema),
   });
@@ -98,6 +103,49 @@ export default function EventApplicationForm({
       return acc + ticket.quantity;
     }, 0);
   }, [JSON.stringify(form.getValues('tickets'))]);
+
+  const { trigger, isMutating: isCreating } = useCreateFreeApplicationMutation({
+    onSuccess() {
+      router.push('apply/result?status=success');
+    },
+    onError(error: ApiException<unknown>) {
+      toast.error(
+        (error.body as ErrorResponse400)?.message ??
+          (error.body as ErrorResponse400)?.errorCode ??
+          'Unknown Error 😵',
+      );
+    },
+  });
+
+  const checkOnlySelectFreeTicket = () => {
+    return form.getValues('tickets').every((ticket) => ticket.price === 0);
+  };
+
+  const handleCreateFreeApplication = async () => {
+    await trigger({
+      createApplicationRequest: {
+        eventId: event.id,
+        email: form.getValues('email'),
+        firstName: form.getValues('firstName'),
+        lastName: form.getValues('lastName'),
+        workplaceName: form.getValues('workplaceName'),
+        phone: form.getValues('phone'),
+        industryCode: form.getValues('industryCode'),
+        jobTypeCode: form.getValues('jobTypeCode'),
+        surveyResponseResults: form.getValues(
+          'surveyResponseResults',
+        ) as SurveyResponseResultItem[],
+        isAgreed: form.getValues('isAgreed'),
+        tickets: form
+          .getValues('tickets')
+          .map((ticket) => ({
+            id: ticket.id,
+            quantity: ticket.quantity,
+          }))
+          .filter((ticket) => ticket),
+      },
+    });
+  };
 
   return (
     <Form {...form}>
@@ -156,7 +204,9 @@ export default function EventApplicationForm({
                 <div className={clsx(styles.between, 'mt-3')}>
                   <Chip
                     content={
-                      event.appliedNumber + ' / ' + event.totalTicketNumber
+                      (event.soldTicketsNumber ?? 0) +
+                      ' / ' +
+                      event.totalTicketNumber
                     }
                     leftIcon={<FaUserFriends className='text-sm' />}
                     type='info'
@@ -347,7 +397,7 @@ export default function EventApplicationForm({
               </h2>
 
               {event && (
-                <Timeline
+                <HorizontalTimeline
                   applicationStartAt={event.applicationStartAt}
                   applicationEndAt={event.applicationEndAt}
                   startAt={event.startAt}
@@ -681,7 +731,12 @@ export default function EventApplicationForm({
               </FormCheckBox>
             </div>
             <Button
-              title='Go To Payment'
+              title={
+                checkOnlySelectFreeTicket() ||
+                form.getValues('tickets').length === 0
+                  ? 'Apply'
+                  : 'Go To Payment'
+              }
               type='submit'
               className='w-80 mt-5 mx-auto'
               disabled={
@@ -689,7 +744,14 @@ export default function EventApplicationForm({
                 event?.applicationEndAt < new Date() ||
                 form.getValues('tickets').length === 0
               }
-              onClick={onOpen}
+              onClick={() => {
+                if (checkOnlySelectFreeTicket()) {
+                  handleCreateFreeApplication();
+                } else {
+                  onOpen();
+                }
+              }}
+              isLoading={isCreating}
             />
           </div>
 

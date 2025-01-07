@@ -152,3 +152,7 @@ export function hexToRgba(hex: string, alpha: number) {
 
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
+
+export function formatTransactionDate(datetime: Date) {
+  return dayjs(datetime).format('YYYY-MM-DD HH:MM');
+}

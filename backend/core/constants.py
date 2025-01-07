@@ -167,7 +167,7 @@ class TicketStatusCode(str, Enum):
 
 class TransactionStatusCode(str, Enum):
     PENDING = "PENDING"
-    PURCHASED = "PURCHASED"
+    SUCCESS = "SUCCESS"
     CANCELED = "CANCELED"
     FAILED = "FAILED"
 
@@ -278,7 +278,7 @@ class EventTimeStatusCode(str, Enum):
 
 
 class ManageEventSortByCode(str, Enum):
-    APPLIED_NUMBER = "APPLIED_NUMBER"
+    SOLD_TICKETS_NUMBER = "SOLD_TICKETS_NUMBER"
     START_AT = "START_AT"
     NAME = "NAME"
     VIEW_NUMBER = "VIEW_NUMBER"
@@ -294,3 +294,27 @@ class TagAssociationEntityCode(str, Enum):
 class FollowEntityCode(str, Enum):
     ORGANIZATION = "ORGANIZATION"
     SPEAKER = "SPEAKER"
+
+
+class AttendeeSortByCode(str, Enum):
+    APPLY_AT = "APPLY_AT"
+    NAME = "NAME"
+
+
+class CheckInMethodCode(str, Enum):
+    MANUAL = "MANUAL"
+    QR = "QR"
+    # NFC = "NFC"
+    FACE = "FACE"
+    OTHER = "OTHER"
+
+
+class RefundReasonCode(str, Enum):
+    CUSTOMER_REQUEST = "CUSTOMER_REQUEST"  # Yêu cầu từ khách hàng
+    EVENT_CANCELED = "EVENT_CANCELED"  # Sự kiện bị hủy
+    EVENT_RESCHEDULED = "EVENT_RESCHEDULED"  # Thay đổi lịch trình
+    TECHNICAL_ERROR = "TECHNICAL_ERROR"  # Lỗi hệ thống
+    DUPLICATE_PAYMENT = "DUPLICATE_PAYMENT"  # Thanh toán trùng lặp
+    POLICY_CHANGE = "POLICY_CHANGE"  # Thay đổi chính sách
+    FRAUDULENT_TRANSACTION = "FRAUDULENT_TRANSACTION"  # Giao dịch gian lận
+    LEGAL_ISSUE = "LEGAL_ISSUE"  # Vấn đề pháp lý

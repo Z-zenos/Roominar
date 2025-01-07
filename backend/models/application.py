@@ -18,3 +18,4 @@ class Application(BaseModel, table=True):
     phone: Optional[str] = Field(sa_type=String(20))
     industry_code: Optional[IndustryCode] = Field(sa_type=Enum(IndustryCode))
     job_type_code: Optional[JobTypeCode] = Field(sa_type=Enum(JobTypeCode))
+    note: Optional[str] = Field(sa_type=String(255))

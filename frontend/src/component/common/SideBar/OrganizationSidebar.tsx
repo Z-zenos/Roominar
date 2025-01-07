@@ -17,7 +17,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from '../Sidebar';
-import { SidebarUser } from './SidebarUser';
+import { SidebarSettings } from './SidebarSettings';
 import {
   Collapsible,
   CollapsibleContent,
@@ -42,20 +42,6 @@ const sidebarMenu = [
     url: '/organization/overview',
     icon: <OverviewIcon />,
     isActive: false,
-    // items: [
-    //   {
-    //     title: 'History',
-    //     url: '#',
-    //   },
-    //   {
-    //     title: 'Starred',
-    //     url: '#',
-    //   },
-    //   {
-    //     title: 'Settings',
-    //     url: '#',
-    //   },
-    // ],
   },
   {
     title: 'Events',
@@ -72,10 +58,6 @@ const sidebarMenu = [
         title: 'Explorer',
         url: '#',
       },
-      // {
-      //   title: 'Quantum',
-      //   url: '#',
-      // },
     ],
   },
   {
@@ -100,7 +82,9 @@ const sidebarMenu = [
   },
 ];
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function OrganizationSidebar({
+  ...props
+}: React.ComponentProps<typeof Sidebar>) {
   const { data: auth } = useSession();
   const router = useRouter();
   const pathname = usePathname();
@@ -116,7 +100,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       } else {
         await signOut(
           auth.user?.roleCode === RoleCode.ORGANIZER
-            ? { callbackUrl: '/organization/login' }
+            ? // ? { callbackUrl: '/organization/login' }
+              { callbackUrl: '/home' }
             : { callbackUrl: '/home' },
         );
       }
@@ -230,7 +215,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         /> */}
       </SidebarContent>
       <SidebarFooter>
-        <SidebarUser
+        <SidebarSettings
           user={auth?.user}
           onLogout={() => handleLogout(auth)}
         />

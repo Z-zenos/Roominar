@@ -48,7 +48,6 @@ import { Autoplay, FreeMode, Pagination } from 'swiper/modules';
 import { styles } from '@/src/constants/styles.constant';
 import DotLoader from '@/src/component/common/Loader/DotLoader';
 import useWindowDimensions from '@/src/hooks/useWindowDimension';
-import Timeline from '@/src/component/common/Timeline';
 import Badge from '@/src/component/common/Badge';
 import SpeakerCard from '@/src/component/common/Card/SpeakerCard';
 import {
@@ -64,6 +63,7 @@ import Chip from '@/src/component/common/Chip';
 import { useSession } from 'next-auth/react';
 import EventBookmark from '../../component/common/Button/EventBookmarkButton';
 import OrganizationFollowButton from '@/src/component/common/Button/OrganizationFollowButton';
+import HorizontalTimeline from '@/src/component/common/DateTime/HorizontalTimeline';
 
 const rows = [
   {
@@ -297,7 +297,8 @@ function EventDetail({ slug }: EventDetailProps) {
               >
                 <BsFillPeopleFill className='text-primary w-6 h-6' />
                 <span className='font-light'>
-                  {event?.appliedNumber} applied / {event?.totalTicketNumber}
+                  {event?.soldTicketsNumber ?? 0} sold /{' '}
+                  {event?.totalTicketNumber}
                 </span>
               </div>
               <Button
@@ -307,7 +308,10 @@ function EventDetail({ slug }: EventDetailProps) {
                 onClick={() =>
                   router.push(auth?.user ? `${pathname}/apply` : '/login')
                 }
-                isDisabled={event?.applicationEndAt < new Date()}
+                isDisabled={
+                  event?.applicationEndAt < new Date() ||
+                  event?.applicationStartAt > new Date()
+                }
               >
                 Apply Now
               </Button>
@@ -342,7 +346,7 @@ function EventDetail({ slug }: EventDetailProps) {
               General Timeline
             </h3>
 
-            <Timeline
+            <HorizontalTimeline
               applicationStartAt={event?.applicationStartAt}
               applicationEndAt={event?.applicationEndAt}
               startAt={event?.startAt}

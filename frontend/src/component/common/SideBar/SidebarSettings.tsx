@@ -27,12 +27,12 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '../Avatar';
 import type { GetMeResponse } from '@/src/lib/api/generated';
 
-interface SidebarUserProps {
+interface SidebarSettingsProps {
   user: GetMeResponse;
   onLogout: () => void;
 }
 
-export function SidebarUser({ user, onLogout }: SidebarUserProps) {
+export function SidebarSettings({ user, onLogout }: SidebarSettingsProps) {
   const { isMobile } = useSidebar();
 
   return (

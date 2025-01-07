@@ -22,14 +22,25 @@ const Page: FC<Props> = () => {
           { value: 'events', content: <SearchEvent /> },
           {
             value: 'organizations',
-            content: <Text className='py-[10%] text-center' content='Coming soon.' />,
+            content: (
+              <Text
+                className='py-[10%] text-center'
+                content='Coming soon.'
+              />
+            ),
           },
           {
             value: 'speaker',
-            content: <Text className='py-[10%] text-center' content='Coming soon.' />,
+            content: (
+              <Text
+                className='py-[10%] text-center'
+                content='Coming soon.'
+              />
+            ),
           },
         ]}
         className='px-[10%]'
+        tabClassName='max-w-[400px] mx-auto'
       />
     </>
   );

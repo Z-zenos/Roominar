@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+from sqlmodel import Session
 
 import backend.api.v1.services.surveys as survey_service
 from backend.api.v1.dependencies.authentication import authorize_role

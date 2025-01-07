@@ -1,6 +1,7 @@
 from .answer import Answer
 from .application import Application
 from .bookmark import Bookmark
+from .check_in import CheckIn
 from .event import Event
 from .follow import Follow
 from .organization import Organization
@@ -12,7 +13,9 @@ from .tag_association import TagAssociation
 from .tag_group import TagGroup
 from .target import Target
 from .ticket import Ticket
+from .ticket_inventory import TicketInventory
 from .transaction import Transaction
+from .transaction_item import TransactionItem
 from .user import User
 
 all = (
@@ -32,4 +35,7 @@ all = (
     TagAssociation,
     Follow,
     Transaction,
+    TransactionItem,
+    CheckIn,
+    TicketInventory,
 )

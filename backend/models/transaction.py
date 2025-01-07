@@ -9,11 +9,10 @@ from backend.models.base_model import BaseModel
 class Transaction(BaseModel, table=True):
     __tablename__: str = "transactions"
 
+    event_id: int = Field(foreign_key="events.id")
     application_id: int = Field(foreign_key="applications.id")
-    ticket_id: int = Field(foreign_key="tickets.id")
     quantity: int
     total_amount: float  # Total amount for the transaction
-    refunded_amount: Optional[float] = Field(default=0.0)  # Amount refunded (if any)
     status: TransactionStatusCode = Field(
         sa_type=Enum(TransactionStatusCode), default=TransactionStatusCode.PENDING
     )  # Default status
@@ -26,4 +25,4 @@ class Transaction(BaseModel, table=True):
     stripe_checkout_session_id: Optional[str] = Field(default=None)  # Stripe session ID
 
     # Metadata and tracking
-    reference: str = Field(unique=True, nullable=False)  # Unique transaction reference
+    reference: Optional[str]

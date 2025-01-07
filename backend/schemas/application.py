@@ -14,7 +14,7 @@ class ApplicationTicket(BaseModel):
     quantity: int
 
 
-class CreateApplicationCheckoutSessionRequest(BaseModel):
+class CreateApplicationRequest(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True)
 
     event_id: int
@@ -49,11 +49,15 @@ class CreateApplicationCheckoutSessionRequest(BaseModel):
 
     @field_validator("industry_code")
     def industry_code_validator(cls, v):
-        return industry_code_validator(v)
+        if v:
+            return industry_code_validator(v)
+        return None
 
     @field_validator("job_type_code")
     def job_type_code_validator(cls, v):
-        return job_type_code_validator(v)
+        if v:
+            return job_type_code_validator(v)
+        return None
 
 
 class CreateApplicationCheckoutSessionResponse(BaseModel):
