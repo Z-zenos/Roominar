@@ -101,7 +101,7 @@ export default function AttendeeDataTable() {
     new Set(),
   );
 
-  const [selectedKeys, setSelectedKeys] = useState<any>(null);
+  const [selectedKeys, setSelectedKeys] = useState<any>(new Set());
   const [selectedAttendeeId, setSelectedAttendeeId] = useState<number | null>(
     null,
   );
@@ -109,6 +109,7 @@ export default function AttendeeDataTable() {
     ...queryString.parse(searchParams.toString(), { arrayFormat: 'bracket' }),
   });
   const [page, setPage] = useState<number>(data?.page || 1);
+  const pageCount = Math.ceil(data?.total / data?.perPage);
   const { data: auth } = useSession();
   const [rightSidebarContent, setRightSidebarContent] = useState<
     'ATTENDEE_DETAIL' | null
@@ -512,25 +513,27 @@ export default function AttendeeDataTable() {
             ? 'All items selected'
             : `${selectedKeys?.size ?? 0} of ${data?.data?.length} selected`}
         </span>
-        <ReactPaginate
-          breakLabel='...'
-          nextLabel={width > 800 ? 'next >' : '>'}
-          onPageChange={({ selected }: any) => {
-            handleSearch({ page: selected + 1 });
-            setPage(selected + 1);
-          }}
-          pageRangeDisplayed={5}
-          pageCount={Math.ceil(data?.total / data?.perPage) || 0}
-          previousLabel={width > 800 ? '< previous' : '<'}
-          renderOnZeroPageCount={null}
-          forcePage={page >= 1 ? page - 1 : 0}
-          className='mx-auto flex lg:gap-4 gap-1 mt-4 w-full items-center justify-center'
-          pageClassName='lg:py-2 lg:px-4 py-1 px-2'
-          nextClassName='lg:py-2 lg:px-4 py-1 px-2'
-          previousClassName='lg:py-2 lg:px-4 py-1 px-2'
-          disabledClassName='text-gray-400'
-          activeClassName='bg-primary text-white rounded-md'
-        />
+        {pageCount > 1 && (
+          <ReactPaginate
+            breakLabel='...'
+            nextLabel={width > 800 ? 'next >' : '>'}
+            onPageChange={({ selected }: any) => {
+              handleSearch({ page: selected + 1 });
+              setPage(selected + 1);
+            }}
+            pageRangeDisplayed={5}
+            pageCount={pageCount}
+            previousLabel={width > 800 ? '< previous' : '<'}
+            renderOnZeroPageCount={null}
+            forcePage={page - 1}
+            className='mx-auto flex lg:gap-4 gap-1 mt-4 w-full items-center justify-center'
+            pageClassName='lg:py-2 lg:px-4 py-1 px-2'
+            nextClassName='lg:py-2 lg:px-4 py-1 px-2'
+            previousClassName='lg:py-2 lg:px-4 py-1 px-2'
+            disabledClassName='text-gray-400'
+            activeClassName='bg-primary text-white rounded-md'
+          />
+        )}
       </div>
 
       <SheetOverlay>
