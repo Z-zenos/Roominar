@@ -1,3 +1,5 @@
+'use client';
+
 import type { AttendeeAppliedEvent } from '@/src/lib/api/generated';
 import { formatEventDate, formatTransactionDate } from '@/src/utils/app.util';
 import { Image } from '@nextui-org/react';

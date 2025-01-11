@@ -14,6 +14,7 @@ import {
   Link,
   Checkbox,
 } from '@nextui-org/react';
+
 import { useForm } from 'react-hook-form';
 import type {
   ApiException,
@@ -40,7 +41,7 @@ import {
   FormDateRangePicker,
   FormInput,
 } from '@/src/component/form/Form';
-import { IoSearchOutline } from 'react-icons/io5';
+import { IoCheckmarkDoneOutline, IoSearchOutline } from 'react-icons/io5';
 import debounce from 'lodash.debounce';
 import clsx from 'clsx';
 import { GrPowerReset } from 'react-icons/gr';
@@ -77,6 +78,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/src/component/common/DropdownMenu';
+import Chip from '@/src/component/common/Chip';
 
 const columns = [
   { name: 'Apply Time', uid: 'apply_time', sortable: false },
@@ -334,12 +336,24 @@ export default function AttendeeDataTable() {
 
         case 'checkin':
           return (
-            <p className={styles.center}>
-              <Checkbox
-                defaultSelected={checkedInAttendees.has(attendee.applicationId)}
-                onChange={() => handleCheckIn(attendee)}
-              />
-            </p>
+            <Chip
+              content={
+                checkedInAttendees.has(attendee.checkInId)
+                  ? 'Checked In'
+                  : 'Uncheck'
+              }
+              leftIcon={
+                checkedInAttendees.has(attendee.checkInId) ? (
+                  <IoCheckmarkDoneOutline className='text-sm' />
+                ) : null
+              }
+              type={
+                checkedInAttendees.has(attendee.checkInId)
+                  ? 'success'
+                  : 'default'
+              }
+              className='w-fit ml-2'
+            />
           );
 
         case 'actions':
