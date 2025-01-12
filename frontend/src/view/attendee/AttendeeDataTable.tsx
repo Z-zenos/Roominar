@@ -75,10 +75,11 @@ import AttendeeDetail from './AttendeeDetail';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuLabel,
+  DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/src/component/common/DropdownMenu';
 import Chip from '@/src/component/common/Chip';
+import { IoIosCheckboxOutline, IoIosRemoveCircleOutline } from 'react-icons/io';
 
 const columns = [
   { name: 'Apply Time', uid: 'apply_time', sortable: false },
@@ -366,7 +367,7 @@ export default function AttendeeDataTable() {
                   <BsThreeDots className='text-default-500 cursor-pointer' />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  <DropdownMenuLabel>
+                  <DropdownMenuItem>
                     <SheetTrigger
                       onClick={() => {
                         setRightSidebarContent('ATTENDEE_DETAIL');
@@ -377,7 +378,23 @@ export default function AttendeeDataTable() {
                       <AiOutlineEye className='w-5 h-5' />
                       View Detail
                     </SheetTrigger>
-                  </DropdownMenuLabel>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem>
+                    <div
+                      onClick={() => handleCheckIn(attendee)}
+                      className={clsx(styles.between, 'gap-2 cursor-pointer')}
+                    >
+                      {checkedInAttendees.has(attendee.checkInId) ? (
+                        <IoIosRemoveCircleOutline className='w-5 h-5' />
+                      ) : (
+                        <IoIosCheckboxOutline className='w-5 h-5' />
+                      )}
+                      {checkedInAttendees.has(attendee.checkInId)
+                        ? 'Uncheck'
+                        : 'Check In'}
+                    </div>
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -480,6 +497,16 @@ export default function AttendeeDataTable() {
                   With Filter Data
                 </Checkbox>
               </div>
+              {/* {Array.from(selectedKeys).length > 1 && (
+                <Button
+                  type='button'
+                  className='text-white'
+                  radius='sm'
+                  size='md'
+                >
+                  Multi Check In
+                </Button>
+              )} */}
             </div>
           </div>
         </form>
