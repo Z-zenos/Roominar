@@ -109,7 +109,7 @@ async def _get_applied_events(db: Session, attendee_id: int):
                 Transaction.id,
                 Transaction.status.label("transaction_status"),
                 Transaction.total_amount,
-                Transaction.created_at.label("purchase_at"),
+                Transaction.created_at.label("purchased_at"),
                 Transaction.quantity,
                 func.json_agg(
                     func.json_build_object(
@@ -186,7 +186,7 @@ async def _get_applied_events(db: Session, attendee_id: int):
                 "id": transaction["id"],
                 "transaction_status": transaction["transaction_status"],
                 "total_amount": transaction["total_amount"],
-                "purchased_at": transaction["purchase_at"],
+                "purchased_at": transaction["purchased_at"],
                 "quantity": transaction["quantity"],
                 "ticket_transaction_items": transaction["ticket_transaction_items"],
             }

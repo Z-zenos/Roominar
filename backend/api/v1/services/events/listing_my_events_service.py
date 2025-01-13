@@ -1,12 +1,16 @@
-from sqlmodel import Boolean, Session, and_, case, desc, func, literal, or_, select
+from sqlmodel import Boolean, Session, and_, case, func, literal, or_, select
 
-import backend.api.v1.services.tickets as tickets_service
-from backend.core.constants import EventStatusCode, TagAssociationEntityCode
+from backend.core.constants import (
+    EventStatusCode,
+    TagAssociationEntityCode,
+    TransactionStatusCode,
+)
 from backend.models import Bookmark, Event, Organization, Ticket, User
 from backend.models.application import Application
 from backend.models.tag import Tag
 from backend.models.tag_association import TagAssociation
 from backend.models.transaction import Transaction
+from backend.models.transaction_item import TransactionItem
 from backend.schemas.event import ListingMyEventsQueryParams, MyEventStatusCode
 
 
@@ -25,42 +29,45 @@ async def _listing_events(
     filters: list,
     query_params: ListingMyEventsQueryParams,
 ):
-    TicketTransactions = (
-        select(
-            Application.event_id.label("event_id"),
-            func.json_agg(
-                func.json_build_object(
-                    "ticket_id",
-                    Ticket.id,
-                    "ticket_name",
-                    Ticket.name,
-                    "ticket_price",
-                    Ticket.price,
-                    "ticket_type",
-                    Ticket.type,
-                    "event_access_link_url",
-                    Ticket.access_link_url,
-                    "ticket_description",
-                    Ticket.description,
-                    "transaction_id",
-                    Transaction.id,
-                    "purchased_quantity",
-                    Transaction.quantity,
-                    "total_amount",
-                    Transaction.total_amount,
-                    "purchased_at",
-                    Transaction.created_at,
-                    "transaction_status",
-                    Transaction.status,
-                )
-            ).label("ticket_transactions"),
+    transaction_histories = (
+        db.exec(
+            select(
+                func.max(Application.event_id).label("event_id"),
+                Transaction.id,
+                Transaction.status.label("transaction_status"),
+                Transaction.total_amount,
+                Transaction.created_at.label("purchased_at"),
+                Transaction.quantity,
+                func.json_agg(
+                    func.json_build_object(
+                        "id",
+                        TransactionItem.id,
+                        "ticket_name",
+                        Ticket.name,
+                        "ticket_id",
+                        Ticket.id,
+                        "ticket_price",
+                        Ticket.price,
+                        "ticket_type",
+                        Ticket.type,
+                        "event_access_link_url",
+                        Ticket.access_link_url,
+                        "amount",
+                        TransactionItem.amount,
+                        "note",
+                        TransactionItem.note,
+                    )
+                ).label("ticket_transaction_items"),
+            )
+            .select_from(Transaction)
+            .join(Application, Application.id == Transaction.application_id)
+            .join(TransactionItem, TransactionItem.transaction_id == Transaction.id)
+            .join(Ticket, Ticket.id == TransactionItem.ticket_id)
+            .where(Application.user_id == current_user.id)
+            .group_by(Transaction.id)
         )
-        .join(Transaction, Transaction.ticket_id == Ticket.id)
-        .join(Application, Application.id == Transaction.application_id)
-        .where(Application.user_id == current_user.id)
-        .group_by(Application.event_id, Transaction.created_at)
-        .order_by(desc(Transaction.created_at))
-        .cte()
+        .mappings()
+        .all()
     )
 
     EventTags = (
@@ -74,11 +81,6 @@ async def _listing_events(
         .where(TagAssociation.entity_code == TagAssociationEntityCode.EVENT)
         .group_by(TagAssociation.entity_id)
         .cte()
-    )
-
-    # Only take care of the total tickets sold of events that the user has applied
-    SoldTicketsNumber = tickets_service.get_sold_tickets_number_query(
-        event_id=None, user_id=current_user.id
     )
 
     query = (
@@ -108,31 +110,18 @@ async def _listing_events(
                 else_=False,
             ).label("is_bookmarked"),
             case(
-                (TicketTransactions.c.ticket_transactions.is_(None), literal("[]")),
-                else_=TicketTransactions.c.ticket_transactions,
-            ).label("ticket_transactions"),
-            case(
                 (EventTags.c.tags.is_(None), literal("[]")),
                 else_=EventTags.c.tags,
             ).label("tags"),
-            case(
-                (
-                    TicketTransactions.c.ticket_transactions.is_(None),
-                    False,
-                ),
-                else_=True,
-            ).label("is_applied"),
-            SoldTicketsNumber.c.sold_tickets_number,
         )
+        .select_from(Event)
         .join(Organization, Event.organization_id == Organization.id)
         .outerjoin(
             Bookmark,
             and_(Bookmark.event_id == Event.id, Bookmark.user_id == current_user.id),
         )
         .outerjoin(Application, Application.event_id == Event.id)
-        .outerjoin(TicketTransactions, TicketTransactions.c.event_id == Event.id)
         .outerjoin(EventTags, EventTags.c.event_id == Event.id)
-        .outerjoin(SoldTicketsNumber, SoldTicketsNumber.c.event_id == Event.id)
         .where(*filters)
         .limit(query_params.per_page)
         .offset(query_params.per_page * (query_params.page - 1))
@@ -140,6 +129,28 @@ async def _listing_events(
     )
 
     my_events = db.exec(query).mappings().all()
+
+    my_events = [dict(event) for event in my_events]
+    for event in my_events:
+        event["transaction_histories"] = [
+            {
+                "id": transaction["id"],
+                "transaction_status": transaction["transaction_status"],
+                "total_amount": transaction["total_amount"],
+                "purchased_at": transaction["purchased_at"],
+                "quantity": transaction["quantity"],
+                "ticket_transaction_items": transaction["ticket_transaction_items"],
+            }
+            for transaction in transaction_histories
+            if transaction["event_id"] == event["id"]
+        ]
+
+        if (
+            len(event["transaction_histories"]) > 0
+            and event["transaction_histories"][0]["transaction_status"]
+            == TransactionStatusCode.SUCCESS
+        ):
+            event["is_applied"] = True
 
     return my_events
 
@@ -151,6 +162,7 @@ async def _count_events(
     total = (
         db.scalar(
             select(func.count(Event.id))
+            .select_from(Event)
             .outerjoin(Bookmark, Event.id == Bookmark.event_id)
             .outerjoin(Application, Application.event_id == Event.id)
             .where(*filters)

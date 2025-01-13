@@ -5,18 +5,24 @@ from pydantic import BaseModel, Field
 from backend.core.constants import TicketTypeCode, TransactionStatusCode
 
 
-class TicketTransaction(BaseModel):
+class MyTicketTransactionItem(BaseModel):
+    id: int
     ticket_id: int
     ticket_name: str
-    ticket_price: int
+    ticket_price: float
     ticket_type: TicketTypeCode
     event_access_link_url: str | None = None
-    ticket_description: str | None = None
-    transaction_id: int
-    purchased_quantity: int
+    amount: float
+    note: str | None = None
+
+
+class MyTicketTransaction(BaseModel):
+    id: int
+    transaction_status: TransactionStatusCode
     total_amount: int
     purchased_at: datetime
-    transaction_status: TransactionStatusCode
+    ticket_transaction_items: list[MyTicketTransactionItem] = Field([])
+    quantity: int
 
 
 class AttendeeTicketTransactionItem(BaseModel):

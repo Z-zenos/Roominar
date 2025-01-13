@@ -20,7 +20,7 @@ from backend.schemas.common import PaginationResponse
 from backend.schemas.survey import SurveyDetail
 from backend.schemas.tag import TagItem
 from backend.schemas.ticket import TicketItem
-from backend.schemas.transaction import TicketTransaction
+from backend.schemas.transaction import MyTicketTransaction
 
 
 class SearchEventsItem(BaseModel):
@@ -176,9 +176,9 @@ class MyEventItem(BaseModel):
     is_bookmarked: bool | None = None
     published_at: datetime
     tags: list[TagItem] = Field([])
-    ticket_transactions: list[TicketTransaction] = Field([])
+    transaction_histories: list[MyTicketTransaction] = Field([])
     # canceled_at: datetime | None = None
-    sold_tickets_number: int | None = 0
+    # sold_tickets_number: int | None = 0
 
 
 class ListingMyEventsQueryParams(BaseModel):
