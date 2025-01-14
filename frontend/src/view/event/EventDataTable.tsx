@@ -14,7 +14,6 @@ import {
   Dropdown,
   DropdownMenu,
   DropdownItem,
-  Chip,
   User,
 } from '@nextui-org/react';
 import { useForm } from 'react-hook-form';
@@ -44,6 +43,7 @@ import { GrPowerReset } from 'react-icons/gr';
 import ReactPaginate from 'react-paginate';
 import useWindowDimensions from '@/src/hooks/useWindowDimension';
 import { BsThreeDots } from 'react-icons/bs';
+import Chip from '@/src/component/common/Chip';
 
 const statusColorMap = {
   PUBLIC: 'success',
@@ -136,20 +136,21 @@ export default function EventDataTable() {
         case 'status':
           return (
             <Chip
-              className='capitalize'
+              className='capitalize w-fit'
               color={statusColorMap[event.status]}
-              size='sm'
-              variant='flat'
-            >
-              {cellValue}
-            </Chip>
+              content={cellValue}
+            />
           );
         case 'apply_state':
           return (
             <div className='flex flex-col'>
               <p className='text-bold text-small capitalize'>{cellValue}</p>
               <p className='text-bold text-tiny capitalize text-default-400'>
-                {event.soldTicketsNumber ?? 0} / {event.totalTicketNumber}
+                {event.tickets.reduce(
+                  (acc, ticket) => acc + ticket.availableQuantity,
+                  0,
+                ) ?? 0}{' '}
+                / {event.totalTicketNumber}
               </p>
             </div>
           );
