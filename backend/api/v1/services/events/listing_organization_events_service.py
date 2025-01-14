@@ -76,6 +76,7 @@ async def _listing_events(
             Event.status,
             Event.view_number,
             Event.meeting_tool_code,
+            Event.meeting_url,
             EventTicket.c.tickets,
         )
         .join(EventTicket, Event.id == EventTicket.c.event_id)

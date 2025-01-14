@@ -15,14 +15,15 @@ import {
   DropdownMenu,
   DropdownItem,
   User,
+  Link,
 } from '@nextui-org/react';
 import { useForm } from 'react-hook-form';
 import { ManageEventSortByCode } from '@/src/lib/api/generated';
 import type {
-  EventMeetingToolCode,
   ListingOrganizationEventsItem,
   OrganizationsApiListingOrganizationEventsRequest,
 } from '@/src/lib/api/generated';
+import { EventMeetingToolCode } from '@/src/lib/api/generated';
 import { EventStatusCode, EventTimeStatusCode } from '@/src/lib/api/generated';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useListingOrganizationEventsQuery } from '@/src/api/event.api';
@@ -44,28 +45,27 @@ import ReactPaginate from 'react-paginate';
 import useWindowDimensions from '@/src/hooks/useWindowDimension';
 import { BsThreeDots } from 'react-icons/bs';
 import Chip from '@/src/component/common/Chip';
-
-const statusColorMap = {
-  PUBLIC: 'success',
-  paused: 'danger',
-  vacation: 'warning',
-};
+import { styles } from '@/src/constants/styles.constant';
+import { CiLocationOn } from 'react-icons/ci';
+import { FcVideoCall } from 'react-icons/fc';
+import { useTranslations } from 'next-intl';
+import { TbArrowBigDown } from 'react-icons/tb';
+import { FaChevronDown } from 'react-icons/fa6';
 
 const columns = [
-  { name: 'ID', uid: 'id', sortable: true },
   { name: 'Name', uid: 'name', sortable: true },
-  { name: 'status', uid: 'status', sortable: true },
-  { name: 'apply state', uid: 'apply_state', sortable: true },
+  { name: 'Address / Link', uid: 'address' },
+  { name: 'status', uid: 'status' },
+  { name: 'Ticket State', uid: 'ticket_state' },
   { name: 'start at', uid: 'start_at' },
-  // { name: 'EMAIL', uid: 'email' },
-  // { name: 'STATUS', uid: 'status', sortable: true },
-  { name: 'ACTIONS', uid: 'actions' },
+  { name: 'Actions', uid: 'actions' },
 ];
 
 export default function EventDataTable() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { width } = useWindowDimensions();
+  const t = useTranslations('code');
 
   const { data, isFetching } = useListingOrganizationEventsQuery({
     ...queryString.parse(searchParams.toString(), { arrayFormat: 'bracket' }),
@@ -127,21 +127,79 @@ export default function EventDataTable() {
                 src: event.coverImageUrl,
                 className: 'w-[100px] h-[100px]',
               }}
-              // description={user.email}
-              name={cellValue}
-            >
-              {event.name}
-            </User>
+              name={event.name}
+            />
           );
+
+        case 'address':
+          return (
+            <div className='flex flex-col'>
+              {event.organizePlaceName && (
+                <p
+                  className={clsx(
+                    styles.flexStart,
+                    'text-bold text-small capitalize',
+                  )}
+                >
+                  <CiLocationOn size={20} /> {event.organizePlaceName}
+                </p>
+              )}
+              {event.meetingUrl && event.organizePlaceName && (
+                <div className='h-1 border-b border-b-gray-300 mb-2'></div>
+              )}
+              {event.meetingUrl && (
+                <Link
+                  className={clsx(
+                    styles.flexStart,
+                    'text-bold text-tiny text-blue-500',
+                  )}
+                  href={event.meetingUrl}
+                >
+                  {event.meetingToolCode ? (
+                    <Chip
+                      className={clsx(
+                        event.meetingToolCode === EventMeetingToolCode.Zoom &&
+                          '!bg-[#2D8CFF] !text-[#fff]',
+                        event.meetingToolCode === EventMeetingToolCode.Meet &&
+                          '!bg-[#FFC107] !text-[#fff]',
+                        event.meetingToolCode ===
+                          EventMeetingToolCode.Discord &&
+                          '!bg-[#7289DA] !text-[#fff]',
+                        event.meetingToolCode ===
+                          EventMeetingToolCode.Roominar &&
+                          '!bg-[#FF0000] !text-[#fff]',
+                        event.meetingToolCode ===
+                          EventMeetingToolCode.ContactLater &&
+                          '!bg-[#FF0000] !text-[#fff]',
+                        'capitalize w-fit',
+                      )}
+                      content={t(`event.meetingTool.${event.meetingToolCode}`)}
+                    />
+                  ) : (
+                    <FcVideoCall size={20} />
+                  )}{' '}
+                  <span className='hover:underline'>{event.meetingUrl}</span>
+                </Link>
+              )}
+            </div>
+          );
+
         case 'status':
           return (
             <Chip
               className='capitalize w-fit'
-              color={statusColorMap[event.status]}
+              type={
+                event.status === EventStatusCode.Draft
+                  ? 'warning'
+                  : event.status === EventStatusCode.Public
+                    ? 'success'
+                    : 'default'
+              }
               content={cellValue}
             />
           );
-        case 'apply_state':
+
+        case 'ticket_state':
           return (
             <div className='flex flex-col'>
               <p className='text-bold text-small capitalize'>{cellValue}</p>
@@ -158,10 +216,18 @@ export default function EventDataTable() {
         case 'start_at':
           return (
             <div className='flex flex-col'>
-              <p className='text-bold text-small capitalize'>{cellValue}</p>
-              <p className='text-bold text-tiny capitalize text-default-400'>
-                {formatEventDate(event.startAt)}
-              </p>
+              <p className='text-bold capitalize'>{cellValue}</p>
+              <div className='flex flex-col gap-1 items-center justify-center'>
+                <p className='text-bold text-small capitalize text-default-500'>
+                  {formatEventDate(event.startAt)}
+                </p>
+
+                <FaChevronDown size={12} />
+
+                <p className='text-bold text-small capitalize text-default-500'>
+                  {formatEventDate(event.endAt)}
+                </p>
+              </div>
             </div>
           );
 
@@ -175,7 +241,7 @@ export default function EventDataTable() {
                     size='sm'
                     variant='light'
                   >
-                    <BsThreeDots className='text-default-300' />
+                    <BsThreeDots className='text-default-600' />
                   </Button>
                 </DropdownTrigger>
                 <DropdownMenu>
