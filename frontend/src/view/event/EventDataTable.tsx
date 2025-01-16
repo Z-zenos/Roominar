@@ -1,7 +1,7 @@
 'use client';
 
 import type { Key } from 'react';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
   Table,
   TableHeader,
@@ -16,6 +16,7 @@ import {
   DropdownItem,
   User,
   Link,
+  Image,
 } from '@nextui-org/react';
 import { useForm } from 'react-hook-form';
 import { ManageEventSortByCode } from '@/src/lib/api/generated';
@@ -49,15 +50,24 @@ import { styles } from '@/src/constants/styles.constant';
 import { CiLocationOn } from 'react-icons/ci';
 import { FcVideoCall } from 'react-icons/fc';
 import { useTranslations } from 'next-intl';
-import { TbArrowBigDown } from 'react-icons/tb';
 import { FaChevronDown } from 'react-icons/fa6';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetOverlay,
+  SheetTitle,
+  SheetTrigger,
+} from '@/src/component/common/Sheet';
 
 const columns = [
   { name: 'Name', uid: 'name', sortable: true },
   { name: 'Address / Link', uid: 'address' },
-  { name: 'status', uid: 'status' },
+  { name: 'Status', uid: 'status' },
   { name: 'Ticket State', uid: 'ticket_state' },
-  { name: 'start at', uid: 'start_at' },
+  { name: 'Start - End', uid: 'start_at' },
   { name: 'Actions', uid: 'actions' },
 ];
 
@@ -73,6 +83,10 @@ export default function EventDataTable() {
 
   const [selectedKeys, setSelectedKeys] = useState<any>(null);
   const [page, setPage] = useState<number>(data?.page || 1);
+  const [rightSidebarContent, setRightSidebarContent] = useState<
+    'EVENT_DETAIL' | null
+  >();
+
   const form = useForm<OrganizationsApiListingOrganizationEventsRequest>({
     mode: 'all',
     defaultValues: {
@@ -98,6 +112,25 @@ export default function EventDataTable() {
     },
   });
 
+  const rightSidebar = useMemo(() => {
+    switch (rightSidebarContent) {
+      case 'EVENT_DETAIL':
+        return {
+          title: 'EVENT DETAIL',
+          body: <p>test</p>,
+          footer: null,
+        };
+
+      // case 'TARGET':
+      //   return {
+      //     title: 'TARGET',
+      //     body: <CreateTargetForm />,
+      //     footer: null,
+      //   };
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rightSidebarContent]);
+
   function handleSearch(data: any = {}) {
     if (form.getValues()['start_at_range']) {
       const start_at_range = form.getValues()['start_at_range'];
@@ -121,19 +154,31 @@ export default function EventDataTable() {
       switch (columnKey) {
         case 'name':
           return (
-            <User
-              avatarProps={{
-                radius: 'lg',
-                src: event.coverImageUrl,
-                className: 'w-[100px] h-[100px]',
-              }}
-              name={event.name}
-            />
+            <div className={clsx(styles.flexStart, 'gap-3')}>
+              <Image
+                src={event.coverImageUrl}
+                alt={event.name}
+                width={100}
+                height={80}
+                className='rounded-md'
+              />
+              <Link className='font-bold text-nm capitalize text-primary hover:underline'>
+                <SheetTrigger
+                  onClick={() => {
+                    setRightSidebarContent('EVENT_DETAIL');
+                    // setSelectedAttendeeId(attendee.id);
+                  }}
+                  className={clsx(styles.between, 'gap-2')}
+                >
+                  {event.name}
+                </SheetTrigger>
+              </Link>
+            </div>
           );
 
         case 'address':
           return (
-            <div className='flex flex-col'>
+            <div className='flex flex-col w-fit'>
               {event.organizePlaceName && (
                 <p
                   className={clsx(
@@ -201,16 +246,13 @@ export default function EventDataTable() {
 
         case 'ticket_state':
           return (
-            <div className='flex flex-col'>
-              <p className='text-bold text-small capitalize'>{cellValue}</p>
-              <p className='text-bold text-tiny capitalize text-default-400'>
-                {event.tickets.reduce(
-                  (acc, ticket) => acc + ticket.availableQuantity,
-                  0,
-                ) ?? 0}{' '}
-                / {event.totalTicketNumber}
-              </p>
-            </div>
+            <p className='text-bold text-sm capitalize underline text-primary cursor-pointer transition-all hover:border hover:border-primary text-center hover:no-underline'>
+              {event.tickets.reduce(
+                (acc, ticket) => acc + ticket.availableQuantity,
+                0,
+              ) ?? 0}
+              / {event.totalTicketNumber}
+            </p>
           );
 
         case 'start_at':
@@ -260,7 +302,7 @@ export default function EventDataTable() {
   );
 
   return (
-    <>
+    <Sheet>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSearch)}>
           <div className='flex justify-between items-center flex-wrap gap-1'>
@@ -346,6 +388,7 @@ export default function EventDataTable() {
           </div>
         </form>
       </Form>
+
       <Table
         aria-label='Example table with custom cells, pagination and sorting'
         isHeaderSticky
@@ -409,6 +452,22 @@ export default function EventDataTable() {
           activeClassName='bg-primary text-white rounded-md'
         />
       </div>
-    </>
+
+      <SheetOverlay>
+        <SheetContent
+          side='right'
+          className='min-w-[800px]'
+        >
+          <SheetHeader>
+            <SheetTitle className='text-primary'>
+              {rightSidebar?.title}
+            </SheetTitle>
+            <SheetDescription />
+          </SheetHeader>
+          {rightSidebar?.body}
+          <SheetFooter>{rightSidebar?.footer}</SheetFooter>
+        </SheetContent>
+      </SheetOverlay>
+    </Sheet>
   );
 }
