@@ -41,3 +41,12 @@ class CreateTicketRequest(BaseModel):
     is_refundable: bool | None
     sales_start_at: datetime | None
     sales_end_at: datetime | None
+
+
+class OrganizationEventTicketItem(BaseModel):
+    id: int
+    name: str
+    available_quantity: int
+    quantity: int
+    price: float
+    type: TicketTypeCode

@@ -19,7 +19,7 @@ from backend.core.exception import BadRequestException
 from backend.schemas.common import PaginationResponse
 from backend.schemas.survey import SurveyDetail
 from backend.schemas.tag import TagItem
-from backend.schemas.ticket import TicketItem
+from backend.schemas.ticket import OrganizationEventTicketItem, TicketItem
 from backend.schemas.transaction import MyTicketTransaction
 
 
@@ -293,9 +293,8 @@ class ListingOrganizationEventsItem(BaseModel):
     organize_place_name: str | None = None
     meeting_url: str | None = None
     meeting_tool_code: EventMeetingToolCode
-    # tickets: list[TicketItem] = Field([])
+    tickets: list[OrganizationEventTicketItem] = Field([])
     total_ticket_number: int
-    sold_tickets_number: int | None = None
     status: EventStatusCode
     # survey: SurveyDetail | None = None
     view_number: int | None = None

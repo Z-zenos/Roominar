@@ -2,7 +2,6 @@ from datetime import datetime
 
 from sqlmodel import Date, Session, and_, func, select, text
 
-import backend.api.v1.services.tickets as tickets_service
 from backend.api.v1.services.tags.get_event_tags_service import get_event_tags
 from backend.core.constants import (
     EventTimeStatusCode,
@@ -11,6 +10,8 @@ from backend.core.constants import (
 )
 from backend.models.event import Event
 from backend.models.tag_association import TagAssociation
+from backend.models.ticket import Ticket
+from backend.models.ticket_inventory import TicketInventory
 from backend.models.user import User
 from backend.schemas.event import ListingOrganizationEventsQueryParams
 
@@ -31,8 +32,30 @@ async def _listing_events(
     sort_by: ManageEventSortByCode,
     query_params: ListingOrganizationEventsQueryParams,
 ):
-    SoldTicketsNumber = tickets_service.get_sold_tickets_number_query(
-        event_id=None, user_id=None
+    EventTicket = (
+        select(
+            Event.id.label("event_id"),
+            func.json_agg(
+                func.json_build_object(
+                    "id",
+                    Ticket.id,
+                    "name",
+                    Ticket.name,
+                    "price",
+                    Ticket.price,
+                    "quantity",
+                    Ticket.quantity,
+                    "available_quantity",
+                    TicketInventory.available_quantity,
+                    "type",
+                    Ticket.type,
+                )
+            ).label("tickets"),
+        )
+        .outerjoin(TicketInventory, TicketInventory.event_id == Event.id)
+        .join(Ticket, Ticket.id == TicketInventory.ticket_id)
+        .group_by(Event.id)
+        .subquery()
     )
 
     query = (
@@ -50,12 +73,13 @@ async def _listing_events(
             Event.organize_city_code,
             Event.organize_place_name,
             Event.total_ticket_number,
-            SoldTicketsNumber.c.sold_tickets_number,
             Event.status,
             Event.view_number,
             Event.meeting_tool_code,
+            Event.meeting_url,
+            EventTicket.c.tickets,
         )
-        .outerjoin(SoldTicketsNumber, Event.id == SoldTicketsNumber.c.event_id)
+        .join(EventTicket, Event.id == EventTicket.c.event_id)
         .where(*filters)
         .limit(query_params.per_page)
         .offset(query_params.per_page * (query_params.page - 1))
@@ -69,7 +93,6 @@ async def _listing_events(
 
     for item in event_tags:
         result[item.id]["tags"] = item.tags
-
     return list(result.values())
 
 
