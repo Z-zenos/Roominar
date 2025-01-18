@@ -19,6 +19,7 @@ from backend.core.exception import BadRequestException
 from backend.schemas.common import PaginationResponse
 from backend.schemas.survey import SurveyDetail
 from backend.schemas.tag import TagItem
+from backend.schemas.target import ListingTargetOptionsItem
 from backend.schemas.ticket import OrganizationEventTicketItem, TicketItem
 from backend.schemas.transaction import MyTicketTransaction
 
@@ -305,3 +306,35 @@ class ListingOrganizationEventsResponse(
     PaginationResponse[ListingOrganizationEventsItem]
 ):
     pass
+
+
+class CreateDraftEventRequest(BaseModel):
+    event_id: int | None = None
+
+
+class GetDraftEventResponse(BaseModel):
+    id: int
+    slug: str
+    name: str
+    start_at: datetime | None = None
+    end_at: datetime | None = None
+    application_start_at: datetime | None = None
+    application_end_at: datetime | None = None
+    cover_image_url: str | None = None
+    gallery: list[str] = Field([])
+    is_online: bool | None = None
+    is_offline: bool | None = None
+    organize_city_code: str | None = None
+    organize_place_name: str | None = None
+    description: str | None = None
+    meeting_url: str | None = None
+    meeting_tool_code: EventMeetingToolCode | None = None
+    tickets: list[TicketItem] = Field([])
+    total_ticket_number: int | None = None
+    status: EventStatusCode | None = None
+    application_form_url: str | None = None
+    tags: list[TagItem] = Field([])
+    target: ListingTargetOptionsItem | None = None
+    survey_id: int | None = None
+    max_ticket_number_per_account: int | None = None
+    comment: str | None = None

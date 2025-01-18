@@ -16,6 +16,7 @@ from backend.models.application import Application
 from backend.models.bookmark import Bookmark
 from backend.models.event import Event
 from backend.models.organization import Organization
+from backend.models.tag import Tag
 from backend.models.tag_association import TagAssociation
 from backend.models.target import Target
 from backend.models.user import User
@@ -31,6 +32,21 @@ async def search_events(
 
     SoldTicketsNumber = tickets_service.get_sold_tickets_number_query(
         event_id=None, user_id=None
+    )
+
+    EventTag = (
+        select(
+            Event.id.label("event_id"),
+            func.json_agg(
+                func.json_build_object(
+                    "id", Tag.id, "name", Tag.name, "image_url", Tag.image_url
+                )
+            ).label("tags"),
+        )
+        .join(TagAssociation, and_(Event.id == TagAssociation.entity_id))
+        .where(TagAssociation.entity_code == TagAssociationEntityCode.EVENT)
+        .group_by(Event.id)
+        .subquery()
     )
 
     query = (
@@ -55,6 +71,7 @@ async def search_events(
             func.max(SoldTicketsNumber.c.sold_tickets_number).label(
                 "sold_tickets_number"
             ),
+            EventTag.c.tags,
         )
         .join(Organization, Event.organization_id == Organization.id)
         .join(Target, Event.target_id == Target.id)
@@ -66,6 +83,7 @@ async def search_events(
                 TagAssociation.entity_code == TagAssociationEntityCode.EVENT,
             ),
         )
+        .outerjoin(EventTag, Event.id == EventTag.c.event_id)
         .outerjoin(SoldTicketsNumber, Event.id == SoldTicketsNumber.c.event_id)
         .group_by(
             Event.id,

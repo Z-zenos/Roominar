@@ -1,5 +1,6 @@
 from .create_question_answer_service import create_question_answer
 from .create_survey_service import create_survey
+from .get_survey_detail_service import get_survey_detail
 from .listing_survey_options_service import listing_survey_options
 
-all = create_survey, create_question_answer, listing_survey_options
+all = create_survey, create_question_answer, listing_survey_options, get_survey_detail

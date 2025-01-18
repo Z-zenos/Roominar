@@ -17,6 +17,8 @@ from backend.db.database import get_read_db
 from backend.models import User
 from backend.schemas.check_in import CreateCheckInRequest
 from backend.schemas.event import (
+    CreateDraftEventRequest,
+    GetDraftEventResponse,
     GetEventDetailResponse,
     ListingEventRankResponse,
     ListingMyEventsQueryParams,
@@ -154,6 +156,28 @@ async def delete_event_bookmark(
     current_user: User = Depends(get_current_user),
 ):
     return await events_service.delete_event_bookmark(db, current_user, event_id)
+
+
+@router.get(
+    "/draft/{slug}",
+    response_model=GetDraftEventResponse,
+    responses=authenticated_api_responses,
+)
+async def get_draft_event(
+    db: Session = Depends(get_read_db),
+    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+    slug: str = None,
+):
+    return await events_service.get_draft_event(db, organizer, slug)
+
+
+@router.post("/draft", response_model=int, responses=authenticated_api_responses)
+async def create_draft_event(
+    db: Session = Depends(get_read_db),
+    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+    request: CreateDraftEventRequest = None,
+):
+    return await events_service.create_draft_event(db, organizer, request)
 
 
 @router.post("/{event_id}", response_model=int, responses=authenticated_api_responses)

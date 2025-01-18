@@ -28,7 +28,7 @@ import toast from 'react-hot-toast';
 import type { PublishEventFormSchema } from '@/src/schemas/event/CreateEventFormSchema';
 import publishEventFormSchema from '@/src/schemas/event/CreateEventFormSchema';
 import {
-  useListingTicketsOfEventQuery,
+  useGetDraftEventQuery,
   usePublishEventMutation,
 } from '@/src/api/event.api';
 import ImageUploader from '../common/Upload/ImageUploader';
@@ -73,10 +73,11 @@ import CreateTicketForm from './CreateTicketForm';
 import CreateTargetForm from './CreateTargetForm';
 import { useListingTargetOptionsQuery } from '@/src/api/target.api';
 import { cn, optionify } from '@/src/utils/app.util';
+import DotLoader from '../common/Loader/DotLoader';
 
-const LexicalEditor = dynamic(() => import('../editor/app/app'), {
-  ssr: false,
-});
+// const LexicalEditor = dynamic(() => import('../editor/app/app'), {
+//   ssr: false,
+// });
 
 const statusColorMap: Record<string, ChipProps['color']> = {
   [TicketStatusCode.Available]: 'success',
@@ -94,19 +95,18 @@ const TICKET_TABLE_COLUMNS = [
 ];
 
 interface CreateEventFormProps {
-  eventId?: number;
+  slug: string;
 }
 
-export default function CreateEventForm() {
+export default function CreateEventForm({ slug }: CreateEventFormProps) {
   const t = useTranslations('form');
 
+  const { data: draftEvent, isLoading: isGetDraftEventLoading } =
+    useGetDraftEventQuery({ slug });
   const { data: tagData } = useListingTagsQuery();
   const { data: surveyOptions } = useListingSurveyOptionsQuery();
   const { data: targetOptions, refetch: refetchTargetOptions } =
     useListingTargetOptionsQuery();
-  const { data: tickets } = useListingTicketsOfEventQuery({
-    eventId: 1,
-  });
 
   const [rightSidebarContent, setRightSidebarContent] = useState<
     'TICKET' | 'TARGET' | null
@@ -115,7 +115,7 @@ export default function CreateEventForm() {
   const form = useForm<PublishEventFormSchema>({
     mode: 'all',
     defaultValues: {
-      name: '',
+      name: draftEvent?.name ?? '',
       description: 'ignore description',
       coverImageUrl:
         'https://images.squarespace-cdn.com/content/v1/5f4d61e4378d637cba3d29c7/99d54c26-4229-4fa0-99eb-eafd9afdd047/2023_TahoeFoodHub_HolidayBlockParty_Post+%282%29.jpg',
@@ -264,6 +264,8 @@ export default function CreateEventForm() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rightSidebarContent]);
+
+  if (isGetDraftEventLoading) return <DotLoader />;
 
   return (
     <Sheet>
@@ -448,7 +450,7 @@ export default function CreateEventForm() {
 
             <div className='col-span-2'>
               <main className='flex flex-col items-center justify-between'>
-                <LexicalEditor />
+                {/* <LexicalEditor /> */}
               </main>
             </div>
 
@@ -506,7 +508,7 @@ export default function CreateEventForm() {
                 </TableHeader>
                 <TableBody
                   emptyContent={'Not setup ticket yet'}
-                  items={tickets ?? []}
+                  items={draftEvent.tickets ?? []}
                 >
                   {(item) => (
                     <TableRow key={item.price}>

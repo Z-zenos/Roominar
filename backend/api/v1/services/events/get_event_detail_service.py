@@ -1,24 +1,13 @@
 from sqlmodel import Session, and_, case, exists, func, select, update
 
-from backend.core.constants import FollowEntityCode, TagAssociationEntityCode
+from backend.api.v1.services.surveys.get_survey_detail_service import get_survey_detail
+from backend.api.v1.services.tags.get_event_tags_service import get_event_tags
+from backend.core.constants import FollowEntityCode
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
-from backend.models import (
-    Answer,
-    Bookmark,
-    Event,
-    Organization,
-    Question,
-    Survey,
-    Tag,
-    Ticket,
-    User,
-)
+from backend.models import Bookmark, Event, Organization, Ticket, User
 from backend.models.follow import Follow
-from backend.models.tag_association import TagAssociation
 from backend.models.ticket_inventory import TicketInventory
-from backend.schemas.answer import AnswerItem
-from backend.schemas.survey import SurveyDetail
 from backend.utils.database import fetch_one
 
 
@@ -110,13 +99,13 @@ async def get_event_detail(db: Session, current_user: User, slug: str):
     event.update(
         {
             "survey": (
-                _get_survey_detail(db, event["survey_id"])
+                get_survey_detail(db, event["survey_id"])
                 if event["survey_id"]
                 else None
             ),
             "tickets": _get_tickets(db, event["id"]),
             "organization_contact_url": event["organization_contact_url"],
-            "tags": _get_event_tags(db, event["id"]),
+            "tags": get_event_tags(db, event["id"]),
         }
     )
 
@@ -175,71 +164,3 @@ def _get_tickets(db: Session, event_id: int):
     )
 
     return tickets
-
-
-def _get_event_tags(db: Session, event_id: int):
-    event_tags = db.exec(
-        select(
-            Tag.id,
-            Tag.image_url,
-            Tag.name,
-        )
-        .join(TagAssociation, Tag.id == TagAssociation.tag_id)
-        .where(
-            TagAssociation.entity_id == event_id,
-            TagAssociation.entity_code == TagAssociationEntityCode.EVENT,
-        )
-    ).all()
-
-    return event_tags
-
-
-def _get_survey_detail(db: Session, survey_id: int):
-    survey = db.get(Survey, survey_id)
-
-    questions = db.exec(
-        select(Question)
-        .where(Question.survey_id == survey_id)
-        .order_by(Question.order_number)
-    ).fetchall()
-
-    question_answers = _get_question_answers(db, questions)
-    return SurveyDetail(
-        id=survey_id,
-        name=survey.name,
-        description=survey.description,
-        status_code=survey.status_code,
-        question_anwers=question_answers,
-        start_at=survey.start_at,
-        end_at=survey.end_at,
-        max_response_number=survey.max_response_number,
-    )
-
-
-def _get_question_answers(db: Session, questions: list[Question]):
-    question_answers = {}
-    for question in questions:
-        question_answers[question.id] = question.__dict__
-
-    question_ids = list(question_answers.keys())
-
-    answers = db.exec(
-        select(Answer)
-        .where(Answer.question_id.in_(question_ids))
-        .order_by(Answer.order_number)
-    ).fetchall()
-
-    for answer in answers:
-        question_id = answer.question_id
-        if "answers" not in question_answers[question_id]:
-            question_answers[question_id]["answers"] = []
-        question_answers[question_id]["answers"].append(
-            AnswerItem(
-                id=answer.id,
-                question_id=answer.question_id,
-                answer=answer.answer,
-                order_number=answer.order_number,
-            )
-        )
-
-    return list(question_answers.values())
