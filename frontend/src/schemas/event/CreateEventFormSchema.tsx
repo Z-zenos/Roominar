@@ -159,6 +159,7 @@ const eventBaseSchema = z.object({
   name: z.string().trim().min(1, { message: 'required' }).max(1024),
   description: z.string().trim().min(1),
   coverImageUrl: z.string().url().max(2048),
+  galleryUrls: z.array(z.string().url()).max(10),
   surveyId: z.coerce.number().nullable(),
   targetId: z.coerce.number(),
   comment: z.string().trim().nullable(),
@@ -166,13 +167,13 @@ const eventBaseSchema = z.object({
   tags: z.array(z.coerce.number()).nullable(),
 });
 
-const publishEventFormSchema = z.intersection(
+const createEventFormSchema = z.intersection(
   eventBaseSchema,
   eventDateSchema.and(eventAddressSchema).and(eventTicketSchema),
 );
 
-type PublishEventFormSchema = z.infer<typeof publishEventFormSchema>;
+type CreateEventFormSchema = z.infer<typeof createEventFormSchema>;
 
-export type { PublishEventFormSchema };
+export type { CreateEventFormSchema };
 
-export default publishEventFormSchema;
+export default createEventFormSchema;

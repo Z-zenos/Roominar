@@ -25,8 +25,7 @@ import {
   TicketStatusCode,
 } from '@/src/lib/api/generated';
 import toast from 'react-hot-toast';
-import type { PublishEventFormSchema } from '@/src/schemas/event/CreateEventFormSchema';
-import publishEventFormSchema from '@/src/schemas/event/CreateEventFormSchema';
+import type { CreateEventFormSchema } from '@/src/schemas/event/CreateEventFormSchema';
 import {
   useGetDraftEventQuery,
   usePublishEventMutation,
@@ -54,7 +53,7 @@ import { FaChevronRight, FaSquareArrowUpRight } from 'react-icons/fa6';
 
 import dynamic from 'next/dynamic';
 import { useCallback, useMemo, useState } from 'react';
-import { BsThreeDots } from 'react-icons/bs';
+import { BsStars, BsThreeDots } from 'react-icons/bs';
 import { IoMdAddCircleOutline } from 'react-icons/io';
 import {
   Sheet,
@@ -74,6 +73,9 @@ import CreateTargetForm from './CreateTargetForm';
 import { useListingTargetOptionsQuery } from '@/src/api/target.api';
 import { cn, optionify } from '@/src/utils/app.util';
 import DotLoader from '../common/Loader/DotLoader';
+import createEventFormSchema from '@/src/schemas/event/CreateEventFormSchema';
+import clsx from 'clsx';
+import GalleryUploader from '../common/Upload/GalleryUploader';
 
 // const LexicalEditor = dynamic(() => import('../editor/app/app'), {
 //   ssr: false,
@@ -112,7 +114,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
     'TICKET' | 'TARGET' | null
   >();
 
-  const form = useForm<PublishEventFormSchema>({
+  const form = useForm<CreateEventFormSchema>({
     mode: 'all',
     defaultValues: {
       name: draftEvent?.name ?? '',
@@ -141,7 +143,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
       applicationNumber: 0,
       ticketIds: [],
     },
-    resolver: zodResolver(publishEventFormSchema),
+    resolver: zodResolver(createEventFormSchema),
   });
 
   const { trigger, isMutating: isPusblishing } = usePublishEventMutation({
@@ -158,7 +160,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
     },
   });
 
-  function handlePublishEvent(data: PublishEventFormSchema) {
+  function handlePublishEvent(data: CreateEventFormSchema) {
     // trigger({
     //   eventId: 11,
     //   publishEventRequest: {
@@ -282,7 +284,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                 name='name'
                 label='name'
                 required
-                placeholder='event name'
+                placeholder='Be clear and descriptive with a title that tells people what your event is about.'
                 control={form.control}
                 showError={true}
               />
@@ -339,6 +341,35 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                   350px (2:1 ratio) image.
                 </li>
               </FormInstructions>
+            </div>
+
+            <div className='col-span-2'>
+              <FormCustomLabel
+                htmlFor='galleryUrls'
+                label='gallery'
+                custom={
+                  <>
+                    <p className={clsx(styles.flexStart, 'mt-1')}>
+                      <BsStars size={20} />
+                      <span>
+                        <span className='font-semibold mr-2'>Pro tip:</span>
+                        Use photos that set the mood, and avoid distracting text
+                        overlays.
+                      </span>
+                    </p>
+                    <li className='bg-error text-sm ml-2 mb-1'>
+                      You can upload up to{' '}
+                      <span className='font-bold text-nm'>10</span> images to
+                      showcase your event.
+                    </li>
+                  </>
+                }
+              />
+
+              <GalleryUploader
+                name='galleryUrls'
+                onGetImageUrl={(url) => form.setValue('galleryUrls', [url])}
+              />
             </div>
 
             {/* === EVENT FORMAT & ADDRESS === */}
