@@ -142,6 +142,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
 
       applicationNumber: 0,
       ticketIds: [],
+      galleryUrls: [],
     },
     resolver: zodResolver(createEventFormSchema),
   });
@@ -359,7 +360,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                     </p>
                     <li className='bg-error text-sm ml-2 mb-1'>
                       You can upload up to{' '}
-                      <span className='font-bold text-nm'>10</span> images to
+                      <span className='font-bold text-nm'>5</span> images to
                       showcase your event.
                     </li>
                   </>

@@ -4,13 +4,10 @@ import { Dropzone } from './Dropzone';
 import type { HTMLAttributes } from 'react';
 import { useEffect } from 'react';
 import clsx from 'clsx';
-import { MdChangeCircle, MdInfoOutline } from 'react-icons/md';
 import { useUpload } from '@/src/hooks/useUploadImage';
-import { RiDragMove2Fill } from 'react-icons/ri';
-import { TbArrowsExchange, TbHandClick } from 'react-icons/tb';
+import { TbArrowsExchange } from 'react-icons/tb';
 import { styles } from '@/src/constants/styles.constant';
 import { Avatar, Button, CircularProgress } from '@nextui-org/react';
-import { Label } from '../Label';
 import { GoTrash } from 'react-icons/go';
 
 export interface GalleryUploaderProps extends HTMLAttributes<HTMLDivElement> {
@@ -23,7 +20,7 @@ export interface GalleryUploaderProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const GalleryUploader = ({
-  maxFiles = 1,
+  maxFiles = 5,
   maxSize = 5120000,
   className,
   name,
