@@ -75,7 +75,7 @@ import { cn, optionify } from '@/src/utils/app.util';
 import DotLoader from '../common/Loader/DotLoader';
 import createEventFormSchema from '@/src/schemas/event/CreateEventFormSchema';
 import clsx from 'clsx';
-import GalleryUploader from '../common/Upload/GalleryUploader';
+import MultipleFilesUploader from '../common/Upload/MultipleFilesUploader';
 
 // const LexicalEditor = dynamic(() => import('../editor/app/app'), {
 //   ssr: false,
@@ -270,6 +270,8 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
 
   if (isGetDraftEventLoading) return <DotLoader />;
 
+  console.log(form.getValues('galleryUrls'));
+
   return (
     <Sheet>
       <Form {...form}>
@@ -367,9 +369,9 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                 }
               />
 
-              <GalleryUploader
+              <MultipleFilesUploader
                 name='galleryUrls'
-                onGetImageUrl={(url) => form.setValue('galleryUrls', [url])}
+                onGetImageUrls={(urls) => form.setValue('galleryUrls', urls)}
               />
             </div>
 
@@ -540,7 +542,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                 </TableHeader>
                 <TableBody
                   emptyContent={'Not setup ticket yet'}
-                  items={draftEvent.tickets ?? []}
+                  items={draftEvent?.tickets ?? []}
                 >
                   {(item) => (
                     <TableRow key={item.price}>
