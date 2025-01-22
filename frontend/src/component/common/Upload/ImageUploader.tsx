@@ -125,6 +125,8 @@ const ImageUploader = ({
               isIconOnly
               size='sm'
               startContent={<GoTrash size={16} />}
+              onClick={() => u.deleteImage(u.image!.public_id)}
+              type='button'
             />
           </div>
         </div>

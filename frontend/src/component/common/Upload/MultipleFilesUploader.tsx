@@ -6,7 +6,6 @@ import { useEffect } from 'react';
 import clsx from 'clsx';
 import { Button, CircularProgress, Image } from '@nextui-org/react';
 import { useUploadMultipleFiles } from '@/src/hooks/useUploadMultipleFiles';
-import { styles } from '@/src/constants/styles.constant';
 import { TbArrowsExchange } from 'react-icons/tb';
 import { GoTrash } from 'react-icons/go';
 

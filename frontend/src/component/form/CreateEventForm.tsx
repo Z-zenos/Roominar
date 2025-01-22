@@ -162,6 +162,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
   });
 
   function handlePublishEvent(data: CreateEventFormSchema) {
+    console.log(data);
     // trigger({
     //   eventId: 11,
     //   publishEventRequest: {
@@ -248,6 +249,8 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
         return cellValue;
     }
   }, []);
+
+  console.log(form.getValues());
 
   const rightSidebar = useMemo(() => {
     switch (rightSidebarContent) {

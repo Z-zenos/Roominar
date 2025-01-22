@@ -10,6 +10,7 @@ import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import type { Message } from 'react-hook-form';
+import crypto from 'crypto';
 
 export const DROPZONE_OPTIONS: DropzoneOptions = {
   accept: {
@@ -50,7 +51,6 @@ export const uploadFile = async ({
 
   return { ...data };
 };
-
 export const useUpload = (
   formats: string[] = ['.png', '.jpg', '.jpeg'],
   maxFiles: number = 1,
@@ -64,33 +64,70 @@ export const useUpload = (
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    if (!acceptedFiles.length) return;
+  const deleteImage = useCallback(async (publicId: string) => {
+    try {
+      const apiKey = process.env.NEXT_PUBLIC_CLOUDINARY_API_PUBLIC_KEY;
+      const apiSecret = process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET_KEY;
 
-    const formData = new FormData();
+      const timestamp = Math.floor(Date.now() / 1000);
+      const signature = crypto
+        .createHash('sha1')
+        .update(`public_id=${publicId}&timestamp=${timestamp}${apiSecret}`)
+        .digest('hex');
 
-    formData.append('file', acceptedFiles[0]);
-    formData.append(
-      'upload_preset',
-      process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET as string,
-    );
+      const formData = new FormData();
+      formData.append('public_id', publicId);
+      formData.append('timestamp', timestamp.toString());
+      formData.append('api_key', apiKey);
+      formData.append('signature', signature);
 
-    setFormatImage(formData);
+      await axios.post(`${process.env.NEXT_PUBLIC_CLOUDINARY_DELETE_URL}`, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        data: formData,
+      });
+      setImage(null);
+      toast.success('Image deleted successfully!');
+    } catch (err) {
+      toast.error('Failed to delete image. Please try again.');
+    }
   }, []);
+
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      if (!acceptedFiles.length) return;
+
+      if (image) {
+        // Delete the existing image before uploading a new one
+        deleteImage(image.public_id);
+      }
+
+      const formData = new FormData();
+      formData.append('file', acceptedFiles[0]);
+      formData.append(
+        'upload_preset',
+        process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET as string,
+      );
+      setFormatImage(formData);
+    },
+    [image, deleteImage],
+  );
 
   const { getRootProps, getInputProps, fileRejections, isDragActive } =
     useDropzone({
       ...DROPZONE_OPTIONS,
-      maxFiles: maxFiles,
-      maxSize: maxSize,
-      accept: {
-        'image/*': formats,
-      },
+      maxFiles,
+      maxSize,
+      accept: { 'image/*': formats },
       onDrop,
     });
 
   const onFileChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const files = e.target?.files;
+    console.log('image: ', image);
+    if (image) {
+      // Delete the existing image before uploading a new one
+      deleteImage(image.public_id);
+    }
 
     const formData = new FormData();
     const file = files?.[0];
@@ -100,32 +137,8 @@ export const useUpload = (
       'upload_preset',
       process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET as string,
     );
-
     setFormatImage(formData);
   };
-
-  useEffect(() => {
-    if (fileRejections.length) {
-      fileRejections
-        .map((el) => el.errors)
-        .map((err) => {
-          err.map((el) => {
-            if (el.code.includes('file-invalid-type')) {
-              toast.error(
-                `File type must be ${formats?.map((f) => `.${f}`).join(', ')}`,
-              );
-
-              return;
-            }
-            if (el.code.includes('file-too-large')) {
-              toast.error(`File is larger than ${maxSize}MB`);
-
-              return;
-            }
-          });
-        });
-    }
-  }, [fileRejections, formats, maxSize]);
 
   useEffect(() => {
     (async () => {
@@ -172,5 +185,6 @@ export const useUpload = (
     onFileChange,
     getRootProps,
     getInputProps,
+    deleteImage,
   };
 };
