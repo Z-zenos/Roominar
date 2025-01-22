@@ -4,8 +4,11 @@ import { Dropzone } from './Dropzone';
 import type { HTMLAttributes } from 'react';
 import { useEffect } from 'react';
 import clsx from 'clsx';
-import { CircularProgress, Image } from '@nextui-org/react';
+import { Button, CircularProgress, Image } from '@nextui-org/react';
 import { useUploadMultipleFiles } from '@/src/hooks/useUploadMultipleFiles';
+import { styles } from '@/src/constants/styles.constant';
+import { TbArrowsExchange } from 'react-icons/tb';
+import { GoTrash } from 'react-icons/go';
 
 interface MultipleFilesUploaderProps extends HTMLAttributes<HTMLDivElement> {
   maxFiles?: number;
@@ -36,18 +39,20 @@ const MultipleFilesUploader = ({
 
   return (
     <div className={clsx('bg-white rounded-xl mx-auto mt-4', className)}>
-      <div className='grid grid-cols-3 gap-4'>
+      <div className='grid grid-cols-3 gap-4 group relative'>
         {u.images.map((image, index) => (
           <div
             key={index}
             className='relative'
           >
-            <Image
-              src={image.secure_url}
-              className='w-[300px] h-[200px]'
-              radius='md'
-              alt='image preview'
-            />
+            <div className='aspect-[3/2] overflow-hidden rounded-lg shadow-md'>
+              <Image
+                src={image.secure_url}
+                alt='image preview'
+                className='w-full h-full object-cover transition-all duration-300 hover:brightness-50'
+                radius='md'
+              />
+            </div>
             {u.progressStatus[index] < 100 && (
               <CircularProgress
                 value={u.progressStatus[index] || 0}
@@ -55,6 +60,31 @@ const MultipleFilesUploader = ({
                 color='warning'
               />
             )}
+            <div
+              className={clsx(
+                'hidden z-10 transition-all group-hover:block absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2',
+              )}
+            >
+              <Button
+                className={clsx(
+                  'font-light border bg-white border-gray-600 text-gray-600',
+                )}
+                variant='bordered'
+                isIconOnly
+                size='sm'
+                type='submit'
+                startContent={<TbArrowsExchange size={16} />}
+              />
+              <Button
+                className={clsx(
+                  'font-light border bg-white ml-2 text-red-500 border-red-500 ',
+                )}
+                variant='bordered'
+                isIconOnly
+                size='sm'
+                startContent={<GoTrash size={16} />}
+              />
+            </div>
           </div>
         ))}
         {u.isUploading && (
