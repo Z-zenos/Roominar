@@ -69,21 +69,17 @@ export const useUpload = (
       const apiKey = process.env.NEXT_PUBLIC_CLOUDINARY_API_PUBLIC_KEY;
       const apiSecret = process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET_KEY;
 
-      const timestamp = Math.floor(Date.now() / 1000);
+      const timestamp = new Date().getTime();
       const signature = crypto
         .createHash('sha1')
         .update(`public_id=${publicId}&timestamp=${timestamp}${apiSecret}`)
         .digest('hex');
 
-      const formData = new FormData();
-      formData.append('public_id', publicId);
-      formData.append('timestamp', timestamp.toString());
-      formData.append('api_key', apiKey);
-      formData.append('signature', signature);
-
-      await axios.post(`${process.env.NEXT_PUBLIC_CLOUDINARY_DELETE_URL}`, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        data: formData,
+      await axios.post(process.env.NEXT_PUBLIC_CLOUDINARY_DELETE_URL, {
+        public_id: publicId,
+        api_key: apiKey,
+        timestamp,
+        signature,
       });
       setImage(null);
       toast.success('Image deleted successfully!');
