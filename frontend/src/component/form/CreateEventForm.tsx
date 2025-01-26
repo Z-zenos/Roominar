@@ -76,6 +76,7 @@ import createEventFormSchema from '@/src/schemas/event/CreateEventFormSchema';
 import clsx from 'clsx';
 import MultipleFilesUploader from '../common/Upload/MultipleFilesUploader';
 import CalendarTimeline from '../common/DateTime/CalendarTimeline';
+import dayjs from 'dayjs';
 
 // const LexicalEditor = dynamic(() => import('../editor/app/app'), {
 //   ssr: false,
@@ -127,10 +128,10 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
       status: EventStatusCode.Public,
       tags: [],
 
-      startAt: new Date(),
-      endAt: new Date(),
-      applicationStartAt: new Date(),
-      applicationEndAt: new Date(),
+      startAt: undefined,
+      endAt: undefined,
+      applicationStartAt: undefined,
+      applicationEndAt: undefined,
 
       isOnline: undefined,
       isOffline: undefined,
@@ -250,8 +251,6 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
     }
   }, []);
 
-  // console.log(form.getValues());
-
   const rightSidebar = useMemo(() => {
     switch (rightSidebarContent) {
       case 'TICKET':
@@ -272,8 +271,6 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
   }, [rightSidebarContent]);
 
   if (isGetDraftEventLoading) return <DotLoader />;
-
-  console.log(form.getValues('galleryUrls'));
 
   return (
     <Sheet>
@@ -320,18 +317,54 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                 onSelectDate={(timeline) => {
                   const hasApplicationStartEnd =
                     form.getValues('applicationStartAt') &&
-                    form.getValues('applicationEndAt');
+                    form.getValues('applicationEndAt')
+                      ? true
+                      : false;
                   const hasStartEnd =
-                    form.getValues('startAt') && form.getValues('endAt');
-
+                    form.getValues('startAt') && form.getValues('endAt')
+                      ? true
+                      : false;
                   if (!hasApplicationStartEnd && !hasStartEnd) {
-                    form.setValue('applicationStartAt', timeline.start);
+                    form.setValue(
+                      'applicationStartAt',
+                      dayjs(timeline.start).hour() == 0
+                        ? dayjs(timeline.start).hour(12).toDate()
+                        : timeline.start,
+                    );
                     form.setValue('applicationEndAt', timeline.end);
+                    form.trigger('applicationStartAt');
                   } else if (hasApplicationStartEnd && !hasStartEnd) {
-                    form.setValue('startAt', timeline.start);
+                    form.setValue(
+                      'startAt',
+                      dayjs(timeline.start).hour() == 0
+                        ? dayjs(timeline.start).hour(12).toDate()
+                        : timeline.start,
+                    );
                     form.setValue('endAt', timeline.end);
+                    form.trigger('startAt');
                   } else {
                     return;
+                  }
+                }}
+                onChange={(info) => {
+                  if (info.event.title === 'Application start') {
+                    form.setValue(
+                      'applicationStartAt',
+                      dayjs(info.event.start).hour() == 0
+                        ? dayjs(info.event.start).hour(12).toDate()
+                        : info.event.start,
+                    );
+                    form.setValue('applicationEndAt', info.event.end);
+                    form.trigger('applicationStartAt');
+                  } else if (info.event.title === 'Event start') {
+                    form.setValue(
+                      'startAt',
+                      dayjs(info.event.start).hour() == 0
+                        ? dayjs(info.event.start).hour(12).toDate()
+                        : info.event.start,
+                    );
+                    form.setValue('endAt', info.event.end);
+                    form.trigger('startAt');
                   }
                 }}
               />

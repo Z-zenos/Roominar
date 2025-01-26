@@ -4,7 +4,7 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
-import type { DateSelectArg } from '@fullcalendar/core';
+import type { DateSelectArg, EventChangeArg } from '@fullcalendar/core';
 
 interface CalendarTimelineEventItem {
   title: string;
@@ -15,11 +15,13 @@ interface CalendarTimelineEventItem {
 
 interface CalendarTimelineProps {
   onSelectDate?: (timelineObject: DateSelectArg) => void;
+  onChange?: (event: EventChangeArg) => void;
   events?: CalendarTimelineEventItem[];
 }
 
 export default function CalendarTimeline({
   onSelectDate,
+  onChange,
   events,
 }: CalendarTimelineProps) {
   return (
@@ -37,8 +39,17 @@ export default function CalendarTimeline({
         selectMirror={true}
         height={600}
         aspectRatio={1}
-        initialEvents={events && events.filter((event) => Boolean(event.start))}
+        events={events && events.filter((event) => event.start && event.end)}
+        // initialEvents={[
+        //   {
+        //     title: 'Application start',
+        //     start: new Date('2024-12-30T17:00:00.000Z'),
+        //     end: new Date('2025-01-01T17:00:00.000Z'),
+        //     color: '#FFD700',
+        //   },
+        // ]}
         select={onSelectDate}
+        eventChange={onChange}
       />
     </div>
   );

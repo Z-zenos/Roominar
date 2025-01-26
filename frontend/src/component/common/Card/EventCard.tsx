@@ -126,7 +126,7 @@ function EventCard({
                 <Chip
                   content={
                     status === 'authenticated'
-                      ? `${event?.soldTicketsNumber || 0} / ${event?.totalTicketNumber}`
+                      ? `${event?.totalTicketNumber || 0} / ${event?.totalTicketNumber}`
                       : event.totalTicketNumber + ''
                   }
                   leftIcon={<FaUserFriends className='text-sm' />}
