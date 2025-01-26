@@ -4,10 +4,26 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
+import type { DateSelectArg } from '@fullcalendar/core';
 
-export default function CalendarTimeline() {
+interface CalendarTimelineEventItem {
+  title: string;
+  start: Date;
+  end: Date;
+  color: string;
+}
+
+interface CalendarTimelineProps {
+  onSelectDate?: (timelineObject: DateSelectArg) => void;
+  events?: CalendarTimelineEventItem[];
+}
+
+export default function CalendarTimeline({
+  onSelectDate,
+  events,
+}: CalendarTimelineProps) {
   return (
-    <div className='calendar-container'>
+    <div className='calendar-container mt-2'>
       <FullCalendar
         plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
         headerToolbar={{
@@ -19,14 +35,10 @@ export default function CalendarTimeline() {
         editable={true}
         selectable={true}
         selectMirror={true}
-        initialEvents={[
-          {
-            title: 'nice event',
-            start: new Date(),
-            resourceId: 'a',
-            color: '#a413f1',
-          },
-        ]}
+        height={600}
+        aspectRatio={1}
+        initialEvents={events && events.filter((event) => Boolean(event.start))}
+        select={onSelectDate}
       />
     </div>
   );

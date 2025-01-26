@@ -67,7 +67,8 @@
       "isApplyEnded": "closed application",
       "isFree": "free",
       "isPaid": "paid",
-      "gallery": "gallery"
+      "gallery": "gallery",
+      "timeline": "timeline"
     },
     "message": {
       "error": {

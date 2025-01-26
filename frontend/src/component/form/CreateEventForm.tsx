@@ -5,7 +5,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
   FormCustomLabel,
-  FormDateTimePicker,
   FormInput,
   FormInstructions,
   FormSelect,
@@ -297,41 +296,46 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
               />
             </div>
             <div className='col-span-2'>
-              <CalendarTimeline />
-            </div>
-            {/* <div>
-              <FormDateTimePicker
-                name='startAt'
-                label='startAt'
+              <FormCustomLabel
+                htmlFor='timeline'
+                label='timeline'
                 required
-                control={form.control}
               />
-            </div>
-            <div>
-              <FormDateTimePicker
-                name='endAt'
-                label='endAt'
-                required
-                control={form.control}
-              />
-            </div>
 
-            <div>
-              <FormDateTimePicker
-                name='applicationStartAt'
-                label='applicationStartAt'
-                required
-                control={form.control}
+              <CalendarTimeline
+                events={[
+                  {
+                    title: 'Application start',
+                    start: form.getValues('applicationStartAt'),
+                    end: form.getValues('applicationEndAt'),
+                    color: '#FFD700',
+                  },
+                  {
+                    title: 'Event start',
+                    start: form.getValues('startAt'),
+                    end: form.getValues('endAt'),
+                    color: '#FF4500',
+                  },
+                ]}
+                onSelectDate={(timeline) => {
+                  const hasApplicationStartEnd =
+                    form.getValues('applicationStartAt') &&
+                    form.getValues('applicationEndAt');
+                  const hasStartEnd =
+                    form.getValues('startAt') && form.getValues('endAt');
+
+                  if (!hasApplicationStartEnd && !hasStartEnd) {
+                    form.setValue('applicationStartAt', timeline.start);
+                    form.setValue('applicationEndAt', timeline.end);
+                  } else if (hasApplicationStartEnd && !hasStartEnd) {
+                    form.setValue('startAt', timeline.start);
+                    form.setValue('endAt', timeline.end);
+                  } else {
+                    return;
+                  }
+                }}
               />
             </div>
-            <div>
-              <FormDateTimePicker
-                name='applicationEndAt'
-                label='applicationEndAt'
-                required
-                control={form.control}
-              />
-            </div> */}
 
             <div className='col-span-2'>
               <FormCustomLabel
