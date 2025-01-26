@@ -88,7 +88,6 @@
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-fill-color: transparent;
   }
 
   .strokeme {
@@ -109,6 +108,14 @@
     transition: #fff 5000s ease-in-out 0s;
   }
 
+  @keyframes autofill {
+    0%,
+    100% {
+      color: #666;
+      background: transparent;
+    }
+  }
+
   @-webkit-keyframes autofill {
     0%,
     100% {
@@ -125,6 +132,12 @@
 
   input:-webkit-autofill {
     -webkit-background-clip: text;
+  }
+
+  .calendar-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
   }
 }
 

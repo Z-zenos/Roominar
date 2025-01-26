@@ -76,6 +76,7 @@ import DotLoader from '../common/Loader/DotLoader';
 import createEventFormSchema from '@/src/schemas/event/CreateEventFormSchema';
 import clsx from 'clsx';
 import MultipleFilesUploader from '../common/Upload/MultipleFilesUploader';
+import CalendarTimeline from '../common/DateTime/CalendarTimeline';
 
 // const LexicalEditor = dynamic(() => import('../editor/app/app'), {
 //   ssr: false,
@@ -250,7 +251,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
     }
   }, []);
 
-  console.log(form.getValues());
+  // console.log(form.getValues());
 
   const rightSidebar = useMemo(() => {
     switch (rightSidebarContent) {
@@ -295,7 +296,10 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                 showError={true}
               />
             </div>
-            <div>
+            <div className='col-span-2'>
+              <CalendarTimeline />
+            </div>
+            {/* <div>
               <FormDateTimePicker
                 name='startAt'
                 label='startAt'
@@ -327,7 +331,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                 required
                 control={form.control}
               />
-            </div>
+            </div> */}
 
             <div className='col-span-2'>
               <FormCustomLabel
