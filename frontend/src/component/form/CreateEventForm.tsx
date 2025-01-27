@@ -52,7 +52,7 @@ import {
 import { FaChevronRight, FaSquareArrowUpRight } from 'react-icons/fa6';
 
 import dynamic from 'next/dynamic';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BsStars, BsThreeDots } from 'react-icons/bs';
 import { IoMdAddCircleOutline } from 'react-icons/io';
 import {
@@ -78,6 +78,7 @@ import clsx from 'clsx';
 import MultipleFilesUploader from '../common/Upload/MultipleFilesUploader';
 import CalendarTimeline from '../common/DateTime/CalendarTimeline';
 import dayjs from 'dayjs';
+import Spinner from '../common/Loader/Spinner';
 
 // const LexicalEditor = dynamic(() => import('../editor/app/app'), {
 //   ssr: false,
@@ -119,7 +120,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
   const form = useForm<CreateEventFormSchema>({
     mode: 'all',
     defaultValues: {
-      name: draftEvent?.name ?? '',
+      name: '',
       description: 'ignore description',
       coverImageUrl:
         'https://images.squarespace-cdn.com/content/v1/5f4d61e4378d637cba3d29c7/99d54c26-4229-4fa0-99eb-eafd9afdd047/2023_TahoeFoodHub_HolidayBlockParty_Post+%282%29.jpg',
@@ -148,6 +149,32 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
     },
     resolver: zodResolver(createEventFormSchema),
   });
+
+  useEffect(() => {
+    form.reset({
+      name: draftEvent?.name ?? '',
+      description: draftEvent?.description ?? '',
+      coverImageUrl: draftEvent?.coverImageUrl ?? '',
+      surveyId: draftEvent?.surveyId,
+      targetId: draftEvent?.target?.id,
+      comment: draftEvent?.comment ?? '',
+      tags: draftEvent?.tags?.map((tag) => tag.id) ?? [],
+      startAt: draftEvent?.startAt,
+      endAt: draftEvent?.endAt,
+      applicationStartAt: draftEvent?.applicationStartAt,
+      applicationEndAt: draftEvent?.applicationEndAt,
+
+      isOnline: draftEvent?.isOnline,
+      isOffline: draftEvent?.isOffline,
+      organizeCityCode: draftEvent?.organizeCityCode as CityCode,
+      meetingToolCode: draftEvent?.meetingToolCode ?? EventMeetingToolCode.Zoom,
+      meetingUrl: draftEvent?.meetingUrl ?? '',
+
+      totalTicketNumber: draftEvent?.totalTicketNumber ?? 0,
+      ticketIds: draftEvent?.tickets?.map((ticket) => ticket.id) ?? [],
+      galleryUrls: draftEvent?.gallery ?? [],
+    });
+  }, [JSON.stringify(draftEvent)]);
 
   const { trigger: publishEvent, isMutating: isPublishing } =
     usePublishEventMutation({
@@ -210,13 +237,13 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
 
   function handleSaveDraftEvent(data: CreateEventFormSchema) {
     saveDraftEvent({
-      eventId: 11,
+      eventId: draftEvent.id,
       saveDraftEventRequest: {
         name: data.name,
         description: data.description,
         coverImageUrl: data.coverImageUrl,
         surveyId: data.surveyId,
-        targetId: data.targetId,
+        targetId: data.targetId ?? null,
         comment: data.comment,
         ticketIds: data.ticketIds,
         tags: data.tags,
@@ -227,7 +254,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
         applicationStartAt: data.applicationStartAt,
         isOnline: data.isOnline,
         isOffline: data.isOffline,
-        organizeAddress: data.organizeAddress,
+        organizeAddress: data.organizeAddress ?? null,
         organizeCityCode: SaveDraftEventRequestOrganizeCityCodeEnum.Hanoi,
         organizePlaceName: '12 aH',
         meetingToolCode: data.meetingToolCode,
@@ -728,6 +755,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                   className='relative w-full text-left text-white transition-colors duration-200 ease-in-out group-hover:text-white'
                   onClick={() => handleSaveDraftEvent(form.getValues())}
                 >
+                  {isDraftSaving && <Spinner />}
                   Draft <CiStickyNote className='inline w-5 h-5 mb-1 ml1' />
                 </span>
               </button>

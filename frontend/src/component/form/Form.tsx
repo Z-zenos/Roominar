@@ -652,7 +652,7 @@ const FormTagsInput = ({
                   <li
                     key={`selected-tag-${id}`}
                     className={clsx(
-                      'text-primary bg-info-sub border rounded-sm w-fit mb-[6px] mr-[6px] p-1',
+                      'text-primary bg-info-sub border rounded-sm w-fit mb-[6px] mr-[6px] p-1 text-sm',
                       styles.flexStart,
                       'gap-2 inline-flex',
                     )}

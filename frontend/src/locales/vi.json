@@ -46,7 +46,7 @@
       "meetingUrl": "link meeting",
       "organizeAddress": "địa chỉ tổ chức",
       "organizeCityCode": "thành phố tổ chức",
-      "applicationNumber": "số lượng đơn tối đa",
+      "totalTicketNumber": "số lượng đơn tối đa",
       "ticketName": "tên vé",
       "ticketQuantity": "số lượng vé",
       "ticketPrice": "giá",

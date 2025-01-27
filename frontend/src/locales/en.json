@@ -46,7 +46,7 @@
       "eventFormat": "format",
       "organizeAddress": "organize address",
       "organizeCityCode": "organize city",
-      "applicationNumber": "maximum application number",
+      "totalTicketNumber": "total ticket number",
       "ticketName": "ticket name",
       "ticketQuantity": "quantity",
       "ticketPrice": "price",

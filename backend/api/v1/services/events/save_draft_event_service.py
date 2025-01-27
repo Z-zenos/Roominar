@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlmodel import Session, select
+from sqlmodel import Session, delete, select
 
 from backend.core.constants import EventStatusCode, TagAssociationEntityCode
 from backend.core.error_code import ErrorCode, ErrorMessage
@@ -39,6 +39,16 @@ async def save_draft_event(
         )
 
         if request.tags:
+            # Remove existing tags associated with the event
+            db.exec(
+                delete(TagAssociation)
+                .where(TagAssociation.entity_id == event.id)
+                .where(TagAssociation.entity_code == TagAssociationEntityCode.EVENT)
+            )
+
+            db.flush()
+
+            # Add new tags
             request_tags = db.exec(select(Tag.id).where(Tag.id.in_(request.tags))).all()
             if (not request_tags) or (len(request.tags) != len(request_tags)):
                 raise BadRequestException(ErrorCode.ERR_TAG_NOT_FOUND)
