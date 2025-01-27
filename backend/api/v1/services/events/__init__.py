@@ -12,6 +12,7 @@ from .listing_related_events_service import listing_related_events
 from .listing_top_organization_events_service import listing_top_organization_events
 from .publish_event_service import publish_event
 from .search_events_service import search_events
+from .save_draft_event_service import save_draft_event
 
 all = (
     search_events,
@@ -28,4 +29,5 @@ all = (
     delete_check_in,
     create_draft_event,
     get_draft_event,
+    save_draft_event,
 )

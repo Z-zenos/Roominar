@@ -19,7 +19,7 @@ async def create_draft_event(
             name=f"""
                 Draft Event {datetime.now().strftime("%Y/%m/%d %H:%M")}""",
         )
-        save(event)
+        save(db, event)
         return event.id
 
     return None

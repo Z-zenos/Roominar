@@ -151,7 +151,7 @@ const eventAddressSchema = z
   );
 
 const eventTicketSchema = z.object({
-  applicationNumber: z.coerce.number(),
+  totalTicketNumber: z.coerce.number(),
   ticketIds: z.array(z.number()),
 });
 

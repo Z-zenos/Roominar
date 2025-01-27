@@ -25,6 +25,7 @@ from backend.schemas.event import (
     ListingMyEventsResponse,
     ListingRelatedEventsResponse,
     PublishEventRequest,
+    SaveDraftEventRequest,
     SearchEventsQueryParams,
     SearchEventsResponse,
 )
@@ -178,6 +179,18 @@ async def create_draft_event(
     request: CreateDraftEventRequest = None,
 ):
     return await events_service.create_draft_event(db, organizer, request)
+
+
+@router.patch(
+    "/draft/{event_id}", response_model=int, responses=authenticated_api_responses
+)
+async def save_draft_event(
+    db: Session = Depends(get_read_db),
+    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+    request: SaveDraftEventRequest = None,
+    event_id: int = None,
+):
+    return await events_service.save_draft_event(db, organizer, request, event_id)
 
 
 @router.post("/{event_id}", response_model=int, responses=authenticated_api_responses)

@@ -10,6 +10,7 @@ import type {
   EventsApiListingRelatedEventsRequest,
   EventsApiListingTicketsOfEventRequest,
   EventsApiPublishEventRequest,
+  EventsApiSaveDraftEventRequest,
   EventsApiSearchEventsRequest,
   OrganizationsApiListingOrganizationEventsRequest,
   OrganizationsApiListingTopOrganizationEventsRequest,
@@ -184,4 +185,16 @@ export const useGetDraftEventQuery = (
     queryKey: ['get-draft-event'],
     queryFn: async () => await api.events.getDraftEvent(params),
   });
+};
+
+export const useSaveDraftEventMutation = <T>(
+  options?: SWRMutationConfiguration<number, T>,
+) => {
+  const api = useApi();
+  const key = 'save-draft-event';
+  return useSWRMutation<number, T, typeof key, EventsApiSaveDraftEventRequest>(
+    key,
+    async (_: string, { arg }) => await api.events.saveDraftEvent(arg),
+    options,
+  );
 };

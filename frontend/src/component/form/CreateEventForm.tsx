@@ -20,7 +20,7 @@ import {
   CityCode,
   EventMeetingToolCode,
   EventStatusCode,
-  PublishEventRequestOrganizeCityCodeEnum,
+  SaveDraftEventRequestOrganizeCityCodeEnum,
   TicketStatusCode,
 } from '@/src/lib/api/generated';
 import toast from 'react-hot-toast';
@@ -28,6 +28,7 @@ import type { CreateEventFormSchema } from '@/src/schemas/event/CreateEventFormS
 import {
   useGetDraftEventQuery,
   usePublishEventMutation,
+  useSaveDraftEventMutation,
 } from '@/src/api/event.api';
 import ImageUploader from '../common/Upload/ImageUploader';
 import { styles } from '@/src/constants/styles.constant';
@@ -141,26 +142,41 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
       meetingToolCode: undefined,
       meetingUrl: '',
 
-      applicationNumber: 0,
+      totalTicketNumber: 0,
       ticketIds: [],
       galleryUrls: [],
     },
     resolver: zodResolver(createEventFormSchema),
   });
 
-  const { trigger, isMutating: isPusblishing } = usePublishEventMutation({
-    onSuccess() {
-      toast.success('Publish event successfully!');
-      form.reset();
-    },
-    onError(error: ApiException<unknown>) {
-      toast.error(
-        (error.body as ErrorResponse400)?.message ??
-          (error.body as ErrorResponse400)?.errorCode ??
-          'Unknown Error 😵',
-      );
-    },
-  });
+  const { trigger: publishEvent, isMutating: isPublishing } =
+    usePublishEventMutation({
+      onSuccess() {
+        toast.success('Publish event successfully!');
+        form.reset();
+      },
+      onError(error: ApiException<unknown>) {
+        toast.error(
+          (error.body as ErrorResponse400)?.message ??
+            (error.body as ErrorResponse400)?.errorCode ??
+            'Unknown Error 😵',
+        );
+      },
+    });
+
+  const { trigger: saveDraftEvent, isMutating: isDraftSaving } =
+    useSaveDraftEventMutation({
+      onSuccess() {
+        toast.success('Save draft event successfully!');
+      },
+      onError(error: ApiException<unknown>) {
+        toast.error(
+          (error.body as ErrorResponse400)?.message ??
+            (error.body as ErrorResponse400)?.errorCode ??
+            'Unknown Error 😵',
+        );
+      },
+    });
 
   function handlePublishEvent(data: CreateEventFormSchema) {
     console.log(data);
@@ -176,7 +192,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
     //     status: data.status,
     //     ticketIds: data.ticketIds,
     //     tags: data.tags,
-    //     applicationNumber: data.totalTicketNumber,
+    //     totalTicketNumber: data.totalTicketNumber,
     //     startAt: data.startAt,
     //     endAt: data.endAt,
     //     applicationEndAt: data.applicationEndAt,
@@ -190,6 +206,35 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
     //     meetingUrl: data.meetingUrl,
     //   },
     // });
+  }
+
+  function handleSaveDraftEvent(data: CreateEventFormSchema) {
+    saveDraftEvent({
+      eventId: 11,
+      saveDraftEventRequest: {
+        name: data.name,
+        description: data.description,
+        coverImageUrl: data.coverImageUrl,
+        surveyId: data.surveyId,
+        targetId: data.targetId,
+        comment: data.comment,
+        ticketIds: data.ticketIds,
+        tags: data.tags,
+        totalTicketNumber: data.totalTicketNumber,
+        startAt: data.startAt,
+        endAt: data.endAt,
+        applicationEndAt: data.applicationEndAt,
+        applicationStartAt: data.applicationStartAt,
+        isOnline: data.isOnline,
+        isOffline: data.isOffline,
+        organizeAddress: data.organizeAddress,
+        organizeCityCode: SaveDraftEventRequestOrganizeCityCodeEnum.Hanoi,
+        organizePlaceName: '12 aH',
+        meetingToolCode: data.meetingToolCode,
+        meetingUrl: data.meetingUrl,
+        gallery: data.galleryUrls,
+      },
+    });
   }
 
   const renderCell = useCallback((ticket: TicketItem, columnKey: string) => {
@@ -538,9 +583,9 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
             </h3>
             <div>
               <FormInput
-                id='applicationNumber'
-                name='applicationNumber'
-                label='applicationNumber'
+                id='totalTicketNumber'
+                name='totalTicketNumber'
+                label='totalTicketNumber'
                 required
                 placeholder='100'
                 control={form.control}
@@ -668,7 +713,10 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
             </div>
 
             <div className='col-span-2 my-8 flex justify-center items-center gap-8'>
-              <button className='relative flex items-center px-6 py-3 overflow-hidden font-medium transition-all bg-yellow-500 rounded-md group'>
+              <button
+                type='button'
+                className='relative flex items-center px-6 py-3 overflow-hidden font-medium transition-all bg-yellow-500 rounded-md group'
+              >
                 <span className='absolute top-0 right-0 inline-block w-4 h-4 transition-all duration-500 ease-in-out bg-yellow-700 rounded group-hover:-mr-4 group-hover:-mt-4'>
                   <span className='absolute top-0 right-0 w-5 h-5 rotate-45 translate-x-1/2 -translate-y-1/2 bg-white'></span>
                 </span>
@@ -676,7 +724,10 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                   <span className='absolute top-0 right-0 w-5 h-5 rotate-45 translate-x-1/2 -translate-y-1/2 bg-white'></span>
                 </span>
                 <span className='absolute bottom-0 left-0 w-full h-full transition-all duration-500 ease-in-out delay-200 -translate-x-full bg-yellow-600 rounded-md group-hover:translate-x-0'></span>
-                <span className='relative w-full text-left text-white transition-colors duration-200 ease-in-out group-hover:text-white'>
+                <span
+                  className='relative w-full text-left text-white transition-colors duration-200 ease-in-out group-hover:text-white'
+                  onClick={() => handleSaveDraftEvent(form.getValues())}
+                >
                   Draft <CiStickyNote className='inline w-5 h-5 mb-1 ml1' />
                 </span>
               </button>
@@ -712,7 +763,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
               endAt: new Date('2024-10-06'),
               applicationStartAt: new Date('2024-10-06'),
               applicationEndAt: new Date('2024-10-06'),
-              applicationNumber: 1,
+              totalTicketNumber: 1,
               coverImageUrl: '',
               meetingToolCode: EventMeetingToolCode.Discord,
               isOffline: true,

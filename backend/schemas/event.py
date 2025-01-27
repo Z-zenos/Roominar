@@ -193,9 +193,6 @@ class ListingMyEventsResponse(PaginationResponse[MyEventItem]):
     pass
 
 
-# class DraftEventRequest(BaseModel):
-
-
 class PublishEventRequest(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True)
 
@@ -338,3 +335,35 @@ class GetDraftEventResponse(BaseModel):
     survey_id: int | None = None
     max_ticket_number_per_account: int | None = None
     comment: str | None = None
+
+
+class SaveDraftEventRequest(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    name: str | None = Field(max_length=1024)
+
+    start_at: datetime | None
+    end_at: datetime | None
+    application_start_at: datetime | None
+    application_end_at: datetime | None
+
+    total_ticket_number: int | None = Field(le=1000)
+    cover_image_url: str | None = Field(max_length=2048)
+    gallery: list[str] = Field([])
+
+    description: str | None
+
+    is_offline: bool | None
+    organize_place_name: str | None = Field(max_length=255)
+    organize_city_code: CityCode | None = Field(max_length=50)
+    organize_address: str | None = Field(max_length=255)
+
+    is_online: bool | None
+    meeting_tool_code: EventMeetingToolCode | None
+    meeting_url: str | None = Field(max_length=2048)
+
+    ticket_ids: list[int] = Field([])
+    survey_id: int | None
+    target_id: int | None
+    comment: str | None
+    tags: list[int] = Field([])
