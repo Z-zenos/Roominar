@@ -20,6 +20,7 @@ from backend.schemas.auth import RegisterOrganizationRequest
 from backend.schemas.event import (
     ListingOrganizationEventsQueryParams,
     ListingOrganizationEventsResponse,
+    ListingOrganizationEventsTimelineItem,
     ListingTopOrganizationEventsResponse,
 )
 from backend.schemas.organization import (
@@ -64,6 +65,19 @@ async def listing_organization_events(
     return ListingOrganizationEventsResponse(
         data=events, total=total, page=1, per_page=10
     )
+
+
+@router.get(
+    "/events/timeline",
+    response_model=list[ListingOrganizationEventsTimelineItem],
+    responses=authenticated_api_responses,
+)
+async def listing_organization_events_timeline(
+    db: Session = Depends(get_read_db),
+    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+):
+    events = await events_service.listing_events_timeline(db, organizer)
+    return events
 
 
 @router.get(

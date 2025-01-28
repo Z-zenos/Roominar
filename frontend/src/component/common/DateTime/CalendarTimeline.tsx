@@ -17,15 +17,20 @@ interface CalendarTimelineProps {
   onSelectDate?: (timelineObject: DateSelectArg) => void;
   onChange?: (event: EventChangeArg) => void;
   events?: CalendarTimelineEventItem[];
+  id?: string;
 }
 
 export default function CalendarTimeline({
   onSelectDate,
   onChange,
   events,
+  id,
 }: CalendarTimelineProps) {
   return (
-    <div className='calendar-container mt-2'>
+    <div
+      className='calendar-container mt-2'
+      id={id}
+    >
       <FullCalendar
         plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
         headerToolbar={{

@@ -7,6 +7,7 @@ import {
   FormCustomLabel,
   FormInput,
   FormInstructions,
+  FormMessage,
   FormSelect,
   FormTagsInput,
   FormTextarea,
@@ -79,6 +80,8 @@ import MultipleFilesUploader from '../common/Upload/MultipleFilesUploader';
 import CalendarTimeline from '../common/DateTime/CalendarTimeline';
 import dayjs from 'dayjs';
 import Spinner from '../common/Loader/Spinner';
+import type { DateSelectArg, EventChangeArg } from '@fullcalendar/core';
+import { useListingOrganizationEventsTimelineQuery } from '@/src/api/organization.api';
 
 // const LexicalEditor = dynamic(() => import('../editor/app/app'), {
 //   ssr: false,
@@ -112,6 +115,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
   const { data: surveyOptions } = useListingSurveyOptionsQuery();
   const { data: targetOptions, refetch: refetchTargetOptions } =
     useListingTargetOptionsQuery();
+  const { data: eventsTimeline } = useListingOrganizationEventsTimelineQuery();
 
   const [rightSidebarContent, setRightSidebarContent] = useState<
     'TICKET' | 'TARGET' | null
@@ -204,6 +208,58 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
         );
       },
     });
+
+  function handleSelectDate(timeline: DateSelectArg) {
+    const hasApplicationStartEnd =
+      form.getValues('applicationStartAt') && form.getValues('applicationEndAt')
+        ? true
+        : false;
+    const hasStartEnd =
+      form.getValues('startAt') && form.getValues('endAt') ? true : false;
+    if (!hasApplicationStartEnd && !hasStartEnd) {
+      form.setValue(
+        'applicationStartAt',
+        dayjs(timeline.start).hour() == 0
+          ? dayjs(timeline.start).hour(12).toDate()
+          : timeline.start,
+      );
+      form.setValue('applicationEndAt', timeline.end);
+      form.trigger('applicationStartAt');
+    } else if (hasApplicationStartEnd && !hasStartEnd) {
+      form.setValue(
+        'startAt',
+        dayjs(timeline.start).hour() == 0
+          ? dayjs(timeline.start).hour(12).toDate()
+          : timeline.start,
+      );
+      form.setValue('endAt', timeline.end);
+      form.trigger('startAt');
+    } else {
+      return;
+    }
+  }
+
+  function handleDragAndDropDate(info: EventChangeArg) {
+    if (info.event.title === 'Application start') {
+      form.setValue(
+        'applicationStartAt',
+        dayjs(info.event.start).hour() == 0
+          ? dayjs(info.event.start).hour(12).toDate()
+          : info.event.start,
+      );
+      form.setValue('applicationEndAt', info.event.end);
+      form.trigger('applicationStartAt');
+    } else if (info.event.title === 'Event start') {
+      form.setValue(
+        'startAt',
+        dayjs(info.event.start).hour() == 0
+          ? dayjs(info.event.start).hour(12).toDate()
+          : info.event.start,
+      );
+      form.setValue('endAt', info.event.end);
+      form.trigger('startAt');
+    }
+  }
 
   function handlePublishEvent(data: CreateEventFormSchema) {
     console.log(data);
@@ -366,12 +422,13 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
             </div>
             <div className='col-span-2'>
               <FormCustomLabel
-                htmlFor='timeline'
+                htmlFor='startAt'
                 label='timeline'
                 required
               />
 
               <CalendarTimeline
+                id='startAt'
                 events={[
                   {
                     title: 'Application start',
@@ -385,61 +442,33 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                     end: form.getValues('endAt'),
                     color: '#FF4500',
                   },
+                  ...(eventsTimeline ? eventsTimeline.map((event) => ({
+                    title: event.name,
+                    start: event.startAt,
+                    end: event.endAt,
+                    color: '#FF4500',
+                  })) : []),
+                  ...(eventsTimeline ?eventsTimeline.map((event) => ({
+                    title: event.name,
+                    start: event.applicationStartAt,
+                    end: event.applicationEndAt,
+                    color: '#FFD700',
+                  })):[]),
                 ]}
-                onSelectDate={(timeline) => {
-                  const hasApplicationStartEnd =
-                    form.getValues('applicationStartAt') &&
-                    form.getValues('applicationEndAt')
-                      ? true
-                      : false;
-                  const hasStartEnd =
-                    form.getValues('startAt') && form.getValues('endAt')
-                      ? true
-                      : false;
-                  if (!hasApplicationStartEnd && !hasStartEnd) {
-                    form.setValue(
-                      'applicationStartAt',
-                      dayjs(timeline.start).hour() == 0
-                        ? dayjs(timeline.start).hour(12).toDate()
-                        : timeline.start,
-                    );
-                    form.setValue('applicationEndAt', timeline.end);
-                    form.trigger('applicationStartAt');
-                  } else if (hasApplicationStartEnd && !hasStartEnd) {
-                    form.setValue(
-                      'startAt',
-                      dayjs(timeline.start).hour() == 0
-                        ? dayjs(timeline.start).hour(12).toDate()
-                        : timeline.start,
-                    );
-                    form.setValue('endAt', timeline.end);
-                    form.trigger('startAt');
-                  } else {
-                    return;
-                  }
-                }}
-                onChange={(info) => {
-                  if (info.event.title === 'Application start') {
-                    form.setValue(
-                      'applicationStartAt',
-                      dayjs(info.event.start).hour() == 0
-                        ? dayjs(info.event.start).hour(12).toDate()
-                        : info.event.start,
-                    );
-                    form.setValue('applicationEndAt', info.event.end);
-                    form.trigger('applicationStartAt');
-                  } else if (info.event.title === 'Event start') {
-                    form.setValue(
-                      'startAt',
-                      dayjs(info.event.start).hour() == 0
-                        ? dayjs(info.event.start).hour(12).toDate()
-                        : info.event.start,
-                    );
-                    form.setValue('endAt', info.event.end);
-                    form.trigger('startAt');
-                  }
-                }}
+                onSelectDate={handleSelectDate}
+                onChange={handleDragAndDropDate}
               />
+
+              {form.formState.errors.applicationStartAt && (
+                <FormMessage label={'applicationStartAt'} />
+              )}
+              {form.formState.errors.applicationEndAt && (
+                <FormMessage label={'applicationEndAt'} />
+              )}
+              {form.formState.errors.startAt && (
+                <FormMessage label={'startAt'} />
+              )}
+              {form.formState.errors.endAt && <FormMessage label={'endAt'} />}
             </div>
 
             <div className='col-span-2'>
@@ -460,6 +489,10 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                   350px (2:1 ratio) image.
                 </li>
               </FormInstructions>
+
+              {form.formState.errors.coverImageUrl && (
+                <FormMessage label={'coverImageUrl'} />
+              )}
             </div>
 
             <div className='col-span-2'>

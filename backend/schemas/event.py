@@ -208,7 +208,7 @@ class PublishEventRequest(BaseModel):
     gallery: list[str] | None = Field([])
 
     description: str
-    description_image_urls: list[str] | None = Field([])
+    # description_image_urls: list[str] | None = Field([])
 
     is_offline: bool | None
     is_online: bool | None
@@ -219,13 +219,12 @@ class PublishEventRequest(BaseModel):
 
     meeting_tool_code: EventMeetingToolCode | None
     meeting_url: str | None = Field(max_length=2048)
-    ticket_ids: list[int] | None = Field([])
+    ticket_ids: list[int] = Field([])
     survey_id: int | None
     target_id: int
     comment: str | None
 
-    status: EventStatusCode
-    tags: list[int] | None = Field([])
+    tags: list[int] = Field([])
 
     @field_validator("is_online")
     def validate_online_offline(cls, v: str | None, values: ValidationInfo):
@@ -367,3 +366,15 @@ class SaveDraftEventRequest(BaseModel):
     target_id: int | None
     comment: str | None
     tags: list[int] = Field([])
+
+
+class ListingOrganizationEventsTimelineItem(BaseModel):
+    id: int
+    slug: str
+    name: str
+    start_at: datetime | None
+    end_at: datetime | None
+    application_start_at: datetime | None
+    application_end_at: datetime | None
+    is_online: bool | None
+    is_offline: bool | None

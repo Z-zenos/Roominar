@@ -97,3 +97,12 @@ export const useGetAttendeeDetailQuery = (
     queryFn: async () => await api.organizations.getAttendeeDetail(params),
   });
 };
+
+export const useListingOrganizationEventsTimelineQuery = () => {
+  const api = useApi();
+  return useQuery({
+    queryKey: ['listing-orgnization-events-timeline'],
+    queryFn: async () =>
+      await api.organizations.listingOrganizationEventsTimeline(),
+  });
+};
