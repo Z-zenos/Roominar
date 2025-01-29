@@ -155,6 +155,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
   });
 
   useEffect(() => {
+    console.log(draftEvent?.tags?.map((tag) => tag.id));
     form.reset({
       name: draftEvent?.name ?? '',
       description: draftEvent?.description ?? '',
@@ -442,18 +443,22 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                     end: form.getValues('endAt'),
                     color: '#FF4500',
                   },
-                  ...(eventsTimeline ? eventsTimeline.map((event) => ({
-                    title: event.name,
-                    start: event.startAt,
-                    end: event.endAt,
-                    color: '#FF4500',
-                  })) : []),
-                  ...(eventsTimeline ?eventsTimeline.map((event) => ({
-                    title: event.name,
-                    start: event.applicationStartAt,
-                    end: event.applicationEndAt,
-                    color: '#FFD700',
-                  })):[]),
+                  ...(eventsTimeline
+                    ? eventsTimeline.map((event) => ({
+                        title: event.name,
+                        start: event.startAt,
+                        end: event.endAt,
+                        color: '#FF4500',
+                      }))
+                    : []),
+                  ...(eventsTimeline
+                    ? eventsTimeline.map((event) => ({
+                        title: event.name,
+                        start: event.applicationStartAt,
+                        end: event.applicationEndAt,
+                        color: '#FFD700',
+                      }))
+                    : []),
                 ]}
                 onSelectDate={handleSelectDate}
                 onChange={handleDragAndDropDate}

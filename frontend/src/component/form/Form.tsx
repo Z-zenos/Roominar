@@ -608,8 +608,8 @@ const FormTagsInput = ({
                 id: tag.id,
                 name: tag.name,
               }))
-              .map((tag) => ({ value: tag.id + '', label: tag.name })),
-          ) as Option[])
+              .map((tag) => ({ value: tag.id, label: tag.name })),
+          ) as { value: number; label: string }[])
         : [],
     [data],
   );
@@ -618,12 +618,12 @@ const FormTagsInput = ({
 
   function handleSelectTags(
     field: ControllerRenderProps<any, string>,
-    id: string,
+    id: number,
   ) {
     let newItems = null;
 
     if (field?.value?.includes(id)) {
-      newItems = field?.value?.filter((value: string) => value !== id);
+      newItems = field?.value?.filter((value: number) => value !== id);
     } else {
       newItems = field?.value ? [...field.value, id] : [id];
     }
@@ -648,7 +648,7 @@ const FormTagsInput = ({
             <div className={clsx('max-h-[100px] overflow-y-scroll p-1')}>
               {field?.value &&
                 field?.value?.length > 0 &&
-                field?.value?.map((id: string) => (
+                field?.value?.map((id: number) => (
                   <li
                     key={`selected-tag-${id}`}
                     className={clsx(
@@ -659,12 +659,15 @@ const FormTagsInput = ({
                   >
                     <span className='break-all max-w-[90%]'>
                       {'#' +
-                        tags?.find((tag: Option) => tag.value === id)?.label}
+                        tags?.find(
+                          (tag: { value: number; label: string }) =>
+                            tag.value === id,
+                        )?.label}
                     </span>
                     <IoClose
                       onClick={() => {
                         field.onChange(
-                          field?.value?.filter((value: string) => value !== id),
+                          field?.value?.filter((value: number) => value !== id),
                         );
                         if (onValueChange) onValueChange();
                       }}
@@ -702,7 +705,7 @@ const FormTagsInput = ({
                   <CommandList>
                     <CommandEmpty>No {title} found.</CommandEmpty>
                     <CommandGroup>
-                      {tags.map((item: Option) => (
+                      {tags.map((item: { value: number; label: string }) => (
                         <CommandItem
                           value={item.label}
                           key={`command-${item.value}`}
@@ -714,14 +717,9 @@ const FormTagsInput = ({
                             if (onValueChange) onValueChange();
                           }}
                         >
-                          <Check
-                            className={cn(
-                              'mr-2 h-4 w-4',
-                              field?.value?.includes(item.value)
-                                ? 'opacity-100'
-                                : 'opacity-0',
-                            )}
-                          />
+                          {field?.value?.includes(item.value) && (
+                            <Check className='mr-2 h-4 w-4' />
+                          )}
                           {item.label}
                         </CommandItem>
                       ))}
@@ -767,7 +765,7 @@ const FormTagsInput = ({
                                   key={`modal-tag-${tag.id}`}
                                   id={tag.id + ''}
                                   onCheckedChange={() => {
-                                    handleSelectTags(field, tag.id + '');
+                                    handleSelectTags(field, tag.id);
                                   }}
                                   defaultChecked={field?.value?.includes(
                                     tag.id + '',
