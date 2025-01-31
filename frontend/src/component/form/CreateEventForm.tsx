@@ -20,7 +20,6 @@ import type {
 import {
   CityCode,
   EventMeetingToolCode,
-  EventStatusCode,
   SaveDraftEventRequestOrganizeCityCodeEnum,
   TicketStatusCode,
 } from '@/src/lib/api/generated';
@@ -131,7 +130,6 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
       surveyId: undefined,
       targetId: undefined,
       comment: '',
-      status: EventStatusCode.Public,
       tags: [],
 
       startAt: undefined,
@@ -142,7 +140,6 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
       isOnline: undefined,
       isOffline: undefined,
       organizeAddress: '',
-      // organizePlaceName: '',
       organizeCityCode: undefined,
       meetingToolCode: undefined,
       meetingUrl: '',
@@ -155,7 +152,6 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
   });
 
   useEffect(() => {
-    console.log(draftEvent?.tags?.map((tag) => tag.id));
     form.reset({
       name: draftEvent?.name ?? '',
       description: draftEvent?.description ?? '',
@@ -285,7 +281,6 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
     //     isOffline: data.isOffline,
     //     organizeAddress: data.organizeAddress,
     //     organizeCityCode: PublishEventRequestOrganizeCityCodeEnum.Angiang,
-    //     organizePlaceName: '12 aH',
     //     meetingToolCode: data.meetingToolCode,
     //     meetingUrl: data.meetingUrl,
     //   },
@@ -313,7 +308,6 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
         isOffline: data.isOffline,
         organizeAddress: data.organizeAddress ?? null,
         organizeCityCode: SaveDraftEventRequestOrganizeCityCodeEnum.Hanoi,
-        organizePlaceName: '12 aH',
         meetingToolCode: data.meetingToolCode,
         meetingUrl: data.meetingUrl,
         gallery: data.galleryUrls,
@@ -401,6 +395,8 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
 
   if (isGetDraftEventLoading) return <DotLoader />;
 
+  console.log(form.formState.errors);
+
   return (
     <Sheet>
       <Form {...form}>
@@ -419,6 +415,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                 placeholder='Be clear and descriptive with a title that tells people what your event is about.'
                 control={form.control}
                 showError={true}
+                autoComplete='on'
               />
             </div>
             <div className='col-span-2'>
@@ -480,6 +477,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
               <FormCustomLabel
                 htmlFor='coverImageUrl'
                 label='coverImageUrl'
+                required
               />
 
               <ImageUploader
@@ -496,7 +494,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
               </FormInstructions>
 
               {form.formState.errors.coverImageUrl && (
-                <FormMessage label={'coverImageUrl'} />
+                <FormMessage label='coverImageUrl' />
               )}
             </div>
 
@@ -550,20 +548,18 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                 form.setValue('isOnline', isSelected)
               }
             >
-              <div className='w-full flex justify-between items-center gap-2'>
-                <span className={styles.flexStart}>
+              <div className='w-full flex justify-between items-start gap-2'>
+                <span className={clsx(styles.flexStart, 'self-center')}>
                   {t('label.isOnline')}
                   <FaChevronRight className='mx-4' />
                 </span>
-                <div>
-                  <FormSelect
-                    name='meetingToolCode'
-                    label='meetingToolCode'
-                    control={form.control}
-                    options={optionify(EventMeetingToolCode)}
-                    i18nPath='code.event.meetingTool'
-                  />
-                </div>
+                <FormSelect
+                  name='meetingToolCode'
+                  label='meetingToolCode'
+                  control={form.control}
+                  options={optionify(EventMeetingToolCode)}
+                  i18nPath='code.event.meetingTool'
+                />
                 <div
                   className='grow'
                   onClick={(e) =>
@@ -598,20 +594,18 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                 form.setValue('isOffline', isSelected)
               }
             >
-              <div className='w-full flex justify-between items-center gap-2'>
-                <span className={styles.flexStart}>
+              <div className='w-full flex justify-between items-start gap-2'>
+                <span className={clsx(styles.flexStart, 'self-center')}>
                   {t('label.isOffline')}
                   <FaChevronRight className='mx-4' />
                 </span>
-                <div>
-                  <FormSelect
-                    name='organizeCityCode'
-                    label='organizeCityCode'
-                    control={form.control}
-                    options={optionify(CityCode)}
-                    i18nPath='code.city'
-                  />
-                </div>
+                <FormSelect
+                  name='organizeCityCode'
+                  label='organizeCityCode'
+                  control={form.control}
+                  options={optionify(CityCode)}
+                  i18nPath='code.city'
+                />
                 <div
                   className='grow'
                   onClick={(e) =>
@@ -722,7 +716,6 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                 control={form.control}
                 placeholder='Select survey'
                 label='survey'
-                required
                 options={surveyOptions?.map((so) => ({
                   value: so.id + '',
                   label: `${so.name} (${so.questionNumber} questions)`,
@@ -737,7 +730,6 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                   name='targetId'
                   control={form.control}
                   label='target'
-                  required
                   placeholder='Select target'
                   options={targetOptions?.map((to) => ({
                     value: to.id + '',
@@ -760,7 +752,6 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                 id='comment'
                 name='comment'
                 label='eventComment'
-                required
                 placeholder='Enter comment of organization for audience when they apply'
                 control={form.control}
                 showError={true}
@@ -801,9 +792,6 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                 form='create-event-form'
                 className='overflow-hidden w-32 p-2 h-12 bg-black text-white border-none rounded-md text-xm font-bold cursor-pointer relative z-10 group'
                 type='submit'
-                onClick={() =>
-                  console.log(form.getValues(), form.formState.errors)
-                }
               >
                 Publish
                 <FaSquareArrowUpRight className='inline w-5 h-5 mb-1 ml1' />

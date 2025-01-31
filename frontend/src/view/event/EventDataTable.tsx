@@ -14,7 +14,6 @@ import {
   Dropdown,
   DropdownMenu,
   DropdownItem,
-  User,
   Link,
   Image,
 } from '@nextui-org/react';
@@ -83,6 +82,7 @@ export default function EventDataTable() {
 
   const [selectedKeys, setSelectedKeys] = useState<any>(null);
   const [page, setPage] = useState<number>(data?.page || 1);
+  const pageCount = Math.ceil(data?.total / data?.perPage);
   const [rightSidebarContent, setRightSidebarContent] = useState<
     'EVENT_DETAIL' | null
   >();
@@ -162,16 +162,26 @@ export default function EventDataTable() {
                 height={80}
                 className='rounded-md'
               />
-              <Link className='font-bold text-nm capitalize text-primary hover:underline'>
-                <SheetTrigger
-                  onClick={() => {
-                    setRightSidebarContent('EVENT_DETAIL');
-                    // setSelectedAttendeeId(attendee.id);
-                  }}
-                  className={clsx(styles.between, 'gap-2')}
-                >
-                  {event.name}
-                </SheetTrigger>
+              <Link
+                className='font-semibold text-nm capitalize text-primary hover:underline'
+                href={
+                  event.status === EventStatusCode.Draft &&
+                  `/organization/events/create/${event.slug}`
+                }
+              >
+                {event.status === EventStatusCode.Draft ? (
+                  event.name
+                ) : (
+                  <SheetTrigger
+                    onClick={() => {
+                      setRightSidebarContent('EVENT_DETAIL');
+                      // setSelectedAttendeeId(attendee.id);
+                    }}
+                    className={clsx(styles.between, 'gap-2')}
+                  >
+                    {event.name}
+                  </SheetTrigger>
+                )}
               </Link>
             </div>
           );
@@ -179,17 +189,17 @@ export default function EventDataTable() {
         case 'address':
           return (
             <div className='flex flex-col w-fit'>
-              {event.organizePlaceName && (
+              {event.organizeAddress && (
                 <p
                   className={clsx(
                     styles.flexStart,
                     'text-bold text-small capitalize',
                   )}
                 >
-                  <CiLocationOn size={20} /> {event.organizePlaceName}
+                  <CiLocationOn size={20} /> {event.organizeAddress}
                 </p>
               )}
-              {event.meetingUrl && event.organizePlaceName && (
+              {event.meetingUrl && event.organizeAddress && (
                 <div className='h-1 border-b border-b-gray-300 mb-2'></div>
               )}
               {event.meetingUrl && (
@@ -261,13 +271,15 @@ export default function EventDataTable() {
               <p className='text-bold capitalize'>{cellValue}</p>
               <div className='flex flex-col gap-1 items-center justify-center'>
                 <p className='text-bold text-small capitalize text-default-500'>
-                  {formatEventDate(event.startAt)}
+                  {event.startAt
+                    ? formatEventDate(event.startAt)
+                    : 'Not set up'}
                 </p>
 
                 <FaChevronDown size={12} />
 
                 <p className='text-bold text-small capitalize text-default-500'>
-                  {formatEventDate(event.endAt)}
+                  {event.endAt ? formatEventDate(event.endAt) : 'Not set up'}
                 </p>
               </div>
             </div>
@@ -298,7 +310,7 @@ export default function EventDataTable() {
           return cellValue;
       }
     },
-    [],
+    [t],
   );
 
   return (
@@ -432,25 +444,27 @@ export default function EventDataTable() {
             ? 'All items selected'
             : `${selectedKeys?.size ?? 0} of ${data?.data?.length} selected`}
         </span>
-        <ReactPaginate
-          breakLabel='...'
-          nextLabel={width > 800 ? 'next >' : '>'}
-          onPageChange={({ selected }: any) => {
-            handleSearch({ page: selected + 1 });
-            setPage(selected + 1);
-          }}
-          pageRangeDisplayed={5}
-          pageCount={Math.ceil(data?.total / data?.perPage) || 0}
-          previousLabel={width > 800 ? '< previous' : '<'}
-          renderOnZeroPageCount={null}
-          forcePage={page >= 1 ? page - 1 : 0}
-          className='mx-auto flex lg:gap-4 gap-1 mt-4 w-full items-center justify-center'
-          pageClassName='lg:py-2 lg:px-4 py-1 px-2'
-          nextClassName='lg:py-2 lg:px-4 py-1 px-2'
-          previousClassName='lg:py-2 lg:px-4 py-1 px-2'
-          disabledClassName='text-gray-400'
-          activeClassName='bg-primary text-white rounded-md'
-        />
+        {pageCount > 1 && (
+          <ReactPaginate
+            breakLabel='...'
+            nextLabel={width > 800 ? 'next >' : '>'}
+            onPageChange={({ selected }: any) => {
+              handleSearch({ page: selected + 1 });
+              setPage(selected + 1);
+            }}
+            pageRangeDisplayed={5}
+            pageCount={pageCount}
+            previousLabel={width > 800 ? '< previous' : '<'}
+            renderOnZeroPageCount={null}
+            forcePage={page - 1}
+            className='mx-auto flex lg:gap-4 gap-1 mt-4 w-full items-center justify-center'
+            pageClassName='lg:py-2 lg:px-4 py-1 px-2'
+            nextClassName='lg:py-2 lg:px-4 py-1 px-2'
+            previousClassName='lg:py-2 lg:px-4 py-1 px-2'
+            disabledClassName='text-gray-400'
+            activeClassName='bg-primary text-white rounded-md'
+          />
+        )}
       </div>
 
       <SheetOverlay>

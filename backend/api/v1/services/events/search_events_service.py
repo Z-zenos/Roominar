@@ -62,7 +62,6 @@ async def search_events(
             Event.application_end_at,
             Event.cover_image_url,
             Event.organize_city_code,
-            Event.organize_place_name,
             Event.organize_address,
             Event.is_online,
             Event.is_offline,

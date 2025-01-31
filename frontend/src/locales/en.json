@@ -91,7 +91,6 @@
         "invalidApplicationStartAt": "event application start day must less than application end day and start day",
         "invalidApplicationEndAt": "event application end day must greater than applicaiton start day and less than  end day",
         "neitheOffnlineNorOfffline": "event host method must be online or offline or both",
-        "missingEventOrganizePlaceName": "please enter organize place name for event",
         "missingEventOrganizeCityCode": "please select organize city for event",
         "missingEventOrganizeAddress": "please enter organize address for event",
         "missingEventMeetingToolCode": "please select at least meeting tool if event is online",

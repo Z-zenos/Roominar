@@ -116,6 +116,8 @@ const MultipleFilesUploader = ({
               type='file'
               hidden
               multiple
+              name={name}
+              id={name}
             />
           </div>
         )}

@@ -91,7 +91,6 @@
         "invalidApplicationStartAt": "thời gian bắt đầu mở đăng ký sự kiện phải bé hơn thời gian đóng đăng ký và thời gian bắt đầu sự kiện",
         "invalidApplicationEndAt": "thời gian đóng đăng ký phải lớn hơn thời gian mở đăng ký và nhỏ hơn thời gian kết thúc sự kiện",
         "neitherOnlineNorOffline": "sự kiện phải là online hoặc offline hoặc cả 2",
-        "missingEventOrganizePlaceName": "vui lòng nhập tên địa điểm tổ chức sự kiện",
         "missingEventOrganizeCityCode": "vui lòng chọn thành phố tổ chức sự kiện",
         "missingEventOrganizeAddress": "vui lòng nhập địa chỉ tổ chức sự kiện",
         "missingEventMeetingToolCode": "vui lòng chọn ít nhất một loại meeting nếu sự kiện diễn ra online",

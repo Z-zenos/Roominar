@@ -1,8 +1,4 @@
-import {
-  CityCode,
-  EventMeetingToolCode,
-  EventStatusCode,
-} from '@/src/lib/api/generated';
+import { CityCode, EventMeetingToolCode } from '@/src/lib/api/generated';
 import dayjs from 'dayjs';
 import z from 'zod';
 
@@ -77,11 +73,10 @@ const eventAddressSchema = z
   .object({
     isOnline: z.boolean().optional(),
     isOffline: z.boolean().optional(),
-    // organizePlaceName: z.string().trim().max(255).optional(),
     organizeAddress: z.string().trim().max(255).optional(),
     organizeCityCode: z.nativeEnum(CityCode).optional(),
     meetingToolCode: z.nativeEnum(EventMeetingToolCode).optional(),
-    meetingUrl: z.string().url().optional(),
+    meetingUrl: z.string().url().nullable(),
   })
   .superRefine(
     (
@@ -90,7 +85,6 @@ const eventAddressSchema = z
         isOnline,
         organizeAddress,
         organizeCityCode,
-        // organizePlaceName,
         meetingToolCode,
         meetingUrl,
       },
@@ -103,14 +97,6 @@ const eventAddressSchema = z
           path: ['isOffline', 'isOnline'],
         });
       }
-
-      // if (isOffline && !organizePlaceName) {
-      //   ctx.addIssue({
-      //     code: 'custom',
-      //     message: 'missingEventOrganizePlaceName',
-      //     path: ['organizePlaceName'],
-      //   });
-      // }
 
       if (isOffline && !organizeCityCode) {
         ctx.addIssue({
@@ -151,19 +137,23 @@ const eventAddressSchema = z
   );
 
 const eventTicketSchema = z.object({
-  totalTicketNumber: z.coerce.number(),
+  totalTicketNumber: z.coerce.number().min(1, { message: 'required' }),
   ticketIds: z.array(z.number()),
 });
 
 const eventBaseSchema = z.object({
   name: z.string().trim().min(1, { message: 'required' }).max(1024),
   description: z.string().trim().min(1),
-  coverImageUrl: z.string().url().max(2048),
+  coverImageUrl: z
+    .string()
+    .trim()
+    .min(1, { message: 'required' })
+    .url()
+    .max(2048),
   galleryUrls: z.array(z.string().url()).max(10),
   surveyId: z.coerce.number().nullable(),
-  targetId: z.coerce.number(),
+  targetId: z.coerce.number().nullable(),
   comment: z.string().trim().nullable(),
-  status: z.nativeEnum(EventStatusCode),
   tags: z.array(z.coerce.number()).nullable(),
 });
 

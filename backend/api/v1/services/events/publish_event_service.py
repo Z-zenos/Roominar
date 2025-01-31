@@ -1,29 +1,50 @@
 from datetime import datetime
 
-from sqlmodel import Session, select
+from sqlmodel import Session, delete, select
 
 from backend.core.constants import EventStatusCode, TagAssociationEntityCode
-from backend.core.error_code import ErrorCode
+from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.models import Event, Tag, User
 from backend.models.tag_association import TagAssociation
 from backend.schemas.event import PublishEventRequest
+from backend.utils.database import fetch_one, save
 
 
 async def publish_event(
     db: Session, organizer: User, request: PublishEventRequest, event_id: int
 ):
     try:
-        event = db.get(Event, event_id)
+        event = fetch_one(
+            db,
+            select(Event).where(
+                Event.id == event_id, Event.organization_id == organizer.organization_id
+            ),
+        )
+
+        if not event:
+            raise BadRequestException(
+                ErrorCode.ERR_EVENT_NOT_FOUND, ErrorMessage.ERR_EVENT_NOT_FOUND
+            )
+
         Event.update_by_dict(event, request.model_dump())
         event.organization_id = organizer.organization_id
         event.published_at = datetime.now()
         event.status = EventStatusCode.PUBLIC
-
-        db.add(event)
-        db.flush()
+        event.updated_at = datetime.now()
+        event.updated_by = organizer.id
 
         if request.tags:
+            # Remove existing tags associated with the event
+            db.exec(
+                delete(TagAssociation)
+                .where(TagAssociation.entity_id == event.id)
+                .where(TagAssociation.entity_code == TagAssociationEntityCode.EVENT)
+            )
+
+            db.flush()
+
+            # Add new tags
             request_tags = db.exec(select(Tag.id).where(Tag.id.in_(request.tags))).all()
             if (not request_tags) or (len(request.tags) != len(request_tags)):
                 raise BadRequestException(ErrorCode.ERR_TAG_NOT_FOUND)
@@ -38,7 +59,7 @@ async def publish_event(
             db.add_all(tags)
 
         db.flush()
-        db.commit()
+        save(db, event)
 
         return event.id
 

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlmodel import Date, Session, and_, func, select, text
+from sqlmodel import Date, Session, and_, case, func, select, text
 
 from backend.core.constants import (
     EventTimeStatusCode,
@@ -67,7 +67,9 @@ async def _listing_events(
                 )
             ).label("tags"),
         )
+        .select_from(Event)
         .join(TagAssociation, and_(Event.id == TagAssociation.entity_id))
+        .join(Tag, Tag.id == TagAssociation.tag_id)
         .where(TagAssociation.entity_code == TagAssociationEntityCode.EVENT)
         .group_by(Event.id)
         .subquery()
@@ -86,16 +88,21 @@ async def _listing_events(
             Event.is_online,
             Event.is_offline,
             Event.organize_city_code,
-            Event.organize_place_name,
             Event.total_ticket_number,
             Event.status,
             Event.view_number,
             Event.meeting_tool_code,
             Event.meeting_url,
-            EventTicket.c.tickets,
-            EventTag.c.tags,
+            case(
+                (EventTicket.c.tickets.is_(None), "[]"),
+                else_=EventTicket.c.tickets,
+            ),
+            case(
+                (EventTag.c.tags.is_(None), "[]"),
+                else_=EventTag.c.tags,
+            ),
         )
-        .join(EventTicket, Event.id == EventTicket.c.event_id)
+        .outerjoin(EventTicket, Event.id == EventTicket.c.event_id)
         .outerjoin(EventTag, Event.id == EventTag.c.event_id)
         .where(*filters)
         .limit(query_params.per_page)

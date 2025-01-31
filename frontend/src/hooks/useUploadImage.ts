@@ -119,7 +119,6 @@ export const useUpload = (
 
   const onFileChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const files = e.target?.files;
-    console.log('image: ', image);
     if (image) {
       // Delete the existing image before uploading a new one
       deleteImage(image.public_id);

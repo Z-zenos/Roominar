@@ -701,7 +701,10 @@ const FormTagsInput = ({
               </PopoverTrigger>
               <PopoverContent className={clsx('w-full p-0', className)}>
                 <Command>
-                  <CommandInput placeholder={`Search ${title}...`} />
+                  <CommandInput
+                    id={name}
+                    placeholder={`Search ${title}...`}
+                  />
                   <CommandList>
                     <CommandEmpty>No {title} found.</CommandEmpty>
                     <CommandGroup>
@@ -1064,6 +1067,7 @@ const FormTextarea = ({
             <Textarea
               placeholder={placeholder}
               className='resize-none'
+              id={name}
               {...field}
             />
           </FormControl>
@@ -1110,6 +1114,7 @@ const FormSelect = ({
             />
           )}
           <Select
+            name={name}
             onValueChange={(value: string) => {
               field.onChange(value);
               if (onSelect) onSelect(value);

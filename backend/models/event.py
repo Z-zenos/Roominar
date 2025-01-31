@@ -40,7 +40,6 @@ class Event(BaseModel, table=True):
     is_online: Optional[bool]
     is_offline: Optional[bool]
 
-    organize_place_name: Optional[str] = Field(sa_type=String(255))
     organize_city_code: Optional[str] = Field(sa_type=String(50))
     organize_address: Optional[str] = Field(sa_type=String(255))
     # organize_coordinates

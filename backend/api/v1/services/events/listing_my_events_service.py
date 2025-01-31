@@ -95,7 +95,6 @@ async def _listing_events(
             Event.application_end_at,
             Event.total_ticket_number,
             Event.cover_image_url,
-            Event.organize_place_name,
             Event.organize_address,
             Event.organize_city_code,
             Event.is_online,
