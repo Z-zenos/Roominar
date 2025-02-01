@@ -97,7 +97,8 @@
         "missingEventMeetingUrl": "you selected meeting tool, please provide meeting url",
         "invalidTicketPrice": "invalid ticket",
         "invalidSurveyEndAt": "invalid survey end date time",
-        "missingIndustryCodes": "target must contain at least one industry"
+        "missingIndustryCodes": "target must contain at least one industry",
+        "minimumTotalTicketNumber": "total ticket number must be greater than 0"
       }
     }
   },

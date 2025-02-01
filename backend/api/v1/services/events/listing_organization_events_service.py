@@ -88,6 +88,7 @@ async def _listing_events(
             Event.is_online,
             Event.is_offline,
             Event.organize_city_code,
+            Event.organize_address,
             Event.total_ticket_number,
             Event.status,
             Event.view_number,

@@ -156,3 +156,7 @@ export function hexToRgba(hex: string, alpha: number) {
 export function formatTransactionDate(datetime: Date) {
   return dayjs(datetime).format('YYYY-MM-DD HH:MM');
 }
+
+export function camelToNormal(str: string) {
+  return str.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase();
+}

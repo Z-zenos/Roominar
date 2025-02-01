@@ -22,7 +22,7 @@ import { createContext, useContext, forwardRef, useId, useMemo } from 'react';
 import type { DateRange } from 'react-day-picker';
 import clsx from 'clsx';
 import { Label } from '../common/Label';
-import { cn } from '@/src/utils/app.util';
+import { camelToNormal, cn } from '@/src/utils/app.util';
 import type { CheckboxProps } from '../common/Input/Checkbox';
 import {
   DateRangePicker,
@@ -224,9 +224,8 @@ const FormMessage = forwardRef<HTMLParagraphElement, FormMessageProps>(
     let body = undefined;
     if (error) {
       if (error?.message === 'required') {
-        body = capitalize(t('message.error.required')).replace(
-          '[field]',
-          label,
+        body = camelToNormal(
+          capitalize(t('message.error.required')).replace('[field]', label),
         );
       } else {
         body = capitalize(

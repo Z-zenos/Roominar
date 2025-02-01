@@ -4,9 +4,12 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
+  FormControl,
   FormCustomLabel,
+  FormField,
   FormInput,
   FormInstructions,
+  FormItem,
   FormMessage,
   FormSelect,
   FormTagsInput,
@@ -125,8 +128,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
     defaultValues: {
       name: '',
       description: 'ignore description',
-      coverImageUrl:
-        'https://images.squarespace-cdn.com/content/v1/5f4d61e4378d637cba3d29c7/99d54c26-4229-4fa0-99eb-eafd9afdd047/2023_TahoeFoodHub_HolidayBlockParty_Post+%282%29.jpg',
+      coverImageUrl: '',
       surveyId: undefined,
       targetId: undefined,
       comment: '',
@@ -149,6 +151,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
       galleryUrls: [],
     },
     resolver: zodResolver(createEventFormSchema),
+    shouldFocusError: false,
   });
 
   useEffect(() => {
@@ -176,6 +179,33 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
       galleryUrls: draftEvent?.gallery ?? [],
     });
   }, [JSON.stringify(draftEvent)]);
+
+  // using a state here to make the "scroll & focus" happen once per submission
+  const [canFocus, setCanFocus] = useState(true);
+
+  const onError = () => {
+    setCanFocus(true);
+  };
+
+  useEffect(() => {
+    if (form.formState.errors && canFocus) {
+      // Sort inputs based on their position on the page. (the order will be based on validaton order otherwise)
+      const elements = Object.keys(form.formState.errors)
+        .map((name) => document.getElementsByName(name)[0])
+        .filter((el) => !!el);
+      console.log(elements);
+      elements.sort(
+        (a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top,
+      );
+
+      if (elements.length > 0) {
+        const errorElement = elements[0];
+        errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' }); // scrollIntoView options are not supported in Safari
+        errorElement.focus({ preventScroll: true });
+        setCanFocus(false); // so the form doesn't suddenly jump to the next input that has error.
+      }
+    }
+  }, [form.formState, canFocus]);
 
   const { trigger: publishEvent, isMutating: isPublishing } =
     usePublishEventMutation({
@@ -402,7 +432,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
       <Form {...form}>
         <form
           id='create-event-form'
-          onSubmit={form.handleSubmit(handlePublishEvent)}
+          onSubmit={form.handleSubmit(handlePublishEvent, onError)}
           className='grid grid-cols-12 items-start gap-10'
         >
           <div className='grid grid-cols-2 gap-6 [&>div]:w-full bg-white rounded-md p-6 shadow-md col-span-9 max-w-[1000px]'>
@@ -419,83 +449,89 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
               />
             </div>
             <div className='col-span-2'>
-              <FormCustomLabel
-                htmlFor='startAt'
-                label='timeline'
-                required
+              <FormField
+                control={form.control}
+                name='coverImageUrl'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormCustomLabel
+                      htmlFor='startAt'
+                      label='timeline'
+                      required
+                    />
+                    <FormControl>
+                      <CalendarTimeline
+                        id='startAt'
+                        events={[
+                          {
+                            title: 'Application start',
+                            start: form.getValues('applicationStartAt'),
+                            end: form.getValues('applicationEndAt'),
+                            color: '#FFD700',
+                          },
+                          {
+                            title: 'Event start',
+                            start: form.getValues('startAt'),
+                            end: form.getValues('endAt'),
+                            color: '#FF4500',
+                          },
+                          ...(eventsTimeline
+                            ? eventsTimeline.map((event) => ({
+                                title: event.name,
+                                start: event.startAt,
+                                end: event.endAt,
+                                color: '#FF4500',
+                              }))
+                            : []),
+                          ...(eventsTimeline
+                            ? eventsTimeline.map((event) => ({
+                                title: event.name,
+                                start: event.applicationStartAt,
+                                end: event.applicationEndAt,
+                                color: '#FFD700',
+                              }))
+                            : []),
+                        ]}
+                        onSelectDate={handleSelectDate}
+                        onChange={handleDragAndDropDate}
+                      />
+                    </FormControl>
+                    <FormMessage label='coverImageUrl' />
+                  </FormItem>
+                )}
               />
-
-              <CalendarTimeline
-                id='startAt'
-                events={[
-                  {
-                    title: 'Application start',
-                    start: form.getValues('applicationStartAt'),
-                    end: form.getValues('applicationEndAt'),
-                    color: '#FFD700',
-                  },
-                  {
-                    title: 'Event start',
-                    start: form.getValues('startAt'),
-                    end: form.getValues('endAt'),
-                    color: '#FF4500',
-                  },
-                  ...(eventsTimeline
-                    ? eventsTimeline.map((event) => ({
-                        title: event.name,
-                        start: event.startAt,
-                        end: event.endAt,
-                        color: '#FF4500',
-                      }))
-                    : []),
-                  ...(eventsTimeline
-                    ? eventsTimeline.map((event) => ({
-                        title: event.name,
-                        start: event.applicationStartAt,
-                        end: event.applicationEndAt,
-                        color: '#FFD700',
-                      }))
-                    : []),
-                ]}
-                onSelectDate={handleSelectDate}
-                onChange={handleDragAndDropDate}
-              />
-
-              {form.formState.errors.applicationStartAt && (
-                <FormMessage label={'applicationStartAt'} />
-              )}
-              {form.formState.errors.applicationEndAt && (
-                <FormMessage label={'applicationEndAt'} />
-              )}
-              {form.formState.errors.startAt && (
-                <FormMessage label={'startAt'} />
-              )}
-              {form.formState.errors.endAt && <FormMessage label={'endAt'} />}
             </div>
 
             <div className='col-span-2'>
-              <FormCustomLabel
-                htmlFor='coverImageUrl'
-                label='coverImageUrl'
-                required
+              <FormField
+                control={form.control}
+                name='coverImageUrl'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormCustomLabel
+                      htmlFor='coverImageUrl'
+                      label='coverImageUrl'
+                      required
+                    />
+                    <FormControl>
+                      <ImageUploader
+                        name='coverImageUrl'
+                        onGetImageUrl={(url) => field.onChange(url)}
+                        variant='cover'
+                        // defaultImageUrl={auth?.user?.avatarUrl}
+                      />
+                    </FormControl>
+                    <FormMessage label='coverImageUrl' />
+                  </FormItem>
+                )}
               />
 
-              <ImageUploader
-                name='coverImageUrl'
-                onGetImageUrl={(url) => form.setValue('coverImageUrl', url)}
-                variant='cover'
-                // defaultImageUrl={auth?.user?.avatarUrl}
-              />
               <FormInstructions>
                 <li>
                   This is the main image for your event. We recommend a 700 x
                   350px (2:1 ratio) image.
                 </li>
               </FormInstructions>
-
-              {form.formState.errors.coverImageUrl && (
-                <FormMessage label='coverImageUrl' />
-              )}
             </div>
 
             <div className='col-span-2'>
@@ -793,12 +829,14 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                 className='overflow-hidden w-32 p-2 h-12 bg-black text-white border-none rounded-md text-xm font-bold cursor-pointer relative z-10 group'
                 type='submit'
               >
+                {isPublishing && <Spinner />}
                 Publish
                 <FaSquareArrowUpRight className='inline w-5 h-5 mb-1 ml1' />
                 <span className='absolute w-36 h-32 -top-8 -left-2 bg-white rotate-12 transform scale-x-0 group-hover:scale-x-100 transition-transform group-hover:duration-500 duration-1000 origin-left'></span>
                 <span className='absolute w-36 h-32 -top-8 -left-2 bg-indigo-400 rotate-12 transform scale-x-0 group-hover:scale-x-100 transition-transform group-hover:duration-700 duration-700 origin-left'></span>
                 <span className='absolute w-36 h-32 -top-8 -left-2 bg-indigo-600 rotate-12 transform scale-x-0 group-hover:scale-x-50 transition-transform group-hover:duration-1000 duration-500 origin-left'></span>
                 <span className='group-hover:opacity-100 group-hover:duration-1000 duration-100 opacity-0 absolute top-2.5 left-6 z-10'>
+                  {isPublishing && <Spinner />}
                   Publish
                   <FaSquareArrowUpRight className='inline-block w-5 h-5 mb-1' />
                 </span>

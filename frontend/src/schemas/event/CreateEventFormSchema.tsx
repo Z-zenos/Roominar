@@ -76,7 +76,7 @@ const eventAddressSchema = z
     organizeAddress: z.string().trim().max(255).optional(),
     organizeCityCode: z.nativeEnum(CityCode).optional(),
     meetingToolCode: z.nativeEnum(EventMeetingToolCode).optional(),
-    meetingUrl: z.string().url().nullable(),
+    meetingUrl: z.string().url().or(z.literal('')),
   })
   .superRefine(
     (
@@ -137,7 +137,9 @@ const eventAddressSchema = z
   );
 
 const eventTicketSchema = z.object({
-  totalTicketNumber: z.coerce.number().min(1, { message: 'required' }),
+  totalTicketNumber: z.coerce
+    .number()
+    .refine((n) => n > 0, { message: 'minimumTotalTicketNumber' }),
   ticketIds: z.array(z.number()),
 });
 
@@ -148,7 +150,7 @@ const eventBaseSchema = z.object({
     .string()
     .trim()
     .min(1, { message: 'required' })
-    .url()
+    .url({})
     .max(2048),
   galleryUrls: z.array(z.string().url()).max(10),
   surveyId: z.coerce.number().nullable(),
