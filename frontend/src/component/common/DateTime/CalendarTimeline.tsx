@@ -18,6 +18,7 @@ interface CalendarTimelineProps {
   onChange?: (event: EventChangeArg) => void;
   events?: CalendarTimelineEventItem[];
   id?: string;
+  name?: string;
 }
 
 export default function CalendarTimeline({
@@ -25,12 +26,10 @@ export default function CalendarTimeline({
   onChange,
   events,
   id,
+  name,
 }: CalendarTimelineProps) {
   return (
-    <div
-      className='calendar-container mt-2'
-      id={id}
-    >
+    <div className='calendar-container mt-2'>
       <FullCalendar
         plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
         headerToolbar={{
@@ -55,6 +54,12 @@ export default function CalendarTimeline({
         // ]}
         select={onSelectDate}
         eventChange={onChange}
+      />
+      <input
+        type='date'
+        id={id}
+        name={name}
+        className='opacity-0'
       />
     </div>
   );

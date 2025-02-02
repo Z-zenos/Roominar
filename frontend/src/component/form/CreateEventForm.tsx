@@ -160,7 +160,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
       description: draftEvent?.description ?? '',
       coverImageUrl: draftEvent?.coverImageUrl ?? '',
       surveyId: draftEvent?.surveyId,
-      targetId: draftEvent?.target?.id,
+      targetId: draftEvent?.target?.id ?? null,
       comment: draftEvent?.comment ?? '',
       tags: draftEvent?.tags?.map((tag) => tag.id) ?? [],
       startAt: draftEvent?.startAt,
@@ -175,7 +175,8 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
       meetingUrl: draftEvent?.meetingUrl ?? '',
 
       totalTicketNumber: draftEvent?.totalTicketNumber ?? 0,
-      ticketIds: draftEvent?.tickets?.map((ticket) => ticket.id) ?? [],
+      ticketIds:
+        draftEvent?.tickets?.map((ticket) => ticket.id)?.slice(0, 10) ?? [],
       galleryUrls: draftEvent?.gallery ?? [],
     });
   }, [JSON.stringify(draftEvent)]);
@@ -192,10 +193,22 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
       // Sort inputs based on their position on the page. (the order will be based on validaton order otherwise)
       const elements = Object.keys(form.formState.errors)
         .map((name) => document.getElementsByName(name)[0])
-        .filter((el) => !!el);
-      console.log(elements);
+        .filter((el) => !!el)
+        .filter((el) => el.tagName !== 'META');
+
+      const inputOrderNames = [
+        'name',
+        'startAt',
+        'coverImageUrl',
+        'isOnline',
+        'isOffline',
+        'totalTicketNumber',
+      ];
+
       elements.sort(
-        (a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top,
+        (a, b) =>
+          inputOrderNames.indexOf(a['name']) -
+          inputOrderNames.indexOf(b['name']),
       );
 
       if (elements.length > 0) {
@@ -289,7 +302,6 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
   }
 
   function handlePublishEvent(data: CreateEventFormSchema) {
-    console.log(data);
     // trigger({
     //   eventId: 11,
     //   publishEventRequest: {
@@ -425,8 +437,6 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
 
   if (isGetDraftEventLoading) return <DotLoader />;
 
-  console.log(form.formState.errors);
-
   return (
     <Sheet>
       <Form {...form}>
@@ -451,7 +461,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
             <div className='col-span-2'>
               <FormField
                 control={form.control}
-                name='coverImageUrl'
+                name='startAt'
                 render={({ field }) => (
                   <FormItem>
                     <FormCustomLabel
@@ -494,6 +504,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                         ]}
                         onSelectDate={handleSelectDate}
                         onChange={handleDragAndDropDate}
+                        name='startAt'
                       />
                     </FormControl>
                     <FormMessage label='coverImageUrl' />
@@ -769,7 +780,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                   placeholder='Select target'
                   options={targetOptions?.map((to) => ({
                     value: to.id + '',
-                    label: `${to.name}`,
+                    label: to.name,
                   }))}
                   className='w-full'
                 />
