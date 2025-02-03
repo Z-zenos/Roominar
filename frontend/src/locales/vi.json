@@ -76,7 +76,7 @@
         "email": "email không hợp lệ",
         "empty": "[field] không được bỏ trống",
         "invalid_string": "[field] không hợp lệ",
-        "invalid_type": "[field] sai định dạng",
+        "invalid_type": "[field] không hợp lệ",
         "too_small": "[field] phải có ít nhất [value] ký tự",
         "too_big": "[field] không được chứa quá [value] ký tự",
         "passwordNotMatch": "mật khẩu không khớp",

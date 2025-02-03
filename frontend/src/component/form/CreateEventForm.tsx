@@ -172,6 +172,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
 
       isOnline: draftEvent?.isOnline,
       isOffline: draftEvent?.isOffline,
+      organizeAddress: draftEvent?.organizeAddress ?? '',
       organizeCityCode: draftEvent?.organizeCityCode as CityCode,
       meetingToolCode: draftEvent?.meetingToolCode ?? EventMeetingToolCode.Zoom,
       meetingUrl: draftEvent?.meetingUrl ?? '',
@@ -203,7 +204,9 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
         'startAt',
         'coverImageUrl',
         'isOnline',
+        'meetingUrl',
         'isOffline',
+        'organizeAddress',
         'totalTicketNumber',
       ];
 
@@ -470,6 +473,8 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
 
   if (isGetDraftEventLoading) return <DotLoader />;
 
+  console.log(form.formState.errors);
+
   return (
     <Sheet>
       <Form {...form}>
@@ -622,97 +627,126 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
               Event format & address ⛩️
             </h3>
 
-            <Checkbox
-              aria-label='isOnline'
+            <FormField
+              control={form.control}
               name='isOnline'
-              classNames={{
-                base: cn(
-                  'inline-flex w-full max-w-full col-span-2 bg-content1',
-                  'hover:bg-content2 items-center justify-start',
-                  'cursor-pointer rounded-lg gap-2 p-4 border-2 border-transparent',
-                  'data-[selected=true]:border-primary',
-                ),
-                label: 'w-full',
-              }}
-              onValueChange={(isSelected) =>
-                form.setValue('isOnline', isSelected)
-              }
-            >
-              <div className='w-full flex justify-between items-start gap-2'>
-                <span className={clsx(styles.flexStart, 'self-center')}>
-                  {t('label.isOnline')}
-                  <FaChevronRight className='mx-4' />
-                </span>
-                <FormSelect
-                  name='meetingToolCode'
-                  label='meetingToolCode'
-                  control={form.control}
-                  options={optionify(EventMeetingToolCode)}
-                  i18nPath='code.event.meetingTool'
-                />
-                <div
-                  className='grow'
-                  onClick={(e) =>
-                    e.currentTarget.querySelector('input').focus()
-                  }
-                >
-                  <FormInput
-                    id='meetingUrl'
-                    name='meetingUrl'
-                    label='meetingUrl'
-                    placeholder='https://meet.google.com/ass-asfas-12'
-                    control={form.control}
-                    showError={true}
-                  />
-                </div>
-              </div>
-            </Checkbox>
+              render={({ field }) => (
+                <FormItem className='col-span-2'>
+                  <FormControl>
+                    <Checkbox
+                      aria-label='isOnline'
+                      classNames={{
+                        base: cn(
+                          'inline-flex w-full max-w-full bg-content1',
+                          'hover:bg-content2 items-center justify-start',
+                          'cursor-pointer rounded-lg gap-2 p-4 border-2 border-transparent',
+                          'data-[selected=true]:border-primary',
+                        ),
+                        label: 'w-full',
+                      }}
+                      onValueChange={(isSelected) => {
+                        field.onChange(isSelected);
+                        form.trigger(['meetingUrl', 'isOnline', 'isOffline']);
+                      }}
+                    >
+                      <div className='w-full flex justify-between items-start gap-2'>
+                        <span className={clsx(styles.flexStart, 'self-center')}>
+                          {t('label.isOnline')}
+                          <FaChevronRight className='mx-4' />
+                        </span>
+                        <FormSelect
+                          name='meetingToolCode'
+                          label='meetingToolCode'
+                          control={form.control}
+                          options={optionify(EventMeetingToolCode)}
+                          i18nPath='code.event.meetingTool'
+                          onValueChange={() =>
+                            form.trigger(['isOnline', 'meetingUrl'])
+                          }
+                        />
+                        <div
+                          className='grow'
+                          onClick={(e) =>
+                            e.currentTarget.querySelector('input').focus()
+                          }
+                        >
+                          <FormInput
+                            id='meetingUrl'
+                            name='meetingUrl'
+                            label='meetingUrl'
+                            placeholder='https://meet.google.com/ass-asfas-12'
+                            control={form.control}
+                            showError={true}
+                          />
+                        </div>
+                      </div>
+                    </Checkbox>
+                  </FormControl>
+                  <FormMessage label='isOnline' />
+                </FormItem>
+              )}
+            />
 
-            <Checkbox
-              aria-label='isOffline'
+            <FormField
+              control={form.control}
               name='isOffline'
-              classNames={{
-                base: cn(
-                  'inline-flex w-full max-w-full col-span-2 bg-content1',
-                  'hover:bg-content2 items-center justify-start',
-                  'cursor-pointer rounded-lg gap-2 p-4 border-2 border-transparent',
-                  'data-[selected=true]:border-primary',
-                ),
-                label: 'w-full',
-              }}
-              onValueChange={(isSelected) =>
-                form.setValue('isOffline', isSelected)
-              }
-            >
-              <div className='w-full flex justify-between items-start gap-2'>
-                <span className={clsx(styles.flexStart, 'self-center')}>
-                  {t('label.isOffline')}
-                  <FaChevronRight className='mx-4' />
-                </span>
-                <FormSelect
-                  name='organizeCityCode'
-                  label='organizeCityCode'
-                  control={form.control}
-                  options={optionify(CityCode)}
-                  i18nPath='code.city'
-                />
-                <div
-                  className='grow'
-                  onClick={(e) =>
-                    e.currentTarget.querySelector('input').focus()
-                  }
-                >
-                  <FormInput
-                    id='organizeAddress'
-                    name='organizeAddress'
-                    label='organizeAddress'
-                    placeholder='12 Hồ Chí Minh, Hoàn Kiếm, Hà Nội'
-                    control={form.control}
-                    showError={true}
-                  />
-                </div>
-              </div>
-            </Checkbox>
+              render={({ field }) => (
+                <FormItem className='col-span-2'>
+                  <FormControl>
+                    <Checkbox
+                      aria-label='isOffline'
+                      classNames={{
+                        base: cn(
+                          'inline-flex w-full max-w-full bg-content1',
+                          'hover:bg-content2 items-center justify-start',
+                          'cursor-pointer rounded-lg gap-2 p-4 border-2 border-transparent',
+                          'data-[selected=true]:border-primary',
+                        ),
+                        label: 'w-full',
+                      }}
+                      onValueChange={(isSelected) => {
+                        field.onChange(isSelected);
+                        form.trigger([
+                          'organizeAddress',
+                          'isOffline',
+                          'isOnline',
+                        ]);
+                      }}
+                    >
+                      <div className='w-full flex justify-between items-start gap-2'>
+                        <span className={clsx(styles.flexStart, 'self-center')}>
+                          {t('label.isOffline')}
+                          <FaChevronRight className='mx-4' />
+                        </span>
+                        <FormSelect
+                          name='organizeCityCode'
+                          label='organizeCityCode'
+                          control={form.control}
+                          options={optionify(CityCode)}
+                          i18nPath='code.city'
+                        />
+                        <div
+                          className='grow'
+                          onClick={(e) =>
+                            e.currentTarget.querySelector('input').focus()
+                          }
+                        >
+                          <FormInput
+                            id='organizeAddress'
+                            name='organizeAddress'
+                            label='organizeAddress'
+                            placeholder='12 Hồ Chí Minh, Hoàn Kiếm, Hà Nội'
+                            control={form.control}
+                            showError={true}
+                          />
+                        </div>
+                      </div>
+                    </Checkbox>
+                  </FormControl>
+                  <FormMessage label='isOffline' />
+                </FormItem>
+              )}
+            />
 
             <div className='border-y border-y-primary py-[2px] mt-4 col-span-2'>
               <div className='border-y border-y-primary py-2'>

@@ -316,6 +316,7 @@ class GetDraftEventResponse(BaseModel):
     gallery: list[str] = Field([])
     is_online: bool | None = None
     is_offline: bool | None = None
+    organize_address: str | None = None
     organize_city_code: str | None = None
     description: str | None = None
     meeting_url: str | None = None

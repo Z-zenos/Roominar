@@ -4,18 +4,14 @@ import z from 'zod';
 
 export const eventDateSchema = z
   .object({
-    startAt: z
-      .union([z.date(), z.null()])
-      .refine((val) => val !== null, {
-        message: 'missingEventStartAt',
-        path: ['startAt'],
-      }),
-    endAt: z
-      .union([z.date(), z.null()])
-      .refine((val) => val !== null, {
-        message: 'missingEventEndAt',
-        path: ['endAt'],
-      }),
+    startAt: z.union([z.date(), z.null()]).refine((val) => val !== null, {
+      message: 'missingEventStartAt',
+      path: ['startAt'],
+    }),
+    endAt: z.union([z.date(), z.null()]).refine((val) => val !== null, {
+      message: 'missingEventEndAt',
+      path: ['endAt'],
+    }),
     applicationStartAt: z
       .union([z.date(), z.null()])
       .refine((val) => val !== null, {
@@ -66,9 +62,9 @@ export const eventDateSchema = z
 
 const eventAddressSchema = z
   .object({
-    isOnline: z.boolean().optional(),
-    isOffline: z.boolean().optional(),
-    organizeAddress: z.string().trim().max(255).optional(),
+    isOnline: z.boolean().nullable(),
+    isOffline: z.boolean().nullable(),
+    organizeAddress: z.string().trim().max(255).or(z.literal('')),
     organizeCityCode: z.nativeEnum(CityCode).optional(),
     meetingToolCode: z.nativeEnum(EventMeetingToolCode).optional(),
     meetingUrl: z.string().url().or(z.literal('')),
@@ -85,11 +81,11 @@ const eventAddressSchema = z
       },
       ctx,
     ) => {
-      if (!(isOffline || isOnline)) {
+      if (!isOffline && !isOnline) {
         ctx.addIssue({
           code: 'custom',
           message: 'neitherOnlineNorOffline',
-          path: ['isOffline', 'isOnline'],
+          path: ['isOffline'],
         });
       }
 
@@ -97,7 +93,7 @@ const eventAddressSchema = z
         ctx.addIssue({
           code: 'custom',
           message: 'missingEventOrganizeCityCode',
-          path: ['organizeCityCode'],
+          path: ['isOffline'],
         });
       }
 
@@ -113,13 +109,13 @@ const eventAddressSchema = z
         ctx.addIssue({
           code: 'custom',
           message: 'missingEventMeetingToolCode',
-          path: ['meetingToolCode'],
+          path: ['isOnline'],
         });
       }
 
       if (
         isOnline &&
-        meetingToolCode === EventMeetingToolCode.ContactLater &&
+        meetingToolCode !== EventMeetingToolCode.ContactLater &&
         !meetingUrl
       ) {
         ctx.addIssue({
