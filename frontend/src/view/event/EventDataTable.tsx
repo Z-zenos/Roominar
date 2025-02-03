@@ -165,8 +165,9 @@ export default function EventDataTable() {
               <Link
                 className='font-semibold text-nm capitalize text-primary hover:underline'
                 href={
-                  event.status === EventStatusCode.Draft &&
-                  `/organization/events/create/${event.slug}`
+                  event.status === EventStatusCode.Draft
+                    ? `/organization/events/create/${event.slug}`
+                    : '#'
                 }
               >
                 {event.status === EventStatusCode.Draft ? (

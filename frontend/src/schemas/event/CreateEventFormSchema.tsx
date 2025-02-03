@@ -2,38 +2,33 @@ import { CityCode, EventMeetingToolCode } from '@/src/lib/api/generated';
 import dayjs from 'dayjs';
 import z from 'zod';
 
-const eventDateSchema = z
+export const eventDateSchema = z
   .object({
-    startAt: z.date({ required_error: 'missingEventStartAt' }),
-    endAt: z.date({ required_error: 'missingEventEndAt' }),
-    applicationStartAt: z.date({
-      required_error: 'missingEventApplicationStartAt',
-    }),
-    applicationEndAt: z.date({
-      required_error: 'missingEventApplicationEndAt',
-    }),
-    isApplying: z.boolean().optional(),
+    startAt: z
+      .union([z.date(), z.null()])
+      .refine((val) => val !== null, {
+        message: 'missingEventStartAt',
+        path: ['startAt'],
+      }),
+    endAt: z
+      .union([z.date(), z.null()])
+      .refine((val) => val !== null, {
+        message: 'missingEventEndAt',
+        path: ['endAt'],
+      }),
+    applicationStartAt: z
+      .union([z.date(), z.null()])
+      .refine((val) => val !== null, {
+        message: 'missingEventApplicationStartAt',
+        path: ['applicationStartAt'],
+      }),
+    applicationEndAt: z
+      .union([z.date(), z.null()])
+      .refine((val) => val !== null, {
+        message: 'missingEventApplicationEndAt',
+        path: ['applicationEndAt'],
+      }),
   })
-  // .refine(
-  //   (val) =>
-  //     val.isApplying ||
-  //     val.startAt.tz('Asia/Ho_Chi_Minh', true).diff(dayjs()) > 60 * 60 * 1000,
-  //   {
-  //     message: '開始日時を確認してください。',
-  //     path: ['startAt'],
-  //   },
-  // )
-  // .refine(
-  //   (val) =>
-  //     val.isApplying ||
-  //     (val.startAt.diff(new Date()) > 0 &&
-  //       val.startAt.diff(val.endAt) < 0 &&
-  //       val.startAt.diff(val.applicationStartAt) > 0),
-  //   {
-  //     message: '開始日時を確認してください。',
-  //     path: ['startAt'],
-  //   },
-  // )
   .refine(
     // Check endAt > today & startAt & applicationEndAt
     (val) =>

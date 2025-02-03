@@ -76,7 +76,9 @@ import CreateTargetForm from './CreateTargetForm';
 import { useListingTargetOptionsQuery } from '@/src/api/target.api';
 import { cn, optionify } from '@/src/utils/app.util';
 import DotLoader from '../common/Loader/DotLoader';
-import createEventFormSchema from '@/src/schemas/event/CreateEventFormSchema';
+import createEventFormSchema, {
+  eventDateSchema,
+} from '@/src/schemas/event/CreateEventFormSchema';
 import clsx from 'clsx';
 import MultipleFilesUploader from '../common/Upload/MultipleFilesUploader';
 import CalendarTimeline from '../common/DateTime/CalendarTimeline';
@@ -301,6 +303,37 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
     }
   }
 
+  function handleValidateEventDates(
+    applicationStartAt: Date,
+    applicationEndAt: Date,
+    startAt: Date,
+    endAt: Date,
+  ) {
+    const result = eventDateSchema.safeParse({
+      applicationStartAt,
+      applicationEndAt,
+      startAt,
+      endAt,
+    });
+
+    if (!result.success) {
+      const errorOrder = [
+        'applicationStartAt',
+        'applicationEndAt',
+        'startAt',
+        'endAt',
+      ];
+      const sortedErrors = result.error.errors.sort(
+        (a, b) =>
+          errorOrder.indexOf(`${a.path[0]}`) -
+          errorOrder.indexOf(`${b.path[0]}`),
+      );
+      return sortedErrors[0]?.message || null;
+    }
+
+    return null; // No errors
+  }
+
   function handlePublishEvent(data: CreateEventFormSchema) {
     // trigger({
     //   eventId: 11,
@@ -462,7 +495,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
               <FormField
                 control={form.control}
                 name='startAt'
-                render={({ field }) => (
+                render={() => (
                   <FormItem>
                     <FormCustomLabel
                       htmlFor='startAt'
@@ -507,7 +540,17 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                         name='startAt'
                       />
                     </FormControl>
-                    <FormMessage label='coverImageUrl' />
+                    {form.formState.isSubmitted && (
+                      <FormMessage
+                        customMessage={handleValidateEventDates(
+                          form.getValues('applicationStartAt'),
+                          form.getValues('applicationEndAt'),
+                          form.getValues('startAt'),
+                          form.getValues('endAt'),
+                        )}
+                        type='custom'
+                      />
+                    )}
                   </FormItem>
                 )}
               />

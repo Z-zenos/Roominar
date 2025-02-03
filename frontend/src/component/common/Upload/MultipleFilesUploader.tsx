@@ -98,7 +98,7 @@ const MultipleFilesUploader = ({
         {!u.isUploading && u.images.length < maxFiles && (
           <div
             {...u.getRootProps({
-              className: 'rounded flex items-center justify-center',
+              className: 'rounded',
             })}
           >
             <div {...u.getRootProps({ className: 'dropzone' })}>
@@ -108,7 +108,7 @@ const MultipleFilesUploader = ({
                 htmlFor={name}
                 onClick={() => u.inputRef.current?.click()}
                 defaultImageUrl={defaultImageUrl}
-                className='w-[300px] h-[200px] !border-gray-400 rounded-lg'
+                className='!w-full h-[200px] !border-gray-400 rounded-lg'
               />
             </div>
             <input

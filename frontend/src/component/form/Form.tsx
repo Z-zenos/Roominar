@@ -215,14 +215,19 @@ FormDescription.displayName = 'FormDescription';
 
 interface FormMessageProps extends HTMLAttributes<HTMLParagraphElement> {
   label?: string;
+  customMessage?: string;
+  type?: 'default' | 'custom';
 }
 
 const FormMessage = forwardRef<HTMLParagraphElement, FormMessageProps>(
-  ({ label, className, children, ...props }, ref) => {
+  (
+    { label, type = 'default', customMessage, className, children, ...props },
+    ref,
+  ) => {
     const t = useTranslations('form');
     const { error, formMessageId } = useFormField();
     let body = undefined;
-    if (error) {
+    if (error && type === 'default') {
       if (error?.message === 'required') {
         body = camelToNormal(
           capitalize(t('message.error.required')).replace('[field]', label),
@@ -241,7 +246,11 @@ const FormMessage = forwardRef<HTMLParagraphElement, FormMessageProps>(
         }
       }
     } else {
-      body = children;
+      if (customMessage) {
+        body = capitalize(t(`message.error.${customMessage}`));
+      } else {
+        body = children;
+      }
     }
 
     if (!body) {
