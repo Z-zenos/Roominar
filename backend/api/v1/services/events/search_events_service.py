@@ -38,7 +38,9 @@ async def search_events(
                 )
             ).label("tags"),
         )
-        .join(TagAssociation, and_(Event.id == TagAssociation.entity_id))
+        .select_from(Event)
+        .join(TagAssociation, Event.id == TagAssociation.entity_id)
+        .join(Tag, Tag.id == TagAssociation.tag_id)
         .where(TagAssociation.entity_code == TagAssociationEntityCode.EVENT)
         .group_by(Event.id)
         .subquery()
