@@ -5,8 +5,6 @@ import pytz
 from pydantic import BaseModel
 from sqlmodel import Date, Session, and_, asc, case, desc, func, or_, select
 
-import backend.api.v1.services.tickets as tickets_service
-from backend.api.v1.services.tags.get_event_tags_service import get_event_tags
 from backend.core.constants import (
     EventSortByCode,
     EventStatusCode,
@@ -19,6 +17,7 @@ from backend.models.organization import Organization
 from backend.models.tag import Tag
 from backend.models.tag_association import TagAssociation
 from backend.models.target import Target
+from backend.models.ticket_inventory import TicketInventory
 from backend.models.user import User
 from backend.schemas.event import SearchEventsQueryParams
 
@@ -29,10 +28,6 @@ async def search_events(
     query_params: SearchEventsQueryParams,
 ):
     filters = _build_filters(db, user, query_params)
-
-    SoldTicketsNumber = tickets_service.get_sold_tickets_number_query(
-        event_id=None, user_id=None
-    )
 
     EventTag = (
         select(
@@ -67,9 +62,7 @@ async def search_events(
             Event.is_offline,
             Event.meeting_tool_code,
             Event.published_at,
-            func.max(SoldTicketsNumber.c.sold_tickets_number).label(
-                "sold_tickets_number"
-            ),
+            TicketInventory.sold_quantity.label("sold_tickets_number"),
             EventTag.c.tags,
         )
         .join(Organization, Event.organization_id == Organization.id)
@@ -83,18 +76,7 @@ async def search_events(
             ),
         )
         .outerjoin(EventTag, Event.id == EventTag.c.event_id)
-        .outerjoin(SoldTicketsNumber, Event.id == SoldTicketsNumber.c.event_id)
-        .group_by(
-            Event.id,
-            case(
-                (
-                    user and Bookmark.user_id == user.id,
-                    True,
-                ),
-                else_=False,
-            ).label("is_bookmarked"),
-            Organization.name.label("organization_name"),
-        )
+        .outerjoin(TicketInventory, Event.id == TicketInventory.event_id)
     )
 
     if user:
@@ -124,11 +106,6 @@ async def search_events(
     events = db.exec(query).mappings().all()
 
     result = {event.id: dict(event) for event in events}
-    event_ids = list(result.keys())
-    event_tags = get_event_tags(db, event_ids=event_ids)
-
-    for item in event_tags:
-        result[item.id]["tags"] = item.tags
 
     total = count_events(db, filters)
     return list(result.values()), total

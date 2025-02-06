@@ -40,16 +40,6 @@ async def get_event_detail(db: Session, current_user: User, slug: str):
         .subquery()
     )
 
-    SoldTicketsNumber = (
-        select(
-            Event.id,
-            func.sum(TicketInventory.sold_quantity).label("sold_tickets_number"),
-        )
-        .join(TicketInventory, TicketInventory.event_id == Event.id)
-        .group_by(Event.id)
-        .subquery()
-    )
-
     query = (
         select(
             *Event.__table__.columns,
@@ -62,7 +52,7 @@ async def get_event_detail(db: Session, current_user: User, slug: str):
             Organization.description.label("organization_description"),
             OrganizationEventFollowCount.c.organization_event_number,
             OrganizationEventFollowCount.c.organization_follower_number,
-            SoldTicketsNumber.c.sold_tickets_number,
+            TicketInventory.sold_quantity.label("sold_tickets_number"),
         )
         .where(
             Event.slug == slug,
@@ -73,7 +63,7 @@ async def get_event_detail(db: Session, current_user: User, slug: str):
             OrganizationEventFollowCount,
             OrganizationEventFollowCount.c.id == Organization.id,
         )
-        .join(SoldTicketsNumber, SoldTicketsNumber.c.id == Event.id)
+        .outerjoin(TicketInventory, TicketInventory.event_id == Event.id)
     )
 
     if current_user:
