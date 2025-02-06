@@ -19,7 +19,7 @@ async def create_free_application(
     try:
         event_id = create_application_request.event_id
         result = applications_service.validate_application_tickets(
-            db, current_user.id, create_application_request
+            db, current_user.id, create_application_request, True
         )
         tickets = result["tickets"]
         total_requested_quantity = result["total_requested_quantity"]

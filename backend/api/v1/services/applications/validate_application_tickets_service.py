@@ -14,7 +14,9 @@ from backend.models.transaction import Transaction
 from backend.models.transaction_item import TransactionItem
 
 
-def validate_application_tickets(db: Session, user_id: int, request: any):
+def validate_application_tickets(
+    db: Session, user_id: int, request: any, is_free_application: bool
+):
     event_id = request.event_id
     try:
         event = db.get(Event, event_id)
@@ -62,7 +64,7 @@ def validate_application_tickets(db: Session, user_id: int, request: any):
         total_requested_quantity = 0
         for ticket in tickets:
             # Check if the ticket is free
-            if ticket["price"] > 0:
+            if ticket["price"] > 0 and is_free_application:
                 raise BadRequestException(
                     ErrorCode.ERR_TICKET_NOT_FREE, ErrorMessage.ERR_TICKET_NOT_FREE
                 )

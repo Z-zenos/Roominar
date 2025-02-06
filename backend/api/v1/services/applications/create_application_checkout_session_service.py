@@ -22,7 +22,7 @@ async def create_application_checkout_session(
     event_id = create_application_request.event_id
     try:
         result = applications_service.validate_application_tickets(
-            db, current_user.id, create_application_request
+            db, current_user.id, create_application_request, False
         )
         event = result["event"]
         tickets = result["tickets"]

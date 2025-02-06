@@ -53,6 +53,7 @@ async def handle_application_transaction(db: Session, request: Request):
                 "event_id": event_id,
                 "tickets": tickets,
             },
+            False,
         )
 
         tickets = result["tickets"]

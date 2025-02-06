@@ -105,7 +105,8 @@ export default function Home() {
           </h2>
           <h1 className='text-hg my-5 font-semibold'>
             Web(<span className='text-gradient'>Sem</span>)inar &
-            <span className='text-gradient'>E</span>vent 2024 🎉
+            <span className='text-gradient'>E</span>vent{' '}
+            {new Date().getFullYear()} 🎉
           </h1>
           <p className='text-primary font-semibold mb-8'>
             Search site for business seminars focusing on digital and AI
