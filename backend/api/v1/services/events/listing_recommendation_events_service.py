@@ -1,5 +1,6 @@
 from sqlmodel import Session, text
 
+from backend.core.constants import EventStatusCode
 from backend.models.user import User
 from backend.schemas.event import SearchEventsQueryParams
 
@@ -7,8 +8,20 @@ from backend.schemas.event import SearchEventsQueryParams
 async def listing_recommendation_events(
     db: Session, user: User, query_params: SearchEventsQueryParams
 ):
+    filters = ""
+    if query_params.keyword:
+        filters += "AND e.name ILIKE '%' || :keyword || '%'"
+    if query_params.job_type_codes:
+        filters += "AND a.job_type_code = ANY(:job_type_codes)"
+    if query_params.industry_codes:
+        filters += "AND a.industry_code = ANY(:industry_codes)"
+    if query_params.start_at_from:
+        filters += "AND e.start_at >= :start_at_from"
+    if query_params.start_at_to:
+        filters += "AND e.start_at <= :start_at_to"
+
     statement = text(
-        """
+        f"""
         WITH user_preferences AS (
             SELECT
                 a.user_id,
@@ -19,7 +32,7 @@ async def listing_recommendation_events(
         ),
         event_scores AS (
             SELECT
-                e.id AS event_id,
+                e.id,
                 e.slug,
                 o.name AS organization_name,
                 e.name,
@@ -52,10 +65,9 @@ async def listing_recommendation_events(
             LEFT JOIN user_preferences up
                 ON (a.industry_code = up.industry_code OR
                 a.job_type_code = up.job_type_code)
-            WHERE e.start_at BETWEEN :start_at_from AND :start_at_to
-            AND (:name IS NULL OR e.name ILIKE '%' || :name || '%')
-            AND (:job_type_codes IS NULL OR a.job_type_code = ANY(:job_type_codes))
-            AND (:industry_codes IS NULL OR a.industry_code = ANY(:industry_codes))
+            WHERE
+                e.status = :status
+                {filters}
             GROUP BY e.id, o.name
         )
         SELECT
@@ -69,14 +81,15 @@ async def listing_recommendation_events(
     )
 
     params = {
+        "status": EventStatusCode.PUBLIC,
         "user_id": user.id,
-        "start_at_from": query_params.start_at_from,
-        "start_at_to": query_params.start_at_to,
-        "name": query_params.keyword,
+        "keyword": query_params.keyword,
         "job_type_codes": query_params.job_type_codes,
         "industry_codes": query_params.industry_codes,
+        "start_at_from": query_params.start_at_from,
+        "start_at_to": query_params.start_at_to,
     }
 
-    events = db.exec(statement, params=params).mappings().all()
+    events = db.exec(statement, params=params).mappings().all() or []
 
     return events

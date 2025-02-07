@@ -125,8 +125,8 @@ async def listing_recommendation_events(
 ):
     events = await events_service.listing_recommendation_events(db, user, query_params)
     return ListingRecommendationEventsResponse(
-        events=events,
-        total=len(events),
+        data=events,
+        total=0,
         page=query_params.page,
         per_page=query_params.per_page,
     )
