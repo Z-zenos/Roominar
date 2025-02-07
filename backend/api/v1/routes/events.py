@@ -23,6 +23,7 @@ from backend.schemas.event import (
     ListingEventRankResponse,
     ListingMyEventsQueryParams,
     ListingMyEventsResponse,
+    ListingRecommendationEventsResponse,
     ListingRelatedEventsResponse,
     PublishEventRequest,
     SaveDraftEventRequest,
@@ -109,6 +110,25 @@ async def listing_my_events(
         per_page=query_params.per_page,
         total=total,
         data=events,
+    )
+
+
+@router.get(
+    "/recommendation",
+    response_model=ListingRecommendationEventsResponse,
+    responses=public_api_responses,
+)
+async def listing_recommendation_events(
+    db: Session = Depends(get_read_db),
+    user: User = Depends(get_current_user),
+    query_params: SearchEventsQueryParams = Depends(SearchEventsQueryParams),
+):
+    events = await events_service.listing_recommendation_events(db, user, query_params)
+    return ListingRecommendationEventsResponse(
+        events=events,
+        total=len(events),
+        page=query_params.page,
+        per_page=query_params.per_page,
     )
 
 

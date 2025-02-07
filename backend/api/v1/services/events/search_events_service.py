@@ -1,8 +1,6 @@
-from collections import defaultdict
 from datetime import datetime
 
 import pytz
-from pydantic import BaseModel
 from sqlmodel import Date, Session, and_, asc, case, desc, func, or_, select
 
 from backend.core.constants import (
@@ -27,7 +25,7 @@ async def search_events(
     user: User | None,
     query_params: SearchEventsQueryParams,
 ):
-    filters = _build_filters(db, user, query_params)
+    filters = _build_filters_sort(db, user, query_params)
 
     EventTag = (
         select(
@@ -135,64 +133,12 @@ def count_events(
     return total
 
 
-def _get_targets(db: Session, user: User, Model: BaseModel):
-    targets_query = (
-        select(
-            Target.industry_codes,
-            Target.job_type_codes,
-        )
-        .join(Event, Event.target_id == Target.id)
-        .join(Model, and_(Model.event_id == Event.id, Model.user_id == user.id))
-        .limit(10)
-        .order_by(Model.created_at.desc())
-    )
-
-    targets = db.exec(targets_query).mappings().all()
-
-    return targets
-
-
-def _build_recommendation_targets(targets_list: list):
-    """
-    Create targets set from application, bookmark and user targets
-    """
-    targets = defaultdict(lambda: {"values": [], "points": []})
-    for item in targets_list:
-        for key, value in item.items():
-            if value is not None:
-                for v in value:
-                    if v in targets[key]["values"]:
-                        index = targets[key]["values"].index(v)
-                        targets[key]["points"][index] += 1
-                    else:
-                        targets[key]["values"].append(v)
-                        targets[key]["points"].append(1)
-    return dict(targets)
-
-
-def _build_filters(db: Session, user: User, query_params: SearchEventsQueryParams):
+def _build_filters_sort(query_params: SearchEventsQueryParams):
     filters = [
         Event.published_at.isnot(None),
         Event.status == EventStatusCode.PUBLIC,
     ]
     sort_by = Event.published_at
-    recommendation_targets = []
-
-    if user:
-        bookmarked_event_targets = _get_targets(db, user, Bookmark)
-        application_targets = _get_targets(db, user, Application)
-        recommendation_targets = _build_recommendation_targets(
-            targets_list=(
-                application_targets
-                + bookmarked_event_targets
-                + [
-                    {
-                        "industry_codes": [user.industry_code],
-                        "job_type_codes": [user.job_type_code],
-                    }
-                ]
-            )
-        )
 
     if query_params.keyword:
         filters.append(Event.name.contains(query_params.keyword))
@@ -241,11 +187,11 @@ def _build_filters(db: Session, user: User, query_params: SearchEventsQueryParam
     if query_params.tags:
         filters.append(TagAssociation.tag_id.in_(query_params.tags))
 
-    if query_params.start_start_at:
-        filters.append(Event.start_at.cast(Date) >= query_params.start_start_at.date())
+    if query_params.start_at_from:
+        filters.append(Event.start_at.cast(Date) >= query_params.start_at_from.date())
 
-    if query_params.end_start_at:
-        filters.append(Event.start_at.cast(Date) <= query_params.end_start_at.date())
+    if query_params.start_at_to:
+        filters.append(Event.start_at.cast(Date) <= query_params.start_at_to.date())
 
     if query_params.sort_by == EventSortByCode.PUBLISHED_AT:
         filters.append(Event.end_at > datetime.now(pytz.utc))
@@ -257,36 +203,6 @@ def _build_filters(db: Session, user: User, query_params: SearchEventsQueryParam
     if query_params.sort_by == EventSortByCode.APPLICATION_END_AT:
         filters.append(Event.application_end_at >= datetime.now(pytz.utc))
         sort_by = Event.application_end_at
-
-    if (
-        query_params.sort_by == EventSortByCode.RECOMMENDATION
-        and recommendation_targets
-    ):
-        conditions = []
-        rankings = []
-
-        for type_code, target_data in recommendation_targets.items():
-            values = target_data["values"]
-            points = target_data["points"]
-
-            if any(values):
-                for code, point in zip(values, points):
-                    if code:
-                        conditions.append(getattr(Target, type_code).any(code))
-                        rankings.append(
-                            case(
-                                (getattr(Target, type_code).any(code), point),
-                                else_=0,
-                            )
-                        )
-
-        filters.extend(
-            [
-                Event.application_end_at > datetime.now(pytz.utc),
-                or_(*conditions),
-            ]
-        )
-        sort_by = sum(rankings[1:], start=rankings[0])
 
     return {
         "conditions": filters,

@@ -9,6 +9,7 @@ from .listing_event_rank_service import listing_event_rank
 from .listing_my_events_service import listing_my_events
 from .listing_organization_events_service import listing_organization_events
 from .listing_organization_events_timeline_service import listing_events_timeline
+from .listing_recommendation_events_service import listing_recommendation_events
 from .listing_related_events_service import listing_related_events
 from .listing_top_organization_events_service import listing_top_organization_events
 from .publish_event_service import publish_event
@@ -32,4 +33,5 @@ all = (
     get_draft_event,
     save_draft_event,
     listing_events_timeline,
+    listing_recommendation_events,
 )

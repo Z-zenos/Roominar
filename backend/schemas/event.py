@@ -64,8 +64,8 @@ class SearchEventsQueryParams(BaseModel):
     city_codes: list[str] = Field(Query(default=None))
     tags: list[int] = Field(Query(default=None))
 
-    start_start_at: datetime | None = Field(Query(default=None))
-    end_start_at: datetime | None = Field(Query(default=None))
+    start_at_from: datetime | None = Field(Query(default=None))
+    start_at_to: datetime | None = Field(Query(default=None))
 
     sort_by: EventSortByCode | None = Field(Query(default=EventSortByCode.PUBLISHED_AT))
     per_page: int | None = Field(Query(default=10, le=100, ge=1))
@@ -373,3 +373,7 @@ class ListingOrganizationEventsTimelineItem(BaseModel):
     application_end_at: datetime | None
     is_online: bool | None
     is_offline: bool | None
+
+
+class ListingRecommendationEventsResponse(PaginationResponse[SearchEventsItem]):
+    pass
