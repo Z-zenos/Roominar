@@ -25,7 +25,7 @@ async def search_events(
     user: User | None,
     query_params: SearchEventsQueryParams,
 ):
-    filters = _build_filters_sort(db, user, query_params)
+    filters = _build_filters_sort(query_params)
 
     EventTag = (
         select(

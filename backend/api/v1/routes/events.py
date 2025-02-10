@@ -123,10 +123,10 @@ async def listing_recommendation_events(
     user: User = Depends(get_current_user),
     query_params: SearchEventsQueryParams = Depends(SearchEventsQueryParams),
 ):
-    events = await events_service.listing_recommendation_events(db, user, query_params)
+    data = await events_service.listing_recommendation_events(db, user, query_params)
     return ListingRecommendationEventsResponse(
-        data=events,
-        total=0,
+        data=data.get("events"),
+        total=data.get("total"),
         page=query_params.page,
         per_page=query_params.per_page,
     )

@@ -7,6 +7,7 @@ import type {
   EventsApiGetDraftEventRequest,
   EventsApiGetEventDetailRequest,
   EventsApiListingMyEventsRequest,
+  EventsApiListingRecommendationEventsRequest,
   EventsApiListingRelatedEventsRequest,
   EventsApiListingTicketsOfEventRequest,
   EventsApiPublishEventRequest,
@@ -197,4 +198,17 @@ export const useSaveDraftEventMutation = <T>(
     async (_: string, { arg }) => await api.events.saveDraftEvent(arg),
     options,
   );
+};
+
+export const useListingRecommendationEventsQuery = (
+  params?: EventsApiListingRecommendationEventsRequest,
+  enabled?: boolean,
+) => {
+  params = toCamelCase(params);
+  const api = useApi();
+  return useQuery({
+    queryKey: ['listing-recommendation-events', params],
+    queryFn: async () => await api.events.listingRecommendationEvents(params),
+    enabled,
+  });
 };
