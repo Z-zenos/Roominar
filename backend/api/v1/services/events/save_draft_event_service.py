@@ -7,12 +7,12 @@ from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.models import Event, Tag, User
 from backend.models.tag_association import TagAssociation
-from backend.schemas.event import PublishEventRequest
+from backend.schemas.event import SaveDraftEventRequest
 from backend.utils.database import fetch_one, save
 
 
-async def publish_event(
-    db: Session, organizer: User, request: PublishEventRequest, event_id: int
+async def save_draft_event(
+    db: Session, organizer: User, request: SaveDraftEventRequest, event_id: int
 ):
     try:
         event = fetch_one(
@@ -29,10 +29,14 @@ async def publish_event(
 
         Event.update_by_dict(event, request.model_dump())
         event.organization_id = organizer.organization_id
-        event.published_at = datetime.now()
-        event.status = EventStatusCode.PUBLIC
         event.updated_at = datetime.now()
         event.updated_by = organizer.id
+        event.status = EventStatusCode.DRAFT
+        event.name = (
+            request.name
+            if request.name
+            else f"Draft Event {datetime.now().strftime('%Y/%m/%d %H:%M')}"
+        )
 
         if request.tags:
             # Remove existing tags associated with the event

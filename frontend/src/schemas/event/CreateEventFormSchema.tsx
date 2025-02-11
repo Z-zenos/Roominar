@@ -1,43 +1,30 @@
-import {
-  CityCode,
-  EventMeetingToolCode,
-  EventStatusCode,
-} from '@/src/lib/api/generated';
+import { CityCode, EventMeetingToolCode } from '@/src/lib/api/generated';
 import dayjs from 'dayjs';
 import z from 'zod';
 
-const eventDateSchema = z
+export const eventDateSchema = z
   .object({
-    startAt: z.date({ required_error: 'missingEventStartAt' }),
-    endAt: z.date({ required_error: 'missingEventEndAt' }),
-    applicationStartAt: z.date({
-      required_error: 'missingEventApplicationStartAt',
+    startAt: z.union([z.date(), z.null()]).refine((val) => val !== null, {
+      message: 'missingEventStartAt',
+      path: ['startAt'],
     }),
-    applicationEndAt: z.date({
-      required_error: 'missingEventApplicationEndAt',
+    endAt: z.union([z.date(), z.null()]).refine((val) => val !== null, {
+      message: 'missingEventEndAt',
+      path: ['endAt'],
     }),
-    isApplying: z.boolean().optional(),
+    applicationStartAt: z
+      .union([z.date(), z.null()])
+      .refine((val) => val !== null, {
+        message: 'missingEventApplicationStartAt',
+        path: ['applicationStartAt'],
+      }),
+    applicationEndAt: z
+      .union([z.date(), z.null()])
+      .refine((val) => val !== null, {
+        message: 'missingEventApplicationEndAt',
+        path: ['applicationEndAt'],
+      }),
   })
-  // .refine(
-  //   (val) =>
-  //     val.isApplying ||
-  //     val.startAt.tz('Asia/Ho_Chi_Minh', true).diff(dayjs()) > 60 * 60 * 1000,
-  //   {
-  //     message: '開始日時を確認してください。',
-  //     path: ['startAt'],
-  //   },
-  // )
-  // .refine(
-  //   (val) =>
-  //     val.isApplying ||
-  //     (val.startAt.diff(new Date()) > 0 &&
-  //       val.startAt.diff(val.endAt) < 0 &&
-  //       val.startAt.diff(val.applicationStartAt) > 0),
-  //   {
-  //     message: '開始日時を確認してください。',
-  //     path: ['startAt'],
-  //   },
-  // )
   .refine(
     // Check endAt > today & startAt & applicationEndAt
     (val) =>
@@ -75,13 +62,12 @@ const eventDateSchema = z
 
 const eventAddressSchema = z
   .object({
-    isOnline: z.boolean().optional(),
-    isOffline: z.boolean().optional(),
-    // organizePlaceName: z.string().trim().max(255).optional(),
-    organizeAddress: z.string().trim().max(255).optional(),
+    isOnline: z.boolean().nullable(),
+    isOffline: z.boolean().nullable(),
+    organizeAddress: z.string().trim().max(255).or(z.literal('')),
     organizeCityCode: z.nativeEnum(CityCode).optional(),
     meetingToolCode: z.nativeEnum(EventMeetingToolCode).optional(),
-    meetingUrl: z.string().url().optional(),
+    meetingUrl: z.string().url().or(z.literal('')),
   })
   .superRefine(
     (
@@ -90,33 +76,24 @@ const eventAddressSchema = z
         isOnline,
         organizeAddress,
         organizeCityCode,
-        // organizePlaceName,
         meetingToolCode,
         meetingUrl,
       },
       ctx,
     ) => {
-      if (!(isOffline || isOnline)) {
+      if (!isOffline && !isOnline) {
         ctx.addIssue({
           code: 'custom',
           message: 'neitherOnlineNorOffline',
-          path: ['isOffline', 'isOnline'],
+          path: ['isOffline'],
         });
       }
-
-      // if (isOffline && !organizePlaceName) {
-      //   ctx.addIssue({
-      //     code: 'custom',
-      //     message: 'missingEventOrganizePlaceName',
-      //     path: ['organizePlaceName'],
-      //   });
-      // }
 
       if (isOffline && !organizeCityCode) {
         ctx.addIssue({
           code: 'custom',
           message: 'missingEventOrganizeCityCode',
-          path: ['organizeCityCode'],
+          path: ['isOffline'],
         });
       }
 
@@ -132,13 +109,13 @@ const eventAddressSchema = z
         ctx.addIssue({
           code: 'custom',
           message: 'missingEventMeetingToolCode',
-          path: ['meetingToolCode'],
+          path: ['isOnline'],
         });
       }
 
       if (
         isOnline &&
-        meetingToolCode === EventMeetingToolCode.ContactLater &&
+        meetingToolCode !== EventMeetingToolCode.ContactLater &&
         !meetingUrl
       ) {
         ctx.addIssue({
@@ -151,28 +128,35 @@ const eventAddressSchema = z
   );
 
 const eventTicketSchema = z.object({
-  applicationNumber: z.coerce.number(),
+  totalTicketNumber: z.coerce
+    .number()
+    .refine((n) => n > 0, { message: 'minimumTotalTicketNumber' }),
   ticketIds: z.array(z.number()),
 });
 
 const eventBaseSchema = z.object({
   name: z.string().trim().min(1, { message: 'required' }).max(1024),
   description: z.string().trim().min(1),
-  coverImageUrl: z.string().url().max(2048),
+  coverImageUrl: z
+    .string()
+    .trim()
+    .min(1, { message: 'required' })
+    .url({})
+    .max(2048),
+  galleryUrls: z.array(z.string().url()).max(10),
   surveyId: z.coerce.number().nullable(),
-  targetId: z.coerce.number(),
+  targetId: z.coerce.number().nullable(),
   comment: z.string().trim().nullable(),
-  status: z.nativeEnum(EventStatusCode),
   tags: z.array(z.coerce.number()).nullable(),
 });
 
-const publishEventFormSchema = z.intersection(
+const createEventFormSchema = z.intersection(
   eventBaseSchema,
   eventDateSchema.and(eventAddressSchema).and(eventTicketSchema),
 );
 
-type PublishEventFormSchema = z.infer<typeof publishEventFormSchema>;
+type CreateEventFormSchema = z.infer<typeof createEventFormSchema>;
 
-export type { PublishEventFormSchema };
+export type { CreateEventFormSchema };
 
-export default publishEventFormSchema;
+export default createEventFormSchema;

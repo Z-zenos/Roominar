@@ -19,6 +19,7 @@ from backend.core.exception import BadRequestException
 from backend.schemas.common import PaginationResponse
 from backend.schemas.survey import SurveyDetail
 from backend.schemas.tag import TagItem
+from backend.schemas.target import ListingTargetOptionsItem
 from backend.schemas.ticket import OrganizationEventTicketItem, TicketItem
 from backend.schemas.transaction import MyTicketTransaction
 
@@ -35,7 +36,6 @@ class SearchEventsItem(BaseModel):
     application_end_at: datetime
     cover_image_url: str
     organize_city_code: str | None = None
-    organize_place_name: str | None = None
     organize_address: str | None = None
     is_online: bool | None = None
     is_offline: bool | None = None
@@ -64,8 +64,8 @@ class SearchEventsQueryParams(BaseModel):
     city_codes: list[str] = Field(Query(default=None))
     tags: list[int] = Field(Query(default=None))
 
-    start_start_at: datetime | None = Field(Query(default=None))
-    end_start_at: datetime | None = Field(Query(default=None))
+    start_at_from: datetime | None = Field(Query(default=None))
+    start_at_to: datetime | None = Field(Query(default=None))
 
     sort_by: EventSortByCode | None = Field(Query(default=EventSortByCode.PUBLISHED_AT))
     per_page: int | None = Field(Query(default=10, le=100, ge=1))
@@ -94,7 +94,6 @@ class GetEventDetailResponse(BaseModel):
     is_online: bool
     is_offline: bool
     organize_city_code: str | None = None
-    organize_place_name: str | None = None
     description: str
     is_bookmarked: bool | None = None
     organization_name: str
@@ -165,7 +164,6 @@ class MyEventItem(BaseModel):
     application_end_at: datetime
     total_ticket_number: int
     cover_image_url: str
-    organize_place_name: str | None = None
     organize_address: str | None = None
     organize_city_code: str | None = None
     meeting_tool_code: EventMeetingToolCode | None = None
@@ -192,9 +190,6 @@ class ListingMyEventsResponse(PaginationResponse[MyEventItem]):
     pass
 
 
-# class DraftEventRequest(BaseModel):
-
-
 class PublishEventRequest(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True)
 
@@ -207,27 +202,25 @@ class PublishEventRequest(BaseModel):
 
     total_ticket_number: int
     cover_image_url: str = Field(max_length=2048)
-    gallery: list[str] | None = Field([])
+    gallery: list[str] = Field([])
 
     description: str
-    description_image_urls: list[str] | None = Field([])
+    # description_image_urls: list[str] | None = Field([])
 
     is_offline: bool | None
     is_online: bool | None
 
-    organize_place_name: str | None = Field(max_length=255)
     organize_city_code: CityCode | None = Field(max_length=50)
     organize_address: str | None = Field(max_length=255)
 
     meeting_tool_code: EventMeetingToolCode | None
     meeting_url: str | None = Field(max_length=2048)
-    ticket_ids: list[int] | None = Field([])
+    ticket_ids: list[int] = Field([])
     survey_id: int | None
-    target_id: int
+    target_id: int | None
     comment: str | None
 
-    status: EventStatusCode
-    tags: list[int] | None = Field([])
+    tags: list[int] = Field([])
 
     @field_validator("is_online")
     def validate_online_offline(cls, v: str | None, values: ValidationInfo):
@@ -238,7 +231,7 @@ class PublishEventRequest(BaseModel):
             )
         return v
 
-    @field_validator("organize_place_name", "organize_city_code", "organize_address")
+    @field_validator("organize_city_code", "organize_address")
     def validate_offline_address(cls, v: str | None, values: ValidationInfo):
         if values.data.get("is_offline") and not v:
             raise BadRequestException(
@@ -282,19 +275,19 @@ class ListingOrganizationEventsItem(BaseModel):
     id: int
     slug: str
     name: str
-    cover_image_url: str
-    start_at: datetime
-    end_at: datetime
-    application_start_at: datetime
-    application_end_at: datetime
-    is_online: bool
-    is_offline: bool
-    organize_city_code: str | None = None
-    organize_place_name: str | None = None
+    cover_image_url: str | None
+    start_at: datetime | None
+    end_at: datetime | None
+    application_start_at: datetime | None
+    application_end_at: datetime | None
+    is_online: bool | None
+    is_offline: bool | None
+    organize_city_code: str | None
+    organize_address: str | None
     meeting_url: str | None = None
-    meeting_tool_code: EventMeetingToolCode
+    meeting_tool_code: EventMeetingToolCode | None
     tickets: list[OrganizationEventTicketItem] = Field([])
-    total_ticket_number: int
+    total_ticket_number: int | None
     status: EventStatusCode
     # survey: SurveyDetail | None = None
     view_number: int | None = None
@@ -304,4 +297,83 @@ class ListingOrganizationEventsItem(BaseModel):
 class ListingOrganizationEventsResponse(
     PaginationResponse[ListingOrganizationEventsItem]
 ):
+    pass
+
+
+class CreateDraftEventRequest(BaseModel):
+    event_id: int | None = None
+
+
+class GetDraftEventResponse(BaseModel):
+    id: int
+    slug: str
+    name: str
+    start_at: datetime | None = None
+    end_at: datetime | None = None
+    application_start_at: datetime | None = None
+    application_end_at: datetime | None = None
+    cover_image_url: str | None = None
+    gallery: list[str] = Field([])
+    is_online: bool | None = None
+    is_offline: bool | None = None
+    organize_address: str | None = None
+    organize_city_code: str | None = None
+    description: str | None = None
+    meeting_url: str | None = None
+    meeting_tool_code: EventMeetingToolCode | None = None
+    tickets: list[TicketItem] = Field([])
+    total_ticket_number: int | None = None
+    status: EventStatusCode | None = None
+    application_form_url: str | None = None
+    tags: list[TagItem] = Field([])
+    target: ListingTargetOptionsItem | None = None
+    survey_id: int | None = None
+    max_ticket_number_per_account: int | None = None
+    comment: str | None = None
+
+
+class SaveDraftEventRequest(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    name: str | None = Field(max_length=1024)
+
+    start_at: datetime | None
+    end_at: datetime | None
+    application_start_at: datetime | None
+    application_end_at: datetime | None
+
+    total_ticket_number: int | None = Field(le=1000)
+    cover_image_url: str | None = Field(max_length=2048)
+    gallery: list[str] = Field([])
+
+    description: str | None
+
+    is_offline: bool | None
+    organize_city_code: CityCode | None = Field(max_length=50)
+    organize_address: str | None = Field(max_length=255)
+
+    is_online: bool | None
+    meeting_tool_code: EventMeetingToolCode | None
+    meeting_url: str | None = Field(max_length=2048)
+
+    ticket_ids: list[int] = Field([])
+    survey_id: int | None
+    target_id: int | None
+    comment: str | None
+    tags: list[int] = Field([])
+
+
+class ListingOrganizationEventsTimelineItem(BaseModel):
+    id: int
+    slug: str
+    name: str
+    start_at: datetime | None
+    end_at: datetime | None
+    application_start_at: datetime | None
+    application_end_at: datetime | None
+    is_online: bool | None
+    is_offline: bool | None
+
+
+class ListingRecommendationEventsResponse(PaginationResponse[SearchEventsItem]):
     pass

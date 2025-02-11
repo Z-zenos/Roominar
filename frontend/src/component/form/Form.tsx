@@ -22,7 +22,7 @@ import { createContext, useContext, forwardRef, useId, useMemo } from 'react';
 import type { DateRange } from 'react-day-picker';
 import clsx from 'clsx';
 import { Label } from '../common/Label';
-import { cn } from '@/src/utils/app.util';
+import { camelToNormal, cn } from '@/src/utils/app.util';
 import type { CheckboxProps } from '../common/Input/Checkbox';
 import {
   DateRangePicker,
@@ -215,18 +215,22 @@ FormDescription.displayName = 'FormDescription';
 
 interface FormMessageProps extends HTMLAttributes<HTMLParagraphElement> {
   label?: string;
+  customMessage?: string;
+  type?: 'default' | 'custom';
 }
 
 const FormMessage = forwardRef<HTMLParagraphElement, FormMessageProps>(
-  ({ label, className, children, ...props }, ref) => {
+  (
+    { label, type = 'default', customMessage, className, children, ...props },
+    ref,
+  ) => {
     const t = useTranslations('form');
     const { error, formMessageId } = useFormField();
     let body = undefined;
-    if (error) {
+    if (error && type === 'default') {
       if (error?.message === 'required') {
-        body = capitalize(t('message.error.required')).replace(
-          '[field]',
-          label,
+        body = camelToNormal(
+          capitalize(t('message.error.required')).replace('[field]', label),
         );
       } else {
         body = capitalize(
@@ -242,7 +246,11 @@ const FormMessage = forwardRef<HTMLParagraphElement, FormMessageProps>(
         }
       }
     } else {
-      body = children;
+      if (customMessage) {
+        body = capitalize(t(`message.error.${customMessage}`));
+      } else {
+        body = children;
+      }
     }
 
     if (!body) {
@@ -608,8 +616,8 @@ const FormTagsInput = ({
                 id: tag.id,
                 name: tag.name,
               }))
-              .map((tag) => ({ value: tag.id + '', label: tag.name })),
-          ) as Option[])
+              .map((tag) => ({ value: tag.id, label: tag.name })),
+          ) as { value: number; label: string }[])
         : [],
     [data],
   );
@@ -618,12 +626,12 @@ const FormTagsInput = ({
 
   function handleSelectTags(
     field: ControllerRenderProps<any, string>,
-    id: string,
+    id: number,
   ) {
     let newItems = null;
 
     if (field?.value?.includes(id)) {
-      newItems = field?.value?.filter((value: string) => value !== id);
+      newItems = field?.value?.filter((value: number) => value !== id);
     } else {
       newItems = field?.value ? [...field.value, id] : [id];
     }
@@ -648,23 +656,26 @@ const FormTagsInput = ({
             <div className={clsx('max-h-[100px] overflow-y-scroll p-1')}>
               {field?.value &&
                 field?.value?.length > 0 &&
-                field?.value?.map((id: string) => (
+                field?.value?.map((id: number) => (
                   <li
                     key={`selected-tag-${id}`}
                     className={clsx(
-                      'text-primary bg-info-sub border rounded-sm w-fit mb-[6px] mr-[6px] p-1',
+                      'text-primary bg-info-sub border rounded-sm w-fit mb-[6px] mr-[6px] p-1 text-sm',
                       styles.flexStart,
                       'gap-2 inline-flex',
                     )}
                   >
                     <span className='break-all max-w-[90%]'>
                       {'#' +
-                        tags?.find((tag: Option) => tag.value === id)?.label}
+                        tags?.find(
+                          (tag: { value: number; label: string }) =>
+                            tag.value === id,
+                        )?.label}
                     </span>
                     <IoClose
                       onClick={() => {
                         field.onChange(
-                          field?.value?.filter((value: string) => value !== id),
+                          field?.value?.filter((value: number) => value !== id),
                         );
                         if (onValueChange) onValueChange();
                       }}
@@ -698,11 +709,14 @@ const FormTagsInput = ({
               </PopoverTrigger>
               <PopoverContent className={clsx('w-full p-0', className)}>
                 <Command>
-                  <CommandInput placeholder={`Search ${title}...`} />
+                  <CommandInput
+                    id={name}
+                    placeholder={`Search ${title}...`}
+                  />
                   <CommandList>
                     <CommandEmpty>No {title} found.</CommandEmpty>
                     <CommandGroup>
-                      {tags.map((item: Option) => (
+                      {tags.map((item: { value: number; label: string }) => (
                         <CommandItem
                           value={item.label}
                           key={`command-${item.value}`}
@@ -714,14 +728,9 @@ const FormTagsInput = ({
                             if (onValueChange) onValueChange();
                           }}
                         >
-                          <Check
-                            className={cn(
-                              'mr-2 h-4 w-4',
-                              field?.value?.includes(item.value)
-                                ? 'opacity-100'
-                                : 'opacity-0',
-                            )}
-                          />
+                          {field?.value?.includes(item.value) && (
+                            <Check className='mr-2 h-4 w-4' />
+                          )}
                           {item.label}
                         </CommandItem>
                       ))}
@@ -767,7 +776,7 @@ const FormTagsInput = ({
                                   key={`modal-tag-${tag.id}`}
                                   id={tag.id + ''}
                                   onCheckedChange={() => {
-                                    handleSelectTags(field, tag.id + '');
+                                    handleSelectTags(field, tag.id);
                                   }}
                                   defaultChecked={field?.value?.includes(
                                     tag.id + '',
@@ -1066,6 +1075,7 @@ const FormTextarea = ({
             <Textarea
               placeholder={placeholder}
               className='resize-none'
+              id={name}
               {...field}
             />
           </FormControl>
@@ -1112,6 +1122,7 @@ const FormSelect = ({
             />
           )}
           <Select
+            name={name}
             onValueChange={(value: string) => {
               field.onChange(value);
               if (onSelect) onSelect(value);

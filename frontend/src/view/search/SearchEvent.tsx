@@ -64,11 +64,11 @@ function SearchEvent() {
         undefined,
       cityCodes: searchParams.getAll('city_codes[]') || undefined,
       tags: (searchParams.getAll('tags[]') as unknown as number[]) || undefined,
-      startStartAt: searchParams.get('start_start_at')
-        ? dayjs(searchParams.get('start_start_at')).toDate()
+      startAtFrom: searchParams.get('start_at_from')
+        ? dayjs(searchParams.get('start_at_from')).toDate()
         : null,
-      endStartAt: searchParams.get('end_start_at')
-        ? dayjs(searchParams.get('end_start_at')).toDate()
+      startAtTo: searchParams.get('start_at_to')
+        ? dayjs(searchParams.get('start_at_to')).toDate()
         : null,
       sortBy: (searchParams.get('sort_by') as EventSortByCode) ?? undefined,
     },
@@ -77,8 +77,8 @@ function SearchEvent() {
   function handleSearch(data: any = {}) {
     if (form.getValues()['start_at_range']) {
       const start_at_range = form.getValues()['start_at_range'];
-      data.start_start_at = dayjs(start_at_range.from).format('YYYY-MM-DD');
-      data.end_start_at = dayjs(start_at_range.to).format('YYYY-MM-DD');
+      data.start_at_from = dayjs(start_at_range.from).format('YYYY-MM-DD');
+      data.start_at_to = dayjs(start_at_range.to).format('YYYY-MM-DD');
     }
     const filters: EventsApiSearchEventsRequest = {
       ...form.getValues(),

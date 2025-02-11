@@ -46,7 +46,7 @@
       "meetingUrl": "link meeting",
       "organizeAddress": "địa chỉ tổ chức",
       "organizeCityCode": "thành phố tổ chức",
-      "applicationNumber": "số lượng đơn tối đa",
+      "totalTicketNumber": "số lượng đơn tối đa",
       "ticketName": "tên vé",
       "ticketQuantity": "số lượng vé",
       "ticketPrice": "giá",
@@ -66,7 +66,9 @@
       "isApplyOngoing": "đang mở đăng ký",
       "isApplyEnded": "kết thúc đăng ký",
       "isFree": "miễn phí",
-      "isPaid": "trả phí"
+      "isPaid": "trả phí",
+      "gallery": "thư viện ảnh và video",
+      "timeline": "lịch trình"
     },
     "message": {
       "error": {
@@ -74,7 +76,7 @@
         "email": "email không hợp lệ",
         "empty": "[field] không được bỏ trống",
         "invalid_string": "[field] không hợp lệ",
-        "invalid_type": "[field] sai định dạng",
+        "invalid_type": "[field] không hợp lệ",
         "too_small": "[field] phải có ít nhất [value] ký tự",
         "too_big": "[field] không được chứa quá [value] ký tự",
         "passwordNotMatch": "mật khẩu không khớp",
@@ -89,14 +91,14 @@
         "invalidApplicationStartAt": "thời gian bắt đầu mở đăng ký sự kiện phải bé hơn thời gian đóng đăng ký và thời gian bắt đầu sự kiện",
         "invalidApplicationEndAt": "thời gian đóng đăng ký phải lớn hơn thời gian mở đăng ký và nhỏ hơn thời gian kết thúc sự kiện",
         "neitherOnlineNorOffline": "sự kiện phải là online hoặc offline hoặc cả 2",
-        "missingEventOrganizePlaceName": "vui lòng nhập tên địa điểm tổ chức sự kiện",
         "missingEventOrganizeCityCode": "vui lòng chọn thành phố tổ chức sự kiện",
         "missingEventOrganizeAddress": "vui lòng nhập địa chỉ tổ chức sự kiện",
         "missingEventMeetingToolCode": "vui lòng chọn ít nhất một loại meeting nếu sự kiện diễn ra online",
         "missingEventMeetingUrl": "vui lòng cung cấp meeting url",
         "invalidTicketPrice": "ticket không hợp lệ",
         "invalidSurveyEndAt": "ngày đóng khảo sát không thể nhỏ hơn ngày mở khảo sáts",
-        "missingIndustryCodes": "target phải chứa ít nhất một loại công việc"
+        "missingIndustryCodes": "target phải chứa ít nhất một loại công việc",
+        "minimumTotalTicketNumber": "số lượng vé tối thiểu là 1"
       }
     }
   },

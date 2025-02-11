@@ -9,6 +9,7 @@ async def listing_tag_rank(db: Session):
     tags = (
         db.exec(
             select(Tag.id, Tag.name, Tag.image_url)
+            .select_from(Tag)
             .outerjoin(TagAssociation, Tag.id == TagAssociation.tag_id)
             .where(
                 TagAssociation.entity_code.in_(

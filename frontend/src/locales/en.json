@@ -46,7 +46,7 @@
       "eventFormat": "format",
       "organizeAddress": "organize address",
       "organizeCityCode": "organize city",
-      "applicationNumber": "maximum application number",
+      "totalTicketNumber": "total ticket number",
       "ticketName": "ticket name",
       "ticketQuantity": "quantity",
       "ticketPrice": "price",
@@ -66,7 +66,9 @@
       "isApplyOngoing": "opening application",
       "isApplyEnded": "closed application",
       "isFree": "free",
-      "isPaid": "paid"
+      "isPaid": "paid",
+      "gallery": "gallery",
+      "timeline": "timeline"
     },
     "message": {
       "error": {
@@ -74,7 +76,7 @@
         "email": "invalid email",
         "empty": "[field] can't empty",
         "invalid_string": "invalid [field]",
-        "invalid_type": "invalid format [field]",
+        "invalid_type": "invalid [field]",
         "too_small": "[field] must be greater than [value] characters",
         "too_big": "[field] must be less than [value] characters",
         "passwordNotMatch": "password not match",
@@ -88,15 +90,15 @@
         "invalidEventEndAt": "event end day must greater than start day, application start day and application end day",
         "invalidApplicationStartAt": "event application start day must less than application end day and start day",
         "invalidApplicationEndAt": "event application end day must greater than applicaiton start day and less than  end day",
-        "neitheOffnlineNorOfffline": "event host method must be online or offline or both",
-        "missingEventOrganizePlaceName": "please enter organize place name for event",
+        "neitherOnlineNorOffline": "event host method must be online or offline or both",
         "missingEventOrganizeCityCode": "please select organize city for event",
         "missingEventOrganizeAddress": "please enter organize address for event",
         "missingEventMeetingToolCode": "please select at least meeting tool if event is online",
         "missingEventMeetingUrl": "you selected meeting tool, please provide meeting url",
         "invalidTicketPrice": "invalid ticket",
         "invalidSurveyEndAt": "invalid survey end date time",
-        "missingIndustryCodes": "target must contain at least one industry"
+        "missingIndustryCodes": "target must contain at least one industry",
+        "minimumTotalTicketNumber": "total ticket number must be greater than 0"
       }
     }
   },

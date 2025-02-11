@@ -20,6 +20,7 @@ from backend.schemas.auth import RegisterOrganizationRequest
 from backend.schemas.event import (
     ListingOrganizationEventsQueryParams,
     ListingOrganizationEventsResponse,
+    ListingOrganizationEventsTimelineItem,
     ListingTopOrganizationEventsResponse,
 )
 from backend.schemas.organization import (
@@ -27,7 +28,7 @@ from backend.schemas.organization import (
     GetAttendeeDetailResponse,
     ListingAttendeesQueryParams,
     ListingAttendeesResponse,
-    ListingOngoingEventOrganizationsResponse,
+    ListingRandomOrganizationsResponse,
 )
 
 router = APIRouter()
@@ -64,6 +65,19 @@ async def listing_organization_events(
     return ListingOrganizationEventsResponse(
         data=events, total=total, page=1, per_page=10
     )
+
+
+@router.get(
+    "/events/timeline",
+    response_model=list[ListingOrganizationEventsTimelineItem],
+    responses=authenticated_api_responses,
+)
+async def listing_organization_events_timeline(
+    db: Session = Depends(get_read_db),
+    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+):
+    events = await events_service.listing_events_timeline(db, organizer)
+    return events
 
 
 @router.get(
@@ -119,22 +133,20 @@ async def get_attendee_detail(
 
 
 @router.get(
-    "/ongoing-event-organizations",
-    response_model=ListingOngoingEventOrganizationsResponse,
+    "/random",
+    response_model=ListingRandomOrganizationsResponse,
     responses=public_api_responses,
 )
-async def listing_organizations_of_ongoing_event(
+async def listing_random_organizations(
     db: Session = Depends(get_read_db),
     user: User | None = Depends(get_user_if_logged_in),
 ):
-    organizations = await organizations_service.listing_ongoing_event_organizations(
-        db, user
-    )
-    return ListingOngoingEventOrganizationsResponse(
+    organizations = await organizations_service.listing_random_organizations(db, user)
+    return ListingRandomOrganizationsResponse(
         data=organizations,
-        total=len(organizations),
+        total=5,
         page=1,
-        per_page=len(organizations),
+        per_page=5,
     )
 
 

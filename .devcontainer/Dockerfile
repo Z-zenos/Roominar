@@ -59,7 +59,7 @@ FROM python-base as development
 COPY --from=poetry-base $POETRY_HOME $POETRY_HOME
 
 RUN apt-get update && apt-get install --no-install-recommends -y \
-    libpq-dev build-essential git bash curl tar sudo default-jre nodejs npm && \
+    procps libpq-dev build-essential git bash curl tar sudo default-jre nodejs npm && \
     curl -fsSL https://get.pnpm.io/v6.js | node - add --global pnpm && \
     useradd -m -d /home/app -s /bin/bash app && \
     echo '%app ALL=(ALL) NOPASSWD:ALL' >>/etc/sudoers && \

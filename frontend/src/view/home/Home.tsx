@@ -30,6 +30,7 @@ import RankingList from '@/src/component/common/Ranking/RankingList';
 import SpeakerCard from '@/src/component/common/Card/SpeakerCard';
 import {
   useListingEventRankQuery,
+  useListingRecommendationEventsQuery,
   useSearchEventsQuery,
 } from '@/src/api/event.api';
 import { EventSortByCode } from '@/src/lib/api/generated';
@@ -37,8 +38,9 @@ import EventCard from '@/src/component/common/Card/EventCard';
 import EventCardSkeleton from '@/src/component/common/Card/EventCardSkeleton';
 import { useListingTagRankQuery } from '@/src/api/tag.api';
 import Marquee from 'react-fast-marquee';
-import { useListingOngoingEventOrganizationsQuery } from '@/src/api/organization.api';
 import OrganizationCardSkeleton from '@/src/component/common/Card/OrganizationCardSkeleton';
+import { useSession } from 'next-auth/react';
+import { useListingRandomOrganizationsQuery } from '@/src/api/organization.api';
 
 interface HeadingGroupProps {
   heading: string | ReactNode;
@@ -60,11 +62,20 @@ const HeadingGroup = ({
 };
 
 export default function Home() {
+  const { status } = useSession();
   const { data: upcomingEvents, isLoading: isUpcomingEventsLoading } =
     useSearchEventsQuery({
       sortBy: EventSortByCode.StartAt,
       perPage: 8,
     });
+
+  const { data: recommendedEvents, isLoading: isRecommendationEventsLoading } =
+    useListingRecommendationEventsQuery(
+      {
+        perPage: 8,
+      },
+      status === 'authenticated',
+    );
 
   const {
     data: applicationClosingSoonEvents,
@@ -74,10 +85,8 @@ export default function Home() {
     perPage: 8,
   });
 
-  const {
-    data: ongoingEventOrganizations,
-    isLoading: isOngoingEventOrganizationLoading,
-  } = useListingOngoingEventOrganizationsQuery();
+  const { data: randomOrganizations, isLoading: isRandomOrganizationsLoading } =
+    useListingRandomOrganizationsQuery();
 
   const { data: tagRankData } = useListingTagRankQuery();
   const { data: eventRankData } = useListingEventRankQuery();
@@ -105,7 +114,8 @@ export default function Home() {
           </h2>
           <h1 className='text-hg my-5 font-semibold'>
             Web(<span className='text-gradient'>Sem</span>)inar &
-            <span className='text-gradient'>E</span>vent 2024 🎉
+            <span className='text-gradient'>E</span>vent{' '}
+            {new Date().getFullYear()} 🎉
           </h1>
           <p className='text-primary font-semibold mb-8'>
             Search site for business seminars focusing on digital and AI
@@ -132,7 +142,15 @@ export default function Home() {
         <div className='bg-transparent h-[500px] w-full flex items-center justify-center absolute top-0 left-0'>
           <div className='relative w-full '>
             <div className='my-8 relative space-y-4 opacity-30'>
-              {upcomingEvents && (
+              {recommendedEvents && (
+                <Image
+                  src={recommendedEvents.data[activeEvent]?.coverImageUrl}
+                  alt='Cover image'
+                  className='w-full blur-xl'
+                  classNames={{ wrapper: '!max-w-full' }}
+                />
+              )}
+              {!recommendedEvents && upcomingEvents && (
                 <Image
                   src={upcomingEvents.data[activeEvent]?.coverImageUrl}
                   alt='Cover image'
@@ -155,12 +173,76 @@ export default function Home() {
       <section className='py-[40px] px-[15%]'>
         <HeadingGroup
           heading={
-            <span className='flex justify-center gap-2 items-center text-green-500'>
+            <span className='flex justify-center gap-2 items-center font-semibold text-green-500'>
               Events <GiPartyPopper />
             </span>
           }
           subheading='Elevate your virtual experiences with our all-in-one webinar and event management solutions.'
         />
+
+        <div className='mb-6'>
+          <Swiper
+            key={width > 1200 ? 5 : 3}
+            autoplay={{
+              delay: 7000,
+              disableOnInteraction: false,
+            }}
+            freeMode={true}
+            modules={[Autoplay, Navigation, FreeMode]}
+            pagination={{
+              clickable: true,
+            }}
+            slidesPerView={width > 1200 ? 5 : 3}
+            spaceBetween={30}
+            wrapperClass='pb-2'
+            onSlideChange={(swipper) => setActiveEvent(swipper.activeIndex)}
+          >
+            {isRecommendationEventsLoading && (
+              <div className='flex justify-between'>
+                <EventCardSkeleton
+                  direction='vertical'
+                  variant='simple'
+                />
+                <EventCardSkeleton
+                  direction='vertical'
+                  variant='simple'
+                />
+                <EventCardSkeleton
+                  direction='vertical'
+                  variant='simple'
+                />
+                <EventCardSkeleton
+                  direction='vertical'
+                  variant='simple'
+                />
+              </div>
+            )}
+            {!isRecommendationEventsLoading &&
+              recommendedEvents &&
+              recommendedEvents.data.map((event) => (
+                <SwiperSlide
+                  key={event.id}
+                  className={clsx('dark:rounded-lg dark:p-0')}
+                >
+                  <EventCard
+                    direction={width > 800 ? 'vertical' : 'horizontal'}
+                    event={event}
+                    variant='compact'
+                    className='!max-w-[250px] !min-w-[200px] !max-h-[200px]'
+                  />
+                </SwiperSlide>
+              ))}
+            {!isRecommendationEventsLoading && recommendedEvents && (
+              <Link
+                href='search/events?sort_by=recommendation'
+                className='my-8 block text-center text-green-500 font-semibold hover:underline'
+              >
+                --- More Recommendation Events ---{' '}
+              </Link>
+            )}
+          </Swiper>
+        </div>
+
         <Link
           className='text-primary font-bold inline-flex justify-start gap-2 items-center cursor-pointer border-b border-b-primary pb-2'
           href='/search?sort_by=START_AT'
@@ -215,7 +297,7 @@ export default function Home() {
                   <EventCard
                     direction={width > 800 ? 'vertical' : 'horizontal'}
                     event={event}
-                    variant='simple'
+                    variant='standard'
                   />
                 </SwiperSlide>
               ))}
@@ -266,7 +348,7 @@ export default function Home() {
                   <EventCard
                     direction='horizontal'
                     event={event}
-                    variant='simple'
+                    variant='standard'
                   />
                 </SwiperSlide>
               ))}
@@ -285,16 +367,16 @@ export default function Home() {
               Follow us to receive the latest news from the organization.
             </h3>
             <div className='grid items-center gap-4 mt-6 1200px:grid-cols-3 grid-cols-2 '>
-              {ongoingEventOrganizations &&
-                ongoingEventOrganizations.data?.length > 0 &&
-                ongoingEventOrganizations.data.map((organization, i) => (
+              {randomOrganizations &&
+                randomOrganizations.data?.length > 0 &&
+                randomOrganizations.data.map((organization, i) => (
                   <OrganizationCard
                     key={`org-${i}`}
                     organization={organization}
                   />
                 ))}
 
-              {isOngoingEventOrganizationLoading && (
+              {isRandomOrganizationsLoading && (
                 <>
                   <OrganizationCardSkeleton />
                   <OrganizationCardSkeleton />

@@ -4,11 +4,14 @@ import type {
   EventsApiCreateEventBookmarkRequest,
   EventsApiDeleteCheckInRequest,
   EventsApiDeleteEventBookmarkRequest,
+  EventsApiGetDraftEventRequest,
   EventsApiGetEventDetailRequest,
   EventsApiListingMyEventsRequest,
+  EventsApiListingRecommendationEventsRequest,
   EventsApiListingRelatedEventsRequest,
   EventsApiListingTicketsOfEventRequest,
   EventsApiPublishEventRequest,
+  EventsApiSaveDraftEventRequest,
   EventsApiSearchEventsRequest,
   OrganizationsApiListingOrganizationEventsRequest,
   OrganizationsApiListingTopOrganizationEventsRequest,
@@ -173,4 +176,39 @@ export const useDeleteCheckInMutation = <T>(
     async (_: string, { arg }) => await api.events.deleteCheckIn(arg),
     options,
   );
+};
+
+export const useGetDraftEventQuery = (
+  params?: EventsApiGetDraftEventRequest,
+) => {
+  const api = useApi();
+  return useQuery({
+    queryKey: ['get-draft-event'],
+    queryFn: async () => await api.events.getDraftEvent(params),
+  });
+};
+
+export const useSaveDraftEventMutation = <T>(
+  options?: SWRMutationConfiguration<number, T>,
+) => {
+  const api = useApi();
+  const key = 'save-draft-event';
+  return useSWRMutation<number, T, typeof key, EventsApiSaveDraftEventRequest>(
+    key,
+    async (_: string, { arg }) => await api.events.saveDraftEvent(arg),
+    options,
+  );
+};
+
+export const useListingRecommendationEventsQuery = (
+  params?: EventsApiListingRecommendationEventsRequest,
+  enabled?: boolean,
+) => {
+  params = toCamelCase(params);
+  const api = useApi();
+  return useQuery({
+    queryKey: ['listing-recommendation-events', params],
+    queryFn: async () => await api.events.listingRecommendationEvents(params),
+    enabled,
+  });
 };

@@ -1,14 +1,14 @@
 from datetime import datetime
 
-from sqlmodel import Date, Session, and_, func, select, text
+from sqlmodel import Date, Session, and_, case, func, select, text
 
-from backend.api.v1.services.tags.get_event_tags_service import get_event_tags
 from backend.core.constants import (
     EventTimeStatusCode,
     ManageEventSortByCode,
     TagAssociationEntityCode,
 )
 from backend.models.event import Event
+from backend.models.tag import Tag
 from backend.models.tag_association import TagAssociation
 from backend.models.ticket import Ticket
 from backend.models.ticket_inventory import TicketInventory
@@ -58,6 +58,23 @@ async def _listing_events(
         .subquery()
     )
 
+    EventTag = (
+        select(
+            Event.id.label("event_id"),
+            func.json_agg(
+                func.json_build_object(
+                    "id", Tag.id, "name", Tag.name, "image_url", Tag.image_url
+                )
+            ).label("tags"),
+        )
+        .select_from(Event)
+        .join(TagAssociation, and_(Event.id == TagAssociation.entity_id))
+        .join(Tag, Tag.id == TagAssociation.tag_id)
+        .where(TagAssociation.entity_code == TagAssociationEntityCode.EVENT)
+        .group_by(Event.id)
+        .subquery()
+    )
+
     query = (
         select(
             Event.id,
@@ -71,15 +88,23 @@ async def _listing_events(
             Event.is_online,
             Event.is_offline,
             Event.organize_city_code,
-            Event.organize_place_name,
+            Event.organize_address,
             Event.total_ticket_number,
             Event.status,
             Event.view_number,
             Event.meeting_tool_code,
             Event.meeting_url,
-            EventTicket.c.tickets,
+            case(
+                (EventTicket.c.tickets.is_(None), "[]"),
+                else_=EventTicket.c.tickets,
+            ),
+            case(
+                (EventTag.c.tags.is_(None), "[]"),
+                else_=EventTag.c.tags,
+            ),
         )
-        .join(EventTicket, Event.id == EventTicket.c.event_id)
+        .outerjoin(EventTicket, Event.id == EventTicket.c.event_id)
+        .outerjoin(EventTag, Event.id == EventTag.c.event_id)
         .where(*filters)
         .limit(query_params.per_page)
         .offset(query_params.per_page * (query_params.page - 1))
@@ -88,11 +113,7 @@ async def _listing_events(
     events = db.exec(query).mappings().all()
 
     result = {event.id: dict(event) for event in events}
-    event_ids = list(result.keys())
-    event_tags = get_event_tags(db, event_ids=event_ids)
 
-    for item in event_tags:
-        result[item.id]["tags"] = item.tags
     return list(result.values())
 
 

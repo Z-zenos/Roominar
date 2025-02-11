@@ -28,12 +28,11 @@ export const useRegisterOrganizationMutation = <T>(
   );
 };
 
-export const useListingOngoingEventOrganizationsQuery = () => {
+export const useListingRandomOrganizationsQuery = () => {
   const api = useApi();
   return useQuery({
-    queryKey: ['listing-ongoing-event-organizations'],
-    queryFn: async () =>
-      await api.organizations.listingOrganizationsOfOngoingEvent(),
+    queryKey: ['listing-random-organizations'],
+    queryFn: async () => await api.organizations.listingRandomOrganizations(),
   });
 };
 
@@ -95,5 +94,14 @@ export const useGetAttendeeDetailQuery = (
   return useQuery({
     queryKey: ['get-attendee-detail'],
     queryFn: async () => await api.organizations.getAttendeeDetail(params),
+  });
+};
+
+export const useListingOrganizationEventsTimelineQuery = () => {
+  const api = useApi();
+  return useQuery({
+    queryKey: ['listing-orgnization-events-timeline'],
+    queryFn: async () =>
+      await api.organizations.listingOrganizationEventsTimeline(),
   });
 };

@@ -17,12 +17,16 @@ from backend.db.database import get_read_db
 from backend.models import User
 from backend.schemas.check_in import CreateCheckInRequest
 from backend.schemas.event import (
+    CreateDraftEventRequest,
+    GetDraftEventResponse,
     GetEventDetailResponse,
     ListingEventRankResponse,
     ListingMyEventsQueryParams,
     ListingMyEventsResponse,
+    ListingRecommendationEventsResponse,
     ListingRelatedEventsResponse,
     PublishEventRequest,
+    SaveDraftEventRequest,
     SearchEventsQueryParams,
     SearchEventsResponse,
 )
@@ -110,6 +114,25 @@ async def listing_my_events(
 
 
 @router.get(
+    "/recommendation",
+    response_model=ListingRecommendationEventsResponse,
+    responses=public_api_responses,
+)
+async def listing_recommendation_events(
+    db: Session = Depends(get_read_db),
+    user: User = Depends(get_current_user),
+    query_params: SearchEventsQueryParams = Depends(SearchEventsQueryParams),
+):
+    data = await events_service.listing_recommendation_events(db, user, query_params)
+    return ListingRecommendationEventsResponse(
+        data=data.get("events"),
+        total=data.get("total"),
+        page=query_params.page,
+        per_page=query_params.per_page,
+    )
+
+
+@router.get(
     "/{slug}", response_model=GetEventDetailResponse, responses=public_api_responses
 )
 async def get_event_detail(
@@ -154,6 +177,40 @@ async def delete_event_bookmark(
     current_user: User = Depends(get_current_user),
 ):
     return await events_service.delete_event_bookmark(db, current_user, event_id)
+
+
+@router.get(
+    "/draft/{slug}",
+    response_model=GetDraftEventResponse,
+    responses=authenticated_api_responses,
+)
+async def get_draft_event(
+    db: Session = Depends(get_read_db),
+    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+    slug: str = None,
+):
+    return await events_service.get_draft_event(db, organizer, slug)
+
+
+@router.post("/draft", response_model=int, responses=authenticated_api_responses)
+async def create_draft_event(
+    db: Session = Depends(get_read_db),
+    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+    request: CreateDraftEventRequest = None,
+):
+    return await events_service.create_draft_event(db, organizer, request)
+
+
+@router.patch(
+    "/draft/{event_id}", response_model=int, responses=authenticated_api_responses
+)
+async def save_draft_event(
+    db: Session = Depends(get_read_db),
+    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+    request: SaveDraftEventRequest = None,
+    event_id: int = None,
+):
+    return await events_service.save_draft_event(db, organizer, request, event_id)
 
 
 @router.post("/{event_id}", response_model=int, responses=authenticated_api_responses)

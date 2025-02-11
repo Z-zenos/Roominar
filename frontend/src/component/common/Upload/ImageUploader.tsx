@@ -41,7 +41,7 @@ const ImageUploader = ({
 
   return (
     <div className={clsx('bg-white rounded-xl mx-auto', className)}>
-      <div className='relative w-full h-full flex gap-6 py-3 px-1 justify-start items-center'>
+      <div className='relative w-full h-full flex flex-wrap gap-6 py-3 px-1 justify-start items-center'>
         {!u.isFetching && u.image && (
           <Avatar
             isBordered
@@ -125,6 +125,8 @@ const ImageUploader = ({
               isIconOnly
               size='sm'
               startContent={<GoTrash size={16} />}
+              onClick={() => u.deleteImage(u.image!.public_id)}
+              type='button'
             />
           </div>
         </div>
