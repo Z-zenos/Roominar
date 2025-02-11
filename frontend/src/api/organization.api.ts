@@ -28,12 +28,11 @@ export const useRegisterOrganizationMutation = <T>(
   );
 };
 
-export const useListingOngoingEventOrganizationsQuery = () => {
+export const useListingRandomOrganizationsQuery = () => {
   const api = useApi();
   return useQuery({
-    queryKey: ['listing-ongoing-event-organizations'],
-    queryFn: async () =>
-      await api.organizations.listingOrganizationsOfOngoingEvent(),
+    queryKey: ['listing-random-organizations'],
+    queryFn: async () => await api.organizations.listingRandomOrganizations(),
   });
 };
 

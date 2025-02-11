@@ -28,7 +28,7 @@ from backend.schemas.organization import (
     GetAttendeeDetailResponse,
     ListingAttendeesQueryParams,
     ListingAttendeesResponse,
-    ListingOngoingEventOrganizationsResponse,
+    ListingRandomOrganizationsResponse,
 )
 
 router = APIRouter()
@@ -133,22 +133,20 @@ async def get_attendee_detail(
 
 
 @router.get(
-    "/ongoing-event-organizations",
-    response_model=ListingOngoingEventOrganizationsResponse,
+    "/random",
+    response_model=ListingRandomOrganizationsResponse,
     responses=public_api_responses,
 )
-async def listing_organizations_of_ongoing_event(
+async def listing_random_organizations(
     db: Session = Depends(get_read_db),
     user: User | None = Depends(get_user_if_logged_in),
 ):
-    organizations = await organizations_service.listing_ongoing_event_organizations(
-        db, user
-    )
-    return ListingOngoingEventOrganizationsResponse(
+    organizations = await organizations_service.listing_random_organizations(db, user)
+    return ListingRandomOrganizationsResponse(
         data=organizations,
-        total=len(organizations),
+        total=5,
         page=1,
-        per_page=len(organizations),
+        per_page=5,
     )
 
 

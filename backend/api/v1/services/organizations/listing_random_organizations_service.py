@@ -1,6 +1,4 @@
-from datetime import datetime
-
-from sqlmodel import Session, and_, case, func, select
+from sqlmodel import Session, and_, distinct, func, literal, select
 
 from backend.core.constants import FollowEntityCode, TagAssociationEntityCode
 from backend.models.event import Event
@@ -11,7 +9,7 @@ from backend.models.tag_association import TagAssociation
 from backend.models.user import User
 
 
-async def listing_ongoing_event_organizations(db: Session, user: User):
+async def listing_random_organizations(db: Session, user: User):
     OrganizationTag = (
         select(
             Organization.id,
@@ -34,9 +32,10 @@ async def listing_ongoing_event_organizations(db: Session, user: User):
     OrganizationEventFollowCount = (
         select(
             Organization.id,
-            func.count(Event.id.distinct()).label("event_number"),
-            func.count(Follow.follower_id.distinct()).label("follower_number"),
+            func.count(distinct(Event.id)).label("event_number"),
+            func.count(distinct(Follow.follower_id)).label("follower_number"),
         )
+        .select_from(Organization)
         .outerjoin(Event, Event.organization_id == Organization.id)
         .outerjoin(
             Follow,
@@ -45,14 +44,21 @@ async def listing_ongoing_event_organizations(db: Session, user: User):
                 Follow.entity_code == FollowEntityCode.ORGANIZATION,
             ),
         )
-        .where(
-            Event.application_start_at <= datetime.now(),
-            Event.application_end_at > datetime.now(),
-            Event.published_at.isnot(None),
-        )
-        .group_by(Organization.id)
-        .subquery()
+        .where(Event.published_at.isnot(None))
     )
+
+    if user:
+        OrganizationEventFollowCount = OrganizationEventFollowCount.add_columns(
+            func.bool_or(Follow.follower_id == user.id).label("is_followed")
+        )
+    else:
+        OrganizationEventFollowCount = OrganizationEventFollowCount.add_columns(
+            literal("false").label("is_followed")
+        )
+
+    OrganizationEventFollowCount = OrganizationEventFollowCount.group_by(
+        Organization.id
+    ).subquery()
 
     organizations = (
         db.exec(
@@ -64,27 +70,15 @@ async def listing_ongoing_event_organizations(db: Session, user: User):
                 OrganizationTag.c.tags,
                 OrganizationEventFollowCount.c.event_number,
                 OrganizationEventFollowCount.c.follower_number,
-                case(
-                    (
-                        user and Follow.follower_id == user.id,
-                        True,
-                    ),
-                    else_=False,
-                ).label("is_followed"),
+                OrganizationEventFollowCount.c.is_followed,
             )
+            .outerjoin(OrganizationTag, OrganizationTag.c.id == Organization.id)
             .outerjoin(
-                Follow,
-                and_(
-                    Follow.following_id == Organization.id,
-                    Follow.entity_code == FollowEntityCode.ORGANIZATION,
-                ),
-            )
-            .join(OrganizationTag, OrganizationTag.c.id == Organization.id)
-            .join(
                 OrganizationEventFollowCount,
                 OrganizationEventFollowCount.c.id == Organization.id,
             )
-            .limit(10)
+            .order_by(func.random())
+            .limit(5)
         )
         .mappings()
         .all()

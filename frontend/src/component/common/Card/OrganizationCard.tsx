@@ -1,7 +1,7 @@
 'use client';
 
 import type {
-  ListingOngoingEventOrganizationsItem,
+  ListingRandomOrganizationsItem,
   TagItem,
 } from '@/src/lib/api/generated';
 import {
@@ -15,7 +15,7 @@ import {
 import clsx from 'clsx';
 import OrganizationFollowButton from '../Button/OrganizationFollowButton';
 
-export interface Organization extends ListingOngoingEventOrganizationsItem {}
+export interface Organization extends ListingRandomOrganizationsItem {}
 
 interface OrganizationCardProps {
   organization?: Organization;
@@ -69,13 +69,13 @@ function OrganizationCard({ organization, className }: OrganizationCardProps) {
       <CardFooter className='gap-3'>
         <div className='flex gap-1'>
           <p className='font-semibold text-default-400 text-small'>
-            {organization?.eventNumber}
+            {organization?.eventNumber ?? 0}
           </p>
           <p className=' text-default-400 text-small'>Events</p>
         </div>
         <div className='flex gap-1'>
           <p className='font-semibold text-default-400 text-small'>
-            {organization?.followerNumber}
+            {organization?.followerNumber ?? 0}
           </p>
           <p className='text-default-400 text-small'>Followers</p>
         </div>

@@ -15,7 +15,7 @@ from backend.schemas.tag import TagItem
 from backend.schemas.transaction import AttendeeTicketTransaction
 
 
-class ListingOngoingEventOrganizationsItem(BaseModel):
+class ListingRandomOrganizationsItem(BaseModel):
     id: int
     name: str
     description: str | None = None
@@ -26,8 +26,8 @@ class ListingOngoingEventOrganizationsItem(BaseModel):
     is_followed: bool | None = None
 
 
-class ListingOngoingEventOrganizationsResponse(
-    PaginationResponse[ListingOngoingEventOrganizationsItem]
+class ListingRandomOrganizationsResponse(
+    PaginationResponse[ListingRandomOrganizationsItem]
 ):
     pass
 

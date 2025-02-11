@@ -38,9 +38,9 @@ import EventCard from '@/src/component/common/Card/EventCard';
 import EventCardSkeleton from '@/src/component/common/Card/EventCardSkeleton';
 import { useListingTagRankQuery } from '@/src/api/tag.api';
 import Marquee from 'react-fast-marquee';
-import { useListingOngoingEventOrganizationsQuery } from '@/src/api/organization.api';
 import OrganizationCardSkeleton from '@/src/component/common/Card/OrganizationCardSkeleton';
 import { useSession } from 'next-auth/react';
+import { useListingRandomOrganizationsQuery } from '@/src/api/organization.api';
 
 interface HeadingGroupProps {
   heading: string | ReactNode;
@@ -85,10 +85,8 @@ export default function Home() {
     perPage: 8,
   });
 
-  const {
-    data: ongoingEventOrganizations,
-    isLoading: isOngoingEventOrganizationLoading,
-  } = useListingOngoingEventOrganizationsQuery();
+  const { data: randomOrganizations, isLoading: isRandomOrganizationsLoading } =
+    useListingRandomOrganizationsQuery();
 
   const { data: tagRankData } = useListingTagRankQuery();
   const { data: eventRankData } = useListingEventRankQuery();
@@ -369,16 +367,16 @@ export default function Home() {
               Follow us to receive the latest news from the organization.
             </h3>
             <div className='grid items-center gap-4 mt-6 1200px:grid-cols-3 grid-cols-2 '>
-              {ongoingEventOrganizations &&
-                ongoingEventOrganizations.data?.length > 0 &&
-                ongoingEventOrganizations.data.map((organization, i) => (
+              {randomOrganizations &&
+                randomOrganizations.data?.length > 0 &&
+                randomOrganizations.data.map((organization, i) => (
                   <OrganizationCard
                     key={`org-${i}`}
                     organization={organization}
                   />
                 ))}
 
-              {isOngoingEventOrganizationLoading && (
+              {isRandomOrganizationsLoading && (
                 <>
                   <OrganizationCardSkeleton />
                   <OrganizationCardSkeleton />
