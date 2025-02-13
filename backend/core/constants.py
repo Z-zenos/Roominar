@@ -289,6 +289,7 @@ class TagAssociationEntityCode(str, Enum):
     EVENT = "EVENT"
     ORGANIZATION = "ORGANIZATION"
     USER = "USER"
+    SPEAKER = "SPEAKER"
 
 
 class FollowEntityCode(str, Enum):

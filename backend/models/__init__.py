@@ -6,6 +6,7 @@ from .event import Event
 from .follow import Follow
 from .organization import Organization
 from .question import Question
+from .speaker import Speaker
 from .survey import Survey
 from .survey_response_result import SurveyResponseResult
 from .tag import Tag
@@ -38,4 +39,5 @@ all = (
     TransactionItem,
     CheckIn,
     TicketInventory,
+    Speaker,
 )

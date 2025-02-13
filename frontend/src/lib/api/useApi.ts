@@ -5,6 +5,7 @@ import {
   AuthApi,
   EventsApi,
   OrganizationsApi,
+  SpeakersApi,
   SurveysApi,
   TagsApi,
   TargetsApi,
@@ -26,6 +27,7 @@ function useApi() {
     targets: new TargetsApi(config),
     tickets: new TicketsApi(config),
     transactions: new TransactionsApi(config),
+    speakers: new SpeakersApi(config),
   };
 }
 
