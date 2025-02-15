@@ -24,7 +24,6 @@ import OrganizationFollowButton from '@/src/component/common/Button/Organization
 import type { TagItem } from '@/src/lib/api/generated';
 import EventCard from '@/src/component/common/Card/EventCard';
 import { FaPhone } from 'react-icons/fa6';
-import { HiMail } from 'react-icons/hi';
 import { GrLocationPin } from 'react-icons/gr';
 import { CiMail } from 'react-icons/ci';
 
@@ -48,11 +47,23 @@ function OrganizationProfile({ slug }: OrganizationProfileProps) {
         keywords={organization?.tags.map((tag) => tag.name).join(', ')}
         title={organization?.name}
       />
+      <div className='bg-transparent h-[200px] w-full flex items-center justify-center absolute top-0 left-0'>
+        <div className='relative w-full '>
+          <div className='my-8 relative space-y-4 opacity-10'>
+            <Image
+              src={organization.avatarUrl}
+              alt='Cover image'
+              className='w-full blur-xl'
+              classNames={{ wrapper: '!max-w-full' }}
+            />
+          </div>
+        </div>
+      </div>
       <div className={clsx('dark:bg-dark-sub w-full py-14 px-[15%]')}>
         <div className='rounded-md bg-gradient-to-tr from-pink-300 to-blue-300 p-1 shadow-md'>
           <div className='h-[100px] border-b border-b-gray-200 bg-white'></div>
           <div className='grid grid-cols-7 px-20 pt-10 pb-5 bg-white'>
-            <div className='col-span-5 pt-5 relative'>
+            <div className='1000px:col-span-5 col-span-7 pt-5 relative'>
               <Image
                 src={organization.avatarUrl}
                 alt='organization avatar url'
@@ -80,7 +91,7 @@ function OrganizationProfile({ slug }: OrganizationProfileProps) {
                 </div>
               </div>
             </div>
-            <div className='col-span-2'>
+            <div className='1000px:col-span-2 col-span-7 '>
               <div className='flex justify-end items-start'>
                 <OrganizationFollowButton
                   organizationId={organization.id}
@@ -105,7 +116,7 @@ function OrganizationProfile({ slug }: OrganizationProfileProps) {
             </div>
           </div>
         </div>
-        <div className='grid grid-cols-3 gap-5 mt-12'>
+        <div className='grid 1000px:grid-cols-3 grid-cols-2 gap-5 mt-12'>
           <div className='col-span-2'>
             <div className='bg-white dark:bg-dark-sub rounded-md p-6 border border-gray-200'>
               <div className='text-md font-semibold'>About Organization</div>
@@ -125,7 +136,7 @@ function OrganizationProfile({ slug }: OrganizationProfileProps) {
               ))}
             </div>
           </div>
-          <div className='col-span-1'>
+          <div className='1000px:col-span-1 col-span-2'>
             <div className='border border-gray-200'></div>
           </div>
         </div>
