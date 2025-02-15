@@ -13,7 +13,7 @@ const registerOrganizationFormSchema = z
     cityCode: z.string().trim().nullable(),
 
     address: z.string().trim().max(1000).nullable(),
-    representativeUrl: z.string().nullable(),
+    slug: z.string().nullable(),
     phone: z.string().trim().max(11).nullable(),
     organizationType: z.nativeEnum(OrganizationTypeCode),
   })

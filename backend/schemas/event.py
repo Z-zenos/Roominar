@@ -67,6 +67,8 @@ class SearchEventsQueryParams(BaseModel):
     start_at_from: datetime | None = Field(Query(default=None))
     start_at_to: datetime | None = Field(Query(default=None))
 
+    organization_id: int | None = Field(Query(default=None))
+
     sort_by: EventSortByCode | None = Field(Query(default=EventSortByCode.PUBLISHED_AT))
     per_page: int | None = Field(Query(default=10, le=100, ge=1))
     page: int | None = Field(Query(default=1, ge=1))
@@ -76,6 +78,33 @@ class SearchEventsQueryParams(BaseModel):
     )
     def check_list_empty(cls, v):
         return v or []
+
+    @classmethod
+    def create(cls, **kwargs):
+        """Factory method to initialize with real values, allowing overrides"""
+        default_values = {
+            "keyword": None,
+            "is_online": False,
+            "is_offline": False,
+            "is_apply_ongoing": False,
+            "is_apply_ended": False,
+            "is_today": False,
+            "is_free": False,
+            "is_paid": False,
+            "job_type_codes": [],
+            "industry_codes": [],
+            "city_codes": [],
+            "tags": [],
+            "start_at_from": None,
+            "start_at_to": None,
+            "organization_id": None,
+            "sort_by": "PUBLISHED_AT",
+            "per_page": 10,
+            "page": 1,
+        }
+        # Update default values with any parameters passed
+        default_values.update(kwargs)
+        return cls(**default_values)
 
 
 class SearchEventsResponse(PaginationResponse[SearchEventsItem]):

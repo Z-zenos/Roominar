@@ -76,7 +76,7 @@ async def search_events(
             SoldTicketsNumber.c.sold_tickets_number,
         )
         .join(Organization, Event.organization_id == Organization.id)
-        .join(Target, Event.target_id == Target.id)
+        .outerjoin(Target, Event.target_id == Target.id)
         .outerjoin(Application, Application.event_id == Event.id)
         .outerjoin(
             TagAssociation,
@@ -101,7 +101,6 @@ async def search_events(
         ).outerjoin(
             Bookmark, and_(Event.id == Bookmark.event_id, Bookmark.user_id == user.id)
         )
-
     query = (
         query.where(and_(*filters["conditions"]))
         .order_by(
@@ -202,6 +201,9 @@ def _build_filters_sort(query_params: SearchEventsQueryParams):
 
     if query_params.start_at_to:
         filters.append(Event.start_at.cast(Date) <= query_params.start_at_to.date())
+
+    if query_params.organization_id:
+        filters.append(Event.organization_id == query_params.organization_id)
 
     if query_params.sort_by == EventSortByCode.PUBLISHED_AT:
         filters.append(Event.end_at > datetime.now(pytz.utc))

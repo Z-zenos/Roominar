@@ -1,5 +1,4 @@
 from http import HTTPStatus
-from typing import Annotated
 
 from fastapi import APIRouter, Depends
 from sqlmodel import Session
@@ -41,11 +40,9 @@ router = APIRouter()
     responses=public_api_responses,
 )
 async def search_events(
-    db: Annotated[Session, Depends(get_read_db)],
-    user: Annotated[User | None, Depends(get_user_if_logged_in)] = None,
-    query_params: Annotated[
-        SearchEventsQueryParams, Depends(SearchEventsQueryParams)
-    ] = None,
+    db: Session = Depends(get_read_db),
+    user: User | None = Depends(get_user_if_logged_in),
+    query_params: SearchEventsQueryParams = Depends(SearchEventsQueryParams),
 ):
     events, total = await events_service.search_events(db, user, query_params)
 
@@ -138,7 +135,7 @@ async def listing_recommendation_events(
 async def get_event_detail(
     slug: str,
     db: Session = Depends(get_read_db),
-    current_user: Annotated[User | None, Depends(get_user_if_logged_in)] = None,
+    current_user: User | None = Depends(get_user_if_logged_in),
 ):
     return await events_service.get_event_detail(db, current_user, slug)
 

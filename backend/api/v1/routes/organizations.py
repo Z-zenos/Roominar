@@ -26,6 +26,7 @@ from backend.schemas.event import (
 from backend.schemas.organization import (
     DownloadAttendeesRequest,
     GetAttendeeDetailResponse,
+    GetOrganizationDetailResponse,
     ListingAttendeesQueryParams,
     ListingAttendeesResponse,
     ListingRandomOrganizationsResponse,
@@ -148,6 +149,22 @@ async def listing_random_organizations(
         page=1,
         per_page=5,
     )
+
+
+@router.get(
+    "/{organization_slug}",
+    response_model=GetOrganizationDetailResponse,
+    responses=public_api_responses,
+)
+async def get_organization_detail(
+    db: Session = Depends(get_read_db),
+    user: User | None = Depends(get_user_if_logged_in),
+    organization_slug: str = None,
+):
+    organization = await organizations_service.get_organization_detail(
+        db, user, organization_slug
+    )
+    return organization
 
 
 @router.get(

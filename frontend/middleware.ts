@@ -55,6 +55,7 @@ export const pathPermissionMaster = {
     '/organization/login',
     '/organization/register',
     '/icon.ico',
+    '/organization/[slug]',
   ],
 };
 

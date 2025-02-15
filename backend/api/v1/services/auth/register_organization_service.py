@@ -1,7 +1,6 @@
 from sqlmodel import Session, select
 
 import backend.api.v1.services.auth as auth_service
-from backend.core.config import settings
 from backend.core.constants import OrganizationTypeCode
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
@@ -38,9 +37,7 @@ async def register_organization(
             phone=request.phone,
             type=request.type if request.type else OrganizationTypeCode.BUSINESS,
             address=request.address,
-            representative_url=f"""
-                {settings.AUD_FRONTEND_URL}/organizations/{request.representative_url}
-            """,
+            slug=request.slug,
         )
 
         save(db, organization)
@@ -70,7 +67,7 @@ async def register_organization(
     #     "register_name": f"{user.first_name} {user.last_name}",
     #     "phone": user.phone,
     #     "status": organization.status,
-    #     "representative_url": organization.representative_url,
+    #     "slug": organization.slug,
     #     "type": organization.type,
     # }
     # admin_context = {

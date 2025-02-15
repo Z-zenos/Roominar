@@ -10,6 +10,7 @@ from backend.core.constants import (
     TransactionStatusCode,
 )
 from backend.schemas.common import PaginationResponse
+from backend.schemas.event import SearchEventsItem
 from backend.schemas.survey_response_result import AttendeeSurveyResponseResultItem
 from backend.schemas.tag import TagItem
 from backend.schemas.transaction import AttendeeTicketTransaction
@@ -17,6 +18,7 @@ from backend.schemas.transaction import AttendeeTicketTransaction
 
 class ListingRandomOrganizationsItem(BaseModel):
     id: int
+    slug: str
     name: str
     description: str | None = None
     avatar_url: str | None = None
@@ -115,3 +117,23 @@ class GetAttendeeDetailResponse(BaseModel):
     workplace_name: str | None = None
     avatar_url: str | None = None
     is_followed: bool | None = None
+
+
+class GetOrganizationDetailResponse(BaseModel):
+    id: int
+    name: str
+    description: str | None = None
+    avatar_url: str | None = None
+    contact_email: str | None = None
+    phone: str | None = None
+    address: str | None = None
+    hp_url: str | None = None
+    city_code: str | None = None
+    contact_url: str | None = None
+    facebook_url: str | None = None
+
+    total_public_events: int | None = None
+    follower_number: int | None = None
+    is_followed: bool | None = None
+    tags: list[TagItem] = Field([])
+    events: list[SearchEventsItem] = Field([])
