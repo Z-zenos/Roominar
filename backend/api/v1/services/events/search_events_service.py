@@ -41,7 +41,17 @@ async def search_events(
         .join(Tag, Tag.id == TagAssociation.tag_id)
         .where(TagAssociation.entity_code == TagAssociationEntityCode.EVENT)
         .group_by(Event.id)
-        .subquery()
+        .cte()
+    )
+
+    SoldTicketsNumber = (
+        select(
+            TicketInventory.event_id,
+            func.sum(TicketInventory.sold_quantity).label("sold_tickets_number"),
+        )
+        .select_from(TicketInventory)
+        .group_by(TicketInventory.event_id)
+        .cte()
     )
 
     query = (
@@ -62,8 +72,8 @@ async def search_events(
             Event.is_offline,
             Event.meeting_tool_code,
             Event.published_at,
-            TicketInventory.sold_quantity.label("sold_tickets_number"),
             EventTag.c.tags,
+            SoldTicketsNumber.c.sold_tickets_number,
         )
         .join(Organization, Event.organization_id == Organization.id)
         .join(Target, Event.target_id == Target.id)
@@ -76,7 +86,7 @@ async def search_events(
             ),
         )
         .outerjoin(EventTag, Event.id == EventTag.c.event_id)
-        .outerjoin(TicketInventory, Event.id == TicketInventory.event_id)
+        .outerjoin(SoldTicketsNumber, Event.id == SoldTicketsNumber.c.event_id)
     )
 
     if user:

@@ -2,78 +2,62 @@ FROM python:3.11-slim as python-base
 
 LABEL version="1.0" maintainer="hoanganhtuanbk2001@gmail.com" description="Roominar"
 
-# python
+# Python environment setup
 ENV PYTHONUNBUFFERED=1 \
-    # prevents python creating .pyc files
     PYTHONDONTWRITEBYTECODE=1 \
-    # pip
     PIP_NO_CACHE_DIR=off \
     PIP_DISABLE_PIP_VERSION_CHECK=on \
     PIP_DEFAULT_TIMEOUT=100 \
-    # poetry
-    # https://python-poetry.org/docs/configuration/#using-environment-variables
     POETRY_VERSION=1.4.1 \
-    # make poetry install to this location
     POETRY_HOME="/opt/poetry" \
-    # make poetry create the virtual environment in the project's root
-    # it gets named `.venv`
     POETRY_VIRTUALENVS_IN_PROJECT=true \
-    # do not ask any interactive question
     POETRY_NO_INTERACTION=1 \
-    # paths
-    # this is where our requirements + virtual environment will live
     PYSETUP_PATH="/workspace" \
     VENV_PATH="/workspace/.venv"
 
-# prepend poetry and venv to path
 ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
 
+# Stage for installing Poetry
 FROM python-base as poetry-base
-RUN apt-get update && \
-    apt-get install --no-install-recommends -y \
-    # deps for installing poetry
-    curl
-
-# install poetry - respects $POETRY_VERSION & $POETRY_HOME
+RUN apt-get update && apt-get install --no-install-recommends -y curl
 RUN curl -sSL https://install.python-poetry.org | python
 
-# `builder-base` stage is used to build deps + create our virtual environment
+# Stage for building Python dependencies
 FROM poetry-base as builder-base
-RUN apt-get update && \
-    apt-get install --no-install-recommends -y  \
-    # deps for building python deps
-    build-essential \
-    libpq-dev
-
-# copy project requirement files here to ensure they will be cached.
+RUN apt-get update && apt-get install --no-install-recommends -y build-essential libpq-dev
 WORKDIR $PYSETUP_PATH
 COPY poetry.lock pyproject.toml README.md ./
-
-# install runtime deps - uses $POETRY_VIRTUALENVS_IN_PROJECT internally
 RUN poetry install --only main
 
-# `development` image is used during development / testing
+# Stage for installing Node.js and pnpm
+FROM node:20.18.3-slim as node-base
+RUN npm install -g pnpm@10
+
+# Development stage
 FROM python-base as development
 
-# copy in our built poetry + venv
+# Copy Python environment
 COPY --from=poetry-base $POETRY_HOME $POETRY_HOME
+COPY --from=builder-base $VENV_PATH $VENV_PATH
 
+# Install additional dependencies
 RUN apt-get update && apt-get install --no-install-recommends -y \
-    procps libpq-dev build-essential git bash curl tar sudo default-jre nodejs npm && \
-    curl -fsSL https://get.pnpm.io/v6.js | node - add --global pnpm && \
+    procps libpq-dev build-essential git bash curl tar sudo default-jre && \
     useradd -m -d /home/app -s /bin/bash app && \
-    echo '%app ALL=(ALL) NOPASSWD:ALL' >>/etc/sudoers && \
+    echo '%app ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
     curl -sS https://starship.rs/install.sh | sh -s -- --yes && \
-    echo 'eval "$(starship init bash)"' >>/home/app/.bashrc && \
+    echo 'eval "$(starship init bash)"' >> /home/app/.bashrc && \
     rm -rf /var/lib/apt/lists/*
 
-USER app
+# Copy Node.js and pnpm from node-base
+COPY --from=node-base /usr/local/bin/node /usr/local/bin/node
+COPY --from=node-base /usr/local/lib/node_modules /usr/local/lib/node_modules
+COPY --from=node-base /usr/local/bin/pnpm /usr/local/bin/pnpm
 
-# will become mountpoint of our code
+USER app
 WORKDIR /workspace
 
-# Copy files from host into image
+# Copy project files
 COPY . .
-
 
 EXPOSE 8000 3000

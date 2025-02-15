@@ -41,6 +41,7 @@ import Marquee from 'react-fast-marquee';
 import OrganizationCardSkeleton from '@/src/component/common/Card/OrganizationCardSkeleton';
 import { useSession } from 'next-auth/react';
 import { useListingRandomOrganizationsQuery } from '@/src/api/organization.api';
+import { useListingRandomSpeakersQuery } from '@/src/api/speaker.api';
 
 interface HeadingGroupProps {
   heading: string | ReactNode;
@@ -87,6 +88,8 @@ export default function Home() {
 
   const { data: randomOrganizations, isLoading: isRandomOrganizationsLoading } =
     useListingRandomOrganizationsQuery();
+  const { data: randomSpeakers, isLoading: isRandomSpeakersLoading } =
+    useListingRandomSpeakersQuery();
 
   const { data: tagRankData } = useListingTagRankQuery();
   const { data: eventRankData } = useListingEventRankQuery();
@@ -437,9 +440,13 @@ export default function Home() {
             Inspiring insights from visionary Speaker.
           </h3>
           <div className='flex gap-5 items-center justify-between mt-6 flex-wrap'>
-            {[10, 11, 12, 15].map((speaker, i) => (
-              <SpeakerCard key={`speaker-${i}`} />
-            ))}
+            {randomSpeakers &&
+              randomSpeakers?.data?.map((speaker, i) => (
+                <SpeakerCard
+                  key={`speaker-${i}`}
+                  speaker={speaker}
+                />
+              ))}
           </div>
         </div>
       </section>

@@ -1,0 +1,3 @@
+from .listing_random_speakers_service import listing_random_speakers
+
+all = listing_random_speakers

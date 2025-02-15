@@ -132,11 +132,7 @@ function EventCard({
               {direction === 'vertical' && (
                 <div className={clsx(styles.between)}>
                   <Chip
-                    content={
-                      status === 'authenticated'
-                        ? `${event?.totalTicketNumber || 0} / ${event?.totalTicketNumber}`
-                        : event.totalTicketNumber + ''
-                    }
+                    content={`${event['soldTicketsNumber'] || 0} / ${event?.totalTicketNumber}`}
                     leftIcon={<FaUserFriends className='text-sm' />}
                     type='info'
                   />
@@ -184,11 +180,7 @@ function EventCard({
                       />
                     )}
                     <Chip
-                      content={
-                        status === 'authenticated'
-                          ? `${event['soldTicketsNumber'] || 0} / ${event?.totalTicketNumber}`
-                          : event.totalTicketNumber + ''
-                      }
+                      content={`${event['soldTicketsNumber'] || 0} / ${event?.totalTicketNumber}`}
                       leftIcon={<FaUserFriends className='text-sm' />}
                       type='info'
                     />

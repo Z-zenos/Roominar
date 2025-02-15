@@ -57,8 +57,6 @@ class Event(BaseModel, table=True):
     target_id: Optional[int] = Field(foreign_key="targets.id")
     comment: Optional[str] = Field(sa_type=Text)
 
-    # tags: Optional[list[str]] = Field(sa_type=ARRAY(String(255)))
-
     published_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
     application_form_url: Optional[str] = Field(sa_type=String(2048))
     view_number: Optional[int] = Field(default=0)

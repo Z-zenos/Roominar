@@ -5,6 +5,7 @@ from .applications import router as application_router
 from .auth import router as auth_router
 from .events import router as event_router
 from .organizations import router as organization_router
+from .speakers import router as speaker_router
 from .surveys import router as survey_router
 from .tags import router as tag_router
 from .targets import router as target_router
@@ -30,6 +31,7 @@ api_router.include_router(ticket_router, prefix="/tickets", tags=["tickets"])
 api_router.include_router(
     transaction_router, prefix="/transactions", tags=["transactions"]
 )
+api_router.include_router(speaker_router, prefix="/speakers", tags=["speakers"])
 
 
 def use_route_names_as_operation_ids(app: FastAPI) -> None:
