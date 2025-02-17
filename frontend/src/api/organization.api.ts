@@ -4,6 +4,7 @@ import type {
   OrganizationsApiCreateOrganizationFollowRequest,
   OrganizationsApiDeleteOrganizationFollowRequest,
   OrganizationsApiGetAttendeeDetailRequest,
+  OrganizationsApiGetOrganizationDetailRequest,
   OrganizationsApiListingAttendeesRequest,
   OrganizationsApiRegisterOrganizationRequest,
 } from '../lib/api/generated';
@@ -103,5 +104,15 @@ export const useListingOrganizationEventsTimelineQuery = () => {
     queryKey: ['listing-orgnization-events-timeline'],
     queryFn: async () =>
       await api.organizations.listingOrganizationEventsTimeline(),
+  });
+};
+
+export const useGetOrganizationDetailQuery = (
+  params?: OrganizationsApiGetOrganizationDetailRequest,
+) => {
+  const api = useApi();
+  return useQuery({
+    queryKey: ['get-organization-detail'],
+    queryFn: async () => await api.organizations.getOrganizationDetail(params),
   });
 };

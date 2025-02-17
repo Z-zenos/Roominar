@@ -39,7 +39,7 @@ function RegisterOrganizationForm() {
       organizationName: '',
       cityCode: '',
       address: '',
-      representativeUrl: '',
+      slug: '',
       phone: '',
       organizationType: OrganizationTypeCode.Personal,
     },
@@ -71,7 +71,7 @@ function RegisterOrganizationForm() {
         cityCode: '',
         hpUrl: '',
         address: value.address,
-        representativeUrl: value.representativeUrl,
+        slug: value.slug,
         phone: value.phone,
         type: value.organizationType,
       },
@@ -222,8 +222,8 @@ function RegisterOrganizationForm() {
 
         <div className='col-span-2'>
           <FormCustomLabel
-            htmlFor='representativeUrl'
-            label='representativeUrl'
+            htmlFor='slug'
+            label='slug'
           />
           <div className='grid grid-cols-5 items-center'>
             <p className='col-span-2 text-sm underline text-primary'>
@@ -231,8 +231,8 @@ function RegisterOrganizationForm() {
             </p>
             <div className='col-span-3'>
               <FormInput
-                id='representativeUrl'
-                name='representativeUrl'
+                id='slug'
+                name='slug'
                 placeholder='abc'
                 control={form.control}
               />

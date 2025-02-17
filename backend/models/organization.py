@@ -11,6 +11,7 @@ class Organization(BaseModel, table=True):
     __tablename__: str = "organizations"
 
     name: str = Field(sa_type=String(1024))
+    slug: Optional[str] = Field(sa_type=String(255))
     hp_url: Optional[str] = Field(sa_type=String(2048))
     city_code: Optional[str] = Field(sa_type=String(50))
     contact_email: str = Field(sa_type=String(255))
@@ -28,4 +29,3 @@ class Organization(BaseModel, table=True):
     facebook_url: Optional[str] = Field(sa_type=String(2048))
     remarks: Optional[str] = Field(sa_type=String(1024))
     type: OrganizationTypeCode = Field(sa_type=Enum(OrganizationTypeCode))
-    representative_url: Optional[str] = Field(sa_type=String(2048))

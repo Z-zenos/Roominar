@@ -54,6 +54,20 @@ COPY --from=node-base /usr/local/bin/node /usr/local/bin/node
 COPY --from=node-base /usr/local/lib/node_modules /usr/local/lib/node_modules
 COPY --from=node-base /usr/local/bin/pnpm /usr/local/bin/pnpm
 
+# # nvm environment variables
+# ENV NVM_DIR /usr/local/nvm
+# ENV NODE_VERSION 4.4.7
+
+# # install nvm
+# # https://github.com/creationix/nvm#install-script
+# RUN curl --silent -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.2/install.sh | bash
+
+# # install node and npm
+# RUN source $NVM_DIR/nvm.sh \
+#     && nvm install $NODE_VERSION \
+#     && nvm alias default $NODE_VERSION \
+#     && nvm use default
+
 USER app
 WORKDIR /workspace
 

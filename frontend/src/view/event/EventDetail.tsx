@@ -443,14 +443,14 @@ function EventDetail({ slug }: EventDetailProps) {
               Speaker
             </h3>
 
-            <div className='flex gap-5 items-center justify-start mt-6 flex-wrap'>
+            {/* <div className='flex gap-5 items-center justify-start mt-6 flex-wrap'>
               {[10, 11, 12, 15].map((speaker, i) => (
                 <SpeakerCard
                   key={`speaker-${i}`}
                   className='max-w-[250px]'
                 />
               ))}
-            </div>
+            </div> */}
           </div>
         </div>
         <div

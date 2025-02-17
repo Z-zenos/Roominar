@@ -142,7 +142,7 @@ class RegisterOrganizationRequest(BaseModel):
     city_code: str | None
     # contact_email: EmailStr | None
     address: str | None
-    representative_url: str | None
+    slug: str | None
     phone: str | None
     type: OrganizationTypeCode
 
@@ -172,7 +172,7 @@ class RegisterOrganizationRequest(BaseModel):
                 # not values.data.get("city_code")
                 # or not values.data.get("contact_email")
                 not values.data.get("address")
-                or not values.data.get("representative_url")
+                or not values.data.get("slug")
                 or not values.data.get("phone")
             ):
                 raise ValueError(

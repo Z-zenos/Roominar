@@ -1,15 +1,18 @@
 from sqlmodel import Session, and_, distinct, func, literal, select
 
+import backend.api.v1.services.events as events_service
 from backend.core.constants import FollowEntityCode, TagAssociationEntityCode
+from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.models.event import Event
 from backend.models.follow import Follow
 from backend.models.organization import Organization
 from backend.models.tag import Tag
 from backend.models.tag_association import TagAssociation
 from backend.models.user import User
+from backend.schemas.event import SearchEventsQueryParams
 
 
-async def listing_random_organizations(db: Session, user: User):
+async def get_organization_detail(db: Session, user: User, organization_slug: str):
     OrganizationTag = (
         select(
             Organization.id,
@@ -25,6 +28,7 @@ async def listing_random_organizations(db: Session, user: User):
             ),
         )
         .join(Tag, Tag.id == TagAssociation.tag_id)
+        .where(Organization.slug == organization_slug)
         .group_by(Organization.id)
         .subquery()
     )
@@ -60,14 +64,20 @@ async def listing_random_organizations(db: Session, user: User):
         Organization.id
     ).subquery()
 
-    organizations = (
+    organization = (
         db.exec(
             select(
                 Organization.id,
-                Organization.slug,
                 Organization.name,
-                Organization.avatar_url,
                 Organization.description,
+                Organization.avatar_url,
+                Organization.hp_url,
+                Organization.city_code,
+                Organization.contact_email,
+                Organization.address,
+                Organization.phone,
+                Organization.contact_url,
+                Organization.facebook_url,
                 OrganizationTag.c.tags,
                 OrganizationEventFollowCount.c.event_number,
                 OrganizationEventFollowCount.c.follower_number,
@@ -78,11 +88,32 @@ async def listing_random_organizations(db: Session, user: User):
                 OrganizationEventFollowCount,
                 OrganizationEventFollowCount.c.id == Organization.id,
             )
-            .order_by(func.random())
-            .limit(5)
+            .where(Organization.slug == organization_slug)
         )
         .mappings()
-        .all()
+        .one_or_none()
     )
 
-    return organizations
+    if not organization:
+        raise ValueError(
+            ErrorCode.ERR_ORGANIZATION_NOT_FOUND,
+            ErrorMessage.ERR_ORGANIZATION_NOT_FOUND,
+        )
+
+    organization = dict(organization)
+
+    query_params = SearchEventsQueryParams().create(organization_id=organization["id"])
+    events, total_public_events = await events_service.search_events(
+        db,
+        user,
+        query_params,
+    )
+
+    organization.update(
+        {
+            "events": events,
+            "total_public_events": total_public_events,
+        }
+    )
+
+    return organization

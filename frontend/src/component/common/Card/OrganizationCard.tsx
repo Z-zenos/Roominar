@@ -26,7 +26,10 @@ function OrganizationCard({ organization, className }: OrganizationCardProps) {
   return (
     <Card className={clsx('', className)}>
       <CardHeader className='justify-between'>
-        <div className='flex gap-5'>
+        <Link
+          className='flex gap-3'
+          href={`/organization/${organization?.slug}`}
+        >
           <Avatar
             isBordered
             radius='full'
@@ -34,14 +37,14 @@ function OrganizationCard({ organization, className }: OrganizationCardProps) {
             src={organization?.avatarUrl}
           />
           <div className='flex flex-col gap-1 items-start justify-center'>
-            <h4 className='text-small font-semibold leading-none text-default-600'>
+            <h4 className='text-small font-semibold leading-none text-default-600 hover:text-primary'>
               {organization?.name}
             </h4>
             {/* <h5 className='text-small tracking-tight text-default-400'>
               @zoeylang
             </h5> */}
           </div>
-        </div>
+        </Link>
         <OrganizationFollowButton
           organizationId={organization.id}
           isFollowed={organization.isFollowed}
