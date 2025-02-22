@@ -23,12 +23,10 @@ import {
   usePublishEventMutation,
   useSaveDraftEventMutation,
 } from '@/src/api/event.api';
-import { FaSquareArrowUpRight } from 'react-icons/fa6';
 
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 import { useListingTagsQuery } from '@/src/api/tag.api';
-import { CiStickyNote } from 'react-icons/ci';
 import { eventDateSchema } from '@/src/schemas/event/CreateEventFormSchema';
 import CalendarTimeline from '../common/DateTime/CalendarTimeline';
 import dayjs from 'dayjs';
@@ -46,6 +44,11 @@ import { RiRobot2Line } from 'react-icons/ri';
 
 const LexicalEditor = dynamic(() => import('../editor/app/app'), {
   ssr: false,
+});
+
+const LazyMap = dynamic(() => import('../common/Map/Map'), {
+  ssr: false,
+  loading: () => <p>Loading...</p>,
 });
 
 export default function CreateEventAIForm() {
@@ -94,9 +97,7 @@ export default function CreateEventAIForm() {
       const inputOrderNames = [
         'name',
         'startAt',
-        'coverImageUrl',
         'isOnline',
-        'meetingUrl',
         'isOffline',
         'organizeAddress',
         'totalTicketNumber',
@@ -372,7 +373,7 @@ export default function CreateEventAIForm() {
                   ? TicketDeliveryMethodCode.Offline
                   : TicketDeliveryMethodCode.Online
               }
-              className={clsx('w-full mx-auto mt-2')}
+              className={clsx('w-full mx-auto mt-2 mb-6')}
             >
               <TabsList className={clsx('grid grid-cols-2')}>
                 <TabsTrigger
@@ -405,6 +406,32 @@ export default function CreateEventAIForm() {
                 </TabsTrigger>
               </TabsList>
             </BaseTabs>
+
+            {form.getValues('isOffline') && (
+              <div>
+                <FormInput
+                  id='organizeAddress'
+                  name='organizeAddress'
+                  label='organizeAddress'
+                  placeholder='12 Hồ Chí Minh, Hoàn Kiếm, Hà Nội'
+                  control={form.control}
+                  showError={true}
+                />
+
+                <main>
+                  <LazyMap
+                    className='h-full rounded-xl mt-4 mx-auto'
+                    zoom={16}
+                  />
+                </main>
+              </div>
+            )}
+            {form.getValues('isOnline') && (
+              <p className='text-sm font-light text-gray-800'>
+                Online events have unique event pages where you can add links to
+                livestreams and more
+              </p>
+            )}
           </div>
 
           <div className='border-y border-y-primary py-[2px] mt-4 col-span-2'>
