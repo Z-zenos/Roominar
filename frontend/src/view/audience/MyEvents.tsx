@@ -119,7 +119,7 @@ function MyEvents() {
                 className='w-full mb-4 mx-auto'
                 event={event}
                 key={event.id}
-                variant='complex'
+                variant='detailed'
               />
             ))}
 

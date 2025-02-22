@@ -33,6 +33,8 @@ export const pathPermissionMaster = {
     '/login',
     '/organization/events',
     '/organization/overview',
+    '/organization/events/create',
+    '/organization/events/create/auto',
     '/organization/events/create/[slug]',
     '/organization/surveys',
     '/organization/surveys/create',

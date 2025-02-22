@@ -1039,11 +1039,15 @@ const FormCustomLabel = ({
     <div className='-mb-1 block'>
       <Label
         htmlFor={htmlFor}
-        className={clsx(styles.label, className)}
+        className={clsx(
+          styles.label,
+          'flex justify-start items-baseline gap-2',
+          className,
+        )}
       >
-        {capitalize(t(`${label}`))}
+        {label && capitalize(t(`${label}`))}
         {custom}
-        {required && <span className='text-red-500 ml-2'>*</span>}
+        {required && <span className='text-red-500'>*</span>}
       </Label>
     </div>
   );
