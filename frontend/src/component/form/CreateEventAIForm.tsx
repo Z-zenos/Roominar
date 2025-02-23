@@ -18,7 +18,10 @@ import {
   type ErrorResponse400,
 } from '@/src/lib/api/generated';
 import toast from 'react-hot-toast';
-import { useSaveDraftEventMutation } from '@/src/api/event.api';
+import {
+  useGenerateEventAIMutation,
+  useSaveDraftEventMutation,
+} from '@/src/api/event.api';
 
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
@@ -120,7 +123,7 @@ export default function CreateEventAIForm() {
   }, [form.formState, canFocus]);
 
   const { trigger: generateEventAI, isMutating: isGenerating } =
-    useSaveDraftEventMutation({
+    useGenerateEventAIMutation({
       onSuccess() {
         toast.success('Save draft event successfully!');
       },
@@ -218,22 +221,21 @@ export default function CreateEventAIForm() {
 
   function handleGenerateEventAI(data: CreateEventAIFormSchema) {
     console.log(data);
-    // saveDraftEvent({
-    //   eventId: draftEvent.id,
-    //   saveDraftEventRequest: {
-    //     name: data.name,
-    //     description: data.description,
-    //     tags: data.tags,
-    //     totalTicketNumber: data.totalTicketNumber,
-    //     startAt: data.startAt,
-    //     endAt: data.endAt,
-    //     applicationEndAt: data.applicationEndAt,
-    //     applicationStartAt: data.applicationStartAt,
-    //     isOnline: data.isOnline,
-    //     isOffline: data.isOffline,
-    //     organizeAddress: data.organizeAddress ?? null,
-    //   },
-    // });
+    generateEventAI({
+      generateEventAIRequest: {
+        name: data.name,
+        tags: data.tags,
+        totalTicketNumber: data.totalTicketNumber,
+        startAt: data.startAt,
+        endAt: data.endAt,
+        applicationEndAt: data.applicationEndAt,
+        applicationStartAt: data.applicationStartAt,
+        isOnline: data.isOnline,
+        isOffline: data.isOffline,
+        organizeAddress: data.organizeAddress ?? null,
+        price: data.price,
+      },
+    });
   }
 
   console.log(form.formState.errors, form.getValues());

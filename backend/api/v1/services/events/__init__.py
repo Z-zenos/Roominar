@@ -3,6 +3,7 @@ from .create_draft_event_service import create_draft_event
 from .create_event_bookmark_service import create_event_bookmark
 from .delete_check_in_service import delete_check_in
 from .delete_event_bookmark_service import delete_event_bookmark
+from .generate_event_ai_service import generate_event_ai
 from .get_draft_event_service import get_draft_event
 from .get_event_detail_service import get_event_detail
 from .listing_event_rank_service import listing_event_rank
@@ -34,4 +35,5 @@ all = (
     save_draft_event,
     listing_events_timeline,
     listing_recommendation_events,
+    generate_event_ai,
 )

@@ -17,6 +17,7 @@ from backend.models import User
 from backend.schemas.check_in import CreateCheckInRequest
 from backend.schemas.event import (
     CreateDraftEventRequest,
+    GenerateEventAIRequest,
     GetDraftEventResponse,
     GetEventDetailResponse,
     ListingEventRankResponse,
@@ -208,6 +209,15 @@ async def save_draft_event(
     event_id: int = None,
 ):
     return await events_service.save_draft_event(db, organizer, request, event_id)
+
+
+@router.post("/ai/draft", response_model=int, responses=authenticated_api_responses)
+async def generate_event_ai(
+    db: Session = Depends(get_read_db),
+    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+    request: GenerateEventAIRequest = None,
+):
+    return await events_service.generate_event_ai(db, organizer, request)
 
 
 @router.post("/{event_id}", response_model=int, responses=authenticated_api_responses)
