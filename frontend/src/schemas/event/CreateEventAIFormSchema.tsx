@@ -61,7 +61,7 @@ export const eventDateSchema = z
 
 const eventAddressSchema = z
   .object({
-    isOnline: z.boolean().nullable(),
+    isOnline: z.boolean().default(false).nullable(),
     isOffline: z.boolean().nullable(),
     organizeAddress: z.string().trim().max(255).or(z.literal('')),
   })
@@ -85,7 +85,6 @@ const eventAddressSchema = z
 
 const eventBaseSchema = z.object({
   name: z.string().trim().min(1, { message: 'required' }).max(1024),
-  description: z.string().trim().min(1),
   tags: z.array(z.coerce.number()).nullable(),
   totalTicketNumber: z.coerce
     .number()

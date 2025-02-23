@@ -87,7 +87,7 @@
         "missingEventEndAt": "hãy chọn ngày kết thúc của sự kiện",
         "missingEventApplicationStartAt": "hãy chọn ngày mở đăng ký cho sự kiện",
         "missingEventApplicationEndAt": "hãy chọn ngày kết thúc đăng ký sự kiện",
-        "invalidEventEndAt": "thời gian kết thúc sự kiện phải lớn hơn thời gian đăng ký sự kiện và bắt đầu sự kiện",
+        "invalidEventEndAt": "thời gian kết thúc sự kiện phải lớn hơn thời gian hiện tại, thời gian đăng ký sự kiện và bắt đầu sự kiện",
         "invalidApplicationStartAt": "thời gian bắt đầu mở đăng ký sự kiện phải bé hơn thời gian đóng đăng ký và thời gian bắt đầu sự kiện",
         "invalidApplicationEndAt": "thời gian đóng đăng ký phải lớn hơn thời gian mở đăng ký và nhỏ hơn thời gian kết thúc sự kiện",
         "neitherOnlineNorOffline": "sự kiện phải là online hoặc offline hoặc cả 2",

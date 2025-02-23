@@ -23,13 +23,14 @@ import { useSaveDraftEventMutation } from '@/src/api/event.api';
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 import { useListingTagsQuery } from '@/src/api/tag.api';
-import { eventDateSchema } from '@/src/schemas/event/CreateEventFormSchema';
 import dayjs from 'dayjs';
 import Spinner from '../common/Loader/Spinner';
 import type { DateSelectArg, EventChangeArg } from '@fullcalendar/core';
 import { useListingOrganizationEventsTimelineQuery } from '@/src/api/organization.api';
 import type { CreateEventAIFormSchema } from '@/src/schemas/event/CreateEventAIFormSchema';
-import createEventAIFormSchema from '@/src/schemas/event/CreateEventAIFormSchema';
+import createEventAIFormSchema, {
+  eventDateSchema,
+} from '@/src/schemas/event/CreateEventAIFormSchema';
 import { BaseTabs, TabsList, TabsTrigger } from '../common/Tabs';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
@@ -60,15 +61,14 @@ export default function CreateEventAIForm() {
     mode: 'all',
     defaultValues: {
       name: '',
-      description: 'ignore description',
       tags: [],
 
-      startAt: undefined,
-      endAt: undefined,
-      applicationStartAt: undefined,
-      applicationEndAt: undefined,
+      startAt: null,
+      endAt: null,
+      applicationStartAt: null,
+      applicationEndAt: null,
 
-      isOnline: undefined,
+      isOnline: false,
       isOffline: true,
       organizeAddress: '',
 
@@ -236,7 +236,7 @@ export default function CreateEventAIForm() {
     // });
   }
 
-  console.log(form.formState.errors);
+  console.log(form.formState.errors, form.getValues());
 
   return (
     <Form {...form}>

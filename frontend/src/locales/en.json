@@ -87,7 +87,7 @@
         "missingEventEndAt": "please select end day of event",
         "missingEventApplicationStartAt": "please select start application day of event",
         "missingEventApplicationEndAt": "please select end application day of event",
-        "invalidEventEndAt": "event end day must greater than start day, application start day and application end day",
+        "invalidEventEndAt": "event end day must greater than today, start day, application start day and application end day",
         "invalidApplicationStartAt": "event application start day must less than application end day and start day",
         "invalidApplicationEndAt": "event application end day must greater than applicaiton start day and less than  end day",
         "neitherOnlineNorOffline": "event host method must be online or offline or both",
