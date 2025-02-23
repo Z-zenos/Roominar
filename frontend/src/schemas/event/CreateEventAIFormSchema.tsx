@@ -1,4 +1,3 @@
-import { CityCode } from '@/src/lib/api/generated';
 import dayjs from 'dayjs';
 import z from 'zod';
 
@@ -65,35 +64,24 @@ const eventAddressSchema = z
     isOnline: z.boolean().nullable(),
     isOffline: z.boolean().nullable(),
     organizeAddress: z.string().trim().max(255).or(z.literal('')),
-    organizeCityCode: z.nativeEnum(CityCode).optional(),
   })
-  .superRefine(
-    ({ isOffline, isOnline, organizeAddress, organizeCityCode }, ctx) => {
-      if (!isOffline && !isOnline) {
-        ctx.addIssue({
-          code: 'custom',
-          message: 'neitherOnlineNorOffline',
-          path: ['isOffline'],
-        });
-      }
+  .superRefine(({ isOffline, isOnline, organizeAddress }, ctx) => {
+    if (!isOffline && !isOnline) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'neitherOnlineNorOffline',
+        path: ['isOffline'],
+      });
+    }
 
-      if (isOffline && !organizeCityCode) {
-        ctx.addIssue({
-          code: 'custom',
-          message: 'missingEventOrganizeCityCode',
-          path: ['isOffline'],
-        });
-      }
-
-      if (isOffline && !organizeAddress) {
-        ctx.addIssue({
-          code: 'custom',
-          message: 'missingEventOrganizeAddress',
-          path: ['organizeAddress'],
-        });
-      }
-    },
-  );
+    if (isOffline && !organizeAddress) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'missingEventOrganizeAddress',
+        path: ['organizeAddress'],
+      });
+    }
+  });
 
 const eventBaseSchema = z.object({
   name: z.string().trim().min(1, { message: 'required' }).max(1024),

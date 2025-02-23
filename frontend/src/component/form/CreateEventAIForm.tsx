@@ -8,7 +8,6 @@ import {
   FormCustomLabel,
   FormField,
   FormInput,
-  FormInstructions,
   FormItem,
   FormMessage,
   FormTagsInput,
@@ -19,16 +18,12 @@ import {
   type ErrorResponse400,
 } from '@/src/lib/api/generated';
 import toast from 'react-hot-toast';
-import {
-  usePublishEventMutation,
-  useSaveDraftEventMutation,
-} from '@/src/api/event.api';
+import { useSaveDraftEventMutation } from '@/src/api/event.api';
 
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 import { useListingTagsQuery } from '@/src/api/tag.api';
 import { eventDateSchema } from '@/src/schemas/event/CreateEventFormSchema';
-import CalendarTimeline from '../common/DateTime/CalendarTimeline';
 import dayjs from 'dayjs';
 import Spinner from '../common/Loader/Spinner';
 import type { DateSelectArg, EventChangeArg } from '@fullcalendar/core';
@@ -41,15 +36,20 @@ import { useTranslations } from 'next-intl';
 import { GrLocation } from 'react-icons/gr';
 import { PiVideoBold } from 'react-icons/pi';
 import { RiRobot2Line } from 'react-icons/ri';
-
-const LexicalEditor = dynamic(() => import('../editor/app/app'), {
-  ssr: false,
-});
+import ElementLoading from '../common/Loader/ElementLoading';
 
 const LazyMap = dynamic(() => import('../common/Map/Map'), {
   ssr: false,
   loading: () => <p>Loading...</p>,
 });
+
+const LazyCalendarTimeline = dynamic(
+  () => import('../common/DateTime/CalendarTimeline'),
+  {
+    ssr: false,
+    loading: () => <ElementLoading title='Loading schedule timeline' />,
+  },
+);
 
 export default function CreateEventAIForm() {
   const t = useTranslations('form');
@@ -71,9 +71,9 @@ export default function CreateEventAIForm() {
       isOnline: undefined,
       isOffline: true,
       organizeAddress: '',
-      organizeCityCode: undefined,
 
       totalTicketNumber: 0,
+      price: 0,
     },
     resolver: zodResolver(createEventAIFormSchema),
     shouldFocusError: false,
@@ -101,6 +101,7 @@ export default function CreateEventAIForm() {
         'isOffline',
         'organizeAddress',
         'totalTicketNumber',
+        'price',
       ];
 
       elements.sort(
@@ -118,22 +119,7 @@ export default function CreateEventAIForm() {
     }
   }, [form.formState, canFocus]);
 
-  const { trigger: publishEvent, isMutating: isPublishing } =
-    usePublishEventMutation({
-      onSuccess() {
-        toast.success('Publish event successfully!');
-        form.reset();
-      },
-      onError(error: ApiException<unknown>) {
-        toast.error(
-          (error.body as ErrorResponse400)?.message ??
-            (error.body as ErrorResponse400)?.errorCode ??
-            'Unknown Error 😵',
-        );
-      },
-    });
-
-  const { trigger: saveDraftEvent, isMutating: isDraftSaving } =
+  const { trigger: generateEventAI, isMutating: isGenerating } =
     useSaveDraftEventMutation({
       onSuccess() {
         toast.success('Save draft event successfully!');
@@ -230,7 +216,8 @@ export default function CreateEventAIForm() {
     return null; // No errors
   }
 
-  function handleSaveDraftEvent(data: CreateEventAIFormSchema) {
+  function handleGenerateEventAI(data: CreateEventAIFormSchema) {
+    console.log(data);
     // saveDraftEvent({
     //   eventId: draftEvent.id,
     //   saveDraftEventRequest: {
@@ -249,20 +236,22 @@ export default function CreateEventAIForm() {
     // });
   }
 
+  console.log(form.formState.errors);
+
   return (
     <Form {...form}>
       <form
         id='create-event-form'
-        onSubmit={form.handleSubmit(handleSaveDraftEvent, onError)}
+        onSubmit={form.handleSubmit(handleGenerateEventAI, onError)}
         className='grid grid-cols-12 items-start gap-10'
       >
         <div className='grid grid-cols-2 gap-6 [&>div]:w-full bg-white rounded-md p-6 shadow-md 1200px:col-span-9 col-span-12 max-w-[1000px]'>
           <div className='col-span-2'>
             <h3 className='text-lg font-semibold'>Create an event with AI</h3>
-            <p className='text-gray-600 font-light text-sm max-w-[500px] text-wrap'>
-              Answer a few questions about your event and our AI creation tool
-              will use internal data to build an event page. You can still
-              create an event without AI.
+            <p className='text-gray-600 font-light text-sm'>
+              Provide a few information about your event and our AI creation
+              tool will use internal data and your writing styles from before
+              events to build an event page. You can after update content.
             </p>
           </div>
           <div className='col-span-2'>
@@ -292,7 +281,7 @@ export default function CreateEventAIForm() {
               autoComplete='on'
             />
           </div>
-          <div className='col-span-2'>
+          <div className='col-span-2 mt-4'>
             <FormField
               control={form.control}
               name='startAt'
@@ -301,14 +290,20 @@ export default function CreateEventAIForm() {
                   <FormCustomLabel
                     htmlFor='startAt'
                     custom={
-                      <h3 className='text-md font-medium mb-3'>
-                        When does your event start and end?
-                      </h3>
+                      <div>
+                        <h3 className='text-nm font-medium'>
+                          When does your event start and end?
+                        </h3>
+                        <span className='text-sm font-light inline-block text-gray-600 mb-3'>
+                          Select proper date in calendar. You can drag and drop
+                          event to any place you want.
+                        </span>
+                      </div>
                     }
                     required
                   />
                   <FormControl>
-                    <CalendarTimeline
+                    <LazyCalendarTimeline
                       id='startAt'
                       events={[
                         {
@@ -361,9 +356,8 @@ export default function CreateEventAIForm() {
             />
           </div>
 
-          {/* === EVENT FORMAT & ADDRESS === */}
-          <h3 className='col-span-2 text-md p-3 border-l-4 border-l-primary'>
-            Where is it located? ⛩️
+          <h3 className='text-nm font-medium col-span-2'>
+            When does your event start and end?
           </h3>
 
           <div className='col-span-2'>
@@ -373,7 +367,7 @@ export default function CreateEventAIForm() {
                   ? TicketDeliveryMethodCode.Offline
                   : TicketDeliveryMethodCode.Online
               }
-              className={clsx('w-full mx-auto mt-2 mb-6')}
+              className={clsx('w-full mx-auto mb-6')}
             >
               <TabsList className={clsx('grid grid-cols-2')}>
                 <TabsTrigger
@@ -418,43 +412,41 @@ export default function CreateEventAIForm() {
                   showError={true}
                 />
 
-                <main>
+                {/* <main>
                   <LazyMap
                     className='h-full rounded-xl mt-4 mx-auto'
                     zoom={16}
                   />
-                </main>
+                </main> */}
               </div>
             )}
             {form.getValues('isOnline') && (
               <p className='text-sm font-light text-gray-800'>
                 Online events have unique event pages where you can add links to
-                livestreams and more
+                livestreams and more.
               </p>
             )}
           </div>
 
-          <div className='border-y border-y-primary py-[2px] mt-4 col-span-2'>
-            <div className='border-y border-y-primary py-2'>
-              <h3 className='text-center text-md'>Description 🗒</h3>
-            </div>
-          </div>
-
-          <div className='col-span-2'>
-            <main className='flex flex-col items-center justify-between'>
-              {/* <LexicalEditor /> */}
-            </main>
-          </div>
-
-          {/* === EVENT APPLICATION NUMBER & TICKETS === */}
-          <h3 className='col-span-2 text-md p-3 border-l-4 border-l-primary'>
-            Tickets 🎟
-          </h3>
-          <div>
+          <div className='mt-6 flex max-h-[200px] justify-between flex-col'>
+            <FormCustomLabel
+              htmlFor='totalTicketNumber'
+              custom={
+                <div>
+                  <h3 className='text-nm font-medium'>
+                    What&lsquo;s the capacity for your event?
+                  </h3>
+                  <p className='text-gray-600 font-light text-sm max-w-[500px] text-wrap my-2'>
+                    Event capacity is the total number of tickets you&#39;re
+                    willing to sell.
+                  </p>
+                </div>
+              }
+              required
+            />
             <FormInput
               id='totalTicketNumber'
               name='totalTicketNumber'
-              label='totalTicketNumber'
               required
               placeholder='100'
               control={form.control}
@@ -462,23 +454,52 @@ export default function CreateEventAIForm() {
               type='number'
             />
           </div>
-          <FormInstructions>
-            <li>
-              The order quantity must always be greater than or equal to the
-              total number of tickets you set.
-            </li>
-          </FormInstructions>
 
-          {/* === MORE === */}
-          <h3 className='col-span-2 text-md p-3 border-l-4 border-l-primary mt-6'>
-            Advanced Information 🌟
-          </h3>
+          <div className='mt-6'>
+            <FormCustomLabel
+              htmlFor='price'
+              custom={
+                <div>
+                  <h3 className='text-nm font-medium'>
+                    How much do you want to charge for tickets?
+                  </h3>
+                  <p className='text-gray-600 font-light text-sm max-w-[500px] text-wrap my-2'>
+                    Our tool can only generate one General Admission ticket for
+                    now. You can edit and add more ticket types later.
+                  </p>
+                </div>
+              }
+              required
+            />
+            <FormInput
+              id='price'
+              name='price'
+              required
+              placeholder='$3.99'
+              control={form.control}
+              showError={true}
+              type='number'
+            />
+          </div>
 
           <div className='col-span-2'>
+            <FormCustomLabel
+              htmlFor='price'
+              custom={
+                <div>
+                  <h3 className='text-nm font-medium mt-3'>
+                    Do you want add some descriptive tags for your events?
+                  </h3>
+                  <p className='text-gray-600 font-light text-sm max-w-[500px] text-wrap mb-4'>
+                    These will make your event more meaningful and detail!
+                  </p>
+                </div>
+              }
+              required
+            />
             <FormTagsInput
               title='tags'
               name='tags'
-              label='tags'
               control={form.control}
               data={tagData}
             />
@@ -489,14 +510,14 @@ export default function CreateEventAIForm() {
             className='mx-auto overflow-hidden w-[132px] p-2 h-12 bg-black text-white border-none rounded-md text-md font-bold cursor-pointer relative z-10 group col-span-2 flex justify-center items-center gap-1'
             type='submit'
           >
-            {isPublishing && <Spinner />}
+            {isGenerating && <Spinner />}
             Generate
             <RiRobot2Line className='inline w-5 h-5' />
             <span className='absolute w-36 h-32 -top-8 -left-2 bg-white rotate-12 transform scale-x-0 group-hover:scale-x-100 transition-transform group-hover:duration-500 duration-1000 origin-left'></span>
             <span className='absolute w-36 h-32 -top-8 -left-2 bg-indigo-400 rotate-12 transform scale-x-0 group-hover:scale-x-100 transition-transform group-hover:duration-700 duration-700 origin-left'></span>
             <span className='absolute w-36 h-32 -top-8 -left-2 bg-indigo-600 rotate-12 transform scale-x-0 group-hover:scale-x-50 transition-transform group-hover:duration-1000 duration-500 origin-left'></span>
             <span className='group-hover:opacity-100 group-hover:duration-1000 duration-100 opacity-0 absolute top-2.5 left-4 z-10 flex justify-center gap-1'>
-              {isPublishing && <Spinner />}
+              {isGenerating && <Spinner />}
               Generate
               <RiRobot2Line className='inline w-5 h-5 mt-1' />
             </span>

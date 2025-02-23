@@ -483,7 +483,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
           onSubmit={form.handleSubmit(handlePublishEvent, onError)}
           className='grid grid-cols-12 items-start gap-10'
         >
-          <div className='grid grid-cols-2 gap-6 [&>div]:w-full bg-white rounded-md p-6 shadow-md col-span-9 max-w-[1000px]'>
+          <div className='grid grid-cols-2 gap-6 [&>div]:w-full bg-white rounded-md p-6 shadow-md 1200px:col-span-9 col-span-12 max-w-[1000px]'>
             <div className='col-span-2'>
               <FormInput
                 id='name'

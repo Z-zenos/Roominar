@@ -741,6 +741,7 @@ const FormTagsInput = ({
             </Popover>
 
             <button
+              type='button'
               className='w-full px-3 py-2 transition-all text-dark-main font-light hover:bg-green-sub border-t border-t-green-sub hover:text-green-main'
               onClick={onOpen}
             >
@@ -752,6 +753,7 @@ const FormTagsInput = ({
               onOpenChange={onOpenChange}
               placement='top-center'
               size='2xl'
+              className='max-h-[600px] overflow-y-scroll'
             >
               <ModalContent>
                 {(onClose) => (
