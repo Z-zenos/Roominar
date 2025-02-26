@@ -510,6 +510,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                     <FormControl>
                       <CalendarTimeline
                         id='startAt'
+                        height={600}
                         events={[
                           {
                             title: 'Application start',

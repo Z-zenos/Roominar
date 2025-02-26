@@ -4,7 +4,11 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
-import type { DateSelectArg, EventChangeArg } from '@fullcalendar/core';
+import type {
+  CalendarOptions,
+  DateSelectArg,
+  EventChangeArg,
+} from '@fullcalendar/core';
 
 interface CalendarTimelineEventItem {
   title: string;
@@ -13,12 +17,14 @@ interface CalendarTimelineEventItem {
   color: string;
 }
 
-interface CalendarTimelineProps {
+interface CalendarTimelineProps extends CalendarOptions {
   onSelectDate?: (timelineObject: DateSelectArg) => void;
   onChange?: (event: EventChangeArg) => void;
   events?: CalendarTimelineEventItem[];
   id?: string;
   name?: string;
+  height?: number;
+  aspectRatio?: number;
 }
 
 export default function CalendarTimeline({
@@ -27,6 +33,9 @@ export default function CalendarTimeline({
   events,
   id,
   name,
+  height = 600,
+  aspectRatio = 1,
+  ...props
 }: CalendarTimelineProps) {
   return (
     <div className='calendar-container mt-2'>
@@ -41,8 +50,8 @@ export default function CalendarTimeline({
         editable={true}
         selectable={true}
         selectMirror={true}
-        height={600}
-        aspectRatio={1}
+        height={height}
+        aspectRatio={aspectRatio}
         events={events && events.filter((event) => event.start && event.end)}
         // initialEvents={[
         //   {
@@ -54,13 +63,16 @@ export default function CalendarTimeline({
         // ]}
         select={onSelectDate}
         eventChange={onChange}
+        {...props}
       />
-      <input
-        type='date'
-        id={id}
-        name={name}
-        className='opacity-0'
-      />
+      {id && (
+        <input
+          type='date'
+          id={id}
+          name={name}
+          className='opacity-0'
+        />
+      )}
     </div>
   );
 }

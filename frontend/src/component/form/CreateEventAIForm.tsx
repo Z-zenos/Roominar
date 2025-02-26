@@ -307,6 +307,7 @@ export default function CreateEventAIForm() {
                   <FormControl>
                     <LazyCalendarTimeline
                       id='startAt'
+                      height={600}
                       events={[
                         {
                           title: 'Application start',
