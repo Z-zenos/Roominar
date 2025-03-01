@@ -26,6 +26,7 @@ from backend.schemas.event import (
 from backend.schemas.organization import (
     DownloadAttendeesRequest,
     GetAttendeeDetailResponse,
+    GetOrganizationDashboardResponse,
     GetOrganizationDetailResponse,
     ListingAttendeesQueryParams,
     ListingAttendeesResponse,
@@ -79,6 +80,18 @@ async def listing_organization_events_timeline(
 ):
     events = await events_service.listing_events_timeline(db, organizer)
     return events
+
+
+@router.get(
+    "/dashboard",
+    response_model=GetOrganizationDashboardResponse,
+    responses=authenticated_api_responses,
+)
+async def get_organization_dashboard(
+    db: Session = Depends(get_read_db),
+    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+):
+    return await organizations_service.get_organization_dashboard(db, organizer)
 
 
 @router.get(

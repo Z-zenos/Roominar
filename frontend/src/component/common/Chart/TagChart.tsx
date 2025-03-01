@@ -3,12 +3,8 @@
 import * as React from 'react';
 import { TrendingUp } from 'lucide-react';
 import { Label, Pie, PieChart } from 'recharts';
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-  type ChartConfig,
-} from './Chart';
+import type { ChartConfig } from './Chart';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from './Chart';
 import {
   Card,
   CardContent,
@@ -58,7 +54,7 @@ export function TagChart() {
   }, []);
 
   return (
-    <Card className='flex flex-col'>
+    <Card className='flex flex-col shadow-md'>
       <CardHeader className='items-center pb-0'>
         <CardTitle>Pie Chart - Donut with Text</CardTitle>
         <CardDescription>January - June 2024</CardDescription>

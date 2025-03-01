@@ -137,3 +137,13 @@ class GetOrganizationDetailResponse(BaseModel):
     is_followed: bool | None = None
     tags: list[TagItem] = Field([])
     events: list[SearchEventsItem] = Field([])
+
+
+class GetOrganizationDashboardResponse(BaseModel):
+    total_events: int | None = None
+    ongoing_events: int | None = None
+    total_visitors: int | None = None
+    total_revenue: int | None = None
+    total_members: int | None = None
+    total_tickets_sold: int | None = None
+    actual_attendees: int | None = None

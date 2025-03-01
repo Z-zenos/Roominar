@@ -4,6 +4,7 @@ import type {
   OrganizationsApiCreateOrganizationFollowRequest,
   OrganizationsApiDeleteOrganizationFollowRequest,
   OrganizationsApiGetAttendeeDetailRequest,
+  OrganizationsApiGetOrganizationDashboardRequest,
   OrganizationsApiGetOrganizationDetailRequest,
   OrganizationsApiListingAttendeesRequest,
   OrganizationsApiRegisterOrganizationRequest,
@@ -114,5 +115,17 @@ export const useGetOrganizationDetailQuery = (
   return useQuery({
     queryKey: ['get-organization-detail'],
     queryFn: async () => await api.organizations.getOrganizationDetail(params),
+  });
+};
+
+export const useGetOrganizationDashboardQuery = (
+  params?: OrganizationsApiGetOrganizationDashboardRequest,
+) => {
+  const api = useApi();
+  return useQuery({
+    queryKey: ['get-organization-dashboard'],
+    queryFn: async () =>
+      await api.organizations.getOrganizationDashboard(params),
+    staleTime: 1000 * 60,
   });
 };
