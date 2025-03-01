@@ -13,20 +13,23 @@ async def get_organization_dashboard(db: Session, organizer: User):
                     WHERE NOW() BETWEEN events.start_at AND events.end_at
                 ) AS ongoing_events
             FROM events
-            WHERE organization_id = :org_id
+            WHERE organization_id = :org_id AND status = 'PUBLIC'
         ),
         revenue_counts AS (
             SELECT COALESCE(SUM(total_amount), 0) AS total_revenue
             FROM transactions
             JOIN events ON transactions.event_id = events.id
-            WHERE events.organization_id = :org_id AND transactions.status = 'SUCCESS'
+            WHERE
+                events.organization_id = :org_id AND
+                transactions.status = 'SUCCESS' AND
+                events.status = 'PUBLIC'
         ),
         ticket_counts AS (
             SELECT
                 COALESCE(SUM(ticket_inventories.sold_quantity), 0) AS total_tickets_sold
             FROM ticket_inventories
             JOIN events ON ticket_inventories.event_id = events.id
-            WHERE events.organization_id = :org_id
+            WHERE events.organization_id = :org_id AND events.status = 'PUBLIC'
             GROUP BY events.organization_id
         ),
         actual_attendees AS (
@@ -34,7 +37,7 @@ async def get_organization_dashboard(db: Session, organizer: User):
                 COUNT(ticket_id) AS actual_attendees
             FROM check_ins
             JOIN events ON check_ins.event_id = events.id
-            WHERE events.organization_id = :org_id
+            WHERE events.organization_id = :org_id AND events.status = 'PUBLIC'
             GROUP BY events.organization_id
         )
         SELECT

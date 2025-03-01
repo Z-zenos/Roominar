@@ -7,6 +7,7 @@ from backend.core.constants import (
     AttendeeSortByCode,
     IndustryCode,
     JobTypeCode,
+    TagStatsCategoryCode,
     TransactionStatusCode,
 )
 from backend.schemas.common import PaginationResponse
@@ -147,3 +148,13 @@ class GetOrganizationDashboardResponse(BaseModel):
     total_members: int | None = None
     total_tickets_sold: int | None = None
     actual_attendees: int | None = None
+
+
+class TagStatsItem(BaseModel):
+    category: TagStatsCategoryCode
+    name: str
+    usage_count: int
+
+
+class GetTagStatsResponse(BaseModel):
+    data: list[TagStatsItem] = Field([])

@@ -6,6 +6,7 @@ import type {
   OrganizationsApiGetAttendeeDetailRequest,
   OrganizationsApiGetOrganizationDashboardRequest,
   OrganizationsApiGetOrganizationDetailRequest,
+  OrganizationsApiGetTagStatsRequest,
   OrganizationsApiListingAttendeesRequest,
   OrganizationsApiRegisterOrganizationRequest,
 } from '../lib/api/generated';
@@ -126,6 +127,17 @@ export const useGetOrganizationDashboardQuery = (
     queryKey: ['get-organization-dashboard'],
     queryFn: async () =>
       await api.organizations.getOrganizationDashboard(params),
+    staleTime: 1000 * 60,
+  });
+};
+
+export const useGetTagStatsQuery = (
+  params?: OrganizationsApiGetTagStatsRequest,
+) => {
+  const api = useApi();
+  return useQuery({
+    queryKey: ['get-tag-stats'],
+    queryFn: async () => await api.organizations.getTagStats(params),
     staleTime: 1000 * 60,
   });
 };

@@ -160,3 +160,8 @@ export function formatTransactionDate(datetime: Date) {
 export function camelToNormal(str: string) {
   return str.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase();
 }
+
+export const randomHexColor = () =>
+  `#${Math.floor(Math.random() * 16777215)
+    .toString(16)
+    .padStart(6, '0')}`;

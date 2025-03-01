@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic';
 import {
   useGetOrganizationDashboardQuery,
+  useGetTagStatsQuery,
   useListingOrganizationEventsTimelineQuery,
 } from '@/src/api/organization.api';
 import ElementLoading from '@/src/component/common/Loader/ElementLoading';
@@ -12,7 +13,7 @@ import { Image } from '@nextui-org/react';
 import { GoDotFill } from 'react-icons/go';
 import { useState } from 'react';
 import { getCookie } from 'cookies-next';
-import { TagChart } from '@/src/component/common/Chart/TagChart';
+import { TagStatsChart } from '@/src/component/common/Chart/TagStatsChart';
 import { TrafficChart } from '@/src/component/common/Chart/TrafficChart';
 
 const LazyCalendarTimeline = dynamic(
@@ -30,6 +31,7 @@ export default function OrganizationDashboard() {
   );
 
   const { data: dashboardData } = useGetOrganizationDashboardQuery();
+  const { data: tagStats } = useGetTagStatsQuery();
 
   return (
     <>
@@ -119,7 +121,7 @@ export default function OrganizationDashboard() {
           </div>
 
           <div className='col-span-1'>
-            <TagChart />
+            {tagStats && <TagStatsChart data={tagStats.data} />}
           </div>
 
           <div className='1200px:col-span-2 col-span-3'>

@@ -319,3 +319,9 @@ class RefundReasonCode(str, Enum):
     POLICY_CHANGE = "POLICY_CHANGE"  # Thay đổi chính sách
     FRAUDULENT_TRANSACTION = "FRAUDULENT_TRANSACTION"  # Giao dịch gian lận
     LEGAL_ISSUE = "LEGAL_ISSUE"  # Vấn đề pháp lý
+
+
+class TagStatsCategoryCode(str, Enum):
+    INDUSTRY = "INDUSTRY"
+    JOB_CATEGORY = "JOB_CATEGORY"
+    TAG = "TAG"
