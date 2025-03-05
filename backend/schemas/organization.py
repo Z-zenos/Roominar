@@ -8,7 +8,9 @@ from backend.core.constants import (
     IndustryCode,
     JobTypeCode,
     TagStatsCategoryCode,
+    TrackingTimeRangeCode,
     TransactionStatusCode,
+    UserActionTypeCode,
 )
 from backend.schemas.common import PaginationResponse
 from backend.schemas.event import SearchEventsItem
@@ -158,3 +160,20 @@ class TagStatsItem(BaseModel):
 
 class GetTagStatsResponse(BaseModel):
     data: list[TagStatsItem] = Field([])
+
+
+class TrackUserActionsQueryParams(BaseModel):
+    time_range: TrackingTimeRangeCode = Query(TrackingTimeRangeCode.LAST_7_DAYS)
+    group_by: TrackingTimeRangeCode | None = Query(TrackingTimeRangeCode.LAST_7_DAYS)
+    action_type: UserActionTypeCode | None = Query(None)
+    event_id: int | None = Query(None)
+
+
+class TrackUserActionsItem(BaseModel):
+    time_period: datetime
+    action_type: UserActionTypeCode
+    count: int
+
+
+class TrackUserActionsResponse(BaseModel):
+    data: list[TrackUserActionsItem] = Field([])

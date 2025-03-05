@@ -32,6 +32,8 @@ from backend.schemas.organization import (
     ListingAttendeesQueryParams,
     ListingAttendeesResponse,
     ListingRandomOrganizationsResponse,
+    TrackUserActionsQueryParams,
+    TrackUserActionsResponse,
 )
 
 router = APIRouter()
@@ -106,6 +108,22 @@ async def get_tag_stats(
 ):
     tag_stats = await organizations_service.get_tag_stats(db, organizer)
     return GetTagStatsResponse(data=tag_stats)
+
+
+@router.get(
+    "/tracking/user-actions",
+    response_model=TrackUserActionsResponse,
+    responses=authenticated_api_responses,
+)
+async def track_user_actions(
+    db: Session = Depends(get_read_db),
+    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+    query_params: TrackUserActionsQueryParams = Depends(TrackUserActionsQueryParams),
+):
+    user_actions = await organizations_service.track_user_actions(
+        db, organizer, query_params
+    )
+    return TrackUserActionsResponse(data=user_actions)
 
 
 @router.get(

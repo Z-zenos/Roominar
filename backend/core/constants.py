@@ -325,3 +325,47 @@ class TagStatsCategoryCode(str, Enum):
     INDUSTRY = "INDUSTRY"
     JOB_CATEGORY = "JOB_CATEGORY"
     TAG = "TAG"
+
+
+class DeviceTypeCode(str, Enum):
+    DESKTOP = "DESKTOP"
+    MOBILE = "MOBILE"
+    TABLET = "TABLET"
+    UNKNOWN = "UNKNOWN"
+
+
+class UserActionTypeCode(str, Enum):
+    VIEW = "VIEW"
+    APPLY_EVENT = "APPLY_EVENT"
+    CANCEL_EVENT = "CANCEL_EVENT"
+    BOOKMARK = "BOOKMARK"
+    SHARE = "SHARE"
+    COMMENT = "COMMENT"
+    FOLLOW = "FOLLOW"
+    RATE = "RATE"
+    CHECK_IN = "CHECK_IN"
+    CHECK_OUT = "CHECK_OUT"
+    REGISTER = "REGISTER"
+    LOGIN = "LOGIN"
+    LOGOUT = "LOGOUT"
+    PURCHASE_TICKET = "PURCHASE_TICKET"
+    REFUND_TICKET = "REFUND_TICKET"
+    SEARCH = "SEARCH"
+    CLICK = "CLICK"
+    REPORT = "REPORT"
+    DOWNLOAD = "DOWNLOAD"
+    UPGRADE_PLAN = "UPGRADE_PLAN"
+    WATCH_VIDEO = "WATCH_VIDEO"
+    SUBMIT_SURVEY = "SUBMIT_SURVEY"
+
+
+class TrackingTimeRangeCode(str, Enum):
+    LAST_7_DAYS = "LAST_7_DAYS"
+    LAST_30_DAYS = "LAST_30_DAYS"
+    LAST_90_DAYS = "LAST_90_DAYS"
+    DAILY = "DAILY"
+    HOURLY = "HOURLY"
+    WEEKLY = "WEEKLY"
+    MONTHLY = "MONTHLY"
+    QUARTERLY = "QUARTERLY"
+    YEARLY = "YEARLY"
