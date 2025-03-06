@@ -360,6 +360,7 @@ class UserActionTypeCode(str, Enum):
 
 
 class TrackingTimeRangeCode(str, Enum):
+    TODAY = "TODAY"
     LAST_7_DAYS = "LAST_7_DAYS"
     LAST_30_DAYS = "LAST_30_DAYS"
     LAST_90_DAYS = "LAST_90_DAYS"

@@ -3,7 +3,6 @@
 import { TrendingUp } from 'lucide-react';
 import { CartesianGrid, Line, LineChart, XAxis } from 'recharts';
 
-import type { ChartConfig } from './Chart';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from './Chart';
 import {
   Card,
@@ -13,27 +12,27 @@ import {
   CardHeader,
   CardTitle,
 } from '../Card/Card';
-const chartData = [
-  { month: 'January', desktop: 186, mobile: 80 },
-  { month: 'February', desktop: 305, mobile: 200 },
-  { month: 'March', desktop: 237, mobile: 120 },
-  { month: 'April', desktop: 73, mobile: 190 },
-  { month: 'May', desktop: 209, mobile: 130 },
-  { month: 'June', desktop: 214, mobile: 140 },
-];
+import {
+  UserActionTypeCode,
+  type TrackUserActionsItem,
+} from '@/src/lib/api/generated';
+import { randomHexColor } from '@/src/utils/app.util';
 
-const chartConfig = {
-  desktop: {
-    label: 'Desktop',
-    color: 'hsl(var(--chart-1))',
-  },
-  mobile: {
-    label: 'Mobile',
-    color: 'hsl(var(--chart-2))',
-  },
-} satisfies ChartConfig;
+interface TrackUserActionsChartProps {
+  data: TrackUserActionsItem[];
+}
 
-export function TrafficChart() {
+export function TrackUserActionsChart({ data }: TrackUserActionsChartProps) {
+  const chartConfig = Object.assign(
+    {},
+    ...Object.values(UserActionTypeCode).map((uatc) => ({
+      [uatc]: {
+        label: uatc,
+        color: randomHexColor(),
+      },
+    })),
+  );
+
   return (
     <Card className='shadow-md'>
       <CardHeader>
@@ -44,7 +43,7 @@ export function TrafficChart() {
         <ChartContainer config={chartConfig}>
           <LineChart
             accessibilityLayer
-            data={chartData}
+            data={data}
             margin={{
               left: 12,
               right: 12,
@@ -52,7 +51,7 @@ export function TrafficChart() {
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey='month'
+              dataKey='actionAt'
               tickLine={false}
               axisLine={false}
               tickMargin={8}
@@ -62,20 +61,20 @@ export function TrafficChart() {
               cursor={false}
               content={<ChartTooltipContent />}
             />
-            <Line
-              dataKey='desktop'
-              type='monotone'
-              stroke='var(--color-desktop)'
-              strokeWidth={2}
-              dot={false}
-            />
-            <Line
-              dataKey='mobile'
-              type='monotone'
-              stroke='var(--color-mobile)'
-              strokeWidth={2}
-              dot={false}
-            />
+            {[
+              UserActionTypeCode.Bookmark,
+              UserActionTypeCode.ApplyEvent,
+              UserActionTypeCode.PurchaseTicket,
+            ].map((uatc) => (
+              <Line
+                key={uatc}
+                dataKey={`actions.${uatc}`}
+                type='monotone'
+                stroke={chartConfig[uatc].color}
+                strokeWidth={2}
+                dot={false}
+              />
+            ))}
           </LineChart>
         </ChartContainer>
       </CardContent>

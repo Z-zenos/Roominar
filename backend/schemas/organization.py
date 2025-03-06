@@ -163,16 +163,24 @@ class GetTagStatsResponse(BaseModel):
 
 
 class TrackUserActionsQueryParams(BaseModel):
-    time_range: TrackingTimeRangeCode = Query(TrackingTimeRangeCode.LAST_7_DAYS)
-    group_by: TrackingTimeRangeCode | None = Query(TrackingTimeRangeCode.LAST_7_DAYS)
-    action_type: UserActionTypeCode | None = Query(None)
-    event_id: int | None = Query(None)
+    time_range: TrackingTimeRangeCode = Field(Query(TrackingTimeRangeCode.LAST_7_DAYS))
+    group_by: TrackingTimeRangeCode = Field(Query(TrackingTimeRangeCode.LAST_7_DAYS))
+    action_types: list[UserActionTypeCode] = Field(
+        Query(
+            [
+                UserActionTypeCode.BOOKMARK,
+                UserActionTypeCode.APPLY_EVENT,
+                UserActionTypeCode.PURCHASE_TICKET,
+            ]
+        )
+    )
+    event_id: int | None = Field(Query(None))
+    top_n: int | None = Field(Query(3))
 
 
 class TrackUserActionsItem(BaseModel):
-    time_period: datetime
-    action_type: UserActionTypeCode
-    count: int
+    action_at: str
+    actions: dict[UserActionTypeCode, int]
 
 
 class TrackUserActionsResponse(BaseModel):

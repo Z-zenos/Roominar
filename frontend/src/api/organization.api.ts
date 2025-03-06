@@ -9,6 +9,7 @@ import type {
   OrganizationsApiGetTagStatsRequest,
   OrganizationsApiListingAttendeesRequest,
   OrganizationsApiRegisterOrganizationRequest,
+  OrganizationsApiTrackUserActionsRequest,
 } from '../lib/api/generated';
 import { useQuery } from '@tanstack/react-query';
 import { toCamelCase } from '../utils/app.util';
@@ -138,6 +139,17 @@ export const useGetTagStatsQuery = (
   return useQuery({
     queryKey: ['get-tag-stats'],
     queryFn: async () => await api.organizations.getTagStats(params),
+    staleTime: 1000 * 60,
+  });
+};
+
+export const useTrackUserActionsQuery = (
+  params?: OrganizationsApiTrackUserActionsRequest,
+) => {
+  const api = useApi();
+  return useQuery({
+    queryKey: ['track-user-actions'],
+    queryFn: async () => await api.organizations.trackUserActions(params),
     staleTime: 1000 * 60,
   });
 };

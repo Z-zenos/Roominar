@@ -5,6 +5,7 @@ import {
   useGetOrganizationDashboardQuery,
   useGetTagStatsQuery,
   useListingOrganizationEventsTimelineQuery,
+  useTrackUserActionsQuery,
 } from '@/src/api/organization.api';
 import ElementLoading from '@/src/component/common/Loader/ElementLoading';
 import clsx from 'clsx';
@@ -14,7 +15,7 @@ import { GoDotFill } from 'react-icons/go';
 import { useState } from 'react';
 import { getCookie } from 'cookies-next';
 import { TagStatsChart } from '@/src/component/common/Chart/TagStatsChart';
-import { TrafficChart } from '@/src/component/common/Chart/TrafficChart';
+import { TrackUserActionsChart } from '@/src/component/common/Chart/TrackUserActionsChart';
 
 const LazyCalendarTimeline = dynamic(
   () => import('@/src/component/common/DateTime/CalendarTimeline'),
@@ -32,6 +33,7 @@ export default function OrganizationDashboard() {
 
   const { data: dashboardData } = useGetOrganizationDashboardQuery();
   const { data: tagStats } = useGetTagStatsQuery();
+  const { data: trackUserActions } = useTrackUserActionsQuery();
 
   return (
     <>
@@ -125,7 +127,9 @@ export default function OrganizationDashboard() {
           </div>
 
           <div className='1200px:col-span-2 col-span-3'>
-            <TrafficChart />
+            {trackUserActions && (
+              <TrackUserActionsChart data={trackUserActions.data} />
+            )}
           </div>
         </div>
         <div className='1200px:col-span-2 col-span-3 bg-white p-4 rounded-lg shadow-md'>
