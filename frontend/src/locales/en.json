@@ -315,6 +315,42 @@
       "HAIDUONG": "Hải Dương",
       "HANAM": "Hà Nam",
       "CAMAU": "Cà Mau"
+    },
+    "userAction": {
+      "VIEW": "view",
+      "APPLY_EVENT": "apply event",
+      "CANCEL_EVENT": "cancel event",
+      "BOOKMARK": "bookmark",
+      "SHARE": "share",
+      "COMMENT": "comment",
+      "FOLLOW": "follow",
+      "RATE": "rate",
+      "CHECK_IN": "check in",
+      "CHECK_OUT": "check out",
+      "REGISTER": "register",
+      "LOGIN": "login",
+      "LOGOUT": "logout",
+      "PURCHASE_TICKET": "purchase ticket",
+      "REFUND_TICKET": "refund ticket",
+      "SEARCH": "search",
+      "CLICK": "click",
+      "REPORT": "report",
+      "DOWNLOAD": "download",
+      "UPGRADE_PLAN": "upgrade plan",
+      "WATCH_VIDEO": "watch video",
+      "SUBMIT_SURVEY": "submit survey"
+    },
+    "trackingTimeRange": {
+      "TODAY": "today",
+      "LAST_7_DAYS": "last 7 days",
+      "LAST_30_DAYS": "last 30 days",
+      "LAST_90_DAYS": "last 90 days",
+      "DAILY": "daily",
+      "HOURLY": "hourly",
+      "WEEKLY": "weekly",
+      "MONTHLY": "monthly",
+      "QUARTERLY": "quarterly",
+      "YEARLY": "yearly"
     }
   }
 }
