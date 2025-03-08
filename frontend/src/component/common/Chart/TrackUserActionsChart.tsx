@@ -3,7 +3,12 @@
 import { TrendingUp } from 'lucide-react';
 import { CartesianGrid, Line, LineChart, XAxis } from 'recharts';
 
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from './Chart';
+import {
+  ChartContainer,
+  ChartLegend,
+  ChartTooltip,
+  ChartTooltipContent,
+} from './Chart';
 import {
   Card,
   CardContent,
@@ -21,12 +26,14 @@ import clsx from 'clsx';
 import { styles } from '@/src/constants/styles.constant';
 import { Form, FormCombobox, FormSelect } from '../../form/Form';
 import { useForm } from 'react-hook-form';
+import { useTranslations } from 'next-intl';
 
 interface TrackUserActionsChartProps {
   data: TrackUserActionsItem[];
 }
 
 export function TrackUserActionsChart({ data }: TrackUserActionsChartProps) {
+  const t = useTranslations('code');
   const form = useForm<{ action: string[]; time_period: string }>({
     mode: 'all',
     defaultValues: {
@@ -87,7 +94,7 @@ export function TrackUserActionsChart({ data }: TrackUserActionsChartProps) {
                   tickLine={false}
                   axisLine={false}
                   tickMargin={8}
-                  tickFormatter={(value) => value.slice(0, 3)}
+                  // tickFormatter={(value) => value.slice(0, 2)}
                 />
                 <ChartTooltip
                   cursor={false}
@@ -105,8 +112,10 @@ export function TrackUserActionsChart({ data }: TrackUserActionsChartProps) {
                     stroke={chartConfig[uatc].color}
                     strokeWidth={2}
                     dot={false}
+                    name={t(`userAction.${uatc}`)}
                   />
                 ))}
+                <ChartLegend />
               </LineChart>
             </ChartContainer>
           </CardContent>
