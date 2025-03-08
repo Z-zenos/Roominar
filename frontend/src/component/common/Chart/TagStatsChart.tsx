@@ -133,7 +133,7 @@ export function TagStatsChart({ data }: TagStatsChartProps) {
                 content={({ x, y, value, index }) => (
                   <text
                     x={(x as number) + 10}
-                    y={(y as number) + 12}
+                    y={(y as number) + 15}
                     fill={
                       index === 0
                         ? '#249055'
