@@ -16,6 +16,8 @@ import { useState } from 'react';
 import { getCookie } from 'cookies-next';
 import { TagStatsChart } from '@/src/component/common/Chart/TagStatsChart';
 import { TrackUserActionsChart } from '@/src/component/common/Chart/TrackUserActionsChart';
+import { useSearchParams } from 'next/navigation';
+import queryString from 'query-string';
 
 const LazyCalendarTimeline = dynamic(
   () => import('@/src/component/common/DateTime/CalendarTimeline'),
@@ -30,10 +32,13 @@ export default function OrganizationDashboard() {
   const [isEnglish] = useState<boolean>(
     getCookie('NEXT_LOCALE') === 'en' || !getCookie('NEXT_LOCALE'),
   );
+  const searchParams = useSearchParams();
 
   const { data: dashboardData } = useGetOrganizationDashboardQuery();
   const { data: tagStats } = useGetTagStatsQuery();
-  const { data: trackUserActions } = useTrackUserActionsQuery();
+  const { data: trackUserActions } = useTrackUserActionsQuery({
+    ...queryString.parse(searchParams.toString(), { arrayFormat: 'bracket' }),
+  });
 
   return (
     <>
@@ -122,17 +127,16 @@ export default function OrganizationDashboard() {
             )}
           </div>
 
-          <div className='col-span-1'>
-            {tagStats && <TagStatsChart data={tagStats.data} />}
-          </div>
-
-          <div className='1200px:col-span-2 col-span-3'>
+          <div className='col-span-3'>
             {trackUserActions && (
               <TrackUserActionsChart data={trackUserActions.data} />
             )}
           </div>
+          <div className='col-span-1'>
+            {tagStats && <TagStatsChart data={tagStats.data} />}
+          </div>
         </div>
-        <div className='1200px:col-span-2 col-span-3 bg-white p-4 rounded-lg shadow-md'>
+        <div className='1200px:col-span-2 max-h-[600px] col-span-3 bg-white p-4 rounded-lg shadow-md'>
           <LazyCalendarTimeline
             height={520}
             aspectRatio={1.35}

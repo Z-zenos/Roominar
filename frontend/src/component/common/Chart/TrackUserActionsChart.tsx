@@ -16,17 +16,20 @@ import {
   CardHeader,
   CardTitle,
 } from '../Card/Card';
+import type { OrganizationsApiTrackUserActionsRequest } from '@/src/lib/api/generated';
 import {
   TrackingTimeRangeCode,
   UserActionTypeCode,
   type TrackUserActionsItem,
 } from '@/src/lib/api/generated';
-import { optionify, randomHexColor } from '@/src/utils/app.util';
+import { optionify, randomHexColor, searchQuery } from '@/src/utils/app.util';
 import clsx from 'clsx';
 import { styles } from '@/src/constants/styles.constant';
 import { Form, FormCombobox, FormSelect } from '../../form/Form';
 import { useForm } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
+import dayjs from 'dayjs';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 interface TrackUserActionsChartProps {
   data: TrackUserActionsItem[];
@@ -34,15 +37,22 @@ interface TrackUserActionsChartProps {
 
 export function TrackUserActionsChart({ data }: TrackUserActionsChartProps) {
   const t = useTranslations('code');
-  const form = useForm<{ action: string[]; time_period: string }>({
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const form = useForm<OrganizationsApiTrackUserActionsRequest>({
     mode: 'all',
     defaultValues: {
-      action: [
+      actionTypes: (searchParams.getAll(
+        'action_types[]',
+      ) as UserActionTypeCode[]) ?? [
         UserActionTypeCode.Bookmark,
         UserActionTypeCode.ApplyEvent,
         UserActionTypeCode.PurchaseTicket,
       ],
-      time_period: TrackingTimeRangeCode.Last7Days,
+      timeRange:
+        (searchParams.get('timeRange') as TrackingTimeRangeCode) ??
+        TrackingTimeRangeCode.Last7Days,
     },
   });
 
@@ -56,6 +66,16 @@ export function TrackUserActionsChart({ data }: TrackUserActionsChartProps) {
     })),
   );
 
+  function handleTrackingUserActions() {
+    const filters: OrganizationsApiTrackUserActionsRequest = {
+      ...form.getValues(),
+    };
+
+    const exclude_queries = [];
+
+    searchQuery(router, filters, searchParams, exclude_queries);
+  }
+
   return (
     <Card className='shadow-md'>
       <Form {...form}>
@@ -65,14 +85,15 @@ export function TrackUserActionsChart({ data }: TrackUserActionsChartProps) {
             <div className={clsx(styles.center, 'gap-3')}>
               <FormCombobox
                 control={form.control}
-                name='action'
+                name='actionTypes'
                 options={optionify(UserActionTypeCode)}
                 multiple
                 i18nPath='code.userAction'
+                onValueChange={handleTrackingUserActions}
               />
               <FormSelect
                 control={form.control}
-                name='time_period'
+                name='timeRange'
                 options={optionify(TrackingTimeRangeCode)}
                 i18nPath='code.trackingTimeRange'
               />
@@ -84,8 +105,8 @@ export function TrackUserActionsChart({ data }: TrackUserActionsChartProps) {
                 accessibilityLayer
                 data={data}
                 margin={{
-                  left: 12,
-                  right: 12,
+                  left: 20,
+                  right: 20,
                 }}
               >
                 <CartesianGrid vertical={false} />
@@ -94,17 +115,22 @@ export function TrackUserActionsChart({ data }: TrackUserActionsChartProps) {
                   tickLine={false}
                   axisLine={false}
                   tickMargin={8}
-                  // tickFormatter={(value) => value.slice(0, 2)}
+                  interval={0}
+                  tickFormatter={(value) => dayjs(value).format('MM-DD')}
                 />
                 <ChartTooltip
                   cursor={false}
-                  content={<ChartTooltipContent />}
+                  content={<ChartTooltipContent className='min-w-[160px]' />}
                 />
-                {[
-                  UserActionTypeCode.Bookmark,
-                  UserActionTypeCode.ApplyEvent,
-                  UserActionTypeCode.PurchaseTicket,
-                ].map((uatc) => (
+                {(
+                  (searchParams.getAll(
+                    'action_types[]',
+                  ) as UserActionTypeCode[]) ?? [
+                    UserActionTypeCode.Bookmark,
+                    UserActionTypeCode.ApplyEvent,
+                    UserActionTypeCode.PurchaseTicket,
+                  ]
+                ).map((uatc) => (
                   <Line
                     key={uatc}
                     dataKey={`actions.${uatc}`}

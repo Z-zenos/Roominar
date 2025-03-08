@@ -146,6 +146,7 @@ export const useGetTagStatsQuery = (
 export const useTrackUserActionsQuery = (
   params?: OrganizationsApiTrackUserActionsRequest,
 ) => {
+  params = toCamelCase(params);
   const api = useApi();
   return useQuery({
     queryKey: ['track-user-actions'],
