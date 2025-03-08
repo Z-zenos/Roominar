@@ -59,7 +59,7 @@ async def get_tag_stats(db: Session, organizer: User):
         SELECT
             'JOB_CATEGORY' AS category, jc.job_category_name AS name, jc.usage_count
         FROM job_category_usage jc
-        ORDER BY category, usage_count DESC;
+        ORDER BY usage_count DESC;
         """
     )
 

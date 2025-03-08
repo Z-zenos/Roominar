@@ -81,7 +81,7 @@ export function TrackUserActionsChart({ data }: TrackUserActionsChartProps) {
       <Form {...form}>
         <form>
           <CardHeader className={clsx(styles.between)}>
-            <CardTitle>Tracking User Actions</CardTitle>
+            <CardTitle className='mb-3'>Tracking User Actions</CardTitle>
             <div className={clsx(styles.center, 'gap-3')}>
               <FormCombobox
                 control={form.control}

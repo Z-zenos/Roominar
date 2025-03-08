@@ -3,7 +3,7 @@ import { FaCaretRight } from 'react-icons/fa';
 import { MdKeyboardDoubleArrowRight } from 'react-icons/md';
 
 interface RankingListProps {
-  title: string;
+  title?: string;
   className?: string;
   data?: any[];
   onClick?(item: any): void;
@@ -12,9 +12,11 @@ interface RankingListProps {
 function RankingList({ title, className, data, onClick }: RankingListProps) {
   return (
     <div className={clsx('w-full border-b border-b-gray-300 pb-4', className)}>
-      <h3 className='text-md border-b border-b-gray-500 pb-1 text-dark-main font-semibold inline-flex justify-start items-center gap-1 cursor-pointer mb-2'>
-        {title} <MdKeyboardDoubleArrowRight size={16} />
-      </h3>
+      {title && (
+        <h3 className='text-md border-b border-b-gray-500 pb-1 text-dark-main font-semibold inline-flex justify-start items-center gap-1 cursor-pointer mb-2'>
+          {title} <MdKeyboardDoubleArrowRight size={16} />
+        </h3>
+      )}
       <ul className='flex flex-col justify-start gap-2 w-full'>
         {data &&
           data?.length &&
@@ -44,12 +46,15 @@ function RankingList({ title, className, data, onClick }: RankingListProps) {
               >
                 {i + 1}
               </p>
+              {item?.extraInfo && <p>{item.extraInfo}</p>}
             </div>
           ))}
       </ul>
-      <h4 className=' flex items-center justify-start gap-1 text-sm font-light text-primary hover:underline transition-all cursor-pointer'>
-        <FaCaretRight /> See more
-      </h4>
+      {title && (
+        <h4 className=' flex items-center justify-start gap-1 text-sm font-light text-primary hover:underline transition-all cursor-pointer'>
+          <FaCaretRight /> See more
+        </h4>
+      )}
     </div>
   );
 }
