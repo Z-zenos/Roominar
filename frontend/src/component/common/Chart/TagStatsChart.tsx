@@ -5,6 +5,7 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  Cell,
   LabelList,
   XAxis,
   YAxis,
@@ -46,19 +47,17 @@ export function TagStatsChart({ data }: TagStatsChartProps) {
     return data.reduce((acc, curr) => acc + curr.usageCount, 0);
   }, [data]);
 
-  const chartConfig = Object.assign(
-    {},
-    {
-      tags: {
-        label: 'Tags',
-      },
-    },
-    ...data.slice(0, 5).map((item) => ({
-      [item.name]: {
+  const chartConfig = data.slice(0, 5).reduce(
+    (acc, item, i) => {
+      acc[item.name] = {
         label: item.name,
-        color: 'hsl(var(--chart-1))',
-      },
-    })),
+        color:
+          ['#d8fcff', '#d8fcff', '#fcfcaa', 'bg-default-sub'][i] ||
+          'bg-default-sub',
+      };
+      return acc;
+    },
+    { tags: { label: 'Tags' } },
   );
 
   const chartData = data.slice(0, 5).map((item) => ({
@@ -116,22 +115,41 @@ export function TagStatsChart({ data }: TagStatsChartProps) {
               type='number'
               hide
             />
-            <ChartTooltip
+            {/* <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent indicator='line' />}
-            />
+            /> */}
             <Bar
               dataKey='usageCount'
               layout='vertical'
-              fill='var(--color-desktop)'
               radius={4}
+              fillOpacity={1}
             >
               <LabelList
                 dataKey='name'
                 position='insideLeft'
                 offset={8}
                 className='fill-white font-semibold'
-                fontSize={12}
+                content={({ x, y, value, index }) => (
+                  <text
+                    x={(x as number) + 10}
+                    y={(y as number) + 12}
+                    fill={
+                      index === 0
+                        ? '#249055'
+                        : index === 1
+                          ? '#246cff'
+                          : index === 2
+                            ? '#fcb400'
+                            : '#fff'
+                    }
+                    fontSize={12}
+                    fontWeight='bold'
+                    textAnchor='left'
+                  >
+                    {value}
+                  </text>
+                )}
               />
               <LabelList
                 dataKey='usageCount'
