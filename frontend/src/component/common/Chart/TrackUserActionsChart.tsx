@@ -1,6 +1,5 @@
 'use client';
 
-import { TrendingUp } from 'lucide-react';
 import { CartesianGrid, Line, LineChart, XAxis } from 'recharts';
 
 import {
@@ -34,6 +33,31 @@ import { Skeleton } from '@nextui-org/react';
 import { useTrackUserActionsQuery } from '@/src/api/organization.api';
 
 const USER_ACTION_STORAGE_KEY = 'userActions';
+
+const userActionColors = {
+  VIEW: '#3498db',
+  APPLY_EVENT: '#c0392b',
+  CANCEL_EVENT: '#e74c3c',
+  BOOKMARK: '#f1c40f',
+  SHARE: '#9b59b6',
+  COMMENT: '#16a085',
+  FOLLOW: '#e67e22',
+  RATE: '#f39c12',
+  CHECK_IN: '#2980b9',
+  CHECK_OUT: '#d35400',
+  REGISTER: '#1abc9c',
+  LOGIN: '#34495e',
+  LOGOUT: '#95a5a6',
+  PURCHASE_TICKET: '#27ae60',
+  REFUND_TICKET: '#2ecc71',
+  SEARCH: '#8e44ad',
+  CLICK: '#2c3e50',
+  REPORT: '#d35400',
+  DOWNLOAD: '#7f8c8d',
+  UPGRADE_PLAN: '#c0392b',
+  WATCH_VIDEO: '#8e44ad',
+  SUBMIT_SURVEY: '#3498db',
+};
 
 export function TrackUserActionsChart() {
   const t = useTranslations('code');
@@ -80,7 +104,7 @@ export function TrackUserActionsChart() {
     ...Object.values(UserActionTypeCode).map((uatc) => ({
       [uatc]: {
         label: uatc,
-        color: randomHexColor(),
+        color: userActionColors[uatc] ?? randomHexColor(),
       },
     })),
   );
@@ -158,7 +182,7 @@ export function TrackUserActionsChart() {
             <Skeleton className='h-[200px] mx-20 my-6 rounded-md' />
           )}
           <CardFooter>
-            <div className='flex w-full items-start gap-2 text-sm'>
+            {/* <div className='flex w-full items-start gap-2 text-sm'>
               <div className='grid gap-2'>
                 <div className='flex items-center gap-2 font-medium leading-none'>
                   Trending up by 5.2% this month{' '}
@@ -168,7 +192,7 @@ export function TrackUserActionsChart() {
                   Showing total visitors for the last 6 months
                 </div>
               </div>
-            </div>
+            </div> */}
           </CardFooter>
         </form>
       </Form>

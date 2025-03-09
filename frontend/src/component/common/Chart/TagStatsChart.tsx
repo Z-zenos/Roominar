@@ -22,7 +22,6 @@ import {
   TagStatsCategoryCode,
   type TagStatsItem,
 } from '@/src/lib/api/generated';
-import { TrendingUp } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import {
   Button,
@@ -132,7 +131,7 @@ export function TagStatsChart({ data }: TagStatsChartProps) {
                 content={({ x, y, value, index }) => (
                   <text
                     x={(x as number) + 10}
-                    y={(y as number) + 15}
+                    y={(y as number) + 14}
                     fill={
                       index === 0
                         ? '#249055'
@@ -162,12 +161,12 @@ export function TagStatsChart({ data }: TagStatsChartProps) {
         </ChartContainer>
       </CardContent>
       <CardFooter className='flex-col items-start gap-2 text-sm'>
-        <div className='flex gap-2 font-medium leading-none'>
+        {/* <div className='flex gap-2 font-medium leading-none'>
           Trending up by 5.2% this month <TrendingUp className='h-4 w-4' />
         </div>
         <div className='leading-none text-muted-foreground'>
           Showing total visitors for the last 6 months
-        </div>
+        </div> */}
       </CardFooter>
 
       <Modal
