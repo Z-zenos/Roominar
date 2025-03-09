@@ -149,7 +149,7 @@ export const useTrackUserActionsQuery = (
   params = toCamelCase(params);
   const api = useApi();
   return useQuery({
-    queryKey: ['track-user-actions'],
+    queryKey: ['track-user-actions', JSON.stringify(params)],
     queryFn: async () => await api.organizations.trackUserActions(params),
     staleTime: 1000 * 60,
   });

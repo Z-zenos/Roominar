@@ -20,41 +20,60 @@ import type { OrganizationsApiTrackUserActionsRequest } from '@/src/lib/api/gene
 import {
   TrackingTimeRangeCode,
   UserActionTypeCode,
-  type TrackUserActionsItem,
 } from '@/src/lib/api/generated';
-import { optionify, randomHexColor, searchQuery } from '@/src/utils/app.util';
+import { optionify, randomHexColor } from '@/src/utils/app.util';
 import clsx from 'clsx';
 import { styles } from '@/src/constants/styles.constant';
 import { Form, FormCombobox, FormSelect } from '../../form/Form';
 import { useForm } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
-import { useRouter, useSearchParams } from 'next/navigation';
+import queryString from 'query-string';
+import { useEffect, useState } from 'react';
+import { Skeleton } from '@nextui-org/react';
+import { useTrackUserActionsQuery } from '@/src/api/organization.api';
 
-interface TrackUserActionsChartProps {
-  data: TrackUserActionsItem[];
-}
+const USER_ACTION_STORAGE_KEY = 'userActions';
 
-export function TrackUserActionsChart({ data }: TrackUserActionsChartProps) {
+export function TrackUserActionsChart() {
   const t = useTranslations('code');
-  const searchParams = useSearchParams();
-  const router = useRouter();
+  const [filters, setFilters] =
+    useState<OrganizationsApiTrackUserActionsRequest>({});
+
+  const { data: trackUserActions, refetch } = useTrackUserActionsQuery({
+    ...queryString.parse(
+      queryString.stringify(filters, { arrayFormat: 'bracket' }),
+      { arrayFormat: 'bracket' },
+    ),
+  });
+
+  useEffect(() => {
+    const storedFilters = localStorage.getItem(USER_ACTION_STORAGE_KEY);
+    if (storedFilters) {
+      setFilters(JSON.parse(storedFilters));
+    }
+  }, []);
 
   const form = useForm<OrganizationsApiTrackUserActionsRequest>({
     mode: 'all',
     defaultValues: {
-      actionTypes: (searchParams.getAll(
-        'action_types[]',
-      ) as UserActionTypeCode[]) ?? [
+      actionTypes: filters.actionTypes ?? [
         UserActionTypeCode.Bookmark,
         UserActionTypeCode.ApplyEvent,
         UserActionTypeCode.PurchaseTicket,
       ],
-      timeRange:
-        (searchParams.get('timeRange') as TrackingTimeRangeCode) ??
-        TrackingTimeRangeCode.Last7Days,
+      timeRange: filters.timeRange ?? TrackingTimeRangeCode.Last7Days,
     },
   });
+
+  useEffect(() => {
+    const subscription = form.watch((value) => {
+      localStorage.setItem(USER_ACTION_STORAGE_KEY, JSON.stringify(value));
+      setFilters(value);
+      refetch();
+    });
+    return () => subscription.unsubscribe();
+  }, [form, form.watch, refetch]);
 
   const chartConfig = Object.assign(
     {},
@@ -66,15 +85,7 @@ export function TrackUserActionsChart({ data }: TrackUserActionsChartProps) {
     })),
   );
 
-  function handleTrackingUserActions() {
-    const filters: OrganizationsApiTrackUserActionsRequest = {
-      ...form.getValues(),
-    };
-
-    const exclude_queries = [];
-
-    searchQuery(router, filters, searchParams, exclude_queries);
-  }
+  console.log(filters);
 
   return (
     <Card className='shadow-md'>
@@ -89,7 +100,6 @@ export function TrackUserActionsChart({ data }: TrackUserActionsChartProps) {
                 options={optionify(UserActionTypeCode)}
                 multiple
                 i18nPath='code.userAction'
-                onValueChange={handleTrackingUserActions}
               />
               <FormSelect
                 control={form.control}
@@ -99,52 +109,54 @@ export function TrackUserActionsChart({ data }: TrackUserActionsChartProps) {
               />
             </div>
           </CardHeader>
-          <CardContent>
-            <ChartContainer config={chartConfig}>
-              <LineChart
-                accessibilityLayer
-                data={data}
-                margin={{
-                  left: 20,
-                  right: 20,
-                }}
-              >
-                <CartesianGrid vertical={false} />
-                <XAxis
-                  dataKey='actionAt'
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={8}
-                  interval={0}
-                  tickFormatter={(value) => dayjs(value).format('MM-DD')}
-                />
-                <ChartTooltip
-                  cursor={false}
-                  content={<ChartTooltipContent className='min-w-[160px]' />}
-                />
-                {(
-                  (searchParams.getAll(
-                    'action_types[]',
-                  ) as UserActionTypeCode[]) ?? [
-                    UserActionTypeCode.Bookmark,
-                    UserActionTypeCode.ApplyEvent,
-                    UserActionTypeCode.PurchaseTicket,
-                  ]
-                ).map((uatc) => (
-                  <Line
-                    key={uatc}
-                    dataKey={`actions.${uatc}`}
-                    type='monotone'
-                    stroke={chartConfig[uatc].color}
-                    strokeWidth={2}
-                    dot={false}
-                    name={t(`userAction.${uatc}`)}
+          {trackUserActions && trackUserActions.data.length > 0 ? (
+            <CardContent>
+              <ChartContainer config={chartConfig}>
+                <LineChart
+                  accessibilityLayer
+                  data={trackUserActions.data}
+                  margin={{
+                    left: 20,
+                    right: 20,
+                  }}
+                >
+                  <CartesianGrid vertical={false} />
+                  <XAxis
+                    dataKey='actionAt'
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={8}
+                    interval={0}
+                    tickFormatter={(value) => dayjs(value).format('MM-DD')}
                   />
-                ))}
-                <ChartLegend />
-              </LineChart>
-            </ChartContainer>
-          </CardContent>
+                  <ChartTooltip
+                    cursor={false}
+                    content={<ChartTooltipContent className='min-w-[160px]' />}
+                  />
+                  {(
+                    filters.actionTypes ?? [
+                      UserActionTypeCode.Bookmark,
+                      UserActionTypeCode.ApplyEvent,
+                      UserActionTypeCode.PurchaseTicket,
+                    ]
+                  ).map((uatc) => (
+                    <Line
+                      key={uatc}
+                      dataKey={`actions.${uatc}`}
+                      type='monotone'
+                      stroke={chartConfig[uatc].color}
+                      strokeWidth={2}
+                      dot={false}
+                      name={t(`userAction.${uatc}`)}
+                    />
+                  ))}
+                  <ChartLegend />
+                </LineChart>
+              </ChartContainer>
+            </CardContent>
+          ) : (
+            <Skeleton className='h-[200px] mx-20 my-6 rounded-md' />
+          )}
           <CardFooter>
             <div className='flex w-full items-start gap-2 text-sm'>
               <div className='grid gap-2'>
