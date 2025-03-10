@@ -29,6 +29,8 @@ from backend.schemas.organization import (
     GetOrganizationDashboardResponse,
     GetOrganizationDetailResponse,
     GetTagStatsResponse,
+    GetTicketStatsQueryParams,
+    GetTicketStatsResponse,
     ListingAttendeesQueryParams,
     ListingAttendeesResponse,
     ListingRandomOrganizationsResponse,
@@ -108,6 +110,19 @@ async def get_tag_stats(
 ):
     tag_stats = await organizations_service.get_tag_stats(db, organizer)
     return GetTagStatsResponse(data=tag_stats)
+
+
+@router.get(
+    "/ticket-stats",
+    response_model=GetTicketStatsResponse,
+    responses=authenticated_api_responses,
+)
+async def get_ticket_stats(
+    db: Session = Depends(get_read_db),
+    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+    query_params: GetTicketStatsQueryParams = Depends(GetTicketStatsQueryParams),
+):
+    return await organizations_service.get_ticket_stats(db, organizer, query_params)
 
 
 @router.get(

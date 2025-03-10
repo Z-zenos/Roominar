@@ -7,6 +7,7 @@ import type {
   OrganizationsApiGetOrganizationDashboardRequest,
   OrganizationsApiGetOrganizationDetailRequest,
   OrganizationsApiGetTagStatsRequest,
+  OrganizationsApiGetTicketStatsRequest,
   OrganizationsApiListingAttendeesRequest,
   OrganizationsApiRegisterOrganizationRequest,
   OrganizationsApiTrackUserActionsRequest,
@@ -151,6 +152,18 @@ export const useTrackUserActionsQuery = (
   return useQuery({
     queryKey: ['track-user-actions', JSON.stringify(params)],
     queryFn: async () => await api.organizations.trackUserActions(params),
+    staleTime: 1000 * 60,
+  });
+};
+
+export const useGetTicketStatsQuery = (
+  params?: OrganizationsApiGetTicketStatsRequest,
+) => {
+  params = toCamelCase(params);
+  const api = useApi();
+  return useQuery({
+    queryKey: ['get-ticket-stats', JSON.stringify(params)],
+    queryFn: async () => await api.organizations.getTicketStats(params),
     staleTime: 1000 * 60,
   });
 };

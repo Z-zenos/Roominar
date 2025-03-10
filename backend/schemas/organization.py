@@ -8,6 +8,8 @@ from backend.core.constants import (
     IndustryCode,
     JobTypeCode,
     TagStatsCategoryCode,
+    TicketStatusCode,
+    TicketTypeCode,
     TrackingTimeRangeCode,
     TransactionStatusCode,
     UserActionTypeCode,
@@ -185,3 +187,22 @@ class TrackUserActionsItem(BaseModel):
 
 class TrackUserActionsResponse(BaseModel):
     data: list[TrackUserActionsItem] = Field([])
+
+
+class GetTicketStatsQueryParams(BaseModel):
+    event_id: int | None = Field(Query(None))
+    start_date: datetime | None = Field(Query(None))
+    end_date: datetime | None = Field(Query(None))
+    ticket_type: TicketTypeCode | None = Field(Query(None))
+    ticket_status: TicketStatusCode | None = Field(Query(None))
+
+
+class GetTicketStatsResponse(BaseModel):
+    total_sold_tickets: int
+    total_remaining_tickets: int
+    total_reserved_tickets: int
+    sold_percentage: float
+    remaining_percentage: float
+    reserved_percentage: float
+    total_revenue: float
+    total_tickets: int

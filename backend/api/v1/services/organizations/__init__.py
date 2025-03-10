@@ -4,6 +4,7 @@ from .get_attendee_detail_service import get_attendee_detail
 from .get_organization_dashboard_service import get_organization_dashboard
 from .get_organization_detail_service import get_organization_detail
 from .get_tag_stats_service import get_tag_stats
+from .get_ticket_stats_service import get_ticket_stats
 from .listing_attendees_service import listing_attendees
 from .listing_random_organizations_service import listing_random_organizations
 from .track_user_actions_service import track_user_actions
@@ -20,4 +21,5 @@ all = (
     get_organization_dashboard,
     get_tag_stats,
     track_user_actions,
+    get_ticket_stats,
 )
