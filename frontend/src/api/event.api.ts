@@ -225,3 +225,11 @@ export const useGenerateEventAIMutation = <T>(
     options,
   );
 };
+
+export const useListingEventOptionsQuery = () => {
+  const api = useApi();
+  return useQuery({
+    queryKey: ['listing-event-options'],
+    queryFn: async () => await api.events.listingEventOptions(),
+  });
+};

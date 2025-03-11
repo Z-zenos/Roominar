@@ -20,8 +20,9 @@ import { useForm } from 'react-hook-form';
 import { useGetTicketStatsQuery } from '@/src/api/organization.api';
 import { Skeleton } from '@nextui-org/react';
 import queryString from 'query-string';
-import { Form, FormSelect } from '../../form/Form';
+import { Form, FormCustomLabel, FormSelect } from '../../form/Form';
 import { optionify } from '@/src/utils/app.util';
+import { useListingEventOptionsQuery } from '@/src/api/event.api';
 
 const TICKET_STATS_STORAGE_KEY = 'ticketStats';
 
@@ -34,12 +35,14 @@ export function TicketStatsChart() {
     {},
   );
 
-  const { data, refetch } = useGetTicketStatsQuery({
+  const { data: ticketStats, refetch } = useGetTicketStatsQuery({
     ...queryString.parse(
       queryString.stringify(filters, { arrayFormat: 'bracket' }),
       { arrayFormat: 'bracket' },
     ),
   });
+
+  const { data: eventOptions } = useListingEventOptionsQuery();
 
   useEffect(() => {
     const storedFilters = localStorage.getItem(TICKET_STATS_STORAGE_KEY);
@@ -51,20 +54,20 @@ export function TicketStatsChart() {
   const chartData = [
     {
       type: 'sold',
-      total: data?.totalSoldTickets,
-      percentage: data?.soldPercentage,
+      total: ticketStats?.totalSoldTickets,
+      percentage: ticketStats?.soldPercentage,
       fill: '#ff5c00',
     },
     {
-      type: 'remaining',
-      total: data?.totalRemainingTickets,
-      percentage: data?.remainingPercentage,
+      type: 'remain',
+      total: ticketStats?.totalRemainingTickets,
+      percentage: ticketStats?.remainingPercentage,
       fill: '#fcb400',
     },
     // {
     //   type: 'reserved',
-    //   total: data.totalReservedTickets,
-    //   percentage: data.reservedPercentage,
+    //   total: ticketStats.totalReservedTickets,
+    //   percentage: ticketStats.reservedPercentage,
     //   fill: '#4CAF50',
     // },
   ];
@@ -93,6 +96,7 @@ export function TicketStatsChart() {
       ticketType: undefined,
       startDate: undefined,
       endDate: undefined,
+      eventId: filters.eventId ?? 0,
     },
   });
 
@@ -110,10 +114,10 @@ export function TicketStatsChart() {
       <Form {...form}>
         <form className='flex flex-col'>
           <CardHeader className='items-center pb-0'>
-            {data ? (
+            {ticketStats ? (
               <CardTitle className='font-medium'>
-                Ticket Stats ({data.totalTickets}) - Revenue:{' '}
-                {new Number(data.totalRevenue).toLocaleString(
+                Ticket Stats ({ticketStats.totalTickets}) - Revenue:{' '}
+                {new Number(ticketStats.totalRevenue).toLocaleString(
                   isEnglish ? 'en-US' : 'vi-VN',
                   {
                     style: 'currency',
@@ -125,7 +129,7 @@ export function TicketStatsChart() {
               <Skeleton className='h-[40px] w-full rounded-md' />
             )}
           </CardHeader>
-          {data ? (
+          {ticketStats ? (
             <div className='grid grid-cols-6'>
               <CardContent className='col-span-4 pb-0'>
                 <ChartContainer
@@ -137,6 +141,7 @@ export function TicketStatsChart() {
                       left: 20,
                       right: 20,
                     }}
+                    // className='[&_.recharts-legend-wrapper]:!w-full'
                   >
                     <ChartTooltip
                       content={
@@ -190,13 +195,42 @@ export function TicketStatsChart() {
                 </ChartContainer>
               </CardContent>
 
-              <div className='col-span-2 pt-4'>
+              <div className='col-span-2 pt-6'>
+                <FormCustomLabel
+                  htmlFor='ticketType'
+                  custom={
+                    <div>
+                      <h3 className='text-sm mt-4 mb-2'>Ticket type: </h3>
+                    </div>
+                  }
+                />
                 <FormSelect
                   control={form.control}
                   name='ticketType'
                   options={optionify(TicketTypeCode)}
                   i18nPath='code.ticket.type'
                   className='max-w-[130px]'
+                  label=''
+                />
+
+                <FormCustomLabel
+                  htmlFor='eventId'
+                  custom={
+                    <div>
+                      <h3 className='text-sm mt-4 mb-2'>Event name: </h3>
+                    </div>
+                  }
+                />
+                <FormSelect
+                  control={form.control}
+                  name='eventId'
+                  options={
+                    eventOptions?.data?.map((option) => ({
+                      label: option.name,
+                      value: option.id + '',
+                    })) || []
+                  }
+                  className='max-w-[130px] mb-4'
                 />
               </div>
             </div>

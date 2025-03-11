@@ -36,7 +36,7 @@ async def get_ticket_stats(
         )
     )
 
-    if "event_id" in filters:
+    if "event_id" in filters and filters["event_id"] != 0:
         query = query.where(Event.id == filters["event_id"])
     if "start_date" in filters:
         query = query.where(Ticket.sales_start_at >= filters["start_date"])

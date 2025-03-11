@@ -426,3 +426,12 @@ class GenerateEventAIRequest(BaseModel):
     price: int
 
     tags: list[int] = Field([])
+
+
+class ListingEventOptionsItem(BaseModel):
+    id: int
+    name: str
+
+
+class ListingEventOptionsResponse(BaseModel):
+    data: list[ListingEventOptionsItem] = Field([])
