@@ -4,7 +4,6 @@ import dynamic from 'next/dynamic';
 import {
   useGetOrganizationDashboardQuery,
   useGetTagStatsQuery,
-  useGetTicketStatsQuery,
   useListingOrganizationEventsTimelineQuery,
 } from '@/src/api/organization.api';
 import ElementLoading from '@/src/component/common/Loader/ElementLoading';
@@ -34,7 +33,6 @@ export default function OrganizationDashboard() {
 
   const { data: dashboardData } = useGetOrganizationDashboardQuery();
   const { data: tagStats } = useGetTagStatsQuery();
-  const { data: ticketStats } = useGetTicketStatsQuery();
 
   return (
     <>
@@ -131,7 +129,7 @@ export default function OrganizationDashboard() {
           </div>
 
           <div className='col-span-2'>
-            {ticketStats && <TicketStatsChart data={ticketStats} />}
+            <TicketStatsChart />
           </div>
         </div>
         <div className='1200px:col-span-2 max-h-[600px] col-span-3 bg-white p-4 rounded-lg shadow-md'>

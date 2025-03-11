@@ -109,8 +109,6 @@ export function TrackUserActionsChart() {
     })),
   );
 
-  console.log(filters);
-
   return (
     <Card className='shadow-md'>
       <Form {...form}>
