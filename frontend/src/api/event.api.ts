@@ -4,6 +4,7 @@ import type {
   EventsApiCreateEventBookmarkRequest,
   EventsApiDeleteCheckInRequest,
   EventsApiDeleteEventBookmarkRequest,
+  EventsApiGenerateEventAiRequest,
   EventsApiGetDraftEventRequest,
   EventsApiGetEventDetailRequest,
   EventsApiListingMyEventsRequest,
@@ -210,5 +211,25 @@ export const useListingRecommendationEventsQuery = (
     queryKey: ['listing-recommendation-events', params],
     queryFn: async () => await api.events.listingRecommendationEvents(params),
     enabled,
+  });
+};
+
+export const useGenerateEventAIMutation = <T>(
+  options?: SWRMutationConfiguration<number, T>,
+) => {
+  const api = useApi();
+  const key = 'generate-event-ai';
+  return useSWRMutation<number, T, typeof key, EventsApiGenerateEventAiRequest>(
+    key,
+    async (_: string, { arg }) => await api.events.generateEventAi(arg),
+    options,
+  );
+};
+
+export const useListingEventOptionsQuery = () => {
+  const api = useApi();
+  return useQuery({
+    queryKey: ['listing-event-options'],
+    queryFn: async () => await api.events.listingEventOptions(),
   });
 };

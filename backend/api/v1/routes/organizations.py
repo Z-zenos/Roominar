@@ -26,10 +26,16 @@ from backend.schemas.event import (
 from backend.schemas.organization import (
     DownloadAttendeesRequest,
     GetAttendeeDetailResponse,
+    GetOrganizationDashboardResponse,
     GetOrganizationDetailResponse,
+    GetTagStatsResponse,
+    GetTicketStatsQueryParams,
+    GetTicketStatsResponse,
     ListingAttendeesQueryParams,
     ListingAttendeesResponse,
     ListingRandomOrganizationsResponse,
+    TrackUserActionsQueryParams,
+    TrackUserActionsResponse,
 )
 
 router = APIRouter()
@@ -79,6 +85,60 @@ async def listing_organization_events_timeline(
 ):
     events = await events_service.listing_events_timeline(db, organizer)
     return events
+
+
+@router.get(
+    "/dashboard",
+    response_model=GetOrganizationDashboardResponse,
+    responses=authenticated_api_responses,
+)
+async def get_organization_dashboard(
+    db: Session = Depends(get_read_db),
+    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+):
+    return await organizations_service.get_organization_dashboard(db, organizer)
+
+
+@router.get(
+    "/tag-stats",
+    response_model=GetTagStatsResponse,
+    responses=authenticated_api_responses,
+)
+async def get_tag_stats(
+    db: Session = Depends(get_read_db),
+    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+):
+    tag_stats = await organizations_service.get_tag_stats(db, organizer)
+    return GetTagStatsResponse(data=tag_stats)
+
+
+@router.get(
+    "/ticket-stats",
+    response_model=GetTicketStatsResponse,
+    responses=authenticated_api_responses,
+)
+async def get_ticket_stats(
+    db: Session = Depends(get_read_db),
+    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+    query_params: GetTicketStatsQueryParams = Depends(GetTicketStatsQueryParams),
+):
+    return await organizations_service.get_ticket_stats(db, organizer, query_params)
+
+
+@router.get(
+    "/tracking/user-actions",
+    response_model=TrackUserActionsResponse,
+    responses=authenticated_api_responses,
+)
+async def track_user_actions(
+    db: Session = Depends(get_read_db),
+    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+    query_params: TrackUserActionsQueryParams = Depends(TrackUserActionsQueryParams),
+):
+    user_actions = await organizations_service.track_user_actions(
+        db, organizer, query_params
+    )
+    return TrackUserActionsResponse(data=user_actions)
 
 
 @router.get(

@@ -406,3 +406,32 @@ class ListingOrganizationEventsTimelineItem(BaseModel):
 
 class ListingRecommendationEventsResponse(PaginationResponse[SearchEventsItem]):
     pass
+
+
+class GenerateEventAIRequest(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    name: str = Field(max_length=1024)
+
+    start_at: datetime
+    end_at: datetime
+    application_start_at: datetime
+    application_end_at: datetime
+
+    total_ticket_number: int = Field(le=1000)
+
+    is_offline: bool
+    organize_address: str | None = Field(max_length=255)
+    is_online: bool
+    price: int
+
+    tags: list[int] = Field([])
+
+
+class ListingEventOptionsItem(BaseModel):
+    id: int
+    name: str
+
+
+class ListingEventOptionsResponse(BaseModel):
+    data: list[ListingEventOptionsItem] = Field([])

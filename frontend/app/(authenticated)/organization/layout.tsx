@@ -7,11 +7,13 @@ import {
   SidebarTrigger,
 } from '@/src/component/common/Sidebar';
 import { OrganizationSidebar } from '@/src/component/common/SideBar/OrganizationSidebar';
+import useWindowDimensions from '@/src/hooks/useWindowDimension';
 
 export default function RootLayout({ children }) {
+  const { width } = useWindowDimensions();
   return (
     <div className='flex w-full h-full'>
-      <SidebarProvider>
+      <SidebarProvider open={width > 1200 ? true : false}>
         <OrganizationSidebar />
         <SidebarInset>
           <header className='flex h-16 shrink-0 items-center gap-2'>

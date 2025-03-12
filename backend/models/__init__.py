@@ -6,6 +6,7 @@ from .event import Event
 from .follow import Follow
 from .organization import Organization
 from .question import Question
+from .site_visit import SiteVisit
 from .speaker import Speaker
 from .survey import Survey
 from .survey_response_result import SurveyResponseResult
@@ -18,6 +19,7 @@ from .ticket_inventory import TicketInventory
 from .transaction import Transaction
 from .transaction_item import TransactionItem
 from .user import User
+from .user_action import UserAction
 
 all = (
     Application,
@@ -40,4 +42,6 @@ all = (
     CheckIn,
     TicketInventory,
     Speaker,
+    SiteVisit,
+    UserAction,
 )

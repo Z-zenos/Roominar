@@ -4,9 +4,13 @@ import type {
   OrganizationsApiCreateOrganizationFollowRequest,
   OrganizationsApiDeleteOrganizationFollowRequest,
   OrganizationsApiGetAttendeeDetailRequest,
+  OrganizationsApiGetOrganizationDashboardRequest,
   OrganizationsApiGetOrganizationDetailRequest,
+  OrganizationsApiGetTagStatsRequest,
+  OrganizationsApiGetTicketStatsRequest,
   OrganizationsApiListingAttendeesRequest,
   OrganizationsApiRegisterOrganizationRequest,
+  OrganizationsApiTrackUserActionsRequest,
 } from '../lib/api/generated';
 import { useQuery } from '@tanstack/react-query';
 import { toCamelCase } from '../utils/app.util';
@@ -114,5 +118,52 @@ export const useGetOrganizationDetailQuery = (
   return useQuery({
     queryKey: ['get-organization-detail'],
     queryFn: async () => await api.organizations.getOrganizationDetail(params),
+  });
+};
+
+export const useGetOrganizationDashboardQuery = (
+  params?: OrganizationsApiGetOrganizationDashboardRequest,
+) => {
+  const api = useApi();
+  return useQuery({
+    queryKey: ['get-organization-dashboard'],
+    queryFn: async () =>
+      await api.organizations.getOrganizationDashboard(params),
+    staleTime: 1000 * 60,
+  });
+};
+
+export const useGetTagStatsQuery = (
+  params?: OrganizationsApiGetTagStatsRequest,
+) => {
+  const api = useApi();
+  return useQuery({
+    queryKey: ['get-tag-stats'],
+    queryFn: async () => await api.organizations.getTagStats(params),
+    staleTime: 1000 * 60,
+  });
+};
+
+export const useTrackUserActionsQuery = (
+  params?: OrganizationsApiTrackUserActionsRequest,
+) => {
+  params = toCamelCase(params);
+  const api = useApi();
+  return useQuery({
+    queryKey: ['track-user-actions', JSON.stringify(params)],
+    queryFn: async () => await api.organizations.trackUserActions(params),
+    staleTime: 1000 * 60,
+  });
+};
+
+export const useGetTicketStatsQuery = (
+  params?: OrganizationsApiGetTicketStatsRequest,
+) => {
+  params = toCamelCase(params);
+  const api = useApi();
+  return useQuery({
+    queryKey: ['get-ticket-stats', JSON.stringify(params)],
+    queryFn: async () => await api.organizations.getTicketStats(params),
+    staleTime: 1000 * 60,
   });
 };

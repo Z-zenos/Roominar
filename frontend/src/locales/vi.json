@@ -87,7 +87,7 @@
         "missingEventEndAt": "hãy chọn ngày kết thúc của sự kiện",
         "missingEventApplicationStartAt": "hãy chọn ngày mở đăng ký cho sự kiện",
         "missingEventApplicationEndAt": "hãy chọn ngày kết thúc đăng ký sự kiện",
-        "invalidEventEndAt": "thời gian kết thúc sự kiện phải lớn hơn thời gian đăng ký sự kiện và bắt đầu sự kiện",
+        "invalidEventEndAt": "thời gian kết thúc sự kiện phải lớn hơn thời gian hiện tại, thời gian đăng ký sự kiện và bắt đầu sự kiện",
         "invalidApplicationStartAt": "thời gian bắt đầu mở đăng ký sự kiện phải bé hơn thời gian đóng đăng ký và thời gian bắt đầu sự kiện",
         "invalidApplicationEndAt": "thời gian đóng đăng ký phải lớn hơn thời gian mở đăng ký và nhỏ hơn thời gian kết thúc sự kiện",
         "neitherOnlineNorOffline": "sự kiện phải là online hoặc offline hoặc cả 2",
@@ -315,6 +315,42 @@
       "HAIDUONG": "Hải Dương",
       "HANAM": "Hà Nam",
       "CAMAU": "Cà Mau"
+    },
+    "userAction": {
+      "VIEW": "xem",
+      "APPLY_EVENT": "đăng ký sự kiện",
+      "CANCEL_EVENT": "hủy sự kiện",
+      "BOOKMARK": "lưu sự kiện",
+      "SHARE": "chia sẻ",
+      "COMMENT": "bình luận",
+      "FOLLOW": "theo dõi",
+      "RATE": "đánh giá",
+      "CHECK_IN": "check-in",
+      "CHECK_OUT": "check-out",
+      "REGISTER": "đăng ký tài khoản",
+      "LOGIN": "đăng nhập",
+      "LOGOUT": "đăng xuất",
+      "PURCHASE_TICKET": "mua vé",
+      "REFUND_TICKET": "hoàn vé",
+      "SEARCH": "tìm kiếm",
+      "CLICK": "nhấp chuột",
+      "REPORT": "báo cáo",
+      "DOWNLOAD": "tải xuống",
+      "UPGRADE_PLAN": "nâng cấp gói",
+      "WATCH_VIDEO": "xem video",
+      "SUBMIT_SURVEY": "gửi khảo sát"
+    },
+    "trackingTimeRange": {
+      "TODAY": "hôm nay",
+      "LAST_7_DAYS": "7 ngày qua",
+      "LAST_30_DAYS": "30 ngày qua",
+      "LAST_90_DAYS": "90 ngày qua",
+      "DAILY": "theo ngày",
+      "HOURLY": "theo giờ",
+      "WEEKLY": "theo tuần",
+      "MONTHLY": "theo tháng",
+      "QUARTERLY": "theo quý",
+      "YEARLY": "theo năm"
     }
   }
 }

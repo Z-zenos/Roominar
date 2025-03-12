@@ -17,8 +17,10 @@ from backend.models import User
 from backend.schemas.check_in import CreateCheckInRequest
 from backend.schemas.event import (
     CreateDraftEventRequest,
+    GenerateEventAIRequest,
     GetDraftEventResponse,
     GetEventDetailResponse,
+    ListingEventOptionsResponse,
     ListingEventRankResponse,
     ListingMyEventsQueryParams,
     ListingMyEventsResponse,
@@ -61,32 +63,17 @@ async def listing_event_rank(db: Session = Depends(get_read_db)):
     return ListingEventRankResponse(events=events)
 
 
-# @router.get(
-#     "/recommend", response_model=ListingEventResponse, responses=public_api_responses
-# )
-# def listing_recommend_events(
-#     db: Annotated[Session, Depends(get_db)],
-#     user: Annotated[User | None, Depends(get_user_if_logged_in)] = None,
-#     query_params: Annotated[
-#         FilteringEventsQueryParams, Depends(FilteringEventsQueryParams)
-#     ] = None,
-# ):
-#     # return empty list on unauthenticated user
-#     if not user:
-#         return ListingEventResponse(
-#             page=query_params.page,
-#             per_page=query_params.per_page,
-#             total=0,
-#             data=[],
-#         )
-#     events, total = events_service.listing_recommend_events(db, user, query_params)
-
-#     return ListingEventResponse(
-#         page=query_params.page,
-#         per_page=query_params.per_page,
-#         total=total,
-#         data=events
-#     )
+@router.get(
+    "/options",
+    response_model=ListingEventOptionsResponse,
+    responses=authenticated_api_responses,
+)
+async def listing_event_options(
+    db: Session = Depends(get_read_db),
+    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+):
+    event_options = await events_service.listing_event_options(db, organizer)
+    return ListingEventOptionsResponse(data=event_options)
 
 
 @router.get(
@@ -208,6 +195,15 @@ async def save_draft_event(
     event_id: int = None,
 ):
     return await events_service.save_draft_event(db, organizer, request, event_id)
+
+
+@router.post("/ai/draft", response_model=int, responses=authenticated_api_responses)
+async def generate_event_ai(
+    db: Session = Depends(get_read_db),
+    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+    request: GenerateEventAIRequest = None,
+):
+    return await events_service.generate_event_ai(db, organizer, request)
 
 
 @router.post("/{event_id}", response_model=int, responses=authenticated_api_responses)

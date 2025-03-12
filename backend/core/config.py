@@ -88,6 +88,8 @@ class Settings(BaseSettings):
     STRIPE_DEVICE_NAME: Optional[str]
     STRIPE_WEBHOOK_SECRET: Optional[str]
 
+    OPEN_AI_KEY: Optional[str]
+
     ENVIRONMENT: Literal["dev", "staging", "production"] = "dev"
 
     @field_validator("MASTER_DATABASE_URI", mode="before")

@@ -7,7 +7,12 @@ from backend.core.constants import (
     AttendeeSortByCode,
     IndustryCode,
     JobTypeCode,
+    TagStatsCategoryCode,
+    TicketStatusCode,
+    TicketTypeCode,
+    TrackingTimeRangeCode,
     TransactionStatusCode,
+    UserActionTypeCode,
 )
 from backend.schemas.common import PaginationResponse
 from backend.schemas.event import SearchEventsItem
@@ -137,3 +142,67 @@ class GetOrganizationDetailResponse(BaseModel):
     is_followed: bool | None = None
     tags: list[TagItem] = Field([])
     events: list[SearchEventsItem] = Field([])
+
+
+class GetOrganizationDashboardResponse(BaseModel):
+    total_events: int | None = None
+    ongoing_events: int | None = None
+    total_visitors: int | None = None
+    total_revenue: int | None = None
+    total_members: int | None = None
+    total_tickets_sold: int | None = None
+    actual_attendees: int | None = None
+
+
+class TagStatsItem(BaseModel):
+    category: TagStatsCategoryCode
+    name: str
+    usage_count: int
+
+
+class GetTagStatsResponse(BaseModel):
+    data: list[TagStatsItem] = Field([])
+
+
+class TrackUserActionsQueryParams(BaseModel):
+    time_range: TrackingTimeRangeCode = Field(Query(TrackingTimeRangeCode.LAST_7_DAYS))
+    group_by: TrackingTimeRangeCode = Field(Query(TrackingTimeRangeCode.LAST_7_DAYS))
+    action_types: list[UserActionTypeCode] = Field(
+        Query(
+            [
+                UserActionTypeCode.BOOKMARK,
+                UserActionTypeCode.APPLY_EVENT,
+                UserActionTypeCode.PURCHASE_TICKET,
+            ]
+        )
+    )
+    event_id: int | None = Field(Query(None))
+    top_n: int | None = Field(Query(3))
+
+
+class TrackUserActionsItem(BaseModel):
+    action_at: str
+    actions: dict[UserActionTypeCode, int]
+
+
+class TrackUserActionsResponse(BaseModel):
+    data: list[TrackUserActionsItem] = Field([])
+
+
+class GetTicketStatsQueryParams(BaseModel):
+    event_id: int | None = Field(Query(None))
+    start_date: datetime | None = Field(Query(None))
+    end_date: datetime | None = Field(Query(None))
+    ticket_type: TicketTypeCode | None = Field(Query(None))
+    ticket_status: TicketStatusCode | None = Field(Query(None))
+
+
+class GetTicketStatsResponse(BaseModel):
+    total_sold_tickets: int
+    total_remaining_tickets: int
+    total_reserved_tickets: int
+    sold_percentage: float
+    remaining_percentage: float
+    reserved_percentage: float
+    total_revenue: float
+    total_tickets: int
