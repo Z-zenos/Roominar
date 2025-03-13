@@ -170,12 +170,7 @@ class TransactionStatusCode(str, Enum):
     SUCCESS = "SUCCESS"
     CANCELED = "CANCELED"
     FAILED = "FAILED"
-
-
-class TransactionTypeCode(str, Enum):
-    DONATE = "DONATE"
-    REFUND_CANCEL_TICKET = "REFUND_CANCEL_TICKET"
-    PURCHASED_TICKET = "PURCHASED_TICKET"
+    REFUNDED = "REFUNDED"
 
 
 class LoginMethodCode(str, Enum):
@@ -370,3 +365,21 @@ class TrackingTimeRangeCode(str, Enum):
     MONTHLY = "MONTHLY"
     QUARTERLY = "QUARTERLY"
     YEARLY = "YEARLY"
+
+
+class PaymentMethodCode(str, Enum):
+    CREDIT_CARD = "CREDIT_CARD"
+    PAYPAL = "PAYPAL"
+    MOMO = "MOMO"
+    ZALOPAY = "ZALOPAY"
+    STRIPE = "STRIPE"
+    VNPAY = "VNPAY"
+    OTHER = "OTHER"
+
+
+class CurrencyCode(str, Enum):
+    VND = "VND"
+    USD = "USD"
+    EUR = "EUR"
+    JPY = "JPY"
+    CNY = "CNY"

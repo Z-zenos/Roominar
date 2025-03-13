@@ -2,7 +2,7 @@ from typing import Optional
 
 from sqlmodel import Enum, Field
 
-from backend.core.constants import TransactionStatusCode, TransactionTypeCode
+from backend.core.constants import CurrencyCode, PaymentMethodCode
 from backend.models.base_model import BaseModel
 
 
@@ -13,10 +13,13 @@ class Transaction(BaseModel, table=True):
     application_id: int = Field(foreign_key="applications.id")
     quantity: int
     total_amount: float  # Total amount for the transaction
-    status: TransactionStatusCode = Field(
-        sa_type=Enum(TransactionStatusCode), default=TransactionStatusCode.PENDING
-    )  # Default status
-    type: Optional[TransactionTypeCode] = Field(sa_type=Enum(TransactionTypeCode))
+
+    payment_method_code: PaymentMethodCode = Field(sa_type=Enum(PaymentMethodCode))
+
+    currency: CurrencyCode = Field(sa_type=Enum(CurrencyCode), default=CurrencyCode.VND)
+    exchange_rate: float = Field(
+        default=1.0
+    )  # Exchange rate from the transaction currency to the event currency
 
     # Stripe-related fields
     stripe_payment_intent_id: Optional[str] = Field(
