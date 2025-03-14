@@ -2,7 +2,11 @@ from typing import Optional
 
 from sqlmodel import Enum, Field
 
-from backend.core.constants import CurrencyCode, PaymentMethodCode
+from backend.core.constants import (
+    CurrencyCode,
+    PaymentMethodCode,
+    TransactionStatusCode,
+)
 from backend.models.base_model import BaseModel
 
 
@@ -29,3 +33,7 @@ class Transaction(BaseModel, table=True):
 
     # Metadata and tracking
     reference: Optional[str]
+
+    status: TransactionStatusCode = Field(
+        sa_type=Enum(TransactionStatusCode), default=TransactionStatusCode.PENDING
+    )

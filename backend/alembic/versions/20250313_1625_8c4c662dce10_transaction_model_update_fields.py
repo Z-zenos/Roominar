@@ -88,7 +88,6 @@ def upgrade() -> None:
     op.add_column(
         "transactions", sa.Column("exchange_rate", sa.Float(), nullable=False)
     )
-    op.drop_column("transactions", "status")
     op.drop_column("transactions", "type")
     # ### end Alembic commands ###
 
@@ -107,17 +106,6 @@ def downgrade() -> None:
             ),
             autoincrement=False,
             nullable=True,
-        ),
-    )
-    op.add_column(
-        "transactions",
-        sa.Column(
-            "status",
-            postgresql.ENUM(
-                "PENDING", "SUCCESS", "CANCELED", "FAILED", name="transactionstatuscode"
-            ),
-            autoincrement=False,
-            nullable=False,
         ),
     )
     op.drop_column("transactions", "exchange_rate")
