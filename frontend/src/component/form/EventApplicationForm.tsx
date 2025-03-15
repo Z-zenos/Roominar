@@ -168,8 +168,6 @@ export default function EventApplicationForm({
 
       {event ? (
         <form
-          // onSubmit={form.handleSubmit(handleApplyEvent)}
-          onSubmit={form.handleSubmit(onOpen)}
           className={clsx(
             'grid grid-cols-7 w-full items-start gap-10 mx-auto py-20',
             width < 1000 && 'px-[5%]',
@@ -181,8 +179,12 @@ export default function EventApplicationForm({
         >
           <div className={clsx(width > 1200 ? 'col-span-2' : 'col-span-7')}>
             {event && (
-              <div className='rounded-md p-5 shadow-[rgba(0,_0,_0,_0.02)_0px_1px_3px_0px,_rgba(27,_31,_35,_0.15)_0px_0px_0px_1px] bg-white'>
-                <div className={'flex justify-between gap-2 items-start mb-3'}>
+              <div className='rounded-md p-5 shadow-[rgba(0,_0,_0,_0.16)_0px_1px_4px] bg-white'>
+                <div
+                  className={
+                    'flex 1200px:justify-between justify-start gap-2 items-start mb-3'
+                  }
+                >
                   <Image
                     src={
                       event.coverImageUrl ??
@@ -223,7 +225,7 @@ export default function EventApplicationForm({
                 </div>
               </div>
             )}
-            <div className='rounded-md pt-5 shadow-[rgba(0,_0,_0,_0.02)_0px_1px_3px_0px,_rgba(27,_31,_35,_0.15)_0px_0px_0px_1px] my-6 bg-white'>
+            <div className='rounded-md pt-5 shadow-[rgba(0,_0,_0,_0.16)_0px_1px_4px] my-6 bg-white'>
               <h3 className='text-md font-semibold px-5 text-orange-500'>
                 Ticket 🎟
               </h3>
@@ -289,16 +291,16 @@ export default function EventApplicationForm({
                         .some((t) => t.id === ticket.id)}
                     >
                       <div className='w-full flex justify-between items-center gap-2'>
-                        <div className='font-normal'>
+                        <div className='font-normal w-full'>
                           <h4 className='text-sm font-medium leading-5'>
                             {ticket.name}
                           </h4>
-                          {/* <p className='font-light opacity-80 leading-5 text-ss mt-1'>
+                          <p className='font-light opacity-80 leading-5 text-ss mt-1'>
                             {ticket.description}
-                          </p> */}
-                          <div className={clsx(styles.between)}>
+                          </p>
+                          <div className={clsx(styles.between, 'w-full')}>
                             {ticket.price ? (
-                              <div className='text-sm'>
+                              <div className='text-sm w-full'>
                                 <span>Price: </span>
                                 <span className='text-primary font-semibold ml-2'>
                                   {ticket.price}

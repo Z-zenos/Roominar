@@ -12,11 +12,16 @@ import sqlalchemy as sa
 from alembic import op
 from sqlalchemy.dialects import postgresql
 
+from backend.core.constants import PaymentMethodCode
+
 # revision identifiers, used by Alembic.
 revision: str = "78e5bcf21beb"
 down_revision: Union[str, None] = "8c4c662dce10"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
+
+enum_name = PaymentMethodCode.mro()[0].__name__.lower()
+enum_keys_to_add = [PaymentMethodCode.FREE.name]
 
 
 def upgrade() -> None:
@@ -32,6 +37,9 @@ def upgrade() -> None:
             nullable=False,
         ),
     )
+
+    for v in enum_keys_to_add:
+        op.execute(f"ALTER TYPE {enum_name} ADD VALUE '{v}'")
     # ### end Alembic commands ###
 
 

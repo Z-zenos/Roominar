@@ -1,6 +1,7 @@
 from sqlmodel import Session
 
 import backend.api.v1.services.applications as applications_service
+from backend.core.constants import CurrencyCode, PaymentMethodCode
 from backend.models.application import Application
 from backend.models.survey_response_result import SurveyResponseResult
 from backend.models.ticket_inventory import TicketInventory
@@ -70,6 +71,9 @@ async def create_free_application(
             quantity=total_requested_quantity,
             total_amount=0,
             status=TransactionStatusCode.SUCCESS,
+            payment_method_code=PaymentMethodCode.FREE,
+            currency=CurrencyCode.VND,
+            exchange_rate=1.0,
         )
         transaction = save(db, transaction)
 
@@ -97,6 +101,7 @@ async def create_free_application(
                         transaction_id=transaction.id,
                         ticket_id=ticket["id"],
                         amount=0,
+                        status=TransactionStatusCode.SUCCESS,
                     )
                 )
 

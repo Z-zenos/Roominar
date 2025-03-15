@@ -49,7 +49,6 @@ import { styles } from '@/src/constants/styles.constant';
 import DotLoader from '@/src/component/common/Loader/DotLoader';
 import useWindowDimensions from '@/src/hooks/useWindowDimension';
 import Badge from '@/src/component/common/Badge';
-import SpeakerCard from '@/src/component/common/Card/SpeakerCard';
 import {
   useGetEventDetailQuery,
   useListingRelatedEventsQuery,
@@ -64,6 +63,8 @@ import { useSession } from 'next-auth/react';
 import EventBookmark from '../../component/common/Button/EventBookmarkButton';
 import OrganizationFollowButton from '@/src/component/common/Button/OrganizationFollowButton';
 import HorizontalTimeline from '@/src/component/common/DateTime/HorizontalTimeline';
+import toast from 'react-hot-toast';
+import { TbClockExclamation } from 'react-icons/tb';
 
 const rows = [
   {
@@ -305,13 +306,38 @@ function EventDetail({ slug }: EventDetailProps) {
                 color='primary'
                 className='my-3 mx-auto w-[160px] font-semibold'
                 radius='none'
-                onClick={() =>
-                  router.push(auth?.user ? `${pathname}/apply` : '/login')
-                }
-                isDisabled={
-                  event?.applicationEndAt < new Date() ||
-                  event?.applicationStartAt > new Date()
-                }
+                onClick={() => {
+                  if (
+                    event?.applicationEndAt < new Date() ||
+                    event?.applicationStartAt > new Date()
+                  ) {
+                    toast.custom(() => (
+                      <div
+                        className={clsx(
+                          'bg-white dark:bg-dark-sub dark:text-white',
+                          'flex items-center justify-between',
+                          'max-w-[400px] p-4 rounded-lg shadow-lg',
+                        )}
+                      >
+                        <div className='flex items-center gap-4'>
+                          <div className='p-3 bg-red-500 rounded-full'>
+                            <TbClockExclamation className='text-white' />
+                          </div>
+                          <div>
+                            <h3 className='text-red-500 font-semibold'>
+                              Application is not available
+                            </h3>
+                            <p className='text-sm'>
+                              The application is not available at this time
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ));
+                  } else {
+                    router.push(auth?.user ? `${pathname}/apply` : '/login');
+                  }
+                }}
               >
                 Apply Now
               </Button>

@@ -7,7 +7,12 @@ from sqlmodel import Session
 
 import backend.api.v1.services.applications as applications_service
 from backend.core.config import settings
-from backend.core.constants import IndustryCode, JobTypeCode
+from backend.core.constants import (
+    CurrencyCode,
+    IndustryCode,
+    JobTypeCode,
+    PaymentMethodCode,
+)
 from backend.models.application import Application
 from backend.models.survey_response_result import SurveyResponseResult
 from backend.models.ticket_inventory import TicketInventory
@@ -111,6 +116,9 @@ async def handle_application_transaction(db: Session, request: Request):
                 stripe_payment_intent_id=session["payment_intent"],
                 stripe_checkout_session_id=session["id"],
                 reference=f"{transaction_reference}-{uuid4()}",
+                payment_method_code=PaymentMethodCode.STRIPE,
+                currency=CurrencyCode.VND,
+                exchange_rate=1.0,
             )
 
             transaction = save(db, transaction)
@@ -136,6 +144,7 @@ async def handle_application_transaction(db: Session, request: Request):
                             transaction_id=transaction.id,
                             ticket_id=ticket["id"],
                             amount=ticket["price"],
+                            status=TransactionStatusCode.SUCCESS,
                         )
                     )
 

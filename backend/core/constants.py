@@ -375,6 +375,7 @@ class PaymentMethodCode(str, Enum):
     STRIPE = "STRIPE"
     VNPAY = "VNPAY"
     OTHER = "OTHER"
+    FREE = "FREE"
 
 
 class CurrencyCode(str, Enum):
