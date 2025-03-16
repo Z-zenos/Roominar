@@ -1,12 +1,15 @@
 import hashlib
 import secrets
 import string
+import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Tuple
 
 from jose import ExpiredSignatureError, JWTError, jwt
 
+from backend.core import redis_client
 from backend.core.config import settings
+from backend.core.constants import TransactionStatusCode
 from backend.core.error_code import ErrorCode
 from backend.core.exception import BadRequestException, UnauthorizedException
 from backend.models.user import User
@@ -88,3 +91,17 @@ def gen_encrypted_token(expire_minutes: int, length: int):
     token = create_token(length)
     encrypted_token = hashlib.sha256(token.encode("utf-8")).hexdigest()
     return token, encrypted_token, expire_at
+
+
+def gen_payment_session_token(
+    transaction_id: int, user_id: int, status: TransactionStatusCode
+):
+    session_token = str(uuid.uuid4())
+    redis_client.redis_client.hmset(
+        f"session:{session_token}",
+        {"transaction_id": transaction_id, "user_id": user_id, "status": status},
+    )
+    redis_client.redis_client.expire(
+        f"session:{session_token}", 3600
+    )  # Hết hạn sau 1 giờ
+    return session_token

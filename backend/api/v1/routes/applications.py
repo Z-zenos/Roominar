@@ -51,7 +51,7 @@ async def create_application_checkout_session(
 @router.post(
     "/free-application",
     responses=authenticated_api_responses,
-    response_model=int,
+    response_model=str,
 )
 async def create_free_application(
     db: Session = Depends(get_read_db),

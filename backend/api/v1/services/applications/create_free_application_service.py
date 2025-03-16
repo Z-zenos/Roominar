@@ -1,6 +1,7 @@
 from sqlmodel import Session
 
 import backend.api.v1.services.applications as applications_service
+import backend.api.v1.services.auth.token_service as token_service
 from backend.core.constants import CurrencyCode, PaymentMethodCode
 from backend.models.application import Application
 from backend.models.survey_response_result import SurveyResponseResult
@@ -77,6 +78,10 @@ async def create_free_application(
         )
         transaction = save(db, transaction)
 
+        session_token = token_service.gen_payment_session_token(
+            transaction.id, current_user.id, TransactionStatusCode.SUCCESS
+        )
+
         new_transaction_items = []
         update_ticket_inventories = []
         for ticket in tickets:
@@ -93,8 +98,7 @@ async def create_free_application(
                     "event_id": event_id,
                 }
             )
-
-            for _ in range(ticket["quantity"]):
+            for _ in range(total_requested_quantity):
                 # Create the transaction item
                 new_transaction_items.append(
                     TransactionItem(
@@ -109,7 +113,7 @@ async def create_free_application(
         db.bulk_save_objects(new_transaction_items)
         db.commit()
 
-        return application.id
+        return session_token
 
     except Exception as e:
         db.rollback()

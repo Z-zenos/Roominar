@@ -47,12 +47,12 @@ export const useCreateApplicationCheckoutSessionMutation = <T>(
 };
 
 export const useCreateFreeApplicationMutation = <T>(
-  options?: SWRMutationConfiguration<number, T>,
+  options?: SWRMutationConfiguration<string, T>,
 ) => {
   const api = useApi();
   const key = 'create-free-application';
   return useSWRMutation<
-    number,
+    string,
     T,
     typeof key,
     ApplicationsApiCreateFreeApplicationRequest

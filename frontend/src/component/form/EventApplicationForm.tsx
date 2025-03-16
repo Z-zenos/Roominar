@@ -105,8 +105,9 @@ export default function EventApplicationForm({
   }, [JSON.stringify(form.getValues('tickets'))]);
 
   const { trigger, isMutating: isCreating } = useCreateFreeApplicationMutation({
-    onSuccess() {
-      router.push('apply/result?status=success');
+    onSuccess(paymentSessionToken) {
+      sessionStorage.setItem('paymentSessionToken', paymentSessionToken);
+      router.push(`apply/result`);
     },
     onError(error: ApiException<unknown>) {
       toast.error(
@@ -168,6 +169,13 @@ export default function EventApplicationForm({
 
       {event ? (
         <form
+          onSubmit={form.handleSubmit(() => {
+            if (checkOnlySelectFreeTicket()) {
+              handleCreateFreeApplication();
+            } else {
+              onOpen();
+            }
+          })}
           className={clsx(
             'grid grid-cols-7 w-full items-start gap-10 mx-auto py-20',
             width < 1000 && 'px-[5%]',
@@ -746,13 +754,6 @@ export default function EventApplicationForm({
                 event?.applicationEndAt < new Date() ||
                 form.getValues('tickets').length === 0
               }
-              onClick={() => {
-                if (checkOnlySelectFreeTicket()) {
-                  handleCreateFreeApplication();
-                } else {
-                  onOpen();
-                }
-              }}
               isLoading={isCreating}
             />
           </div>
