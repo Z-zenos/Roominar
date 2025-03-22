@@ -13,6 +13,7 @@ import { formatEventDate } from '@/src/utils/app.util';
 import dayjs from 'dayjs';
 import { FaCheck } from 'react-icons/fa6';
 import { useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface MyTicketCardProps {
   className?: string;
@@ -26,6 +27,7 @@ function MyTicketCard({
   ticket,
 }: MyTicketCardProps) {
   const isVertical = useMemo(() => direction === 'vertical', [direction]);
+  const router = useRouter();
   return (
     <div
       className={clsx(
@@ -43,8 +45,8 @@ function MyTicketCard({
         className={clsx(
           'absolute top-0 z-10',
           isVertical
-            ? 'bg-transparent w-full h-full absolute  left-0'
-            : 'w-2/3 top-0 right-0',
+            ? 'bg-transparent w-full h-full absolute left-0'
+            : 'w-2/3 right-0',
         )}
       >
         <div
@@ -77,7 +79,10 @@ function MyTicketCard({
         )}
       >
         <div className={clsx('flex gap-2 flex-col')}>
-          <div className='flex gap-3 items-center px-3'>
+          <div
+            className='flex gap-3 items-center px-3'
+            onClick={() => router.push(`/events/${ticket.eventSlug}`)}
+          >
             <div>
               <p className='font-semibold text-sm'>{ticket.eventName}</p>
               <p className='text-xs'>
@@ -99,7 +104,7 @@ function MyTicketCard({
               {direction === 'horizontal' &&
                 '〜' + formatEventDate(ticket.eventEndAt)}
             </span>
-            <div className={clsx(styles.between)}>
+            <div className={clsx(styles.flexStart)}>
               <Chip
                 content={ticket?.transactionStatus}
                 leftIcon={<FaCheck className='text-sm' />}

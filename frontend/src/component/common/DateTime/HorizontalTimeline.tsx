@@ -20,7 +20,7 @@ function getTodayProgressBetweenTwoDates(
   startDate: Date,
   endDate: Date,
 ): number {
-  const today = new Date();
+  const today = new Date() > endDate ? endDate : new Date();
 
   return Math.max(
     Math.ceil(
@@ -143,7 +143,7 @@ function HorizontalTimeline({
                 className={clsx(
                   'w-10 h-10 mx-auto rounded-full text-lg flex items-center',
                   progress[1] >= 100
-                    ? 'bg-green-500 text-white'
+                    ? 'bg-green-500 !text-white'
                     : 'bg-white text-black border border-gray-200',
                 )}
               >
@@ -157,7 +157,7 @@ function HorizontalTimeline({
             </div>
 
             <div className='text-xs text-center md:text-base'>
-              <p>Start event at</p>
+              <p>Start at</p>
               <p className='mt-1 font-semibold'>{formatEventDate(startAt)}</p>
             </div>
           </div>

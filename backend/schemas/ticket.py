@@ -74,7 +74,9 @@ class CancelTicketsRequest(BaseModel):
 
 class ListingMyTicketsQueryParams(BaseModel):
     keyword: str | None = Field(Query(None))
-    page: int | None = Field(Query(default=1, ge=1))
+    status: TransactionStatusCode = Field(Query(default=TransactionStatusCode.SUCCESS))
+
+    page: int | None = Field(Query(default=1, le=100, ge=1))
     per_page: int | None = Field(Query(default=10, ge=1))
 
 
@@ -92,6 +94,7 @@ class ListingMyTicketsItem(BaseModel):
     note: str | None = None
     event_name: str
     event_id: int
+    event_slug: str
     event_cover_image_url: str
     event_start_at: datetime
     event_end_at: datetime

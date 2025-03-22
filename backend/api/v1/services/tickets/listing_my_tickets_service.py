@@ -1,4 +1,4 @@
-from sqlmodel import Session, select
+from sqlmodel import Session, func, or_, select
 
 from backend.models.application import Application
 from backend.models.event import Event
@@ -12,13 +12,14 @@ from backend.schemas.ticket import ListingMyTicketsQueryParams
 async def listing_my_tickets(
     db: Session, user: User, query_params: ListingMyTicketsQueryParams
 ):
-    tickets = await _get_my_tickets(db, user, query_params)
-    total = await _count_my_tickets(db, user)
+    filters = _build_filters(user, query_params)
+    tickets = await _get_my_tickets(db, filters, query_params)
+    total = await _count_my_tickets(db, filters)
     return tickets, total
 
 
 async def _get_my_tickets(
-    db: Session, user: User, query_params: ListingMyTicketsQueryParams
+    db: Session, filters: list, query_params: ListingMyTicketsQueryParams
 ):
     tickets = (
         db.exec(
@@ -37,6 +38,7 @@ async def _get_my_tickets(
                 Event.name.label("event_name"),
                 Event.cover_image_url.label("event_cover_image_url"),
                 Event.id.label("event_id"),
+                Event.slug.label("event_slug"),
                 Event.start_at.label("event_start_at"),
                 Event.end_at.label("event_end_at"),
                 Event.application_start_at.label("event_application_start_at"),
@@ -53,9 +55,10 @@ async def _get_my_tickets(
             .join(Application, Application.id == Transaction.application_id)
             .join(Ticket, Ticket.id == TransactionItem.ticket_id)
             .join(Event, Event.id == Ticket.event_id)
-            .where(TransactionItem.user_id == user.id)
+            .where(*filters)
             .limit(query_params.per_page)
             .offset((query_params.page - 1) * query_params.per_page)
+            .order_by(TransactionItem.created_at.desc())
         )
         .mappings()
         .all()
@@ -63,10 +66,24 @@ async def _get_my_tickets(
     return tickets
 
 
-async def _count_my_tickets(db: Session, user: User):
-    total = (
-        db.scalar(select(TransactionItem.id).where(TransactionItem.user_id == user.id))
-        or 0
-    )
+async def _count_my_tickets(db: Session, filters: list):
+    total = db.scalar(select(func.count(TransactionItem.id)).where(*filters)) or 0
 
     return total
+
+
+def _build_filters(user: User, query_params: ListingMyTicketsQueryParams):
+    filters = [TransactionItem.user_id == user.id]
+
+    if query_params.keyword:
+        filters.append(
+            or_(
+                Event.name.contains(query_params.keyword),
+                Ticket.name.contains(query_params.keyword),
+            )
+        )
+
+    if query_params.status:
+        filters.append(TransactionItem.status == query_params.status)
+
+    return filters

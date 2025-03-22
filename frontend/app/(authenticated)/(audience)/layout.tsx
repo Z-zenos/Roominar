@@ -17,7 +17,7 @@ export default function RootLayout({ children }) {
     <div>
       <Navbar />
 
-      <div className='flex 1400px:px-[15%] px-0 w-full  overflow-y-clip'>
+      <div className='flex 1400px:px-[15%] px-0 w-full'>
         <SidebarProvider open={width > 1200 ? true : false}>
           <AudienceSidebar />
           <SidebarInset>
@@ -31,7 +31,7 @@ export default function RootLayout({ children }) {
               </div>
             </header>
             <div className='flex flex-1 flex-col gap-4 p-4 pt-0'>
-              <div className='flex-1 rounded-xl bg-muted/50'>{children}</div>
+              <div className='rounded-xl bg-muted/50'>{children}</div>
             </div>
           </SidebarInset>
         </SidebarProvider>

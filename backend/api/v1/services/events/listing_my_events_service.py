@@ -15,17 +15,17 @@ from backend.schemas.event import ListingMyEventsQueryParams, MyEventStatusCode
 
 
 async def listing_my_events(
-    db: Session, current_user: User, query_params: ListingMyEventsQueryParams
+    db: Session, user: User, query_params: ListingMyEventsQueryParams
 ):
-    filters = await _build_filters(current_user, query_params)
-    events = await _listing_events(db, current_user, filters, query_params)
+    filters = _build_filters(user, query_params)
+    events = await _listing_events(db, user, filters, query_params)
     total = await _count_events(db, filters)
     return events, total
 
 
 async def _listing_events(
     db: Session,
-    current_user: User,
+    user: User,
     filters: list,
     query_params: ListingMyEventsQueryParams,
 ):
@@ -63,7 +63,7 @@ async def _listing_events(
             .join(Application, Application.id == Transaction.application_id)
             .join(TransactionItem, TransactionItem.transaction_id == Transaction.id)
             .join(Ticket, Ticket.id == TransactionItem.ticket_id)
-            .where(Application.user_id == current_user.id)
+            .where(Application.user_id == user.id)
             .group_by(Transaction.id)
         )
         .mappings()
@@ -117,7 +117,7 @@ async def _listing_events(
         .join(Organization, Event.organization_id == Organization.id)
         .outerjoin(
             Bookmark,
-            and_(Bookmark.event_id == Event.id, Bookmark.user_id == current_user.id),
+            and_(Bookmark.event_id == Event.id, Bookmark.user_id == user.id),
         )
         .outerjoin(Application, Application.event_id == Event.id)
         .outerjoin(EventTags, EventTags.c.event_id == Event.id)
@@ -171,26 +171,24 @@ async def _count_events(
     return total
 
 
-async def _build_filters(current_user: User, query_params: ListingMyEventsQueryParams):
+def _build_filters(user: User, query_params: ListingMyEventsQueryParams):
     filters = [
         Event.status == EventStatusCode.PUBLIC,
         Event.published_at.isnot(None),
-        or_(
-            Application.user_id == current_user.id, Bookmark.user_id == current_user.id
-        ),
+        or_(Application.user_id == user.id, Bookmark.user_id == user.id),
     ]
 
     if query_params.keyword:
         filters.append(Event.name.contains(query_params.keyword))
 
     if query_params.status == MyEventStatusCode.BOOKMARKED:
-        filters.append(Bookmark.user_id == current_user.id)
+        filters.append(Bookmark.user_id == user.id)
 
     # if query_params.status == MyEventStatusCode.APPLIED:
     #     filters.append(
     #         and_(
     #             Application.canceled_at.is_(None),
-    #             Application.user_id == current_user.id,
+    #             Application.user_id == user.id,
     #             # Application.status == ApplicationStatusCode.APPROVED,
     #         )
     #     )
@@ -199,8 +197,8 @@ async def _build_filters(current_user: User, query_params: ListingMyEventsQueryP
     #     filters.append(
     #         and_(
     #             or_(
-    #                 Application.user_id == current_user.id,
-    #                 Bookmark.user_id == current_user.id,
+    #                 Application.user_id == user.id,
+    #                 Bookmark.user_id == user.id,
     #             ),
     #             Event.end_at < datetime.now(pytz.utc),
     #         )
@@ -210,7 +208,7 @@ async def _build_filters(current_user: User, query_params: ListingMyEventsQueryP
     #     filters.append(
     #         and_(
     #             Application.canceled_at.isnot(None),
-    #             Application.user_id == current_user.id,
+    #             Application.user_id == user.id,
     #             # Application.status == ApplicationStatusCode.REJECTED,
     #         )
     #     )
@@ -228,7 +226,7 @@ async def _build_filters(current_user: User, query_params: ListingMyEventsQueryP
     # if query_params.status == MyEventStatusCode.PENDING:
     #     filters.append(
     #         and_(
-    #             Application.user_id == current_user.id,
+    #             Application.user_id == user.id,
     #             # Application.status == ApplicationStatusCode.PENDING,
     #         )
     #     )
@@ -237,8 +235,8 @@ async def _build_filters(current_user: User, query_params: ListingMyEventsQueryP
     #     filters.append(
     #         and_(
     #             or_(
-    #                 Application.user_id == current_user.id,
-    #                 Bookmark.user_id == current_user.id,
+    #                 Application.user_id == user.id,
+    #                 Bookmark.user_id == user.id,
     #             ),
     #             Event.start_at < datetime.now(pytz.utc),
     #             Event.end_at > datetime.now(pytz.utc),
@@ -249,8 +247,8 @@ async def _build_filters(current_user: User, query_params: ListingMyEventsQueryP
     #     filters.append(
     #         and_(
     #             or_(
-    #                 Application.user_id == current_user.id,
-    #                 Bookmark.user_id == current_user.id,
+    #                 Application.user_id == user.id,
+    #                 Bookmark.user_id == user.id,
     #             ),
     #             Event.end_at > datetime.now(pytz.utc),
     #             Event.status == EventStatusCode.DEFERRED,
