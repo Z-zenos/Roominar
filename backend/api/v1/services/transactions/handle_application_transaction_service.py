@@ -145,6 +145,7 @@ async def handle_application_transaction(db: Session, request: Request):
                             ticket_id=ticket["id"],
                             amount=ticket["price"],
                             status=TransactionStatusCode.SUCCESS,
+                            user_id=user_id,
                         )
                     )
 

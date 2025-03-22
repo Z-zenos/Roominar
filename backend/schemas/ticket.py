@@ -1,13 +1,19 @@
 from datetime import datetime
 from typing import Optional
 
+from fastapi import Query
 from pydantic import BaseModel, ConfigDict, Field
 
 from backend.core.constants import (
+    CancelTicketReasonCode,
+    CurrencyCode,
+    PaymentMethodCode,
     TicketDeliveryMethodCode,
     TicketStatusCode,
     TicketTypeCode,
+    TransactionStatusCode,
 )
+from backend.schemas.common import PaginationResponse
 
 
 class TicketItem(BaseModel):
@@ -59,3 +65,45 @@ class DraftEventTicketItem(BaseModel):
     price: float | None = None
     type: TicketTypeCode | None = None
     description: str | None = None
+
+
+class CancelTicketsRequest(BaseModel):
+    ticket_ids: list[int]
+    reason: CancelTicketReasonCode | None
+
+
+class ListingMyTicketsQueryParams(BaseModel):
+    keyword: str | None = Field(Query(None))
+    page: int | None = Field(Query(default=1, ge=1))
+    per_page: int | None = Field(Query(default=10, ge=1))
+
+
+class ListingMyTicketsItem(BaseModel):
+    id: int
+    name: str
+    price: float
+    type: TicketTypeCode
+    transaction_status: TransactionStatusCode
+    description: str | None = None
+    canceled_at: datetime | None = None
+    canceled_reason_code: CancelTicketReasonCode | None = None
+    refunded_at: datetime | None = None
+    refunded_amount: float | None = None
+    note: str | None = None
+    event_name: str
+    event_id: int
+    event_cover_image_url: str
+    event_start_at: datetime
+    event_end_at: datetime
+    event_application_start_at: datetime
+    event_application_end_at: datetime
+    application_id: int | None
+    applied_at: datetime | None = None
+    transaction_item_id: int
+    transaction_id: int
+    payment_method_code: PaymentMethodCode
+    currency: CurrencyCode
+
+
+class ListingMyTicketsResponse(PaginationResponse[ListingMyTicketsItem]):
+    pass

@@ -106,6 +106,7 @@ async def create_free_application(
                         ticket_id=ticket["id"],
                         amount=0,
                         status=TransactionStatusCode.SUCCESS,
+                        user_id=current_user.id,
                     )
                 )
 

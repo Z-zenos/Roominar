@@ -3,7 +3,11 @@ from typing import Optional
 
 from sqlmodel import DateTime, Enum, Field, String
 
-from backend.core.constants import RefundReasonCode, TransactionStatusCode
+from backend.core.constants import (
+    CancelTicketReasonCode,
+    RefundReasonCode,
+    TransactionStatusCode,
+)
 from backend.models.base_model import BaseModel
 
 
@@ -22,3 +26,8 @@ class TransactionItem(BaseModel, table=True):
     status: TransactionStatusCode = Field(
         sa_type=Enum(TransactionStatusCode), default=TransactionStatusCode.PENDING
     )
+    cancel_reason_code: Optional[CancelTicketReasonCode] = Field(
+        sa_type=Enum(CancelTicketReasonCode)
+    )
+    canceled_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
+    user_id: Optional[int] = Field(foreign_key="users.id")

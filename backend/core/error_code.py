@@ -47,6 +47,7 @@ class ErrorCode:
     ERR_CHECK_IN_ALREADY_EXISTED = "ERR_CHECK_IN_ALREADY_EXISTED"
     ERR_CHECK_IN_NOT_FOUND = "ERR_CHECK_IN_NOT_FOUND"
     ERR_ATTENDEE_NOT_FOUND = "ERR_ATTENDEE_NOT_FOUND"
+    ERR_INVALID_CANCEL_TICKET_DATETIME = "ERR_INVALID_CANCEL_TICKET_DATETIME"
 
 
 class ErrorMessage:
@@ -100,3 +101,4 @@ class ErrorMessage:
     ERR_CHECK_IN_ALREADY_EXISTED = "The check-in already existed."
     ERR_CHECK_IN_NOT_FOUND = "The check-in doesn't exist."
     ERR_ATTENDEE_NOT_FOUND = "The attendee doesn't exist."
+    ERR_INVALID_CANCEL_TICKET_DATETIME = "Invalid cancel ticket datetime."
