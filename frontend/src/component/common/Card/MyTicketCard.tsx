@@ -348,7 +348,7 @@ function MyTicketCard({
                             className='w-fit'
                           />
                           {t(
-                            `cancellationPolicyCode.${ticket.cancellationPolicyCode}`,
+                            `cancellationPolicy.${ticket.cancellationPolicyCode}`,
                           )}
                         </div>
                         {ticket.cancellationPolicyExtraDescription && (

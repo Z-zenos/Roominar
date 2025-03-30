@@ -265,7 +265,7 @@
         "BAD_CUSTOMER_SERVICE": "unsatisfactory customer service",
         "WEATHER_ISSUE": "bad weather conditions"
       },
-      "cancellationPolicyCode": {
+      "cancellationPolicy": {
         "NO_REFUND": "no refund upon ticket cancellation",
         "FULL_REFUND": "full refund upon cancellation",
         "PARTIAL_REFUND": "partial refund, specific percentage may apply",

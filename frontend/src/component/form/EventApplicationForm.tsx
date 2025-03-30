@@ -16,11 +16,16 @@ import {
   FormInput,
   FormItem,
   FormLabel,
+  FormInstructions,
 } from '@/src/component/form/Form';
 import Button from '@/src/component/common/Button/Button';
 import { useGetEventDetailQuery } from '@/src/api/event.api';
 import { cn, optionify } from '@/src/utils/app.util';
-import { MdOutlineOnlinePrediction } from 'react-icons/md';
+import {
+  MdAirplaneTicket,
+  MdOutlineOnlinePrediction,
+  MdVideoCall,
+} from 'react-icons/md';
 import Chip from '@/src/component/common/Chip';
 import { FaUserFriends } from 'react-icons/fa';
 import {
@@ -57,10 +62,12 @@ import HorizontalTimeline from '@/src/component/common/DateTime/HorizontalTimeli
 import { Alert, AlertDescription, AlertTitle } from '../common/Alert';
 import DotLoader from '../common/Loader/DotLoader';
 import NumberSpinnerInput from '../common/Input/NumberSpinnerInput';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import ApplicationCheckout from '../common/Payment/ApplicationCheckout';
 import { useCreateFreeApplicationMutation } from '@/src/api/application.api';
 import { useRouter } from 'next/navigation';
+import useFormatMoney from '@/src/hooks/useFormatMoney';
+import { useTranslations } from 'next-intl';
 
 interface EventApplicationFormProps {
   slug: string;
@@ -69,10 +76,22 @@ interface EventApplicationFormProps {
 export default function EventApplicationForm({
   slug,
 }: EventApplicationFormProps) {
+  const t = useTranslations();
   const { data: event } = useGetEventDetailQuery({ slug });
   const { data: auth, status } = useSession();
   const { width } = useWindowDimensions();
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const {
+    isOpen: isPaymentOpen,
+    onOpen: onOpenPayment,
+    onOpenChange: onOpenPaymentChange,
+  } = useDisclosure();
+  const {
+    isOpen: isTicketDetailOpen,
+    onOpen: onOpenTicketDetail,
+    onOpenChange: onOpenTicketDetailChange,
+  } = useDisclosure();
+  const [selectedTicket, setSelectedTicket] = useState<TicketItem | null>(null);
+  const formatMoney = useFormatMoney();
   const router = useRouter();
 
   const form = useForm<EventApplicationFormSchema>({
@@ -173,7 +192,7 @@ export default function EventApplicationForm({
             if (checkOnlySelectFreeTicket()) {
               handleCreateFreeApplication();
             } else {
-              onOpen();
+              onOpenPayment();
             }
           })}
           className={clsx(
@@ -325,63 +344,85 @@ export default function EventApplicationForm({
                             </p>
                           </div>
 
-                          <NumberSpinnerInput
-                            onChange={(value) => {
-                              if (
-                                totalTickets + 1 >
-                                event.maxTicketNumberPerAccount
-                              ) {
-                                toast(
-                                  () => (
-                                    <span
-                                      className={clsx(styles.between, 'gap-2')}
-                                    >
-                                      <span>
-                                        You can only select max{' '}
-                                        <b>{event.maxTicketNumberPerAccount}</b>{' '}
-                                        tickets
+                          <div className={clsx(styles.between, 'w-full')}>
+                            <NumberSpinnerInput
+                              onChange={(value) => {
+                                if (
+                                  totalTickets + 1 >
+                                  event.maxTicketNumberPerAccount
+                                ) {
+                                  toast(
+                                    () => (
+                                      <span
+                                        className={clsx(
+                                          styles.between,
+                                          'gap-2',
+                                        )}
+                                      >
+                                        <span>
+                                          You can only select max{' '}
+                                          <b>
+                                            {event.maxTicketNumberPerAccount}
+                                          </b>{' '}
+                                          tickets
+                                        </span>
                                       </span>
-                                    </span>
-                                  ),
-                                  {
-                                    icon: '⚠️',
-                                  },
-                                );
-                                return;
-                              }
-                              if (value > ticket.quantity) {
-                                toast(
-                                  () => (
-                                    <span
-                                      className={clsx(styles.between, 'gap-2')}
-                                    >
-                                      <span>
-                                        You can only select max{' '}
-                                        <b>{ticket.quantity}</b> {ticket.name}{' '}
-                                        tickets
+                                    ),
+                                    {
+                                      icon: '⚠️',
+                                    },
+                                  );
+                                  return;
+                                }
+                                if (value > ticket.quantity) {
+                                  toast(
+                                    () => (
+                                      <span
+                                        className={clsx(
+                                          styles.between,
+                                          'gap-2',
+                                        )}
+                                      >
+                                        <span>
+                                          You can only select max{' '}
+                                          <b>{ticket.quantity}</b> {ticket.name}{' '}
+                                          tickets
+                                        </span>
                                       </span>
-                                    </span>
-                                  ),
-                                  {
-                                    icon: '⚠️',
-                                  },
-                                );
-                                return;
-                              }
+                                    ),
+                                    {
+                                      icon: '⚠️',
+                                    },
+                                  );
+                                  return;
+                                }
 
-                              form.setValue(
-                                `tickets.${index}`,
-                                {
-                                  id: ticket.id,
-                                  quantity: value,
-                                  price: ticket.price,
-                                },
-                                { shouldValidate: true },
-                              );
-                            }}
-                            value={form.getValues(`tickets.${index}`)?.quantity}
-                            max={event.maxTicketNumberPerAccount}
-                          />
+                                form.setValue(
+                                  `tickets.${index}`,
+                                  {
+                                    id: ticket.id,
+                                    quantity: value,
+                                    price: ticket.price,
+                                  },
+                                  { shouldValidate: true },
+                                );
+                              }}
+                              value={
+                                form.getValues(`tickets.${index}`)?.quantity
+                              }
+                              max={event.maxTicketNumberPerAccount}
+                            />
+                            <button
+                              className='underline text-xs text-primary translate-y-2 cursor-pointer'
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setSelectedTicket(ticket);
+                                onOpenTicketDetail();
+                              }}
+                            >
+                              Detail
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </UICheckbox>
@@ -759,8 +800,8 @@ export default function EventApplicationForm({
           </div>
 
           <Modal
-            isOpen={isOpen}
-            onOpenChange={onOpenChange}
+            isOpen={isPaymentOpen}
+            onOpenChange={onOpenPaymentChange}
             placement='top-center'
             size='2xl'
           >
@@ -795,6 +836,101 @@ export default function EventApplicationForm({
                   <ModalFooter>
                     <UIButton
                       color='danger'
+                      variant='flat'
+                      onPress={onClose}
+                    >
+                      Close
+                    </UIButton>
+                  </ModalFooter>
+                </>
+              )}
+            </ModalContent>
+          </Modal>
+
+          <Modal
+            isOpen={isTicketDetailOpen}
+            onOpenChange={onOpenTicketDetailChange}
+            placement='top-center'
+            size='2xl'
+          >
+            <ModalContent>
+              {(onClose) => (
+                <>
+                  <ModalHeader className='flex flex-col gap-1'>
+                    Ticket Detail
+                  </ModalHeader>
+                  <ModalBody>
+                    <div className={clsx('flex gap-2 flex-col')}>
+                      <div className='px-3'>
+                        <div className={clsx(styles.between)}>
+                          <h3
+                            className={clsx(
+                              'font-medium text-nm line-clamp-2 h-12 text-primary',
+                            )}
+                          >
+                            {selectedTicket.name}
+                          </h3>
+                          <div className='rounded-md p-4 text-info-main bg-info-sub'>
+                            {selectedTicket.price
+                              ? formatMoney(selectedTicket.price)
+                              : 'FRee'}
+                          </div>
+                        </div>
+                        <p className='text-sm line-clamp-1 text-gray-700'>
+                          <span className='underline font-semibold'>
+                            Available quantity
+                          </span>
+                          : {selectedTicket.soldQuantity} /{' '}
+                          {selectedTicket.quantity}
+                        </p>
+                        <p className='text-sm line-clamp-1 text-gray-700'>
+                          {selectedTicket.description}
+                        </p>
+
+                        <div
+                          className={clsx('my-3', styles.flexStart, 'gap-2')}
+                        >
+                          <Chip
+                            content={t(
+                              `code.ticket.type.${selectedTicket.type}`,
+                            )}
+                            leftIcon={<MdAirplaneTicket className='text-sm' />}
+                            type='info'
+                            className='text-xs w-fit'
+                          />
+                          <Chip
+                            content={selectedTicket.deliveryMethod}
+                            leftIcon={<MdVideoCall className='text-sm' />}
+                            type='success'
+                            className='text-xs w-fit'
+                          />
+                        </div>
+
+                        <p className='font-medium text-nm'>
+                          Cancellation Policy:
+                        </p>
+                        <FormInstructions>
+                          <li>
+                            {t(
+                              `code.ticket.cancellationPolicy.${selectedTicket.cancellationPolicyCode}`,
+                            )}{' '}
+                            {selectedTicket.cancellationPolicyExtraDescription && (
+                              <span className='font-light'>
+                                (
+                                {
+                                  selectedTicket.cancellationPolicyExtraDescription
+                                }
+                                )
+                              </span>
+                            )}
+                          </li>
+                        </FormInstructions>
+                      </div>
+                    </div>
+                  </ModalBody>
+                  <ModalFooter>
+                    <UIButton
+                      color='warning'
                       variant='flat'
                       onPress={onClose}
                     >

@@ -22,6 +22,7 @@ class TicketItem(BaseModel):
     id: int
     name: str
     available_quantity: Optional[int]
+    sold_quantity: Optional[int]
     quantity: int
     description: Optional[str]
     price: Optional[float]
@@ -31,6 +32,8 @@ class TicketItem(BaseModel):
     sales_start_at: Optional[datetime]
     sales_end_at: Optional[datetime]
     delivery_method: Optional[TicketDeliveryMethodCode]
+    cancellation_policy_code: Optional[TicketCancellationPolicyCode]
+    cancellation_policy_extra_description: Optional[str]
 
 
 class CreateTicketRequest(BaseModel):

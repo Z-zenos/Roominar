@@ -142,6 +142,7 @@ def _get_tickets(db: Session, event_id: int):
                 Ticket.id,
                 Ticket.name,
                 TicketInventory.available_quantity,
+                TicketInventory.sold_quantity,
                 Ticket.quantity,
                 Ticket.description,
                 Ticket.price,
@@ -151,6 +152,8 @@ def _get_tickets(db: Session, event_id: int):
                 Ticket.sales_start_at,
                 Ticket.sales_end_at,
                 Ticket.delivery_method,
+                Ticket.cancellation_policy_code,
+                Ticket.cancellation_policy_extra_description,
             )
             .where(
                 Ticket.event_id == event_id,

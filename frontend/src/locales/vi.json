@@ -265,7 +265,7 @@
         "BAD_CUSTOMER_SERVICE": "dịch vụ hỗ trợ khách hàng không tốt",
         "WEATHER_ISSUE": "điều kiện thời tiết không thuận lợi"
       },
-      "cancellationPolicyCode": {
+      "cancellationPolicy": {
         "NO_REFUND": "không hoàn tiền khi hủy vé",
         "FULL_REFUND": "hoàn tiền toàn bộ khi hủy",
         "PARTIAL_REFUND": "hoàn tiền một phần, có thể áp dụng tỷ lệ cụ thể",
