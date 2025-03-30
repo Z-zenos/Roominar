@@ -6,11 +6,19 @@ import type { HTMLAttributes, ReactNode } from 'react';
 interface ChipProps extends HTMLAttributes<HTMLDivElement> {
   leftIcon?: ReactNode;
   rightIcon?: ReactNode;
-  content: string;
+  content?: string;
   type?: 'default' | 'info' | 'error' | 'success' | 'warning';
+  children?: ReactNode;
 }
 
-function Chip({ className, content, leftIcon, rightIcon, type = 'default' }: ChipProps) {
+function Chip({
+  className,
+  content,
+  leftIcon,
+  rightIcon,
+  type = 'default',
+  children,
+}: ChipProps) {
   return (
     <div
       className={clsx(
@@ -21,6 +29,7 @@ function Chip({ className, content, leftIcon, rightIcon, type = 'default' }: Chi
     >
       {leftIcon}
       {content}
+      {children}
       {rightIcon}
     </div>
   );

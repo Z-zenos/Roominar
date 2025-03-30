@@ -151,7 +151,6 @@ def _get_tickets(db: Session, event_id: int):
                 Ticket.sales_start_at,
                 Ticket.sales_end_at,
                 Ticket.delivery_method,
-                Ticket.is_refundable,
             )
             .where(
                 Ticket.event_id == event_id,

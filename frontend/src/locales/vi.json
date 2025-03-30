@@ -68,7 +68,8 @@
       "isFree": "miễn phí",
       "isPaid": "trả phí",
       "gallery": "thư viện ảnh và video",
-      "timeline": "lịch trình"
+      "timeline": "lịch trình",
+      "cancelReason": "lý do hủy"
     },
     "message": {
       "error": {
@@ -242,6 +243,41 @@
         "DONATION": "ủng hộ",
         "MULTIDAY": "nhiều ngày",
         "DAY_PASS": "vé ngày"
+      },
+      "cancelReason": {
+        "EVENT_CANCELED": "sự kiện đã bị hủy",
+        "EVENT_RESCHEDULED": "sự kiện đã bị dời lịch",
+        "PAYMENT_FAILED": "thanh toán không thành công",
+        "VENUE_CAPACITY_LIMIT": "địa điểm tổ chức đã hết chỗ",
+        "FRAUDULENT_PURCHASE": "phát hiện giao dịch gian lận",
+        "VIOLATION_OF_TERMS": "vi phạm điều khoản và điều kiện",
+
+        "CHANGE_PLAN": "thay đổi kế hoạch",
+        "FINANCIAL_ISSUE": "gặp vấn đề tài chính",
+        "PERSONAL_REASON": "lý do cá nhân",
+        "TIME_CONFLICT": "không thể tham gia vào thời gian này",
+        "HEALTH_ISSUE": "gặp vấn đề sức khỏe",
+        "TRANSPORT_ISSUE": "gặp khó khăn về phương tiện di chuyển",
+        "PURCHASE_ERROR": "lỗi khi mua vé (mua nhầm, mua trùng)",
+        "NO_COMPANION": "không tìm được người đi cùng",
+        "VISA_ISSUE": "gặp vấn đề về visa hoặc giấy tờ đi lại",
+        "POLICY_ISSUE": "không đồng ý với chính sách sự kiện",
+        "BAD_CUSTOMER_SERVICE": "dịch vụ hỗ trợ khách hàng không tốt",
+        "WEATHER_ISSUE": "điều kiện thời tiết không thuận lợi"
+      },
+      "cancellationPolicyCode": {
+        "NO_REFUND": "không hoàn tiền khi hủy vé",
+        "FULL_REFUND": "hoàn tiền toàn bộ khi hủy",
+        "PARTIAL_REFUND": "hoàn tiền một phần, có thể áp dụng tỷ lệ cụ thể",
+        "REFUND_BY_DATETIME": "hoàn tiền dựa trên thời điểm hủy (ví dụ: 80% nếu hủy trước 7 ngày, 50% nếu hủy trước 3 ngày)",
+        "EXCHANGE_ONLY": "không hoàn tiền nhưng cho phép đổi vé",
+        "NON_TRANSFERABLE": "vé không được hoàn, hủy hoặc chuyển nhượng",
+        "REFUND_IF_EVENT_CANCELED": "chỉ hoàn tiền nếu sự kiện bị hủy",
+        "REFUND_IF_RESCHEDULED": "chỉ hoàn tiền nếu sự kiện bị dời lịch và người tham gia không đồng ý tham dự",
+        "CREDIT_ONLY": "không hoàn tiền nhưng cấp tín dụng để mua vé sau",
+        "THIRD_PARTY_POLICY": "tuân theo chính sách hủy của bên thứ ba (ví dụ: khi mua qua đại lý)",
+        "INSURANCE_REQUIRED": "chỉ hoàn tiền nếu có mua bảo hiểm hủy vé",
+        "OTHER": "chính sách khác, tùy theo từng sự kiện cụ thể"
       }
     },
     "question": {
@@ -318,8 +354,6 @@
     },
     "userAction": {
       "VIEW": "xem",
-      "APPLY_EVENT": "đăng ký sự kiện",
-      "CANCEL_EVENT": "hủy sự kiện",
       "BOOKMARK": "lưu sự kiện",
       "SHARE": "chia sẻ",
       "COMMENT": "bình luận",
@@ -327,18 +361,15 @@
       "RATE": "đánh giá",
       "CHECK_IN": "check-in",
       "CHECK_OUT": "check-out",
-      "REGISTER": "đăng ký tài khoản",
-      "LOGIN": "đăng nhập",
-      "LOGOUT": "đăng xuất",
       "PURCHASE_TICKET": "mua vé",
-      "REFUND_TICKET": "hoàn vé",
+      "CANCEL_TICKET": "hủy vé",
       "SEARCH": "tìm kiếm",
-      "CLICK": "nhấp chuột",
-      "REPORT": "báo cáo",
       "DOWNLOAD": "tải xuống",
       "UPGRADE_PLAN": "nâng cấp gói",
       "WATCH_VIDEO": "xem video",
-      "SUBMIT_SURVEY": "gửi khảo sát"
+      "SUBMIT_SURVEY": "gửi khảo sát",
+      "ADD_TO_CALENDAR": "thêm vào lịch",
+      "INVITE_FRIEND": "mời bạn bè"
     },
     "trackingTimeRange": {
       "TODAY": "hôm nay",

@@ -331,8 +331,6 @@ class DeviceTypeCode(str, Enum):
 
 class UserActionTypeCode(str, Enum):
     VIEW = "VIEW"
-    APPLY_EVENT = "APPLY_EVENT"
-    CANCEL_EVENT = "CANCEL_EVENT"
     BOOKMARK = "BOOKMARK"
     SHARE = "SHARE"
     COMMENT = "COMMENT"
@@ -340,18 +338,15 @@ class UserActionTypeCode(str, Enum):
     RATE = "RATE"
     CHECK_IN = "CHECK_IN"
     CHECK_OUT = "CHECK_OUT"
-    REGISTER = "REGISTER"
-    LOGIN = "LOGIN"
-    LOGOUT = "LOGOUT"
     PURCHASE_TICKET = "PURCHASE_TICKET"
-    REFUND_TICKET = "REFUND_TICKET"
     SEARCH = "SEARCH"
-    CLICK = "CLICK"
-    REPORT = "REPORT"
     DOWNLOAD = "DOWNLOAD"
     UPGRADE_PLAN = "UPGRADE_PLAN"
     WATCH_VIDEO = "WATCH_VIDEO"
     SUBMIT_SURVEY = "SUBMIT_SURVEY"
+    CANCEL_TICKET = "CANCEL_TICKET"
+    ADD_TO_CALENDAR = "ADD_TO_CALENDAR"
+    INVITE_FRIEND = "INVITE_FRIEND"
 
 
 class TrackingTimeRangeCode(str, Enum):
@@ -387,15 +382,62 @@ class CurrencyCode(str, Enum):
 
 
 class CancelTicketReasonCode(str, Enum):
-    USER_REQUESTED = "USER_REQUESTED"
+    # Các lý do từ hệ thống hoặc ban tổ chức
     EVENT_CANCELED = "EVENT_CANCELED"
     EVENT_RESCHEDULED = "EVENT_RESCHEDULED"
-    DUPLICATE_BOOKING = "DUPLICATE_BOOKING"
     PAYMENT_FAILED = "PAYMENT_FAILED"
-    REFUND_REQUESTED = "REFUND_REQUESTED"
-    NO_LONGER_INTERESTED = "NO_LONGER_INTERESTED"
-    ILLNESS_OR_EMERGENCY = "ILLNESS_OR_EMERGENCY"
     VENUE_CAPACITY_LIMIT = "VENUE_CAPACITY_LIMIT"
     FRAUDULENT_PURCHASE = "FRAUDULENT_PURCHASE"
-    ORGANIZER_DISCRETION = "ORGANIZER_DISCRETION"
     VIOLATION_OF_TERMS = "VIOLATION_OF_TERMS"
+
+    # Các lý do từ người dùng
+    CHANGE_PLAN = "CHANGE_PLAN"
+    FINANCIAL_ISSUE = "FINANCIAL_ISSUE"
+    PERSONAL_REASON = "PERSONAL_REASON"
+    TIME_CONFLICT = "TIME_CONFLICT"
+    HEALTH_ISSUE = "HEALTH_ISSUE"
+    TRANSPORT_ISSUE = "TRANSPORT_ISSUE"
+    PURCHASE_ERROR = "PURCHASE_ERROR"
+    NO_COMPANION = "NO_COMPANION"
+    VISA_ISSUE = "VISA_ISSUE"
+    POLICY_ISSUE = "POLICY_ISSUE"
+    BAD_CUSTOMER_SERVICE = "BAD_CUSTOMER_SERVICE"
+    WEATHER_ISSUE = "WEATHER_ISSUE"
+
+
+class TicketCancellationPolicyCode(str, Enum):
+    NO_REFUND = "NO_REFUND"  # Không hoàn tiền khi hủy vé
+    FULL_REFUND = "FULL_REFUND"  # Hoàn tiền 100% khi hủy
+    PARTIAL_REFUND = "PARTIAL_REFUND"  # Hoàn tiền một phần, tỷ lệ có thể quy định riêng
+    # Hoàn tiền theo thời gian hủy (VD: Hủy trước 7 ngày hoàn 80%, trước 3 ngày hoàn 50%)
+    REFUND_BY_DATETIME = "REFUND_BY_DATETIME"
+    EXCHANGE_ONLY = "EXCHANGE_ONLY"  # Không hoàn tiền nhưng cho phép đổi sang vé khác
+    NON_TRANSFERABLE = "NON_TRANSFERABLE"  # Vé không thể hủy, hoàn, hoặc chuyển nhượng
+    REFUND_IF_EVENT_CANCELED = (
+        "REFUND_IF_EVENT_CANCELED"  # Chỉ hoàn tiền nếu sự kiện bị hủy
+    )
+    # Chỉ hoàn tiền nếu sự kiện bị dời ngày và khách không đồng ý tham gia
+    REFUND_IF_RESCHEDULED = "REFUND_IF_RESCHEDULED"
+    CREDIT_ONLY = (
+        "CREDIT_ONLY"  # Không hoàn tiền nhưng cấp credit để mua vé khác trong tương lai
+    )
+    # Tuân theo chính sách hủy của bên thứ ba (VD: khi mua qua đại lý)
+    THIRD_PARTY_POLICY = "THIRD_PARTY_POLICY"
+    INSURANCE_REQUIRED = (
+        "INSURANCE_REQUIRED"  # Chỉ hoàn tiền nếu khách có mua bảo hiểm hủy vé
+    )
+    OTHER = "OTHER"  # Chính sách khác tùy từng sự kiện cụ thể
+
+
+class RefundMethodCode(str, Enum):
+    # Hoàn tiền về phương thức thanh toán ban đầu (thẻ tín dụng, ví điện tử, v.v.)
+    ORIGINAL_PAYMENT_METHOD = "ORIGINAL_PAYMENT_METHOD"
+    BANK_TRANSFER = "BANK_TRANSFER"  # Hoàn tiền qua chuyển khoản ngân hàng
+    EVENT_CREDIT = (
+        "EVENT_CREDIT"  # Cấp credit để sử dụng cho sự kiện khác thay vì hoàn tiền
+    )
+    VOUCHER = "VOUCHER"  # Cấp voucher giảm giá cho sự kiện khác
+    # Hoàn tiền qua hệ thống của bên thứ ba (VD: Ticketmaster, Eventbrite, Stripe)
+    THIRD_PARTY_REFUND = "THIRD_PARTY_REFUND"
+    CASH = "CASH"  # Hoàn tiền mặt
+    OTHER = "OTHER"  # Các phương thức khác

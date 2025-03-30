@@ -35,28 +35,23 @@ import { useTrackUserActionsQuery } from '@/src/api/organization.api';
 const USER_ACTION_STORAGE_KEY = 'userActions';
 
 const userActionColors = {
-  VIEW: '#3498db',
-  APPLY_EVENT: '#c0392b',
-  CANCEL_EVENT: '#e74c3c',
-  BOOKMARK: '#f1c40f',
-  SHARE: '#9b59b6',
-  COMMENT: '#16a085',
-  FOLLOW: '#e67e22',
-  RATE: '#f39c12',
-  CHECK_IN: '#2980b9',
-  CHECK_OUT: '#d35400',
-  REGISTER: '#1abc9c',
-  LOGIN: '#34495e',
-  LOGOUT: '#95a5a6',
-  PURCHASE_TICKET: '#27ae60',
-  REFUND_TICKET: '#2ecc71',
-  SEARCH: '#8e44ad',
-  CLICK: '#2c3e50',
-  REPORT: '#d35400',
-  DOWNLOAD: '#7f8c8d',
-  UPGRADE_PLAN: '#c0392b',
-  WATCH_VIDEO: '#8e44ad',
-  SUBMIT_SURVEY: '#3498db',
+  VIEW: '#3498db', // Xanh dương
+  BOOKMARK: '#f1c40f', // Vàng
+  SHARE: '#9b59b6', // Tím
+  COMMENT: '#16a085', // Xanh ngọc
+  FOLLOW: '#e67e22', // Cam đậm
+  RATE: '#f39c12', // Cam sáng
+  CHECK_IN: '#2980b9', // Xanh nước biển
+  CHECK_OUT: '#d35400', // Cam đất
+  PURCHASE_TICKET: '#27ae60', // Xanh lá
+  CANCEL_TICKET: '#e74c3c', // Đỏ
+  SEARCH: '#8e44ad', // Tím đậm
+  DOWNLOAD: '#7f8c8d', // Xám
+  UPGRADE_PLAN: '#c0392b', // Đỏ sẫm
+  WATCH_VIDEO: '#8e44ad', // Tím đậm
+  SUBMIT_SURVEY: '#3498db', // Xanh dương
+  ADD_TO_CALENDAR: '#2ecc71', // Xanh lá sáng (giống Google Calendar)
+  INVITE_FRIEND: '#ff6b81', // Hồng đỏ (mang tính thân thiện, rủ rê)
 };
 
 export function TrackUserActionsChart() {

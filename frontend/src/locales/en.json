@@ -68,7 +68,8 @@
       "isFree": "free",
       "isPaid": "paid",
       "gallery": "gallery",
-      "timeline": "timeline"
+      "timeline": "timeline",
+      "cancelReason": "cancellation reason"
     },
     "message": {
       "error": {
@@ -242,6 +243,41 @@
         "DONATION": "donation",
         "MULTIDAY": "multiday",
         "DAY_PASS": "day pass"
+      },
+      "cancelReason": {
+        "EVENT_CANCELED": "event was canceled",
+        "EVENT_RESCHEDULED": "event was rescheduled",
+        "PAYMENT_FAILED": "payment failed",
+        "VENUE_CAPACITY_LIMIT": "venue reached capacity limit",
+        "FRAUDULENT_PURCHASE": "fraudulent purchase detected",
+        "VIOLATION_OF_TERMS": "violation of terms and conditions",
+
+        "CHANGE_PLAN": "change of plans",
+        "FINANCIAL_ISSUE": "financial difficulties",
+        "PERSONAL_REASON": "personal reasons",
+        "TIME_CONFLICT": "unable to attend at the scheduled time",
+        "HEALTH_ISSUE": "health-related issues",
+        "TRANSPORT_ISSUE": "transportation difficulties",
+        "PURCHASE_ERROR": "mistaken or duplicate purchase",
+        "NO_COMPANION": "unable to find a companion",
+        "VISA_ISSUE": "visa or travel document issues",
+        "POLICY_ISSUE": "disagreement with event policies",
+        "BAD_CUSTOMER_SERVICE": "unsatisfactory customer service",
+        "WEATHER_ISSUE": "bad weather conditions"
+      },
+      "cancellationPolicyCode": {
+        "NO_REFUND": "no refund upon ticket cancellation",
+        "FULL_REFUND": "full refund upon cancellation",
+        "PARTIAL_REFUND": "partial refund, specific percentage may apply",
+        "REFUND_BY_DATETIME": "refund based on cancellation time (e.g., 80% if canceled 7 days in advance, 50% if canceled 3 days in advance)",
+        "EXCHANGE_ONLY": "no refund but allows ticket exchange",
+        "NON_TRANSFERABLE": "ticket is non-refundable, non-cancellable, and non-transferable",
+        "REFUND_IF_EVENT_CANCELED": "refund only if the event is canceled",
+        "REFUND_IF_RESCHEDULED": "refund only if the event is rescheduled and the attendee does not agree to participate",
+        "CREDIT_ONLY": "no refund but credit is issued for future ticket purchases",
+        "THIRD_PARTY_POLICY": "follows third-party cancellation policy (e.g., when purchased through an agent)",
+        "INSURANCE_REQUIRED": "refund only if cancellation insurance was purchased",
+        "OTHER": "other policy, depending on the specific event"
       }
     },
     "question": {
@@ -318,8 +354,6 @@
     },
     "userAction": {
       "VIEW": "view",
-      "APPLY_EVENT": "apply event",
-      "CANCEL_EVENT": "cancel event",
       "BOOKMARK": "bookmark",
       "SHARE": "share",
       "COMMENT": "comment",
@@ -327,18 +361,15 @@
       "RATE": "rate",
       "CHECK_IN": "check in",
       "CHECK_OUT": "check out",
-      "REGISTER": "register",
-      "LOGIN": "login",
-      "LOGOUT": "logout",
       "PURCHASE_TICKET": "purchase ticket",
-      "REFUND_TICKET": "refund ticket",
+      "CANCEL_TICKET": "cancel ticket",
       "SEARCH": "search",
-      "CLICK": "click",
-      "REPORT": "report",
       "DOWNLOAD": "download",
       "UPGRADE_PLAN": "upgrade plan",
       "WATCH_VIDEO": "watch video",
-      "SUBMIT_SURVEY": "submit survey"
+      "SUBMIT_SURVEY": "submit survey",
+      "ADD_TO_CALENDAR": "add to calendar",
+      "INVITE_FRIEND": "invite friend"
     },
     "trackingTimeRange": {
       "TODAY": "today",

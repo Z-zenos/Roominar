@@ -18,12 +18,10 @@ import { styles } from '@/src/constants/styles.constant';
 import { BaseTabs, TabsList, TabsTrigger } from '@/src/component/common/Tabs';
 import ReactPaginate from 'react-paginate';
 import Nodata from '@/src/component/common/Nodata';
-import { Button } from '@nextui-org/react';
 
 function TicketsNPayment() {
   const { data, isLoading, isFetching } = useListingMyTicketsQuery();
   const { width } = useWindowDimensions();
-
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -59,7 +57,7 @@ function TicketsNPayment() {
             <FormInput
               name='keyword'
               leftIcon={<IoSearchOutline size={20} />}
-              placeholder='Find web(sem)inar events you like...'
+              placeholder='Find ticket name...'
               className='w-full 600px:min-w-[320px] min-w-full'
               control={form.control}
               onKeyDown={debounce(
@@ -67,16 +65,6 @@ function TicketsNPayment() {
                 1000,
               )}
             />
-
-            <Button
-              className={clsx(
-                'text-[17px] !px-3 !bg-orange-100 !text-orange-500 !hover:text-orange-500 !hover:border-orange-500 !hover:shadow-orange-100',
-              )}
-              radius='sm'
-              size='md'
-            >
-              Cancel Ticket
-            </Button>
           </div>
           <BaseTabs
             defaultValue={form.getValues('status')}

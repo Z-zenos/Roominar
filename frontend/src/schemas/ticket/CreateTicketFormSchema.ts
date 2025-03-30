@@ -20,7 +20,6 @@ const createTicketFormSchema = z.object({
   type: z.nativeEnum(TicketTypeCode),
   deliveryMethod: z.nativeEnum(TicketDeliveryMethodCode),
   // accessLinkUrl: z.string().trim().url().optional(),
-  // isRefundable: z.boolean().optional(),
   // status: z.nativeEnum(TicketStatusCode).optional(),
   salesStartAt: z.date().optional(),
   salesEndAt: z.date().optional(),

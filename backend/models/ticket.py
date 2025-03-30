@@ -4,6 +4,8 @@ from typing import Optional
 from sqlmodel import DateTime, Enum, Field, Integer, String
 
 from backend.core.constants import (
+    RefundMethodCode,
+    TicketCancellationPolicyCode,
     TicketDeliveryMethodCode,
     TicketStatusCode,
     TicketTypeCode,
@@ -30,4 +32,14 @@ class Ticket(BaseModel, table=True):
         sa_type=Enum(TicketDeliveryMethodCode)
     )
     access_link_url: Optional[str] = Field(sa_type=String(2048))
-    is_refundable: Optional[bool]
+    cancellation_policy_code: Optional[TicketCancellationPolicyCode] = Field(
+        sa_type=Enum(TicketCancellationPolicyCode),
+        default=TicketCancellationPolicyCode.NO_REFUND,
+    )
+    cancellation_policy_extra_description: Optional[str] = Field(sa_type=String(2048))
+    cancelable_before_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
+    refund_method_code: Optional[RefundMethodCode] = Field(
+        sa_type=Enum(RefundMethodCode), default=RefundMethodCode.ORIGINAL_PAYMENT_METHOD
+    )
+    cancelation_fee: Optional[float] = Field(default=0.0)
+    refund_percentage: Optional[float] = Field(default=0.0)

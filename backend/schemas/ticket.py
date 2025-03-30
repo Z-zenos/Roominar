@@ -8,6 +8,8 @@ from backend.core.constants import (
     CancelTicketReasonCode,
     CurrencyCode,
     PaymentMethodCode,
+    RefundMethodCode,
+    TicketCancellationPolicyCode,
     TicketDeliveryMethodCode,
     TicketStatusCode,
     TicketTypeCode,
@@ -29,7 +31,6 @@ class TicketItem(BaseModel):
     sales_start_at: Optional[datetime]
     sales_end_at: Optional[datetime]
     delivery_method: Optional[TicketDeliveryMethodCode]
-    is_refundable: Optional[bool]
 
 
 class CreateTicketRequest(BaseModel):
@@ -44,7 +45,6 @@ class CreateTicketRequest(BaseModel):
     type: TicketTypeCode
     delivery_method: TicketDeliveryMethodCode
     access_link_url: str | None
-    is_refundable: bool | None
     sales_start_at: datetime | None
     sales_end_at: datetime | None
 
@@ -68,7 +68,7 @@ class DraftEventTicketItem(BaseModel):
 
 
 class CancelTicketsRequest(BaseModel):
-    ticket_ids: list[int]
+    transaction_item_id: int
     reason: CancelTicketReasonCode | None
 
 
@@ -106,6 +106,14 @@ class ListingMyTicketsItem(BaseModel):
     transaction_id: int
     payment_method_code: PaymentMethodCode
     currency: CurrencyCode
+    cancellation_policy_code: TicketCancellationPolicyCode
+    cancellation_policy_extra_description: str | None = None
+    cancelable_before_at: datetime | None = None
+    refund_method_code: RefundMethodCode
+    cancelation_fee: float | None = None
+    cancelable: bool
+    refunded_amount: float | None = None
+    refund_percentage: float | None = None
 
 
 class ListingMyTicketsResponse(PaginationResponse[ListingMyTicketsItem]):
