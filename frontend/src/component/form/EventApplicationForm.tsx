@@ -288,6 +288,12 @@ export default function EventApplicationForm({
                           'hover:bg-content2 items-center justify-start',
                           'cursor-pointer rounded-lg gap-2 p-4 border-2 border-transparent',
                           'data-[selected=true]:border-primary ',
+                          form.getValues('tickets').filter(Boolean).length ===
+                            event.maxTicketNumberPerAccount &&
+                            !form
+                              .getValues('tickets')
+                              .filter((t) => t.id === ticket.id).length &&
+                            'pointer-events-none text-gray-600 bg-gray-100',
                         ),
                         label: 'w-full m-0',
                       }}
@@ -364,7 +370,7 @@ export default function EventApplicationForm({
                                           <b>
                                             {event.maxTicketNumberPerAccount}
                                           </b>{' '}
-                                          tickets
+                                          ticket(s)
                                         </span>
                                       </span>
                                     ),
@@ -793,7 +799,9 @@ export default function EventApplicationForm({
               disabled={
                 !form.getValues('isAgreed') ||
                 event?.applicationEndAt < new Date() ||
-                form.getValues('tickets').length === 0
+                form.getValues('tickets').length === 0 ||
+                form.getValues('tickets').filter(Boolean).length >
+                  event.maxTicketNumberPerAccount
               }
               isLoading={isCreating}
             />

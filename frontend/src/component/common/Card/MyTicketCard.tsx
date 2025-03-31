@@ -156,7 +156,7 @@ function MyTicketCard({
         </div>
       </div>
       {!isVertical && (
-        <div className='absolute top-0 right-0 z-20 w-2/3 h-full bg-gradient-to-r from-gray-50  to-white/10'></div>
+        <div className='absolute top-0 right-0 z-20 w-2/3 h-full bg-gradient-to-r from-gray-50 to-white/10'></div>
       )}
       <div
         className={clsx(

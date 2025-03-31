@@ -347,6 +347,7 @@ class UserActionTypeCode(str, Enum):
     CANCEL_TICKET = "CANCEL_TICKET"
     ADD_TO_CALENDAR = "ADD_TO_CALENDAR"
     INVITE_FRIEND = "INVITE_FRIEND"
+    ANSWER_APPLICATION_SURVEY = "ANSWER_APPLICATION_SURVEY"
 
 
 class TrackingTimeRangeCode(str, Enum):
