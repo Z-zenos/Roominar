@@ -52,6 +52,7 @@ interface MyTicketCardProps {
   className?: string;
   direction?: 'horizontal' | 'vertical';
   ticket: ListingMyTicketsItem;
+  onCancel?: (state: boolean) => void;
 }
 
 export enum AudienceCancelTicketReasonCode {
@@ -73,6 +74,7 @@ function MyTicketCard({
   className,
   direction = 'vertical',
   ticket,
+  onCancel,
 }: MyTicketCardProps) {
   const t = useTranslations('code.ticket');
   const isVertical = useMemo(() => direction === 'vertical', [direction]);
@@ -88,6 +90,7 @@ function MyTicketCard({
     useCancelTicketsMutation({
       onSuccess() {
         toast.success('Ticket(s) canceled successfully');
+        onCancel(true);
       },
       onError(error: ApiException<unknown>) {
         toast.error(
@@ -95,6 +98,7 @@ function MyTicketCard({
             (error.body as ErrorResponse400)?.errorCode ??
             'Unknown Error 😵',
         );
+        onCancel(false);
       },
     });
 

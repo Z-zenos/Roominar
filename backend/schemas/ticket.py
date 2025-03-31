@@ -34,6 +34,7 @@ class TicketItem(BaseModel):
     delivery_method: Optional[TicketDeliveryMethodCode]
     cancellation_policy_code: Optional[TicketCancellationPolicyCode]
     cancellation_policy_extra_description: Optional[str]
+    purchaseble: Optional[bool]
 
 
 class CreateTicketRequest(BaseModel):

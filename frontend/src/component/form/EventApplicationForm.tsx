@@ -158,14 +158,20 @@ export default function EventApplicationForm({
         isAgreed: form.getValues('isAgreed'),
         tickets: form
           .getValues('tickets')
+          .filter(Boolean)
           .map((ticket) => ({
             id: ticket.id,
             quantity: ticket.quantity,
-          }))
-          .filter((ticket) => ticket),
+          })),
       },
     });
   };
+
+  console.log(
+    form.getValues('tickets'),
+    form.formState.isValid,
+    form.formState.errors,
+  );
 
   return (
     <Form {...form}>
@@ -287,12 +293,14 @@ export default function EventApplicationForm({
                           'flex max-w-full mx-0 my-1 w-full bg-content1',
                           'hover:bg-content2 items-center justify-start',
                           'cursor-pointer rounded-lg gap-2 p-4 border-2 border-transparent',
-                          'data-[selected=true]:border-primary ',
-                          form.getValues('tickets').filter(Boolean).length ===
+                          'data-[selected=true]:border-primary',
+                          ((form.getValues('tickets').filter(Boolean).length ===
                             event.maxTicketNumberPerAccount &&
                             !form
                               .getValues('tickets')
-                              .filter((t) => t.id === ticket.id).length &&
+                              .filter(Boolean)
+                              .find((t) => t.id === ticket.id)) ||
+                            !ticket.purchaseble) &&
                             'pointer-events-none text-gray-600 bg-gray-100',
                         ),
                         label: 'w-full m-0',
@@ -790,7 +798,7 @@ export default function EventApplicationForm({
             <Button
               title={
                 checkOnlySelectFreeTicket() ||
-                form.getValues('tickets').length === 0
+                form.getValues('tickets').filter(Boolean).length === 0
                   ? 'Apply'
                   : 'Go To Payment'
               }
@@ -839,6 +847,7 @@ export default function EventApplicationForm({
                         ) as SurveyResponseResultItem[]
                       }
                       isAgreed={form.getValues('isAgreed')}
+                      onClose={onClose}
                     />
                   </ModalBody>
                   <ModalFooter>

@@ -145,7 +145,7 @@ async def handle_application_transaction(db: Session, request: Request):
                     }
                 )
 
-                for _ in range(ticket["requestd_quantity"]):
+                for _ in range(ticket["requested_quantity"]):
                     # Create the transaction item
                     new_transaction_items.append(
                         TransactionItem(

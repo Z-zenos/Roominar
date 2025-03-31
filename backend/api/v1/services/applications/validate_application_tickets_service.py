@@ -17,12 +17,9 @@ from backend.models.transaction_item import TransactionItem
 def validate_application_tickets(
     db: Session, user_id: int, request: any, is_free_application: bool
 ):
-    print("before dict: ", request)
     request = dict(request)
-    print("after dict: ", request)
     event_id = request.get("event_id")
     request_tickets = [dict(ticket) for ticket in request.get("tickets", [])]
-    print(event_id, request_tickets)
 
     try:
         event = db.get(Event, event_id)

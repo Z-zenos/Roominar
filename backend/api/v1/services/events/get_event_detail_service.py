@@ -2,12 +2,13 @@ from sqlmodel import Session, and_, case, exists, func, select, update
 
 from backend.api.v1.services.surveys.get_survey_detail_service import get_survey_detail
 from backend.api.v1.services.tags.get_event_tags_service import get_event_tags
-from backend.core.constants import FollowEntityCode
+from backend.core.constants import FollowEntityCode, TransactionStatusCode
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.models import Bookmark, Event, Organization, Ticket, User
 from backend.models.follow import Follow
 from backend.models.ticket_inventory import TicketInventory
+from backend.models.transaction_item import TransactionItem
 from backend.utils.database import fetch_one
 
 
@@ -103,7 +104,7 @@ async def get_event_detail(db: Session, current_user: User, slug: str):
                 if event["survey_id"]
                 else None
             ),
-            "tickets": _get_tickets(db, event["id"]),
+            "tickets": _get_tickets(db, current_user.id, event["id"]),
             "organization_contact_url": event["organization_contact_url"],
             "tags": get_event_tags(db, event["id"]),
         }
@@ -135,34 +136,50 @@ async def get_event_detail(db: Session, current_user: User, slug: str):
         raise e
 
 
-def _get_tickets(db: Session, event_id: int):
-    tickets = (
-        db.exec(
-            select(
-                Ticket.id,
-                Ticket.name,
-                TicketInventory.available_quantity,
-                TicketInventory.sold_quantity,
-                Ticket.quantity,
-                Ticket.description,
-                Ticket.price,
-                Ticket.expired_at,
-                Ticket.type,
-                Ticket.status,
-                Ticket.sales_start_at,
-                Ticket.sales_end_at,
-                Ticket.delivery_method,
-                Ticket.cancellation_policy_code,
-                Ticket.cancellation_policy_extra_description,
-            )
-            .where(
-                Ticket.event_id == event_id,
-            )
-            .join(TicketInventory, TicketInventory.ticket_id == Ticket.id)
-            .order_by(Ticket.id)
+def _get_tickets(db: Session, user_id: int, event_id: int):
+    query = (
+        select(
+            Ticket.id,
+            Ticket.name,
+            TicketInventory.available_quantity,
+            TicketInventory.sold_quantity,
+            Ticket.quantity,
+            Ticket.description,
+            Ticket.price,
+            Ticket.expired_at,
+            Ticket.type,
+            Ticket.status,
+            Ticket.sales_start_at,
+            Ticket.sales_end_at,
+            Ticket.delivery_method,
+            Ticket.cancellation_policy_code,
+            Ticket.cancellation_policy_extra_description,
         )
-        .mappings()
-        .all()
+        .where(
+            Ticket.event_id == event_id,
+        )
+        .join(TicketInventory, TicketInventory.ticket_id == Ticket.id)
+        .order_by(Ticket.id)
     )
+
+    if user_id:
+        query = query.add_columns(
+            case(
+                (
+                    user_id
+                    and TransactionItem.status == TransactionStatusCode.CANCELED,
+                    False,
+                ),
+                else_=True,
+            ).label("purchaseble"),
+        ).outerjoin(
+            TransactionItem,
+            and_(
+                TransactionItem.ticket_id == Ticket.id,
+                TransactionItem.user_id == (user_id if user_id else None),
+            ),
+        )
+
+    tickets = db.exec(query).mappings().all()
 
     return tickets

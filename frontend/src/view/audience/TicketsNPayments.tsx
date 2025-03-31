@@ -20,7 +20,7 @@ import ReactPaginate from 'react-paginate';
 import Nodata from '@/src/component/common/Nodata';
 
 function TicketsNPayment() {
-  const { data, isLoading, isFetching } = useListingMyTicketsQuery();
+  const { data, isLoading, isFetching, refetch } = useListingMyTicketsQuery();
   const { width } = useWindowDimensions();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -117,6 +117,7 @@ function TicketsNPayment() {
                     direction={
                       width > 1200 || width < 600 ? 'vertical' : 'horizontal'
                     }
+                    onCancel={(state) => state && refetch()}
                   />
                 );
               })}

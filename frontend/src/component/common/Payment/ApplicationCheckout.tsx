@@ -38,7 +38,12 @@ interface ApplicationCheckoutProps {
   isAgreed: boolean;
 }
 
+interface ApplicationCheckoutProps {
+  onClose?: () => void;
+}
+
 export default function ApplicationCheckout({
+  onClose,
   ...props
 }: ApplicationCheckoutProps) {
   const [clientSecret, setClientSecret] = useState('');
@@ -53,6 +58,7 @@ export default function ApplicationCheckout({
           (error.body as ErrorResponse400)?.errorCode ??
           'Unknown Error 😵',
       );
+      onClose();
     },
   });
 

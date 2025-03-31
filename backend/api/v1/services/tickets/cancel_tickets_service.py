@@ -21,12 +21,13 @@ async def cancel_tickets(db: Session, user: User, request: CancelTicketsRequest)
         ticket = (
             db.exec(
                 select(
-                    TransactionItem.transaction_id,
+                    TransactionItem.id.label("transaction_item_id"),
                     TransactionItem.status,
-                    Ticket.id.label("ticket_id"),
+                    Ticket.id,
                     Ticket.type,
                     Ticket.price,
                     Event.start_at,
+                    Ticket.cancelable_before_at,
                     Event.id.label("event_id"),
                     Event.organization_id,
                     TicketInventory.available_quantity,
@@ -50,7 +51,9 @@ async def cancel_tickets(db: Session, user: User, request: CancelTicketsRequest)
                 ErrorMessage.ERR_INVALID_TICKET,
             )
 
-        if ticket["start_at"] < datetime.now(pytz.utc):
+        if (ticket["start_at"] < datetime.now(pytz.utc)) or (
+            ticket["cancelable_before_at"] < datetime.now(pytz.utc)
+        ):
             raise BadRequestException(
                 ErrorCode.ERR_INVALID_CANCEL_TICKET_DATETIME,
                 ErrorMessage.ERR_INVALID_CANCEL_TICKET_DATETIME,
@@ -69,11 +72,11 @@ async def cancel_tickets(db: Session, user: User, request: CancelTicketsRequest)
         db.exec(
             update(TicketInventory)
             .where(
-                TicketInventory.ticket_id == ticket["ticket_id"],
+                TicketInventory.ticket_id == ticket["id"],
             )
             .values(
                 available_quantity=ticket["available_quantity"] + 1,
-                cancel_quantity=ticket["canceled_quantity"] + 1,
+                canceled_quantity=ticket["canceled_quantity"] + 1,
             )
         )
 
