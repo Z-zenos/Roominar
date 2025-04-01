@@ -1,6 +1,9 @@
 'use client';
 
-import { useListingMyTicketsQuery } from '@/src/api/ticket.api';
+import {
+  useGetTicketStatusCountsQuery,
+  useListingMyTicketsQuery,
+} from '@/src/api/ticket.api';
 import MyTicketCard from '@/src/component/common/Card/MyTicketCard';
 import DotLoader from '@/src/component/common/Loader/DotLoader';
 import { Form, FormInput } from '@/src/component/form/Form';
@@ -18,14 +21,24 @@ import { styles } from '@/src/constants/styles.constant';
 import { BaseTabs, TabsList, TabsTrigger } from '@/src/component/common/Tabs';
 import ReactPaginate from 'react-paginate';
 import Nodata from '@/src/component/common/Nodata';
+import queryString from 'query-string';
 
 function TicketsNPayment() {
-  const { data, isLoading, isFetching, refetch } = useListingMyTicketsQuery();
   const { width } = useWindowDimensions();
   const searchParams = useSearchParams();
   const router = useRouter();
+  const {
+    data: myTicketsData,
+    isLoading: isListingMyTicketsLoading,
+    isFetching: isListingMyTicketsFetching,
+    refetch: refetchListingMyTickets,
+  } = useListingMyTicketsQuery({
+    ...queryString.parse(searchParams.toString(), { arrayFormat: 'bracket' }),
+  });
+  const { data: statusCounts, refetch: refetchStatusCounts } =
+    useGetTicketStatusCountsQuery();
 
-  const [page, setPage] = useState<number>(data?.page || 1);
+  const [page, setPage] = useState<number>(myTicketsData?.page || 1);
 
   const form = useForm<TicketsApiListingMyTicketsRequest>({
     mode: 'all',
@@ -90,9 +103,8 @@ function TicketsNPayment() {
                   )}
                 >
                   {tab}
-                  {data &&
-                    form.getValues('status') === TransactionStatusCode[tab] &&
-                    ' [' + data.total + '] '}
+                  {statusCounts &&
+                    ' [' + statusCounts[TransactionStatusCode[tab]] + '] '}
                 </TabsTrigger>
               ))}
             </TabsList>
@@ -100,16 +112,17 @@ function TicketsNPayment() {
         </div>
 
         <div className={clsx('border-t border-t-gray-300 py-[5%] mt-2')}>
-          {!data && (isLoading || isFetching) && (
-            <div className='mx-auto'>
-              <DotLoader />
-            </div>
-          )}
+          {!myTicketsData &&
+            (isListingMyTicketsLoading || isListingMyTicketsFetching) && (
+              <div className='mx-auto'>
+                <DotLoader />
+              </div>
+            )}
 
           <div className='flex 1200px:jusify-start justify-center flex-wrap gap-4 p-5'>
-            {data &&
-              data.data?.length > 0 &&
-              data.data?.map((ticket) => {
+            {myTicketsData &&
+              myTicketsData.data?.length > 0 &&
+              myTicketsData.data?.map((ticket) => {
                 return (
                   <MyTicketCard
                     key={ticket.id}
@@ -117,23 +130,30 @@ function TicketsNPayment() {
                     direction={
                       width > 1200 || width < 600 ? 'vertical' : 'horizontal'
                     }
-                    onCancel={(state) => state && refetch()}
+                    onCancel={(state) => {
+                      if (state) {
+                        refetchListingMyTickets();
+                        refetchStatusCounts();
+                      }
+                    }}
                   />
                 );
               })}
           </div>
 
-          {data && !data.data.length && <Nodata />}
+          {myTicketsData && !myTicketsData.data.length && <Nodata />}
         </div>
 
-        {data && data.total > data.perPage && (
+        {myTicketsData && myTicketsData.total > myTicketsData.perPage && (
           <ReactPaginate
             breakLabel='...'
             nextLabel={width > 800 ? 'next >' : '>'}
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             onPageChange={({ selected }: any) => setPage(selected + 1)}
             pageRangeDisplayed={5}
-            pageCount={Math.ceil(data.total / data.perPage) || 0}
+            pageCount={
+              Math.ceil(myTicketsData.total / myTicketsData.perPage) || 0
+            }
             previousLabel={width > 600 ? '< previous' : '<'}
             renderOnZeroPageCount={null}
             forcePage={page >= 1 ? page - 1 : 0}

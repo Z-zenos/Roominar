@@ -9,6 +9,7 @@ from backend.models.user import User
 from backend.schemas.ticket import (
     CancelTicketsRequest,
     CreateTicketRequest,
+    GetTicketStatusCountsResponse,
     ListingMyTicketsQueryParams,
     ListingMyTicketsResponse,
 )
@@ -50,3 +51,15 @@ async def listing_my_tickets(
         page=query_params.page,
         per_page=query_params.per_page,
     )
+
+
+@router.get(
+    "/my-tickets/status-counts",
+    response_model=GetTicketStatusCountsResponse,
+    responses=authenticated_api_responses,
+)
+async def get_ticket_status_counts(
+    db: Session = Depends(get_read_db),
+    user: User = Depends(get_current_user),
+):
+    return await ticket_service.get_ticket_status_counts(db, user)

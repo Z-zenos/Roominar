@@ -95,6 +95,5 @@ async def cancel_tickets(db: Session, user: User, request: CancelTicketsRequest)
         return request.transaction_item_id
 
     except Exception as e:
-        print(e)
         db.rollback()
         raise e

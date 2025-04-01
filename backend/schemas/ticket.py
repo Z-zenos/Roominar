@@ -122,3 +122,7 @@ class ListingMyTicketsItem(BaseModel):
 
 class ListingMyTicketsResponse(PaginationResponse[ListingMyTicketsItem]):
     pass
+
+
+class GetTicketStatusCountsResponse(BaseModel):
+    __annotations__ = {status.value: int for status in TransactionStatusCode}

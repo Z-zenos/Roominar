@@ -41,6 +41,5 @@ async def create_check_in(
         return check_in.id
 
     except Exception as e:
-        print(e)
         db.rollback()
         raise e
