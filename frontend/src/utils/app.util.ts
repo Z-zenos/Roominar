@@ -101,7 +101,11 @@ export function toCamelCase(obj: { [key: string]: any }) {
 }
 
 export function formatEventDate(datetime: Date) {
-  return dayjs(datetime).format('YYYY MMM DD - HH:MM');
+  return dayjs(datetime).format(
+    datetime.getFullYear() === new Date().getFullYear()
+      ? 'MMM DD - HH:MM'
+      : 'YYYY MMM DD - HH:MM',
+  );
 }
 
 interface OptionifyOptions {
