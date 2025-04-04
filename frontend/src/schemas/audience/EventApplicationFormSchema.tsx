@@ -6,11 +6,13 @@ const eventApplicationFormSchema = z.object({
 
   tickets: z
     .array(
-      z.object({
-        id: z.number(),
-        quantity: z.number(),
-        price: z.number(),
-      }),
+      z
+        .object({
+          id: z.number(),
+          quantity: z.number(),
+          price: z.number(),
+        })
+        .optional(),
     )
     .refine((val) => val.length > 0, { message: 'missingTicket' }),
 

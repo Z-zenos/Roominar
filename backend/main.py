@@ -1,12 +1,14 @@
+import asyncio
 import os
 import time
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from backend.api.v1.routes.router import api_router
+from backend.core import redis_client
 from backend.core.exception import (
     AccessDeniedException,
     BadRequestException,
@@ -36,6 +38,36 @@ app.add_middleware(
 @app.get("/healthcheck")
 async def healthcheck():
     return {"status": "OK"}
+
+
+clients = {}
+
+
+@app.websocket("/ws/payment/{session_token}")
+async def payment_websocket_endpoint(websocket: WebSocket, session_token: str):
+    session_data = redis_client.redis_client.hgetall(f"session:{session_token}")
+    if not session_data:
+        await websocket.close(reason="Invalid session token")
+        return
+
+    transaction_id = session_data.get("transaction_id")
+    stored_user_id = session_data.get("user_id")
+    if not transaction_id or not stored_user_id:
+        await websocket.close(reason="Unauthorized session token")
+        return
+
+    await websocket.accept()
+    clients[session_token] = websocket
+
+    try:
+        while True:
+            await asyncio.sleep(1)
+            status = redis_client.redis_client.get(f"session_status:{session_token}")
+            if status:
+                await websocket.send_json({"status": status})
+
+    except WebSocketDisconnect:
+        clients.pop(session_token, None)
 
 
 app.include_router(api_router, prefix="/api/v1")

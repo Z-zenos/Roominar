@@ -1,7 +1,14 @@
 import type { SWRMutationConfiguration } from 'swr/mutation';
 import useSWRMutation from 'swr/mutation';
 import useApi from '../lib/api/useApi';
-import type { TicketsApiCreateTicketRequest } from '../lib/api/generated';
+import type {
+  TicketsApiCancelTicketsRequest,
+  TicketsApiCreateTicketRequest,
+  TicketsApiGetTicketStatusCountsRequest,
+  TicketsApiListingMyTicketsRequest,
+} from '../lib/api/generated';
+import { useQuery } from '@tanstack/react-query';
+import { toCamelCase } from '../utils/app.util';
 
 export const useCreateTicketMutation = <T>(
   options?: SWRMutationConfiguration<number, T>,
@@ -13,4 +20,38 @@ export const useCreateTicketMutation = <T>(
     async (_: string, { arg }) => await api.tickets.createTicket(arg),
     options,
   );
+};
+
+export const useListingMyTicketsQuery = (
+  params?: TicketsApiListingMyTicketsRequest,
+) => {
+  params = toCamelCase(params);
+  const api = useApi();
+  return useQuery({
+    queryKey: ['listing-my-tickets', params],
+    queryFn: async () => await api.tickets.listingMyTickets(params),
+    staleTime: 1000 * 60 * 5,
+  });
+};
+
+export const useCancelTicketsMutation = <T>(
+  options?: SWRMutationConfiguration<number, T>,
+) => {
+  const api = useApi();
+  const key = 'cancel-ticket';
+  return useSWRMutation<number, T, typeof key, TicketsApiCancelTicketsRequest>(
+    key,
+    async (_: string, { arg }) => await api.tickets.cancelTickets(arg),
+    options,
+  );
+};
+
+export const useGetTicketStatusCountsQuery = (
+  params?: TicketsApiGetTicketStatusCountsRequest,
+) => {
+  const api = useApi();
+  return useQuery({
+    queryKey: ['get-ticket-status-counts'],
+    queryFn: async () => await api.tickets.getTicketStatusCounts(params),
+  });
 };

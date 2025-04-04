@@ -9,14 +9,16 @@ import {
 } from '@/src/component/common/Sidebar';
 import AudienceSidebar from '@/src/component/common/SideBar/AudienceSidebar';
 import Footer from '@/src/component/layout/Footer';
+import useWindowDimensions from '@/src/hooks/useWindowDimension';
 
 export default function RootLayout({ children }) {
+  const { width } = useWindowDimensions();
   return (
     <div>
       <Navbar />
 
-      <div className='flex 1400px:px-[15%] px-0 w-full max-h-screen overflow-y-clip'>
-        <SidebarProvider>
+      <div className='flex 1400px:px-[15%] px-0 w-full'>
+        <SidebarProvider open={width > 1200 ? true : false}>
           <AudienceSidebar />
           <SidebarInset>
             <header className='flex h-16 shrink-0 items-center gap-2'>
@@ -29,7 +31,7 @@ export default function RootLayout({ children }) {
               </div>
             </header>
             <div className='flex flex-1 flex-col gap-4 p-4 pt-0'>
-              <div className='flex-1 rounded-xl bg-muted/50'>{children}</div>
+              <div className='rounded-xl bg-muted/50'>{children}</div>
             </div>
           </SidebarInset>
         </SidebarProvider>

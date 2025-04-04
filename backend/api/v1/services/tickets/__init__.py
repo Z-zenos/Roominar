@@ -1,5 +1,13 @@
+from .cancel_tickets_service import cancel_tickets
 from .create_ticket_service import create_ticket
-from .get_sold_tickets_number_query_service import get_sold_tickets_number_query
+from .get_ticket_status_counts_service import get_ticket_status_counts
+from .listing_my_tickets_service import listing_my_tickets
 from .listing_tickets_of_event_service import listing_tickets_of_event
 
-all = create_ticket, listing_tickets_of_event, get_sold_tickets_number_query
+all = (
+    create_ticket,
+    listing_tickets_of_event,
+    cancel_tickets,
+    listing_my_tickets,
+    get_ticket_status_counts,
+)

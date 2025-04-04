@@ -10,7 +10,7 @@ class Application(BaseModel, table=True):
     __tablename__: str = "applications"
 
     event_id: int = Field(foreign_key="events.id")
-    user_id: int = Field(foreign_key="users.id")
+    user_id: Optional[int] = Field(foreign_key="users.id")
     email: str = Field(sa_type=String(255))
     first_name: str = Field(sa_type=String(255))
     last_name: Optional[str] = Field(sa_type=String(255))

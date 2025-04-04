@@ -15,7 +15,6 @@ async def create_ticket(db: Session, request: CreateTicketRequest):
         type=request.type,
         delivery_method=request.delivery_method,
         access_link_url=request.access_link_url,
-        is_refundable=request.is_refundable,
         sales_end_at=request.sales_end_at,
         sales_start_at=request.sales_start_at,
     )

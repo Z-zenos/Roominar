@@ -39,7 +39,7 @@ const sidebarMenu = [
   },
   {
     title: 'Ticket & payments',
-    url: '/payments',
+    url: '/tickets-n-payments',
     icon: <PaymentIcon />,
     isActive: false,
   },

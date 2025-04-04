@@ -119,4 +119,9 @@
 
   That means you are successfully can testing stripe with your app!
 
+- Manually run stripe cli for listen webhook:
+  ```bash
+    stripe listen --forward-to http://localhost:8000/api/v1/transactions/webhook
+  ```
+
 # ROOMINAR

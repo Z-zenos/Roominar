@@ -16,11 +16,16 @@ import {
   FormInput,
   FormItem,
   FormLabel,
+  FormInstructions,
 } from '@/src/component/form/Form';
 import Button from '@/src/component/common/Button/Button';
 import { useGetEventDetailQuery } from '@/src/api/event.api';
 import { cn, optionify } from '@/src/utils/app.util';
-import { MdOutlineOnlinePrediction } from 'react-icons/md';
+import {
+  MdAirplaneTicket,
+  MdOutlineOnlinePrediction,
+  MdVideoCall,
+} from 'react-icons/md';
 import Chip from '@/src/component/common/Chip';
 import { FaUserFriends } from 'react-icons/fa';
 import {
@@ -57,10 +62,12 @@ import HorizontalTimeline from '@/src/component/common/DateTime/HorizontalTimeli
 import { Alert, AlertDescription, AlertTitle } from '../common/Alert';
 import DotLoader from '../common/Loader/DotLoader';
 import NumberSpinnerInput from '../common/Input/NumberSpinnerInput';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import ApplicationCheckout from '../common/Payment/ApplicationCheckout';
 import { useCreateFreeApplicationMutation } from '@/src/api/application.api';
 import { useRouter } from 'next/navigation';
+import useFormatMoney from '@/src/hooks/useFormatMoney';
+import { useTranslations } from 'next-intl';
 
 interface EventApplicationFormProps {
   slug: string;
@@ -69,10 +76,22 @@ interface EventApplicationFormProps {
 export default function EventApplicationForm({
   slug,
 }: EventApplicationFormProps) {
+  const t = useTranslations();
   const { data: event } = useGetEventDetailQuery({ slug });
   const { data: auth, status } = useSession();
   const { width } = useWindowDimensions();
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const {
+    isOpen: isPaymentOpen,
+    onOpen: onOpenPayment,
+    onOpenChange: onOpenPaymentChange,
+  } = useDisclosure();
+  const {
+    isOpen: isTicketDetailOpen,
+    onOpen: onOpenTicketDetail,
+    onOpenChange: onOpenTicketDetailChange,
+  } = useDisclosure();
+  const [selectedTicket, setSelectedTicket] = useState<TicketItem | null>(null);
+  const formatMoney = useFormatMoney();
   const router = useRouter();
 
   const form = useForm<EventApplicationFormSchema>({
@@ -105,8 +124,9 @@ export default function EventApplicationForm({
   }, [JSON.stringify(form.getValues('tickets'))]);
 
   const { trigger, isMutating: isCreating } = useCreateFreeApplicationMutation({
-    onSuccess() {
-      router.push('apply/result?status=success');
+    onSuccess(paymentSessionToken) {
+      sessionStorage.setItem('paymentSessionToken', paymentSessionToken);
+      router.push(`apply/result`);
     },
     onError(error: ApiException<unknown>) {
       toast.error(
@@ -138,14 +158,20 @@ export default function EventApplicationForm({
         isAgreed: form.getValues('isAgreed'),
         tickets: form
           .getValues('tickets')
+          .filter(Boolean)
           .map((ticket) => ({
             id: ticket.id,
             quantity: ticket.quantity,
-          }))
-          .filter((ticket) => ticket),
+          })),
       },
     });
   };
+
+  console.log(
+    form.getValues('tickets'),
+    form.formState.isValid,
+    form.formState.errors,
+  );
 
   return (
     <Form {...form}>
@@ -168,8 +194,13 @@ export default function EventApplicationForm({
 
       {event ? (
         <form
-          // onSubmit={form.handleSubmit(handleApplyEvent)}
-          onSubmit={form.handleSubmit(onOpen)}
+          onSubmit={form.handleSubmit(() => {
+            if (checkOnlySelectFreeTicket()) {
+              handleCreateFreeApplication();
+            } else {
+              onOpenPayment();
+            }
+          })}
           className={clsx(
             'grid grid-cols-7 w-full items-start gap-10 mx-auto py-20',
             width < 1000 && 'px-[5%]',
@@ -181,8 +212,12 @@ export default function EventApplicationForm({
         >
           <div className={clsx(width > 1200 ? 'col-span-2' : 'col-span-7')}>
             {event && (
-              <div className='rounded-md p-5 shadow-[rgba(0,_0,_0,_0.02)_0px_1px_3px_0px,_rgba(27,_31,_35,_0.15)_0px_0px_0px_1px] bg-white'>
-                <div className={'flex justify-between gap-2 items-start mb-3'}>
+              <div className='rounded-md p-5 shadow-[rgba(0,_0,_0,_0.16)_0px_1px_4px] bg-white'>
+                <div
+                  className={
+                    'flex 1200px:justify-between justify-start gap-2 items-start mb-3'
+                  }
+                >
                   <Image
                     src={
                       event.coverImageUrl ??
@@ -223,7 +258,7 @@ export default function EventApplicationForm({
                 </div>
               </div>
             )}
-            <div className='rounded-md pt-5 shadow-[rgba(0,_0,_0,_0.02)_0px_1px_3px_0px,_rgba(27,_31,_35,_0.15)_0px_0px_0px_1px] my-6 bg-white'>
+            <div className='rounded-md pt-5 shadow-[rgba(0,_0,_0,_0.16)_0px_1px_4px] my-6 bg-white'>
               <h3 className='text-md font-semibold px-5 text-orange-500'>
                 Ticket 🎟
               </h3>
@@ -258,7 +293,15 @@ export default function EventApplicationForm({
                           'flex max-w-full mx-0 my-1 w-full bg-content1',
                           'hover:bg-content2 items-center justify-start',
                           'cursor-pointer rounded-lg gap-2 p-4 border-2 border-transparent',
-                          'data-[selected=true]:border-primary ',
+                          'data-[selected=true]:border-primary',
+                          ((form.getValues('tickets').filter(Boolean).length ===
+                            event.maxTicketNumberPerAccount &&
+                            !form
+                              .getValues('tickets')
+                              .filter(Boolean)
+                              .find((t) => t.id === ticket.id)) ||
+                            !ticket.purchaseble) &&
+                            'pointer-events-none text-gray-600 bg-gray-100',
                         ),
                         label: 'w-full m-0',
                       }}
@@ -289,16 +332,16 @@ export default function EventApplicationForm({
                         .some((t) => t.id === ticket.id)}
                     >
                       <div className='w-full flex justify-between items-center gap-2'>
-                        <div className='font-normal'>
+                        <div className='font-normal w-full'>
                           <h4 className='text-sm font-medium leading-5'>
                             {ticket.name}
                           </h4>
-                          {/* <p className='font-light opacity-80 leading-5 text-ss mt-1'>
+                          <p className='font-light opacity-80 leading-5 text-ss mt-1'>
                             {ticket.description}
-                          </p> */}
-                          <div className={clsx(styles.between)}>
+                          </p>
+                          <div className={clsx(styles.between, 'w-full')}>
                             {ticket.price ? (
-                              <div className='text-sm'>
+                              <div className='text-sm w-full'>
                                 <span>Price: </span>
                                 <span className='text-primary font-semibold ml-2'>
                                   {ticket.price}
@@ -315,63 +358,85 @@ export default function EventApplicationForm({
                             </p>
                           </div>
 
-                          <NumberSpinnerInput
-                            onChange={(value) => {
-                              if (
-                                totalTickets + 1 >
-                                event.maxTicketNumberPerAccount
-                              ) {
-                                toast(
-                                  () => (
-                                    <span
-                                      className={clsx(styles.between, 'gap-2')}
-                                    >
-                                      <span>
-                                        You can only select max{' '}
-                                        <b>{event.maxTicketNumberPerAccount}</b>{' '}
-                                        tickets
+                          <div className={clsx(styles.between, 'w-full')}>
+                            <NumberSpinnerInput
+                              onChange={(value) => {
+                                if (
+                                  totalTickets + 1 >
+                                  event.maxTicketNumberPerAccount
+                                ) {
+                                  toast(
+                                    () => (
+                                      <span
+                                        className={clsx(
+                                          styles.between,
+                                          'gap-2',
+                                        )}
+                                      >
+                                        <span>
+                                          You can only select max{' '}
+                                          <b>
+                                            {event.maxTicketNumberPerAccount}
+                                          </b>{' '}
+                                          ticket(s)
+                                        </span>
                                       </span>
-                                    </span>
-                                  ),
-                                  {
-                                    icon: '⚠️',
-                                  },
-                                );
-                                return;
-                              }
-                              if (value > ticket.quantity) {
-                                toast(
-                                  () => (
-                                    <span
-                                      className={clsx(styles.between, 'gap-2')}
-                                    >
-                                      <span>
-                                        You can only select max{' '}
-                                        <b>{ticket.quantity}</b> {ticket.name}{' '}
-                                        tickets
+                                    ),
+                                    {
+                                      icon: '⚠️',
+                                    },
+                                  );
+                                  return;
+                                }
+                                if (value > ticket.quantity) {
+                                  toast(
+                                    () => (
+                                      <span
+                                        className={clsx(
+                                          styles.between,
+                                          'gap-2',
+                                        )}
+                                      >
+                                        <span>
+                                          You can only select max{' '}
+                                          <b>{ticket.quantity}</b> {ticket.name}{' '}
+                                          tickets
+                                        </span>
                                       </span>
-                                    </span>
-                                  ),
-                                  {
-                                    icon: '⚠️',
-                                  },
-                                );
-                                return;
-                              }
+                                    ),
+                                    {
+                                      icon: '⚠️',
+                                    },
+                                  );
+                                  return;
+                                }
 
-                              form.setValue(
-                                `tickets.${index}`,
-                                {
-                                  id: ticket.id,
-                                  quantity: value,
-                                  price: ticket.price,
-                                },
-                                { shouldValidate: true },
-                              );
-                            }}
-                            value={form.getValues(`tickets.${index}`)?.quantity}
-                            max={event.maxTicketNumberPerAccount}
-                          />
+                                form.setValue(
+                                  `tickets.${index}`,
+                                  {
+                                    id: ticket.id,
+                                    quantity: value,
+                                    price: ticket.price,
+                                  },
+                                  { shouldValidate: true },
+                                );
+                              }}
+                              value={
+                                form.getValues(`tickets.${index}`)?.quantity
+                              }
+                              max={event.maxTicketNumberPerAccount}
+                            />
+                            <button
+                              className='underline text-xs text-primary translate-y-2 cursor-pointer'
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setSelectedTicket(ticket);
+                                onOpenTicketDetail();
+                              }}
+                            >
+                              Detail
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </UICheckbox>
@@ -733,7 +798,7 @@ export default function EventApplicationForm({
             <Button
               title={
                 checkOnlySelectFreeTicket() ||
-                form.getValues('tickets').length === 0
+                form.getValues('tickets').filter(Boolean).length === 0
                   ? 'Apply'
                   : 'Go To Payment'
               }
@@ -742,22 +807,17 @@ export default function EventApplicationForm({
               disabled={
                 !form.getValues('isAgreed') ||
                 event?.applicationEndAt < new Date() ||
-                form.getValues('tickets').length === 0
+                form.getValues('tickets').length === 0 ||
+                form.getValues('tickets').filter(Boolean).length >
+                  event.maxTicketNumberPerAccount
               }
-              onClick={() => {
-                if (checkOnlySelectFreeTicket()) {
-                  handleCreateFreeApplication();
-                } else {
-                  onOpen();
-                }
-              }}
               isLoading={isCreating}
             />
           </div>
 
           <Modal
-            isOpen={isOpen}
-            onOpenChange={onOpenChange}
+            isOpen={isPaymentOpen}
+            onOpenChange={onOpenPaymentChange}
             placement='top-center'
             size='2xl'
           >
@@ -787,11 +847,107 @@ export default function EventApplicationForm({
                         ) as SurveyResponseResultItem[]
                       }
                       isAgreed={form.getValues('isAgreed')}
+                      onClose={onClose}
                     />
                   </ModalBody>
                   <ModalFooter>
                     <UIButton
                       color='danger'
+                      variant='flat'
+                      onPress={onClose}
+                    >
+                      Close
+                    </UIButton>
+                  </ModalFooter>
+                </>
+              )}
+            </ModalContent>
+          </Modal>
+
+          <Modal
+            isOpen={isTicketDetailOpen}
+            onOpenChange={onOpenTicketDetailChange}
+            placement='top-center'
+            size='2xl'
+          >
+            <ModalContent>
+              {(onClose) => (
+                <>
+                  <ModalHeader className='flex flex-col gap-1'>
+                    Ticket Detail
+                  </ModalHeader>
+                  <ModalBody>
+                    <div className={clsx('flex gap-2 flex-col')}>
+                      <div className='px-3'>
+                        <div className={clsx(styles.between)}>
+                          <h3
+                            className={clsx(
+                              'font-medium text-nm line-clamp-2 h-12 text-primary',
+                            )}
+                          >
+                            {selectedTicket.name}
+                          </h3>
+                          <div className='rounded-md p-4 text-info-main bg-info-sub'>
+                            {selectedTicket.price
+                              ? formatMoney(selectedTicket.price)
+                              : 'FRee'}
+                          </div>
+                        </div>
+                        <p className='text-sm line-clamp-1 text-gray-700'>
+                          <span className='underline font-semibold'>
+                            Available quantity
+                          </span>
+                          : {selectedTicket.soldQuantity} /{' '}
+                          {selectedTicket.quantity}
+                        </p>
+                        <p className='text-sm line-clamp-1 text-gray-700'>
+                          {selectedTicket.description}
+                        </p>
+
+                        <div
+                          className={clsx('my-3', styles.flexStart, 'gap-2')}
+                        >
+                          <Chip
+                            content={t(
+                              `code.ticket.type.${selectedTicket.type}`,
+                            )}
+                            leftIcon={<MdAirplaneTicket className='text-sm' />}
+                            type='info'
+                            className='text-xs w-fit'
+                          />
+                          <Chip
+                            content={selectedTicket.deliveryMethod}
+                            leftIcon={<MdVideoCall className='text-sm' />}
+                            type='success'
+                            className='text-xs w-fit'
+                          />
+                        </div>
+
+                        <p className='font-medium text-nm'>
+                          Cancellation Policy:
+                        </p>
+                        <FormInstructions>
+                          <li>
+                            {t(
+                              `code.ticket.cancellationPolicy.${selectedTicket.cancellationPolicyCode}`,
+                            )}{' '}
+                            {selectedTicket.cancellationPolicyExtraDescription && (
+                              <span className='font-light'>
+                                (
+                                {
+                                  selectedTicket.cancellationPolicyExtraDescription
+                                }
+                                )
+                              </span>
+                            )}
+                          </li>
+                        </FormInstructions>
+                      </div>
+                    </div>
+                  </ModalBody>
+                  <ModalFooter>
+                    <UIButton
+                      color='warning'
                       variant='flat'
                       onPress={onClose}
                     >

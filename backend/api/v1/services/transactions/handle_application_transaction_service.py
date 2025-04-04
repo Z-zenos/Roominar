@@ -7,12 +7,19 @@ from sqlmodel import Session
 
 import backend.api.v1.services.applications as applications_service
 from backend.core.config import settings
-from backend.core.constants import IndustryCode, JobTypeCode
+from backend.core.constants import (
+    CurrencyCode,
+    IndustryCode,
+    JobTypeCode,
+    PaymentMethodCode,
+    UserActionTypeCode,
+)
 from backend.models.application import Application
 from backend.models.survey_response_result import SurveyResponseResult
 from backend.models.ticket_inventory import TicketInventory
 from backend.models.transaction import Transaction, TransactionStatusCode
 from backend.models.transaction_item import TransactionItem
+from backend.models.user_action import UserAction
 from backend.utils.database import save
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -92,6 +99,12 @@ async def handle_application_transaction(db: Session, request: Request):
                     )
                     for srr in survey_response_results
                 ]
+                user_action = UserAction(
+                    user_id=user_id,
+                    event_id=event_id,
+                    action_type=UserActionTypeCode.ANSWER_APPLICATION_SURVEY,
+                )
+                db.add(user_action)
                 db.bulk_save_objects(survey_responses)
 
         # Handle checkout session completion
@@ -111,6 +124,9 @@ async def handle_application_transaction(db: Session, request: Request):
                 stripe_payment_intent_id=session["payment_intent"],
                 stripe_checkout_session_id=session["id"],
                 reference=f"{transaction_reference}-{uuid4()}",
+                payment_method_code=PaymentMethodCode.STRIPE,
+                currency=CurrencyCode.VND,
+                exchange_rate=1.0,
             )
 
             transaction = save(db, transaction)
@@ -129,16 +145,25 @@ async def handle_application_transaction(db: Session, request: Request):
                     }
                 )
 
-                for _ in range(ticket["quantity"]):
+                for _ in range(ticket["requested_quantity"]):
                     # Create the transaction item
                     new_transaction_items.append(
                         TransactionItem(
                             transaction_id=transaction.id,
                             ticket_id=ticket["id"],
                             amount=ticket["price"],
+                            status=TransactionStatusCode.SUCCESS,
+                            user_id=user_id,
                         )
                     )
 
+            user_action = UserAction(
+                user_id=user_id,
+                event_id=event_id,
+                action_type=UserActionTypeCode.PURCHASE_TICKET,
+            )
+
+            db.add(user_action)
             db.bulk_update_mappings(TicketInventory, update_ticket_inventories)
             db.bulk_save_objects(new_transaction_items)
             db.commit()
@@ -165,5 +190,6 @@ async def handle_application_transaction(db: Session, request: Request):
     except (ValueError, stripe.SignatureVerificationError):
         raise HTTPException(status_code=400, detail="Invalid Stripe webhook signature")
     except Exception as e:
+        print(e)
         db.rollback()
         raise HTTPException(status_code=500, detail=str(e))

@@ -17,7 +17,10 @@ from backend.models.transaction_item import TransactionItem
 def validate_application_tickets(
     db: Session, user_id: int, request: any, is_free_application: bool
 ):
-    event_id = request.event_id
+    request = dict(request)
+    event_id = request.get("event_id")
+    request_tickets = [dict(ticket) for ticket in request.get("tickets", [])]
+
     try:
         event = db.get(Event, event_id)
 
@@ -46,7 +49,7 @@ def validate_application_tickets(
                 .join(Event, Event.id == Ticket.event_id)
                 .join(TicketInventory, TicketInventory.ticket_id == Ticket.id)
                 .where(
-                    Ticket.id.in_([ticket.id for ticket in request.tickets]),
+                    Ticket.id.in_([ticket["id"] for ticket in request_tickets]),
                     Event.id == event_id,
                 )
             )
@@ -55,7 +58,7 @@ def validate_application_tickets(
         )
 
         # Check if tickets are really created from the event
-        if len(tickets) != len(request.tickets):
+        if len(tickets) != len(request_tickets):
             raise BadRequestException(
                 ErrorCode.ERR_INVALID_TICKET, ErrorMessage.ERR_INVALID_TICKET
             )
@@ -71,9 +74,9 @@ def validate_application_tickets(
 
             ticket["requested_quantity"] = next(
                 (
-                    request_ticket.quantity
-                    for request_ticket in request.tickets
-                    if request_ticket.id == ticket["id"]
+                    request_ticket["quantity"]
+                    for request_ticket in request_tickets
+                    if request_ticket["id"] == ticket["id"]
                 ),
                 None,
             )

@@ -171,7 +171,6 @@ class TrackUserActionsQueryParams(BaseModel):
         Query(
             [
                 UserActionTypeCode.BOOKMARK,
-                UserActionTypeCode.APPLY_EVENT,
                 UserActionTypeCode.PURCHASE_TICKET,
             ]
         )

@@ -24,6 +24,7 @@ export const pathPermissionMaster = {
     '/not-found',
     '/email/change/[token]',
     '/my-events',
+    '/tickets-n-payments',
     '/organization/login',
     '/organization/register',
     '/icon.ico',

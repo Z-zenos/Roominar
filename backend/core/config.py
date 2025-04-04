@@ -90,6 +90,13 @@ class Settings(BaseSettings):
 
     OPEN_AI_KEY: Optional[str]
 
+    REDIS_PORT: Optional[str]
+    REDIS_HOST: Optional[str]
+
+    KAFKA_BROKER_HOST: Optional[str]
+    KAFKA_BROKER_PORT: Optional[str]
+    KAFKA_TOPIC: Optional[str]
+
     ENVIRONMENT: Literal["dev", "staging", "production"] = "dev"
 
     @field_validator("MASTER_DATABASE_URI", mode="before")
