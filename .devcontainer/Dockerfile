@@ -57,6 +57,7 @@ FROM python-base AS development
 
 # copy in our built poetry + venv
 COPY --from=poetry-base $POETRY_HOME $POETRY_HOME
+COPY --from=builder-base /workspace/.venv /workspace/.venv
 
 RUN apt-get update && apt-get install --no-install-recommends -y \
     procps libpq-dev build-essential git bash curl tar sudo default-jre nodejs npm && \
