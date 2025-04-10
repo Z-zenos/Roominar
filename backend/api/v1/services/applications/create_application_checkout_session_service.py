@@ -84,7 +84,7 @@ async def create_application_checkout_session(
             client_reference_id=transaction_reference,
             mode="payment",
             ui_mode="embedded",
-            return_url=f"{settings.AUD_FRONTEND_URL}/events/{event.slug}/apply/result",
+            return_url=f"{settings.WEB_URL}/events/{event.slug}/apply/result",
         )
 
         return session.client_secret

@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, BackgroundTasks, Depends
 from sqlmodel import Session
 
 import backend.api.v1.services.events as events_service
@@ -143,11 +143,14 @@ async def listing_related_events(slug: str = None, db: Session = Depends(get_rea
     responses=authenticated_api_responses,
 )
 async def create_event_bookmark(
-    event_id: int,
     db: Session = Depends(get_read_db),
+    background_tasks: BackgroundTasks = None,
     current_user: User = Depends(get_current_user),
+    event_id: int = None,
 ):
-    return await events_service.create_event_bookmark(db, current_user, event_id)
+    return await events_service.create_event_bookmark(
+        db, background_tasks, current_user, event_id
+    )
 
 
 @router.delete(

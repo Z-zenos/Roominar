@@ -25,7 +25,7 @@ class Email:
         self.org_sender_email = settings.ORG_SENDER_EMAIL
         self.aud_sender_name = settings.AUD_SENDER_NAME
         self.org_sender_name = settings.ORG_SENDER_NAME
-        self.constant_data = {"homepage_url": f"{settings.AUD_FRONTEND_URL}/home"}
+        self.constant_data = {"homepage_url": f"{settings.WEB_URL}/home"}
 
     async def send_aud_email(
         self, receivers: str | list, template: str, subject: str, data

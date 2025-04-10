@@ -79,10 +79,10 @@ class Settings(BaseSettings):
     # MEDIA_PATH: Optional[str]
     # MEDIA_PATH_TMP_PREFIX: str = "tmp/"
     # PUBLIC_CDN_URL: Optional[str]
-    APP_PORT: Optional[str]
-    APP_URL: Optional[str]
+    SERVER_PORT: Optional[str]
+    SERVER_URL: Optional[str]
 
-    AUD_FRONTEND_URL: Optional[str]
+    WEB_URL: Optional[str]
 
     STRIPE_SECRET_KEY: Optional[str]
     STRIPE_DEVICE_NAME: Optional[str]
@@ -92,10 +92,18 @@ class Settings(BaseSettings):
 
     REDIS_PORT: Optional[str]
     REDIS_HOST: Optional[str]
+    REDIS_URL: Optional[str]
 
     KAFKA_BROKER_HOST: Optional[str]
     KAFKA_BROKER_PORT: Optional[str]
     KAFKA_TOPIC: Optional[str]
+
+    CELERY_BROKER_URL: Optional[str]
+    CELERY_RESULT_BACKEND: Optional[str]
+
+    FLOWER_PORT: Optional[str]
+
+    ZOOKEEPER_CLIENT_PORT: Optional[str]
 
     ENVIRONMENT: Literal["dev", "staging", "production"] = "dev"
 

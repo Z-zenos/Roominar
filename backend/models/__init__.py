@@ -4,6 +4,7 @@ from .bookmark import Bookmark
 from .check_in import CheckIn
 from .event import Event
 from .follow import Follow
+from .notification import Notification
 from .organization import Organization
 from .question import Question
 from .site_visit import SiteVisit
@@ -44,4 +45,5 @@ all = (
     Speaker,
     SiteVisit,
     UserAction,
+    Notification,
 )

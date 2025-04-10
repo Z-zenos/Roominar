@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from fastapi import BackgroundTasks
 import pytz
+from fastapi import BackgroundTasks
 from sqlmodel import Session
 
 import backend.api.v1.services.auth as auth_service
@@ -40,7 +40,7 @@ async def register_audience(
 
             context = {
                 "url": f"""
-                    {settings.AUD_FRONTEND_URL}/email/verify/{user.verify_email_token}
+                    {settings.WEB_URL}/email/verify/{user.verify_email_token}
                 """,
                 "expire_at": user.verify_email_token_expire_at.strftime(
                     "%Y/%m/%d %H:%M"
@@ -72,7 +72,7 @@ async def register_audience(
         new_user = save(db, new_user)
 
         context = {
-            "url": f"{settings.AUD_FRONTEND_URL}/email/verify/{verify_token}",
+            "url": f"{settings.WEB_URL}/email/verify/{verify_token}",
             "expire_at": verify_expire_at.strftime("%Y/%m/%d %H:%M"),
             "first_name": new_user.first_name,
         }

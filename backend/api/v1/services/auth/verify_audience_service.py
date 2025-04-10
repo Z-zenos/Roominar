@@ -54,8 +54,8 @@ async def verify_audience(
 
         context = {
             "first_name": user.first_name,
-            "search_page_url": f"{settings.AUD_FRONTEND_URL}/search",
-            "my_profile_page_url": f"{settings.AUD_FRONTEND_URL}/profiles",
+            "search_page_url": f"{settings.WEB_URL}/search",
+            "my_profile_page_url": f"{settings.WEB_URL}/profiles",
         }
 
         mailer = Email()

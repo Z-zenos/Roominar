@@ -78,6 +78,7 @@
     "cmdk": "1.0.0",
     "cookies-next": "^4.2.1",
     "dayjs": "^1.11.12",
+    "firebase": "^11.6.0",
     "framer-motion": "~11.1.9",
     "intl-messageformat": "^10.5.14",
     "jsdom": "^23.2.0",

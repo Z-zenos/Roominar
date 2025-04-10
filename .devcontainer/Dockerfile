@@ -1,4 +1,4 @@
-FROM python:3.11-slim as python-base
+FROM python:3.11-slim AS python-base
 
 LABEL version="1.0" maintainer="hoanganhtuanbk2001@gmail.com" description="Roominar"
 
@@ -28,7 +28,7 @@ ENV PYTHONUNBUFFERED=1 \
 # prepend poetry and venv to path
 ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
 
-FROM python-base as poetry-base
+FROM python-base AS poetry-base
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
     # deps for installing poetry
@@ -38,7 +38,7 @@ RUN apt-get update && \
 RUN curl -sSL https://install.python-poetry.org | python
 
 # `builder-base` stage is used to build deps + create our virtual environment
-FROM poetry-base as builder-base
+FROM poetry-base AS builder-base
 RUN apt-get update && \
     apt-get install --no-install-recommends -y  \
     # deps for building python deps
@@ -53,7 +53,7 @@ COPY poetry.lock pyproject.toml README.md ./
 RUN poetry install --only main
 
 # `development` image is used during development / testing
-FROM python-base as development
+FROM python-base AS development
 
 # copy in our built poetry + venv
 COPY --from=poetry-base $POETRY_HOME $POETRY_HOME

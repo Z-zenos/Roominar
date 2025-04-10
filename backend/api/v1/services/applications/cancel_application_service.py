@@ -51,7 +51,7 @@ async def cancel_application(db: Session, current_user: User, application_id: in
             "address": event.organize_address,
             "meeting_tool_code": event.meeting_tool_code,
             "meeting_url": event.meeting_url,
-            "detail_event_url": f"{settings.AUD_FRONTEND_URL}/events/{event.slug}",
+            "detail_event_url": f"{settings.WEB_URL}/events/{event.slug}",
         }
 
         mailer = Email()

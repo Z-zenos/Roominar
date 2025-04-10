@@ -47,7 +47,7 @@ async def forgot_password(db: Session, request: ForgotPasswordRequest):
         context = {
             "expire_at": user.reset_password_token_expire_at.strftime("%Y/%m/%d %H:%M"),
             "first_name": f"{user.first_name}",
-            "url": f"{settings.AUD_FRONTEND_URL}/reset-password/{reset_token}",
+            "url": f"{settings.WEB_URL}/reset-password/{reset_token}",
         }
 
         mailer = Email()
