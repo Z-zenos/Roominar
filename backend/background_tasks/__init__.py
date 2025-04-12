@@ -1,0 +1,3 @@
+from .notification_tasks import push_bookmark_event_notification
+
+all = push_bookmark_event_notification

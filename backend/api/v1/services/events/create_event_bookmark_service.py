@@ -1,17 +1,13 @@
-from fastapi import BackgroundTasks
 from sqlmodel import Session, exists
 
-from backend.api.v1.services.notifications.notification_service import (
-    NotificationService,
-)
+import backend.background_tasks.notification_tasks as notification_tasks
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.models import Bookmark, User
+from backend.utils.database import save
 
 
-async def create_event_bookmark(
-    db: Session, background_tasks: BackgroundTasks, current_user: User, event_id: int
-):
+async def create_event_bookmark(db: Session, current_user: User, event_id: int):
     bookmark = db.scalar(
         exists()
         .where(Bookmark.user_id == current_user.id, Bookmark.event_id == event_id)
@@ -25,15 +21,10 @@ async def create_event_bookmark(
         )
 
     try:
-        new_bookmark = Bookmark(user_id=current_user.id, event_id=event_id)
-        db.add(new_bookmark)
-        db.commit()
+        new_bookmark = save(db, Bookmark(user_id=current_user.id, event_id=event_id))
 
-        background_tasks.add_task(
-            NotificationService.push_event_bookmarked_notification,
-            db=db,
-            sender=current_user,
-            event_id=event_id,
+        notification_tasks.push_bookmark_event_notification.delay(
+            kwargs={"db": db, "event_id": event_id}
         )
 
         return new_bookmark.id

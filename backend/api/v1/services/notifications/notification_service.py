@@ -47,7 +47,7 @@ class NotificationService:
         )
 
         if user_notification_tokens:
-            NotificationService.send_notification(
+            NotificationService.__send_notification(
                 title=message.get("title", ""),
                 body=message.get("body", ""),
                 tokens=user_notification_tokens,
@@ -112,7 +112,7 @@ class NotificationService:
         ).count()
 
     @staticmethod
-    def send_notification(
+    def __send_notification(
         title: str,
         body: str,
         tokens: list[str],
