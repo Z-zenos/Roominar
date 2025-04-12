@@ -88,7 +88,7 @@ services:
       dockerfile: .devcontainer/Dockerfile
     image: roominar-celery
     working_dir: /workspace/Roominar
-    command: poetry run celery -A backend.celery worker --loglevel=info
+    command: poetry run celery -A backend.celery worker --loglevel=info --concurrency=5
     volumes:
       - ../..:/workspace:cached
     depends_on:
