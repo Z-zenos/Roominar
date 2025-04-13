@@ -62,6 +62,7 @@ export function NotificationItem({
       <div className='flex-1 text-sm text-gray-700'>
         <div
           className={clsx(
+            'line-clamp-3 min-h-16 max-h-16',
             isRead ? 'text-gray-500' : 'font-semibold text-gray-900',
           )}
         >
