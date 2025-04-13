@@ -26,7 +26,7 @@ async def push_bookmark_event_notification(self, db: Session, event_id: int):
             return
 
         NotificationService.push_notification(
-            receiver=owner, type_code=NotificationTypeCode.EVENT_BOOKMARKED
+            receiver=owner, type_code=NotificationTypeCode.BOOKMARK_EVENT
         )
     except Exception as exc:
         raise self.retry(exc=exc)

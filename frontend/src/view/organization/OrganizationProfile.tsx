@@ -12,7 +12,6 @@ import 'swiper/css/navigation';
 
 import { Autoplay, FreeMode, Navigation } from 'swiper/modules';
 
-// import required modules
 import { styles } from '@/src/constants/styles.constant';
 import DotLoader from '@/src/component/common/Loader/DotLoader';
 import useWindowDimensions from '@/src/hooks/useWindowDimension';

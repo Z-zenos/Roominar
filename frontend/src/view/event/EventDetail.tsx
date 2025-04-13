@@ -184,10 +184,22 @@ function EventDetail({ slug }: EventDetailProps) {
       />
       <div
         className={clsx(
-          'bg-emerald-50 dark:bg-dark-sub w-full py-14 px-[15%] relative flex-wrap',
+          'dark:bg-dark-sub w-full py-14 px-[15%] relative flex-wrap',
           styles.between,
         )}
       >
+        <div className='bg-transparent h-[200px] w-full flex items-center justify-center absolute top-0 left-0'>
+          <div className='relative w-full '>
+            <div className='my-8 relative space-y-4 opacity-15'>
+              <Image
+                src={event.coverImageUrl}
+                alt='Cover image'
+                className='w-full blur-xl'
+                classNames={{ wrapper: '!max-w-full' }}
+              />
+            </div>
+          </div>
+        </div>
         <div
           className={clsx(
             'flex flex-col gap-7',
