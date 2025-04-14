@@ -115,22 +115,27 @@ class NotificationService:
         )
 
     @staticmethod
-    def mark_notification_as_read(
-        db: Session, notification_id: int
+    async def mark_notification_as_read(
+        db: Session, user: User, notification_id: int
     ) -> Notification | None:
-        notification = (
-            db.exec(select(Notification).where(Notification.id == notification_id))
-            .scalars()
-            .first()
-        )
+        try:
+            notification = db.get(Notification, notification_id)
+            if not notification:
+                return None
 
-        if notification:
+            if notification.receiver_id != user.id:
+                raise PermissionError(
+                    "You do not have permission to access this notification."
+                )
+
             notification.is_read = True
             db.add(notification)
             db.commit()
-            return notification
+            return notification_id
 
-        return None
+        except Exception as e:
+            db.rollback()
+            raise e
 
     @staticmethod
     async def count_unread_notifications(db: Session, user_id: int) -> int:

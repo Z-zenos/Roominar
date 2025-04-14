@@ -90,16 +90,18 @@ interface NavbarProps {
 export default function Navbar({ className, hasLogo = true }: NavbarProps) {
   const t = useTranslations('app');
 
-  const { data: totalUnreadNotifications } =
-    useGetTotalUnreadNotificationsQuery();
-
   const [isEnglish, setIsEnglish] = useState<boolean>(
     getCookie('NEXT_LOCALE') === 'en' || !getCookie('NEXT_LOCALE'),
   );
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const [isNotificationOpen, setIsNotificationOpen] = useState<boolean>(false);
   const { data: auth, status } = useSession();
   const { width } = useWindowDimensions();
   const pathname = usePathname();
+  const {
+    data: totalUnreadNotifications,
+    refetch: refetchTotalUnreadNotifications,
+  } = useGetTotalUnreadNotificationsQuery(status === 'authenticated');
 
   const handleLogout = () => {
     localStorage.setItem('rememberMe', 'false');
@@ -114,7 +116,10 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
   };
 
   return (
-    <Sheet>
+    <Sheet
+      open={isNotificationOpen}
+      onOpenChange={setIsNotificationOpen}
+    >
       <UINavbar
         isBordered
         classNames={{
@@ -195,23 +200,25 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
               )
             }
           />
-          <SheetTrigger className='relative cursor-pointer mr-2'>
-            <CiBellOn className='w-7 h-7' />
-            {totalUnreadNotifications && (
-              <span
-                className={clsx(
-                  'absolute -top-2 -right-4 bg-red-500 text-white rounded-full flex items-center justify-center text-xs',
-                  totalUnreadNotifications === 0 ? 'hidden' : 'block',
-                  totalUnreadNotifications > 99 && 'w-8 h-5',
-                  totalUnreadNotifications > 9 && 'w-6 h-5 -right-3',
-                  totalUnreadNotifications <= 9 && 'w-5 h-5',
-                )}
-              >
-                {totalUnreadNotifications}
-                {totalUnreadNotifications > 99 && '+'}
-              </span>
-            )}
-          </SheetTrigger>
+          {status === 'authenticated' && (
+            <SheetTrigger className='relative cursor-pointer mr-2'>
+              <CiBellOn className='w-7 h-7' />
+              {totalUnreadNotifications && (
+                <span
+                  className={clsx(
+                    'absolute -top-2 -right-4 bg-red-500 text-white rounded-full flex items-center justify-center text-xs',
+                    totalUnreadNotifications === 0 ? 'hidden' : 'block',
+                    totalUnreadNotifications > 99 && 'w-8 h-5',
+                    totalUnreadNotifications > 9 && 'w-6 h-5 -right-3',
+                    totalUnreadNotifications <= 9 && 'w-5 h-5',
+                  )}
+                >
+                  {totalUnreadNotifications}
+                  {totalUnreadNotifications > 99 && '+'}
+                </span>
+              )}
+            </SheetTrigger>
+          )}
 
           {status === 'authenticated' ? (
             <div className='flex justify-end items-center gap-x-4'>
@@ -328,7 +335,10 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
           <SheetHeader>
             <SheetTitle className='text-primary'>Notifications</SheetTitle>
             <SheetDescription />
-            <NotificationList />
+            <NotificationList
+              onRefetch={refetchTotalUnreadNotifications}
+              onClose={() => setIsNotificationOpen(false)}
+            />
           </SheetHeader>
         </SheetContent>
       </SheetOverlay>

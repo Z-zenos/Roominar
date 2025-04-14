@@ -40,7 +40,7 @@ export const useListingNotificationsInfiniteQuery = (enabled = false) => {
       return page < total ? page + 1 : undefined;
     },
     enabled,
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60,
     // select: (data) => {
     //   return {
     //     ...data,
@@ -56,10 +56,23 @@ export const useListingNotificationsInfiniteQuery = (enabled = false) => {
   });
 };
 
-export const useGetTotalUnreadNotificationsQuery = () => {
+export const useGetTotalUnreadNotificationsQuery = (enabled: boolean) => {
   const api = useApi();
   return useQuery({
     queryKey: ['total-unread-notifications'],
     queryFn: async () => await api.users.getTotalUnreadNotifications(),
+    enabled,
   });
+};
+
+export const useMarkNotificationAsReadMutation = <T>(
+  options?: SWRMutationConfiguration<number, T>,
+) => {
+  const api = useApi();
+  const key = 'mark-notification-as-read';
+  return useSWRMutation<number, T, typeof key, { notificationId: number }>(
+    key,
+    async (_: string, { arg }) => await api.users.markNotificationAsRead(arg),
+    options,
+  );
 };

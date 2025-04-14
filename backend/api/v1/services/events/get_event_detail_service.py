@@ -104,7 +104,7 @@ async def get_event_detail(db: Session, current_user: User, slug: str):
                 if event["survey_id"]
                 else None
             ),
-            "tickets": _get_tickets(db, current_user.id, event["id"]),
+            "tickets": _get_tickets(db, current_user, event["id"]),
             "organization_contact_url": event["organization_contact_url"],
             "tags": get_event_tags(db, event["id"]),
         }
@@ -136,7 +136,7 @@ async def get_event_detail(db: Session, current_user: User, slug: str):
         raise e
 
 
-def _get_tickets(db: Session, user_id: int, event_id: int):
+def _get_tickets(db: Session, user: User, event_id: int):
     query = (
         select(
             Ticket.id,
@@ -162,11 +162,11 @@ def _get_tickets(db: Session, user_id: int, event_id: int):
         .order_by(Ticket.id)
     )
 
-    if user_id:
+    if user:
         query = query.add_columns(
             case(
                 (
-                    user_id
+                    user.id
                     and TransactionItem.status == TransactionStatusCode.CANCELED,
                     False,
                 ),
@@ -176,7 +176,7 @@ def _get_tickets(db: Session, user_id: int, event_id: int):
             TransactionItem,
             and_(
                 TransactionItem.ticket_id == Ticket.id,
-                TransactionItem.user_id == (user_id if user_id else None),
+                TransactionItem.user_id == user.id,
             ),
         )
 

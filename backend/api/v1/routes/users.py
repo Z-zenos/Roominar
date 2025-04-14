@@ -5,7 +5,7 @@ from sqlmodel import Session
 
 import backend.api.v1.services.tags as tags_service
 import backend.api.v1.services.users as users_service
-from backend.api.v1.dependencies.authentication import authorize_role
+from backend.api.v1.dependencies.authentication import authorize_role, get_current_user
 from backend.api.v1.services.notifications.notification_service import (
     NotificationService,
 )
@@ -59,7 +59,7 @@ async def update_audience(
 )
 async def listing_notifications(
     db: Session = Depends(get_read_db),
-    current_user: User = Depends(authorize_role(RoleCode.AUDIENCE)),
+    current_user: User = Depends(get_current_user),
     query_params: ListingNotificationsQueryParams = Depends(
         ListingNotificationsQueryParams
     ),
@@ -88,9 +88,24 @@ async def listing_notifications(
 )
 async def get_total_unread_notifications(
     db: Session = Depends(get_read_db),
-    current_user: User = Depends(authorize_role(RoleCode.AUDIENCE)),
+    current_user: User = Depends(get_current_user),
 ):
     return await NotificationService.count_unread_notifications(
         db=db,
         user_id=current_user.id,
+    )
+
+
+@router.patch(
+    "/notifications/{notification_id}/read",
+    response_model=int,
+    responses=authenticated_api_responses,
+)
+async def mark_notification_as_read(
+    db: Session = Depends(get_read_db),
+    current_user: User = Depends(get_current_user),
+    notification_id: int = None,
+):
+    return await NotificationService.mark_notification_as_read(
+        db, current_user, notification_id
     )
