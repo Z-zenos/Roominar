@@ -179,6 +179,13 @@ def _get_tickets(db: Session, user: User, event_id: int):
                 TransactionItem.user_id == user.id,
             ),
         )
+    else:
+        query = query.add_columns(
+            case(
+                (TicketInventory.available_quantity > 0, True),
+                else_=False,
+            ).label("purchaseble"),
+        )
 
     tickets = db.exec(query).mappings().all()
 

@@ -66,8 +66,7 @@ export function TagStatsChart({ data }: TagStatsChartProps) {
               item.category === TagStatsCategoryCode.Industry
                 ? 'industry'
                 : 'jobType'
-            }.${item.name}
-            }`,
+            }.${item.name}`,
           )
         : item.name,
     usageCount: item.usageCount,

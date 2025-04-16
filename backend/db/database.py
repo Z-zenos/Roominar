@@ -1,5 +1,8 @@
 from typing import Generator
+
+from sqlalchemy.orm import sessionmaker
 from sqlmodel import Session, create_engine
+
 from backend.core.config import settings
 
 master_engine = create_engine(settings.MASTER_DATABASE_URI)
@@ -29,3 +32,9 @@ def get_read_db():
         yield db
     finally:
         db.close()
+
+
+SessionLocal = sessionmaker(
+    autocommit=False, autoflush=False, bind=read_engine, class_=Session
+)
+# SessionLocal = sessionmaker(class_=Session, autoflush=False, bind=read_engine)

@@ -21,6 +21,7 @@ from .transaction import Transaction
 from .transaction_item import TransactionItem
 from .user import User
 from .user_action import UserAction
+from .user_notification_token import UserNotificationToken
 
 all = (
     Application,
@@ -46,4 +47,5 @@ all = (
     SiteVisit,
     UserAction,
     Notification,
+    UserNotificationToken,
 )

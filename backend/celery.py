@@ -9,3 +9,5 @@ app = Celery(
     # tasks="[queue-name].tasks",
     # include=["backend.background_tasks"],
 )
+
+import backend.background_tasks

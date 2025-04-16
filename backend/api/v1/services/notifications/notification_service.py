@@ -28,7 +28,7 @@ class NotificationService:
 
         # Save to DB
         notification = Notification(
-            sender_id=sender.id,
+            sender_id=None if sender is None else sender.id,
             receiver_id=receiver.id,
             content=message,
             type_code=type_code,
@@ -37,21 +37,17 @@ class NotificationService:
         db.commit()
 
         # Send push to all tokens
-        user_notification_tokens = (
-            db.exec(
-                select(UserNotificationToken.fcm_token).where(
-                    UserNotificationToken.user_id == receiver.id
-                )
+        user_notification_tokens = db.exec(
+            select(UserNotificationToken.fcm_token).where(
+                UserNotificationToken.user_id == receiver.id
             )
-            .scalars()
-            .all()
-        )
+        ).all()
 
         if user_notification_tokens:
             NotificationService.__send_notification(
                 title=message.get("title", ""),
                 body=message.get("body", ""),
-                tokens=user_notification_tokens,
+                tokens=list(user_notification_tokens),
                 data={**message, "type_code": type_code},
             )
 

@@ -369,7 +369,8 @@
       "WATCH_VIDEO": "xem video",
       "SUBMIT_SURVEY": "gửi khảo sát",
       "ADD_TO_CALENDAR": "thêm vào lịch",
-      "INVITE_FRIEND": "mời bạn bè"
+      "INVITE_FRIEND": "mời bạn bè",
+      "ANSWER_APPLICATION_SURVEY": "trả lời khảo sát đăng ký"
     },
     "trackingTimeRange": {
       "TODAY": "hôm nay",

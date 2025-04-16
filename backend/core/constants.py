@@ -441,6 +441,8 @@ class RefundMethodCode(str, Enum):
 class NotificationTypeCode(str, Enum):
     BOOKMARK_EVENT = "BOOKMARK_EVENT"
     PUBLISH_NEW_EVENT = "PUBLISH_NEW_EVENT"
+    APPLY_EVENT = "APPLY_EVENT"
+    CANCEL_EVENT = "CANCEL_EVENT"
 
 
 class DeviceTypeCode(str, Enum):

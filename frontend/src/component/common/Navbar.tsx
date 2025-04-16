@@ -203,7 +203,7 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
           {status === 'authenticated' && (
             <SheetTrigger className='relative cursor-pointer mr-2'>
               <CiBellOn className='w-7 h-7' />
-              {totalUnreadNotifications && (
+              {totalUnreadNotifications > 0 && (
                 <span
                   className={clsx(
                     'absolute -top-2 -right-4 bg-red-500 text-white rounded-full flex items-center justify-center text-xs',

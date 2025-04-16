@@ -23,6 +23,7 @@ import queryString from 'query-string';
 import { Form, FormCustomLabel, FormSelect } from '../../form/Form';
 import { optionify } from '@/src/utils/app.util';
 import { useListingEventOptionsQuery } from '@/src/api/event.api';
+import Nodata from '../Nodata';
 
 const TICKET_STATS_STORAGE_KEY = 'ticketStats';
 
@@ -35,7 +36,11 @@ export function TicketStatsChart() {
     {},
   );
 
-  const { data: ticketStats, refetch } = useGetTicketStatsQuery({
+  const {
+    data: ticketStats,
+    refetch,
+    isLoading,
+  } = useGetTicketStatsQuery({
     ...queryString.parse(
       queryString.stringify(filters, { arrayFormat: 'bracket' }),
       { arrayFormat: 'bracket' },
@@ -129,7 +134,7 @@ export function TicketStatsChart() {
               <Skeleton className='h-[40px] w-full rounded-md' />
             )}
           </CardHeader>
-          {ticketStats ? (
+          {ticketStats && (
             <div className='grid grid-cols-6'>
               <CardContent className='col-span-4 pb-0'>
                 <ChartContainer
@@ -234,8 +239,10 @@ export function TicketStatsChart() {
                 />
               </div>
             </div>
-          ) : (
-            <Skeleton className='h-[150px] mx-6 my-6 rounded-md' />
+          )}
+          {isLoading && <Skeleton className='h-[150px] mx-6 my-6 rounded-md' />}
+          {!isLoading && !ticketStats && ticketStats?.totalTickets === 0 && (
+            <Nodata />
           )}
         </form>
       </Form>
