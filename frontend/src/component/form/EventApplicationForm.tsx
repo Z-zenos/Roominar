@@ -893,14 +893,14 @@ export default function EventApplicationForm({
                               : 'FRee'}
                           </div>
                         </div>
-                        <p className='text-sm line-clamp-1 text-gray-700'>
+                        <p className='text-sm text-gray-700'>
                           <span className='underline font-semibold'>
                             Available quantity
                           </span>
                           : {selectedTicket.soldQuantity} /{' '}
                           {selectedTicket.quantity}
                         </p>
-                        <p className='text-sm line-clamp-1 text-gray-700'>
+                        <p className='text-sm text-gray-700'>
                           {selectedTicket.description}
                         </p>
 

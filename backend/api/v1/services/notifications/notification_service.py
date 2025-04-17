@@ -19,37 +19,41 @@ class NotificationService:
         lang: Lang = "vi",
         **kwargs,
     ) -> None:
-        # Build multilingual message
-        message = NotificationService.get_notification_message(
-            key=type_code,
-            lang=lang,
-            **kwargs,
-        )
-
-        # Save to DB
-        notification = Notification(
-            sender_id=None if sender is None else sender.id,
-            receiver_id=receiver.id,
-            content=message,
-            type_code=type_code,
-        )
-        db.add(notification)
-        db.commit()
-
-        # Send push to all tokens
-        user_notification_tokens = db.exec(
-            select(UserNotificationToken.fcm_token).where(
-                UserNotificationToken.user_id == receiver.id
+        try:
+            # Build multilingual message
+            message = NotificationService.get_notification_message(
+                key=type_code,
+                lang=lang,
+                **kwargs,
             )
-        ).all()
 
-        if user_notification_tokens:
-            NotificationService.__send_notification(
-                title=message.get("title", ""),
-                body=message.get("body", ""),
-                tokens=list(user_notification_tokens),
-                data={**message, "type_code": type_code},
+            # Save to DB
+            notification = Notification(
+                sender_id=None if sender is None else sender.id,
+                receiver_id=receiver.id,
+                content=dict(kwargs),
+                type_code=type_code,
             )
+            db.add(notification)
+            db.commit()
+
+            # Send push to all tokens
+            user_notification_tokens = db.exec(
+                select(UserNotificationToken.fcm_token).where(
+                    UserNotificationToken.user_id == receiver.id
+                )
+            ).all()
+
+            if user_notification_tokens:
+                NotificationService.__send_notification(
+                    title=message.get("title", ""),
+                    body=message.get("body", ""),
+                    tokens=list(user_notification_tokens),
+                    data={"type_code": type_code},
+                )
+        except Exception as e:
+            db.rollback()
+            raise e
 
     @staticmethod
     async def listing_notifications(

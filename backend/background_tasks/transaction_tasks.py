@@ -6,6 +6,7 @@ from backend.core.constants import (
     CurrencyCode,
     PaymentMethodCode,
     TransactionStatusCode,
+    UserActionTypeCode,
 )
 from backend.db.database import SessionLocal
 from backend.models.event import Event
@@ -14,6 +15,7 @@ from backend.models.ticket_inventory import TicketInventory
 from backend.models.transaction import Transaction
 from backend.models.transaction_item import TransactionItem
 from backend.models.user import User
+from backend.models.user_action import UserAction
 from backend.utils.database import save
 
 
@@ -93,9 +95,15 @@ def process_free_application(
                     )
                 )
 
+        user_action = UserAction(
+            user_id=user_id,
+            event_id=event_id,
+            action_type=UserActionTypeCode.PURCHASE_TICKET,
+        )
+
+        db.add(user_action)
         db.bulk_update_mappings(TicketInventory, update_ticket_inventories)
         db.bulk_save_objects(new_transaction_items)
-
         db.commit()
 
         push_apply_event_notification.delay(
@@ -112,6 +120,7 @@ def process_free_application(
         }
 
     except Exception as e:
+        print(e)
         db.rollback()
         self.retry(exc=e)
         raise e

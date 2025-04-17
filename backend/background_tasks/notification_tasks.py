@@ -50,15 +50,18 @@ def push_apply_event_notification(
 
         NotificationService.push_notification(
             db=db,
-            event=event,
             sender=sender,
             receiver=receiver,
-            ticket=ticket,
             type_code=NotificationTypeCode.APPLY_EVENT,
+            event_name=event.name,
+            full_name=f"{sender.first_name} {sender.last_name}",
+            ticket_name=ticket.name,
         )
 
         db.commit()
+
     except Exception as e:
+        print(e)
         db.rollback()
         self.retry(exc=e)
         raise
