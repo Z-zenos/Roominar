@@ -17,6 +17,7 @@ from backend.models.transaction_item import TransactionItem
 from backend.models.user import User
 from backend.models.user_action import UserAction
 from backend.utils.database import save
+from backend.utils.logger import logger
 
 
 @app.task(bind=True, max_retries=3, default_retry_delay=5)
@@ -105,6 +106,10 @@ def process_free_application(
         db.bulk_update_mappings(TicketInventory, update_ticket_inventories)
         db.bulk_save_objects(new_transaction_items)
         db.commit()
+
+        logger.info(
+            f"User {user_id} applied for event {event_id} with application ID {application_id}"
+        )
 
         push_apply_event_notification.delay(
             event_id=event_id,

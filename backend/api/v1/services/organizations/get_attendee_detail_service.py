@@ -1,4 +1,4 @@
-from sqlmodel import Session, and_, case, func, select
+from sqlmodel import Session, and_, case, func, literal, select
 
 from backend.core.constants import FollowEntityCode
 from backend.core.error_code import ErrorCode, ErrorMessage
@@ -46,7 +46,9 @@ async def get_attendee_detail(db: Session, organizer: User, attendee_id: int):
         )
         .outerjoin(Application, Application.user_id == User.id)
         .join(Event, Event.id == Application.event_id)
-        .where(User.id == attendee_id, Event.organization_id == organizer.id)
+        .where(
+            User.id == attendee_id, Event.organization_id == organizer.organization_id
+        )
         .group_by(User.id)
     )
 
@@ -160,7 +162,7 @@ async def _get_applied_events(db: Session, attendee_id: int):
             case(
                 (
                     AttendeeSurveyResponseResult.c.survey_response_results.is_(None),
-                    [],
+                    literal("[]"),
                 ),
                 else_=AttendeeSurveyResponseResult.c.survey_response_results,
             ).label("survey_response_results"),

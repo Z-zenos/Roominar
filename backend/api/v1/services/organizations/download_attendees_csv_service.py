@@ -63,7 +63,10 @@ async def download_attendees_csv(
                 .outerjoin(CheckIn, CheckIn.application_id == Application.id)
                 .join(Event, Event.id == Application.event_id)
                 .join(Transaction, Transaction.application_id == Application.id)
-                .where(Event.organization_id == organizer.id, User.deleted_at.is_(None))
+                .where(
+                    Event.organization_id == organizer.organization_id,
+                    User.deleted_at.is_(None),
+                )
                 .order_by(Application.created_at.desc())
             )
 

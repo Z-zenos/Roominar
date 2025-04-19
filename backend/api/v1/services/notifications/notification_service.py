@@ -1,6 +1,7 @@
 from firebase_admin import messaging
 from sqlmodel import Session, func, select
 
+from backend.core.config import logger
 from backend.core.constants import Lang, NotificationTypeCode
 from backend.core.notification_message import NOTIFICATION_MESSAGES
 from backend.models.notification import Notification
@@ -165,6 +166,15 @@ class NotificationService:
 
         try:
             response = messaging.send_multicast(message)
+            if response.failure_count > 0:
+                failed_tokens = [
+                    tokens[i]
+                    for i, res in enumerate(response.responses)
+                    if not res.success
+                ]
+                logger.error(f"Failed to send notifications to tokens: {failed_tokens}")
+            else:
+                logger.info("Notification sent successfully.")
             return response
         except Exception as e:
             # Log the error or handle it as needed

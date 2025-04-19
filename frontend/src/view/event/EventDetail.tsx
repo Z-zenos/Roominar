@@ -239,7 +239,7 @@ function EventDetail({ slug }: EventDetailProps) {
             alt='Event banner image'
           />
           <h2 className='text-primary font-bold text-xl'>{event?.name}</h2>
-          <div className={clsx(styles.flexStart)}>
+          <div className={clsx(styles.flexStart, 'gap-2')}>
             {event?.tags.map((tag: TagItem) => (
               <Badge
                 title={tag.name}
@@ -429,6 +429,8 @@ function EventDetail({ slug }: EventDetailProps) {
                 color='primary'
                 className={clsx('flex justify-start items-center gap-2 mt-3')}
                 onClick={() => setShowMore(!showMore)}
+                variant='light'
+                radius='sm'
               >
                 Show more {!showMore ? <FaChevronDown /> : <FaChevronUp />}
               </Button>

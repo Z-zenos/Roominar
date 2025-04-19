@@ -58,11 +58,8 @@ def push_apply_event_notification(
             ticket_name=ticket.name,
         )
 
-        db.commit()
-
     except Exception as e:
         print(e)
-        db.rollback()
         self.retry(exc=e)
         raise
     finally:

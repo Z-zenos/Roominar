@@ -47,8 +47,10 @@ function HorizontalTimeline({
     ];
   }, [applicationStartAt, applicationEndAt, startAt, endAt]);
 
+  console.log('progress', progress);
+
   return (
-    <div className={clsx('w-full max-w-6xl mx-auto bg-emerald-50', className)}>
+    <div className={clsx('w-full max-w-6xl mx-auto bg-blue-50', className)}>
       <div className='w-full py-6'>
         <div className='flex'>
           <div className='w-1/4'>
@@ -57,14 +59,17 @@ function HorizontalTimeline({
                 className={clsx(
                   'w-10 h-10 mx-auto rounded-full text-lg flex items-center',
                   progress[0] > 0
-                    ? 'bg-green-500 text-white'
-                    : 'bg-white text-black border border-gray-200',
+                    ? 'bg-green-500'
+                    : 'bg-white border border-gray-200',
                 )}
               >
-                <span className='text-center text-white w-full'>
+                <span className='text-center w-full'>
                   <SlNote
                     size={20}
-                    className='w-full fill-current'
+                    className={clsx(
+                      'w-full',
+                      progress[0] > 0 ? 'fill-white' : 'fill-black',
+                    )}
                   />
                 </span>
               </div>
@@ -100,14 +105,17 @@ function HorizontalTimeline({
                 className={clsx(
                   'w-10 h-10 mx-auto rounded-full text-lg flex items-center',
                   progress[0] >= 100
-                    ? 'bg-green-500 text-white'
-                    : 'bg-white text-black border border-gray-200',
+                    ? 'bg-green-500'
+                    : 'bg-white border border-gray-200',
                 )}
               >
                 <span className='text-center w-full'>
                   <RiFileCloseLine
                     size={20}
-                    className='w-full fill-current'
+                    className={clsx(
+                      'w-full',
+                      progress[0] >= 100 ? 'fill-white' : 'fill-gray-600',
+                    )}
                   />
                 </span>
               </div>
@@ -143,14 +151,17 @@ function HorizontalTimeline({
                 className={clsx(
                   'w-10 h-10 mx-auto rounded-full text-lg flex items-center',
                   progress[1] >= 100
-                    ? 'bg-green-500 !text-white'
-                    : 'bg-white text-black border border-gray-200',
+                    ? 'bg-green-500'
+                    : 'bg-white border border-gray-200',
                 )}
               >
-                <span className='text-center text-gray-600 w-full'>
+                <span className='text-center w-full'>
                   <PiShootingStarThin
                     size={20}
-                    className='w-full fill-current'
+                    className={clsx(
+                      'w-full',
+                      progress[1] >= 100 ? 'fill-white' : 'fill-gray-600',
+                    )}
                   />
                 </span>
               </div>
@@ -184,14 +195,17 @@ function HorizontalTimeline({
                 className={clsx(
                   'w-10 h-10 mx-auto rounded-full text-lg flex items-center',
                   progress[2] >= 100
-                    ? 'bg-green-500 text-white'
-                    : 'bg-white text-black border border-gray-200',
+                    ? 'bg-green-500 '
+                    : 'bg-white border border-gray-200',
                 )}
               >
-                <span className='text-center text-gray-600 w-full'>
+                <span className='text-center w-full'>
                   <CiLogout
                     size={20}
-                    className='w-full fill-current'
+                    className={clsx(
+                      'w-full',
+                      progress[2] >= 100 ? 'fill-white' : 'fill-gray-600',
+                    )}
                   />
                 </span>
               </div>

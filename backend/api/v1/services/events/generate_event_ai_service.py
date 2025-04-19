@@ -36,7 +36,7 @@ async def generate_event_ai(
         ai_response = completion.choices[0].message.content
         print(ai_response)
         event = Event(
-            organization_id=organizer.id,
+            organization_id=organizer.organization_id,
             name=(
                 request.name
                 if request.name

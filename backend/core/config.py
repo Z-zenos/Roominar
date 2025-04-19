@@ -1,23 +1,10 @@
-import logging
 from pathlib import Path
 from typing import Any, Literal, Optional
 
 from pydantic import DirectoryPath, PostgresDsn, ValidationInfo, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from backend.utils.logging import CustomFormatter
-
-# create logger with 'spam_application'
-logger = logging.getLogger("Roominar")
-logger.setLevel(logging.DEBUG)
-
-# create console handler with a higher log level
-ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
-
-ch.setFormatter(CustomFormatter())
-
-logger.addHandler(ch)
+from backend.utils.logger import logger
 
 
 class Settings(BaseSettings):

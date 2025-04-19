@@ -19,8 +19,8 @@ export default function Badge({
   return (
     <div
       className={clsx(
-        ' text-dark-main dark:bg-white flex items-center justify-between rounded-lg max-w-[200px] shadow-md',
-        'bg-[#dcfffb] text-[#0a9484] border-none font-medium px-2 py-1 text-xs',
+        'text-dark-main dark:bg-white flex items-center justify-between rounded-md max-w-[200px] shadow-sm',
+        'bg-blue-50 text-primary border-none font-medium px-2 py-1 text-xs',
         className,
       )}
       onClick={onClick}

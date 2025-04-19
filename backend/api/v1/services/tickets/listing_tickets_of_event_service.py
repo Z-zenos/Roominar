@@ -11,6 +11,9 @@ async def listing_tickets_of_event(db: Session, organizer: User, event_id: int):
         db,
         select(Ticket)
         .join(Event, Event.id == Ticket.event_id)
-        .where(Ticket.event_id == event_id, Event.organization_id == organizer.id),
+        .where(
+            Ticket.event_id == event_id,
+            Event.organization_id == organizer.organization_id,
+        ),
     )
     return tickets

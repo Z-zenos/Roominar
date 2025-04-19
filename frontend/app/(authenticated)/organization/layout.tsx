@@ -60,7 +60,7 @@ export default function RootLayout({ children }) {
                         totalUnreadNotifications === 0 ? 'hidden' : 'block',
                         totalUnreadNotifications > 99 && 'w-8 h-5',
                         totalUnreadNotifications > 9 && 'w-6 h-5 -right-3',
-                        totalUnreadNotifications <= 9 && 'w-5 h-5',
+                        totalUnreadNotifications <= 9 && 'w-5 h-5 -right-2',
                       )}
                     >
                       {totalUnreadNotifications}

@@ -80,7 +80,10 @@ async def _get_attendees(
 
 
 def _build_filters_sort(organizer: User, query_params: ListingAttendeesQueryParams):
-    filters = [Event.organization_id == organizer.id, User.deleted_at.is_(None)]
+    filters = [
+        Event.organization_id == organizer.organization_id,
+        User.deleted_at.is_(None),
+    ]
     sort_by = Application.created_at.desc()
     if query_params.keyword:
         filters.append(
