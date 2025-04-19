@@ -1,9 +1,9 @@
 import logging
 import os
+from logging.handlers import TimedRotatingFileHandler
 
 
 class CustomFormatter(logging.Formatter):
-    # COLOR
     blue = "\x1b[1;38;5;45m"
     yellow = "\x1b[1;38;5;226m"
     red = "\x1b[1;38;5;196m"
@@ -11,34 +11,14 @@ class CustomFormatter(logging.Formatter):
     orange = "\x1b[1;38;5;202m"
     white = "\x1b[1;38;5;256m"
 
-    # TYPE
     reset = "\x1b[0m"
-    bright = "\x1b[1m"
-    dim = "\x1b[2m"
-    italic = "\x1b[3m"
-    underscore = "\x1b[4m"
-    blink = "\x1b[5m"
-    reverse = "\x1b[7m"
-    hidden = "\x1b[8m"
-
-    # HTTP METHOD
-    GET = "\x1b[1;38;5;47m"
-    POST = "\x1b[1;38;5;226m"
-    PATCH = "\x1b[1;38;5;202m"
-    DELETE = "\x1b[1;38;5;196m"
-    OPTIONS = "\x1b[1;38;5;165m"
-
-    # FORMAT
-    time = "%(asctime)s"
-    level = "%(levelname)s"
-    message = "%(message)s"
 
     FORMATS = {
-        logging.DEBUG: f"{orange}{level}:\t  {reset}{white}{message}{reset}",
-        logging.INFO: f"{green}{level}:\t  {reset}{white}{message}{reset}",
-        logging.WARNING: f"{yellow}{level}:\t  {reset}{white}{message}{reset}",
-        logging.ERROR: f"{red}{level}:\t  {reset}{white}{message}{reset}",
-        logging.CRITICAL: f"{red}{level}:\t  {reset}{white}{message}{reset}",
+        logging.DEBUG: f"{orange}DEBUG:\t  {reset}{white}%(message)s{reset}",
+        logging.INFO: f"{green}INFO:\t  {reset}{white}%(message)s{reset}",
+        logging.WARNING: f"{yellow}WARNING:\t  {reset}{white}%(message)s{reset}",
+        logging.ERROR: f"{red}ERROR:\t  {reset}{white}%(message)s{reset}",
+        logging.CRITICAL: f"{red}CRITICAL:\t  {reset}{white}%(message)s{reset}",
     }
 
     def format(self, record):
@@ -47,21 +27,37 @@ class CustomFormatter(logging.Formatter):
         return formatter.format(record)
 
 
-if not os.path.exists("logs"):
-    os.makedirs("logs")
+# === Logger setup ===
 
-logging.basicConfig(
-    filename="logs/app.log",
-    level=logging.INFO,
-    format="%(name)s - %(levelname)s - %(message)s",
+log_dir = "backend/logs"
+os.makedirs(log_dir, exist_ok=True)
+
+log_file_path = os.path.join(log_dir, "app.log")
+
+# File handler with rotation per day
+file_handler = TimedRotatingFileHandler(
+    log_file_path,
+    when="midnight",
+    interval=1,
+    backupCount=7,
+    encoding="utf-8",
 )
+file_handler.suffix = "%Y-%m-%d"
+file_formatter = logging.Formatter(
+    "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+file_handler.setFormatter(file_formatter)
 
-logger = logging.getLogger(__name__)
+# Console handler with colored output
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.DEBUG)
+console_handler.setFormatter(CustomFormatter())
 
+# Logger
+logger = logging.getLogger("myapp")  # Sử dụng tên cụ thể tránh ghi đè root logger
+logger.setLevel(logging.DEBUG)
+logger.addHandler(file_handler)
+logger.addHandler(console_handler)
 
-ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
-
-ch.setFormatter(CustomFormatter())
-
-logger.addHandler(ch)
+# Đảm bảo logger không nhân đôi log
+logger.propagate = False

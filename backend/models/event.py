@@ -1,11 +1,13 @@
-import uuid
 from datetime import datetime
 from typing import Optional
 
-from sqlmodel import ARRAY, Column, DateTime, Enum, Field, String, Text, func
+import slugify
+from pydantic import model_validator
+from sqlmodel import ARRAY, DateTime, Enum, Field, String, Text
 
 from backend.core.constants import EventMeetingToolCode, EventStatusCode
 from backend.models.base_model import BaseModel
+from backend.utils.random import generate_random_string
 
 
 class Event(BaseModel, table=True):
@@ -21,13 +23,11 @@ class Event(BaseModel, table=True):
     application_start_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
     application_end_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
 
-    slug: str = Field(
-        default=str(uuid.uuid4()),
-        sa_column=Column(
-            String(36),
-            nullable=False,
-            server_default=func.gen_random_uuid(),
-        ),
+    slug: Optional[str] = Field(
+        default=None,
+        sa_type=String(255),
+        nullable=False,
+        index=True,
     )
 
     status: Optional[EventStatusCode] = Field(sa_type=Enum(EventStatusCode))
@@ -61,3 +61,14 @@ class Event(BaseModel, table=True):
     application_form_url: Optional[str] = Field(sa_type=String(2048))
     view_number: Optional[int] = Field(default=0)
     max_ticket_number_per_account: Optional[int] = Field(default=10)
+
+    @model_validator(mode="before")
+    @classmethod
+    def set_slug(cls, values: dict):
+        name = values.get("name")
+        slug = values.get("slug")
+        if not slug and name:
+            slug_base = slugify(name)
+            random_part = generate_random_string(8)
+            values["slug"] = f"{slug_base}-{random_part}"
+        return values

@@ -50,3 +50,5 @@ openapi.json
 .idea
 
 backend/credentials
+
+*.log
