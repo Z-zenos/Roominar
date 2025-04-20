@@ -118,7 +118,7 @@ async def get_event_detail(db: Session, current_user: User, slug: str):
                     Bookmark.event_id == event["id"],
                 )
             )
-        ).first()
+        ).one_or_none()
         event["is_bookmarked"] = is_bookmarked
 
     try:

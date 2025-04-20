@@ -124,4 +124,10 @@
     stripe listen --forward-to http://localhost:8000/api/v1/transactions/webhook
   ```
 
+### 10. Run Celery
+
+```bash
+  watchmedo auto-restart --directory=./ --pattern=*.py --recursive -- celery -A backend.celery worker --loglevel=info
+```
+
 # ROOMINAR

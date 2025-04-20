@@ -3,7 +3,12 @@ from typing import Optional
 
 from pydantic import BaseModel, EmailStr, Field, ValidationInfo, field_validator
 
-from backend.core.constants import IndustryCode, JobTypeCode, OrganizationTypeCode
+from backend.core.constants import (
+    DeviceTypeCode,
+    IndustryCode,
+    JobTypeCode,
+    OrganizationTypeCode,
+)
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.schemas.common import password_validator
 from backend.schemas.user import UserBase
@@ -14,6 +19,11 @@ class UserLoginRequest(BaseModel):
     password: str = Field(min_length=8, max_length=255)
     role_code: str
     remember_me: bool | None = None
+    fcm_token: str | None = None
+    device_type: DeviceTypeCode | None = Field(
+        default=DeviceTypeCode.WEB,
+        description="Device type for push notifications",
+    )
 
 
 class TokenResponse(BaseModel):
@@ -179,3 +189,11 @@ class RegisterOrganizationRequest(BaseModel):
                     ErrorCode.ERR_MISSING_FIELDS,
                     ErrorMessage.ERR_MISSING_FIELDS,
                 )
+
+
+class LogoutRequest(BaseModel):
+    fcm_token: str
+    device_type: DeviceTypeCode | None = Field(
+        default=DeviceTypeCode.WEB,
+        description="Device type for push notifications",
+    )

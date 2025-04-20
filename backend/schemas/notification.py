@@ -3,7 +3,7 @@ from datetime import datetime
 from fastapi import Query
 from pydantic import BaseModel, Field
 
-from backend.core.constants import NotificationTypeCode
+from backend.core.constants import DeviceTypeCode, NotificationTypeCode
 from backend.schemas.common import PaginationResponse
 
 
@@ -26,3 +26,8 @@ class NotificationItem(BaseModel):
 
 class ListingNotificationsResponse(PaginationResponse[NotificationItem]):
     pass
+
+
+class RegisterNotificationDeviceTokenRequest(BaseModel):
+    fcm_token: str
+    device_type: str | None = Field(default=DeviceTypeCode.WEB)

@@ -447,7 +447,8 @@ class NotificationTypeCode(str, Enum):
 
 class DeviceTypeCode(str, Enum):
     DESKTOP = "DESKTOP"
-    MOBILE = "MOBILE"
+    ANDROID = "ANDROID"
+    IOS = "IOS"
     TABLET = "TABLET"
     WEB = "WEB"
     OTHER = "OTHER"

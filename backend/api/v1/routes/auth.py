@@ -1,17 +1,18 @@
 from http import HTTPStatus
 
-from fastapi import APIRouter, BackgroundTasks, Depends
+from fastapi import APIRouter, BackgroundTasks, Depends, Header
 from sqlmodel import Session
 
 import backend.api.v1.services.auth as auth_service
 import backend.api.v1.services.tags as tags_service
+import backend.api.v1.services.user_notification_tokens as user_notification_tokens_service
 from backend.api.v1.dependencies.authentication import (
     authorize_role,
     get_current_user,
     get_user_if_logged_in,
     validate_encrypted_token,
 )
-from backend.core.constants import RoleCode, TagAssociationEntityCode
+from backend.core.constants import DeviceTypeCode, RoleCode, TagAssociationEntityCode
 from backend.core.error_code import ErrorCode
 from backend.core.exception import BadRequestException, UnauthorizedException
 from backend.core.response import authenticated_api_responses, public_api_responses
@@ -23,6 +24,7 @@ from backend.schemas.auth import (
     ForgotPasswordRequest,
     ForgotPasswordResponse,
     GetMeResponse,
+    LogoutRequest,
     RegisterAudienceRequest,
     RegisterAudienceResponse,
     RequestChangeEmailResponse,
@@ -38,14 +40,30 @@ router = APIRouter()
 
 @router.post("/login", responses=public_api_responses, response_model=TokenResponse)
 async def login(
-    request: UserLoginRequest,
     db: Session = Depends(get_read_db),
+    request: UserLoginRequest = None,
+    user_agent: str = Header(None),
 ) -> TokenResponse:
     user = auth_service.authenticate_user(db, **request.model_dump())
     if not user:
         raise UnauthorizedException(ErrorCode.ERR_UNAUTHORIZED)
     if not user.email_verified_at:
         raise BadRequestException(ErrorCode.ERR_USER_NOT_VERIFIED)
+
+    # Register the device token if provided
+    if request.fcm_token:
+        device_type = request.device_type or DeviceTypeCode.WEB
+
+        # Try to determine device type from user agent if not specified
+        if not request.device_type and user_agent:
+            if "Android" in user_agent:
+                device_type = DeviceTypeCode.ANDROID
+            elif "iPhone" in user_agent or "iPad" in user_agent:
+                device_type = DeviceTypeCode.IOS
+
+        user_notification_tokens_service.remove_notification_device_token(
+            db=db, user_id=user.id, fcm_token=request.fcm_token, device_type=device_type
+        )
 
     return auth_service.gen_auth_token(user, remember_me=True)
 
@@ -213,3 +231,19 @@ async def revert_email(
     user: User = Depends(validate_encrypted_token("revert_email_token")),
 ):
     return await auth_service.revert_email(db, user)
+
+
+@router.post(
+    "/logout", status_code=HTTPStatus.OK, responses=authenticated_api_responses
+)
+async def logout(
+    db: Session = Depends(get_read_db),
+    request: LogoutRequest = None,
+):
+    """Log out user from the current device"""
+    if request and request.fcm_token:
+        await user_notification_tokens_service.remove_notification_device_token(
+            db, request.fcm_token
+        )
+
+    return {"status": "success"}
