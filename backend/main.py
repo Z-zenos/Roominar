@@ -8,7 +8,6 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from backend.api.v1.routes.router import api_router
 from backend.core import redis_client
 from backend.core.config import settings
 from backend.core.exception import (
@@ -21,6 +20,7 @@ from backend.core.response import (
     BadRequestResponse,
     UnauthorizedResponse,
 )
+from backend.routes.router import api_router
 
 app = FastAPI(title="Roominar", openapi_url="/api/v1/openapi.json")
 

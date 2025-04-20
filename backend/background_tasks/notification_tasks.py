@@ -1,14 +1,12 @@
 from sqlmodel import Session, select
 
-from backend.api.v1.services.notifications.notification_service import (
-    NotificationService,
-)
 from backend.celery import app
 from backend.core.constants import NotificationTypeCode
 from backend.db.database import SessionLocal
 from backend.models.event import Event
 from backend.models.ticket import Ticket
 from backend.models.user import User
+from backend.services.notifications.notification_service import NotificationService
 
 
 @app.task(bind=True, max_retries=3, default_retry_delay=5)
