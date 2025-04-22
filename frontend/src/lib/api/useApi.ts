@@ -4,6 +4,7 @@ import {
   ApplicationsApi,
   AuthApi,
   EventsApi,
+  NotificationsApi,
   OrganizationsApi,
   SpeakersApi,
   SurveysApi,
@@ -28,6 +29,7 @@ function useApi() {
     tickets: new TicketsApi(config),
     transactions: new TransactionsApi(config),
     speakers: new SpeakersApi(config),
+    notifications: new NotificationsApi(config),
   };
 }
 

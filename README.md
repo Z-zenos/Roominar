@@ -27,6 +27,7 @@
 
   ```bash
     uvicorn backend.main:app --reload --host 0.0.0.0
+    uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000 --ssl-keyfile=backend/certs/server.key --ssl-certfile=backend/certs/server.crt
   ```
 
 - Open browser and type `http://127.0.0.1:8000/docs`. If the Swagger docs screen appears, it means it has been run
@@ -124,10 +125,11 @@
     stripe listen --forward-to http://localhost:8000/api/v1/transactions/webhook
   ```
 
-### 10. Run Celery
+### 10. Run Celery & Celery Beat
 
 ```bash
-  watchmedo auto-restart --directory=./ --pattern=*.py --recursive -- celery -A backend.celery worker --loglevel=info
+  watchmedo auto-restart --directory=./ --pattern=*.py --recursive -- celery -A backend.celery worker --loglevel=info --logfile=backend/logs/celery.log
+  watchmedo auto-restart --directory=./ --pattern=*.py --recursive -- celery -A backend.celery beat --loglevel=info --logfile=backend/logs/celery-beat.log
 ```
 
 # ROOMINAR

@@ -26,9 +26,7 @@ import { maskEmail } from '@/src/utils/app.util';
 import { useTranslations } from 'next-intl';
 import { setUserLocale } from '@/src/utils/locale';
 import { getCookie } from 'cookies-next';
-import { CiBellOn } from 'react-icons/ci';
 import { useGetTotalUnreadNotificationsQuery } from '@/src/api/user.api';
-import clsx from 'clsx';
 import {
   Sheet,
   SheetContent,
@@ -38,7 +36,9 @@ import {
   SheetTitle,
   SheetTrigger,
 } from './Sheet';
-import { NotificationList } from './Notification';
+import { NotificationIcon, NotificationList } from './Notification';
+import { useRemoveNotificationDeviceTokenMutation } from '@/src/api/notification.api';
+import { getStoredFcmToken } from '@/src/hooks/useNotification';
 
 const menuItems = [
   {
@@ -102,9 +102,23 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
     data: totalUnreadNotifications,
     refetch: refetchTotalUnreadNotifications,
   } = useGetTotalUnreadNotificationsQuery(status === 'authenticated');
+  const { trigger: removeToken } = useRemoveNotificationDeviceTokenMutation();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     localStorage.setItem('rememberMe', 'false');
+
+    // Get the FCM token and remove it if available
+    const fcmToken = getStoredFcmToken();
+    if (fcmToken) {
+      try {
+        await removeToken({ logoutRequest: { fcmToken } });
+        localStorage.removeItem('fcm_token');
+      } catch (error) {
+        console.error('Error removing FCM token:', error);
+      }
+    }
+
+    // Then logout
     if (process.env.NODE_ENV === 'development') {
       signOut({ redirect: false });
       location.reload();
@@ -202,21 +216,9 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
           />
           {status === 'authenticated' && (
             <SheetTrigger className='relative cursor-pointer mr-2'>
-              <CiBellOn className='w-7 h-7' />
-              {totalUnreadNotifications > 0 && (
-                <span
-                  className={clsx(
-                    'absolute -top-2 -right-4 bg-red-500 text-white rounded-full flex items-center justify-center text-xs',
-                    totalUnreadNotifications === 0 ? 'hidden' : 'block',
-                    totalUnreadNotifications > 99 && 'w-8 h-5',
-                    totalUnreadNotifications > 9 && 'w-6 h-5 -right-3',
-                    totalUnreadNotifications <= 9 && 'w-5 h-5 -right-2',
-                  )}
-                >
-                  {totalUnreadNotifications}
-                  {totalUnreadNotifications > 99 && '+'}
-                </span>
-              )}
+              <NotificationIcon
+                totalUnreadNotifications={totalUnreadNotifications}
+              />
             </SheetTrigger>
           )}
 

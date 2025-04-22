@@ -10,7 +10,6 @@ from backend.models.base_model import BaseModel
 class UserAction(BaseModel, table=True):
     __tablename__ = "user_actions"
 
-    id: int = Field(default=None, primary_key=True)
     user_id: Optional[int] = Field(default=None, index=True)
     event_id: Optional[int] = Field(default=None, index=True)
     organization_id: Optional[int] = Field(default=None, index=True)

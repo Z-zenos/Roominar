@@ -9,6 +9,8 @@ import type {
   AuthApiRequestChangeEmailRequest,
   AuthApiChangePasswordRequest,
   AuthApiVerifyChangeEmailRequest,
+  AuthApiLoginRequest,
+  TokenResponse,
 } from '../lib/api/generated';
 import useApi from '../lib/api/useApi';
 import type { SWRMutationConfiguration } from 'swr/mutation';
@@ -109,6 +111,18 @@ export const useVerifyChangeEmailMutation = <T>(
   return useSWRMutation<void, T, typeof key, AuthApiVerifyChangeEmailRequest>(
     key,
     async (_: string, { arg }) => await api.auth.verifyChangeEmail(arg),
+    options,
+  );
+};
+
+export const useLoginMutation = <T>(
+  options?: SWRMutationConfiguration<TokenResponse, T>,
+) => {
+  const api = useApi();
+  const key = `login`;
+  return useSWRMutation<TokenResponse, T, typeof key, AuthApiLoginRequest>(
+    key,
+    async (_: string, { arg }) => await api.auth.login(arg),
     options,
   );
 };

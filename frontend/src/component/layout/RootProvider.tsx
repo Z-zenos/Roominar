@@ -1,6 +1,7 @@
 'use client';
 
 import ErrorBoundary from '@/src/component/layout/ErrorBoundary';
+import { NotificationProvider } from '@/src/contexts/NotificationContext';
 import { parseErrorMessage } from '@/src/utils/app.util';
 import {
   MutationCache,
@@ -36,20 +37,22 @@ export default function RootProvider({
           },
         },
         queryCache: new QueryCache({
-          onError: (error, query) => {
+          onError: (error) => {
             console.log('queryCache: ', error);
             const err = parseErrorMessage(error?.message);
             toast.error(`${+err.httpCode}: ${err?.body?.message}`);
           },
         }),
         mutationCache: new MutationCache({
-          onError: (error, _, __, mutation) => {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          onError: (error, _, __) => {
             console.log('mutationCache: ', error);
 
             const err = parseErrorMessage(error?.message);
             toast.error(`${+err.httpCode}: ${err?.body?.message}`);
           },
-          onSuccess(data, _, __, mutation) {},
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          onSuccess(_, __) {},
         }),
       }),
     [],
@@ -59,9 +62,11 @@ export default function RootProvider({
     <ErrorBoundary>
       <SessionProvider session={session}>
         <RecoilRoot>
-          <QueryClientProvider client={queryClient}>
-            {children}
-          </QueryClientProvider>
+          <NotificationProvider>
+            <QueryClientProvider client={queryClient}>
+              {children}
+            </QueryClientProvider>
+          </NotificationProvider>
         </RecoilRoot>
       </SessionProvider>
     </ErrorBoundary>

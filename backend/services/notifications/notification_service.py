@@ -3,11 +3,14 @@ from sqlmodel import Session, func, select
 
 from backend.core.config import logger
 from backend.core.constants import Lang, NotificationTypeCode
+from backend.core.firebase import get_firebase_app
 from backend.core.notification_message import NOTIFICATION_MESSAGES
+from backend.db.database import SessionLocal
 from backend.models.notification import Notification
 from backend.models.user import User
 from backend.models.user_notification_token import UserNotificationToken
 from backend.schemas.notification import ListingNotificationsQueryParams
+from backend.utils.database import save
 
 
 class NotificationService:
@@ -18,9 +21,14 @@ class NotificationService:
         receiver: User,
         type_code: NotificationTypeCode,
         lang: Lang = "vi",
+        action_url: str = None,
         **kwargs,
     ) -> None:
+        notification_id = None
         try:
+            # First ensure Firebase is initialized
+            get_firebase_app()
+
             # Build multilingual message
             message = NotificationService.get_notification_message(
                 key=type_code,
@@ -28,15 +36,16 @@ class NotificationService:
                 **kwargs,
             )
 
-            # Save to DB
+            # Save to DB first - we want to keep the notification even if FCM fails
             notification = Notification(
                 sender_id=None if sender is None else sender.id,
                 receiver_id=receiver.id,
                 content=dict(kwargs),
                 type_code=type_code,
+                action_url=action_url,
             )
-            db.add(notification)
-            db.commit()
+            notification = save(db, notification)
+            notification_id = notification.id
 
             # Send push to all tokens
             user_notification_tokens = db.exec(
@@ -45,16 +54,38 @@ class NotificationService:
                 )
             ).all()
 
-            if user_notification_tokens:
-                NotificationService.__send_notification(
-                    title=message.get("title", ""),
-                    body=message.get("body", ""),
-                    tokens=list(user_notification_tokens),
-                    data={"type_code": type_code},
+            # Extract token strings from result
+            token_strings = [
+                token[0] for token in user_notification_tokens if token and token[0]
+            ]
+
+            if token_strings:
+                try:
+                    NotificationService.__send_notification(
+                        title=message.get("title", ""),
+                        body=message.get("body", ""),
+                        tokens=token_strings,
+                        data={
+                            "type_code": type_code,
+                            "notification_id": str(notification_id),
+                        },
+                    )
+                except Exception as e:
+                    # Log error but don't roll back - notification is still saved in DB
+                    logger.error(
+                        f"Failed to send push notification to user {receiver.id}: {str(e)}"
+                    )
+            else:
+                logger.info(
+                    f"No FCM tokens found for user {receiver.id}, notification saved to DB only"
                 )
+
         except Exception as e:
-            db.rollback()
-            raise e
+            # Only rollback if we haven't committed the notification yet
+            if notification_id is None:
+                db.rollback()
+            logger.error(f"Error in push_notification: {str(e)}")
+            raise
 
     @staticmethod
     async def listing_notifications(
@@ -158,27 +189,82 @@ class NotificationService:
         tokens: list[str],
         data: dict = None,
     ) -> messaging.BatchResponse:
+        """Send FCM notification with improved error handling"""
+        if not tokens:
+            logger.warning("No FCM tokens provided for notification")
+            return None
+
+        # Ensure data is properly formatted for FCM
+        if data:
+            # Convert all values to strings as FCM requires
+            data = {k: str(v) for k, v in data.items()}
+        else:
+            data = {}
+
         message = messaging.MulticastMessage(
             notification=messaging.Notification(title=title, body=body),
-            data=data or {},
+            data=data,
             tokens=tokens,
         )
 
         try:
             response = messaging.send_multicast(message)
+
+            # Handle and log failed tokens
             if response.failure_count > 0:
-                failed_tokens = [
-                    tokens[i]
-                    for i, res in enumerate(response.responses)
-                    if not res.success
-                ]
-                logger.error(f"Failed to send notifications to tokens: {failed_tokens}")
-            else:
-                logger.info("Notification sent successfully.")
+                failed_tokens = []
+                for idx, result in enumerate(response.responses):
+                    if not result.success:
+                        error = result.exception
+                        failed_tokens.append(
+                            {
+                                "token": tokens[idx],
+                                "error": str(error) if error else "Unknown error",
+                            }
+                        )
+
+                        # This token should be removed from database
+                        NotificationService._clean_invalid_token(tokens[idx])
+
+                logger.error(
+                    f"Failed to send {response.failure_count} notifications: {failed_tokens}"
+                )
+
+            logger.info(
+                f"Successfully sent {response.success_count} of {len(tokens)} notifications"
+            )
             return response
+
+        except messaging.UnregisteredError:
+            logger.error("FCM tokens not registered")
+            # Invalid tokens should be removed
+            for token in tokens:
+                NotificationService._clean_invalid_token(token)
+            raise RuntimeError(
+                "Failed to send notification: Device tokens not registered"
+            )
+
         except Exception as e:
-            # Log the error or handle it as needed
-            raise RuntimeError(f"Failed to send notification: {e}")
+            logger.error(f"FCM send error: {str(e)}")
+            raise RuntimeError(f"Failed to send notification: {str(e)}")
+
+    @staticmethod
+    def _clean_invalid_token(token: str):
+        """Remove invalid FCM token from database"""
+        try:
+            with SessionLocal() as db:
+                token_record = db.exec(
+                    select(UserNotificationToken).where(
+                        UserNotificationToken.fcm_token == token
+                    )
+                ).first()
+
+                if token_record:
+                    db.delete(token_record)
+                    db.commit()
+                    logger.info(f"Removed invalid FCM token: {token[:10]}...")
+        except Exception as e:
+            logger.error(f"Error removing invalid token: {str(e)}")
 
     @staticmethod
     def get_notification_message(

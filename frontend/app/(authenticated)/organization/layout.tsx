@@ -1,7 +1,10 @@
 'use client';
 
 import { useGetTotalUnreadNotificationsQuery } from '@/src/api/user.api';
-import { NotificationList } from '@/src/component/common/Notification';
+import {
+  NotificationIcon,
+  NotificationList,
+} from '@/src/component/common/Notification';
 import { Separator } from '@/src/component/common/Separator';
 import {
   Sheet,
@@ -52,21 +55,9 @@ export default function RootLayout({ children }) {
               </div>
               {status === 'authenticated' && (
                 <SheetTrigger className='relative cursor-pointer mr-2'>
-                  <CiBellOn className='w-7 h-7' />
-                  {totalUnreadNotifications > 0 && (
-                    <span
-                      className={clsx(
-                        'absolute -top-2 -right-4 bg-red-500 text-white rounded-full flex items-center justify-center text-xs',
-                        totalUnreadNotifications === 0 ? 'hidden' : 'block',
-                        totalUnreadNotifications > 99 && 'w-8 h-5',
-                        totalUnreadNotifications > 9 && 'w-6 h-5 -right-3',
-                        totalUnreadNotifications <= 9 && 'w-5 h-5 -right-2',
-                      )}
-                    >
-                      {totalUnreadNotifications}
-                      {totalUnreadNotifications > 99 && '+'}
-                    </span>
-                  )}
+                  <NotificationIcon
+                    totalUnreadNotifications={totalUnreadNotifications}
+                  />
                 </SheetTrigger>
               )}
             </header>

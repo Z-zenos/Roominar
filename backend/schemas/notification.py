@@ -31,3 +31,10 @@ class ListingNotificationsResponse(PaginationResponse[NotificationItem]):
 class RegisterNotificationDeviceTokenRequest(BaseModel):
     fcm_token: str
     device_type: str | None = Field(default=DeviceTypeCode.WEB)
+
+
+class RegisterNotificationDeviceTokenResponse(BaseModel):
+    id: int
+    fcm_token: str
+    device_type: DeviceTypeCode
+    user_id: int

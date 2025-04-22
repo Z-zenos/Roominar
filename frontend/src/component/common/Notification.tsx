@@ -15,6 +15,7 @@ import {
 } from '@/src/api/user.api';
 import { Link } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
+import { CiBellOn } from 'react-icons/ci';
 
 interface NotificationItemProps {
   id: number;
@@ -26,6 +27,10 @@ interface NotificationItemProps {
   senderId?: number;
   typeCode: NotificationTypeCode;
   onRefetch?: () => void;
+}
+
+interface NotificationIconProps {
+  totalUnreadNotifications: number;
 }
 
 export function NotificationItem({
@@ -78,7 +83,6 @@ export function NotificationItem({
       <div className='flex-1 text-sm text-gray-700'>
         <div
           className={clsx(
-            'line-clamp-3 min-h-16 max-h-18',
             isRead ? 'text-gray-500' : 'font-semibold text-gray-900',
           )}
         >
@@ -170,5 +174,29 @@ export function NotificationList({
         </div>
       )}
     </div>
+  );
+}
+
+export function NotificationIcon({
+  totalUnreadNotifications,
+}: NotificationIconProps) {
+  return (
+    <>
+      <CiBellOn className='w-7 h-7' />
+      {totalUnreadNotifications > 0 && (
+        <span
+          className={clsx(
+            'absolute -top-2 -right-4 bg-red-500 text-white rounded-full flex items-center justify-center text-xs',
+            totalUnreadNotifications === 0 ? 'hidden' : 'block',
+            totalUnreadNotifications > 99 && 'w-8 h-5',
+            totalUnreadNotifications > 9 && 'w-6 h-5 -right-3',
+            totalUnreadNotifications <= 9 && 'w-5 h-5 -right-2',
+          )}
+        >
+          {totalUnreadNotifications}
+          {totalUnreadNotifications > 99 && '+'}
+        </span>
+      )}
+    </>
   );
 }

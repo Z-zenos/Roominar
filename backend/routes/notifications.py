@@ -11,13 +11,19 @@ from backend.core.response import authenticated_api_responses
 from backend.db.database import get_read_db
 from backend.dependencies.authentication import get_current_user
 from backend.models.user import User
-from backend.schemas.notification import RegisterNotificationDeviceTokenRequest
+from backend.schemas.notification import (
+    RegisterNotificationDeviceTokenRequest,
+    RegisterNotificationDeviceTokenResponse,
+)
 
 router = APIRouter()
 
 
 @router.post(
-    "/device-token", status_code=HTTPStatus.OK, responses=authenticated_api_responses
+    "/device-token",
+    status_code=HTTPStatus.OK,
+    responses=authenticated_api_responses,
+    response_model=RegisterNotificationDeviceTokenResponse,
 )
 async def register_notification_device_token(
     db: Session = Depends(get_read_db),
@@ -25,11 +31,20 @@ async def register_notification_device_token(
     request: RegisterNotificationDeviceTokenRequest = None,
 ):
     """Register or update a device token for push notifications"""
-    return await user_notification_tokens_service.register_notification_device_token(
-        db=db,
-        user_id=current_user.id,
-        fcm_token=request.fcm_token,
-        device_type=request.device_type or DeviceTypeCode.WEB,
+    user_notification_token = (
+        await user_notification_tokens_service.register_notification_device_token(
+            db=db,
+            user_id=current_user.id,
+            fcm_token=request.fcm_token,
+            device_type=request.device_type or DeviceTypeCode.WEB,
+        )
+    )
+
+    return RegisterNotificationDeviceTokenResponse(
+        id=user_notification_token.id,
+        fcm_token=user_notification_token.fcm_token,
+        device_type=user_notification_token.device_type,
+        user_id=user_notification_token.user_id,
     )
 
 

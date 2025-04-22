@@ -11,3 +11,4 @@ app = Celery(
 )
 
 import backend.background_tasks
+import backend.schedulers

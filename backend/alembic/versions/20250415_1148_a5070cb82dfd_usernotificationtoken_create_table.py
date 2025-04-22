@@ -39,10 +39,25 @@ def upgrade() -> None:
         sa.Column("updated_by", sa.Integer(), nullable=True),
         sa.Column("user_id", sa.Integer(), nullable=False),
         sa.Column("fcm_token", sa.String(), nullable=False),
-        sa.Column("device_type", sa.String(), nullable=True),
-        sa.PrimaryKeyConstraint("id", "fcm_token"),
+        sa.Column(
+            "device_type",
+            sa.Enum(
+                "DESKTOP",
+                "ANDROID",
+                "IOS",
+                "TABLET",
+                "WEB",
+                "OTHER",
+                name="notificationdevicetypecode",
+            ),
+            nullable=True,
+        ),
+        sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("fcm_token"),
     )
-    # ### end Alembic commands ###
+
+
+# ### end Alembic commands ###
 
 
 def downgrade() -> None:
