@@ -10,11 +10,14 @@ import type {
   EventChangeArg,
 } from '@fullcalendar/core';
 
+import './Calendar.css';
+
 interface CalendarTimelineEventItem {
   title: string;
   start: Date;
   end: Date;
   color: string;
+  textColor?: string;
 }
 
 interface CalendarTimelineProps extends CalendarOptions {
@@ -37,6 +40,7 @@ export default function CalendarTimeline({
   aspectRatio = 1,
   ...props
 }: CalendarTimelineProps) {
+  console.log(events.filter((event) => event.start && event.end));
   return (
     <div className='calendar-container mt-2'>
       <FullCalendar

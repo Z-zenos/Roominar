@@ -238,8 +238,6 @@ export default function CreateEventAIForm() {
     });
   }
 
-  console.log(form.formState.errors, form.getValues());
-
   return (
     <Form {...form}>
       <form
@@ -326,7 +324,7 @@ export default function CreateEventAIForm() {
                               title: event.name,
                               start: event.startAt,
                               end: event.endAt,
-                              color: '#FF4500',
+                              color: '#d8fcff',
                             }))
                           : []),
                         ...(eventsTimeline
@@ -334,7 +332,8 @@ export default function CreateEventAIForm() {
                               title: event.name,
                               start: event.applicationStartAt,
                               end: event.applicationEndAt,
-                              color: '#FFD700',
+                              color: '#d8fcff',
+                              textColor: '#246cff',
                             }))
                           : []),
                       ]}

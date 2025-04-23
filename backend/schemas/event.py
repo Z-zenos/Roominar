@@ -425,7 +425,14 @@ class GenerateEventAIRequest(BaseModel):
     is_online: bool
     price: int
 
-    tags: list[int] = Field([])
+    tags: list[int | str] = Field([])
+
+
+class GenerateEventAIResponse(BaseModel):
+    title: str
+    description: str
+    recommended_schedule: list[dict[str, str]] | None = None
+    suggested_tags: list[str] = []
 
 
 class ListingEventOptionsItem(BaseModel):

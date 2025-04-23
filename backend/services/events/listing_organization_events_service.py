@@ -110,6 +110,7 @@ async def _listing_events(
         .offset(query_params.per_page * (query_params.page - 1))
         .order_by(sort_by)
     )
+
     events = db.exec(query).mappings().all()
 
     result = {event.id: dict(event) for event in events}
