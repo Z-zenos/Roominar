@@ -48,3 +48,11 @@ openapi.json
 .venv
 
 .idea
+
+backend/credentials
+
+*.log
+logs
+
+certificates
+certs

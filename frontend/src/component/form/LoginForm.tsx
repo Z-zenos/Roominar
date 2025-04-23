@@ -48,14 +48,19 @@ export default function LoginForm({ roleCode }: LoginFormProps) {
       setIsLoading(true);
 
       setCookie('rememberMe', data.rememberMe?.toString());
-
-      const res = await signIn('credentials', {
-        email: data.email,
-        password: data.password,
-        rememberMe: data.rememberMe,
-        redirect: false,
-        roleCode: roleCode,
-      });
+      let res = undefined;
+      try {
+        res = await signIn('credentials', {
+          email: data.email,
+          password: data.password,
+          rememberMe: data.rememberMe,
+          redirect: false,
+          roleCode: roleCode,
+          callbackUrl: window.location.origin,
+        });
+      } catch (error) {
+        console.error('Error setting cookie:', error);
+      }
 
       if (res.status === 200) {
         const session = await getSession();

@@ -25,6 +25,11 @@ openai = "^1.64.0"
 kafka-python = "^2.0.6"
 redis = "^5.2.1"
 websockets = "^15.0.1"
+firebase-admin = "^6.7.0"
+celery = {extras = ["redis"], version = "^5.5.1"}
+rich = "^14.0.0"
+watchdog = "^6.0.0"
+python-slugify = "^8.0.4"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.6.0"

@@ -32,7 +32,7 @@ interface MapProps {
 }
 
 export default function Map({ className, zoom = 4 }: MapProps) {
-  const hanoiCoordinate = [21.028511, 105.804817];
+  const hanoiCoordinate: [number, number] = [21.028511, 105.804817];
 
   useEffect(() => {
     return () => {

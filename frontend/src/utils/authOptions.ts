@@ -59,17 +59,21 @@ const authOptions: NextAuthOptions = {
         },
       },
       async authorize({ email, password, rememberMe, roleCode }) {
-        if (!email || !password) {
-          throw Error('Invalid credentials');
+        try {
+          if (!email || !password) {
+            throw Error('Invalid credentials');
+          }
+          return await makeAuthApi().login({
+            userLoginRequest: {
+              email,
+              password,
+              rememberMe: Boolean(rememberMe),
+              roleCode: roleCode,
+            },
+          });
+        } catch (error) {
+          console.error('Error in authorize:', error);
         }
-        return await makeAuthApi().login({
-          userLoginRequest: {
-            email,
-            password,
-            rememberMe: Boolean(rememberMe),
-            roleCode: roleCode,
-          },
-        });
       },
     }),
     GoogleProvider({

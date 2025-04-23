@@ -23,8 +23,12 @@
     // This can be used to network with other containers or the host.
     "forwardPorts": [
         5432,
+        6379,
+        9092,
+        2181,
+        8000,
         3000,
-        8000
+        5555
     ],
     // Use 'postCreateCommand' to run commands after the container is created.
     // "postCreateCommand": "poetry install && pre-commit install && cd frontend && pnpm install",

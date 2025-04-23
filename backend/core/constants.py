@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Literal
 
 
 class RoleCode(str, Enum):
@@ -322,13 +323,6 @@ class TagStatsCategoryCode(str, Enum):
     TAG = "TAG"
 
 
-class DeviceTypeCode(str, Enum):
-    DESKTOP = "DESKTOP"
-    MOBILE = "MOBILE"
-    TABLET = "TABLET"
-    UNKNOWN = "UNKNOWN"
-
-
 class UserActionTypeCode(str, Enum):
     VIEW = "VIEW"
     BOOKMARK = "BOOKMARK"
@@ -442,3 +436,35 @@ class RefundMethodCode(str, Enum):
     THIRD_PARTY_REFUND = "THIRD_PARTY_REFUND"
     CASH = "CASH"  # Hoàn tiền mặt
     OTHER = "OTHER"  # Các phương thức khác
+
+
+class NotificationTypeCode(str, Enum):
+    BOOKMARK_EVENT = "BOOKMARK_EVENT"
+    PUBLISH_NEW_EVENT = "PUBLISH_NEW_EVENT"
+    APPLY_EVENT = "APPLY_EVENT"
+    CANCEL_EVENT = "CANCEL_EVENT"
+    UPCOMING_EVENT_REMINDER_7_DAYS_BEFORE = "UPCOMING_EVENT_REMINDER_7_DAYS_BEFORE"
+    UPCOMING_EVENT_REMINDER_3_DAYS_BEFORE = "UPCOMING_EVENT_REMINDER_3_DAYS_BEFORE"
+    UPCOMING_EVENT_REMINDER_1_DAY_BEFORE = "UPCOMING_EVENT_REMINDER_1_DAY_BEFORE"
+    UPCOMING_EVENT_REMINDER_10_MINUTES_BEFORE = (
+        "UPCOMING_EVENT_REMINDER_10_MINUTES_BEFORE"
+    )
+
+
+class DeviceTypeCode(str, Enum):
+    DESKTOP = "DESKTOP"
+    ANDROID = "ANDROID"
+    IOS = "IOS"
+    TABLET = "TABLET"
+    WEB = "WEB"
+    OTHER = "OTHER"
+
+
+Lang = Literal["vi", "en"]
+
+
+class ReminderTypeCode(str, Enum):
+    SEVEN_DAYS_BEFORE = "SEVEN_DAYS_BEFORE"
+    THREE_DAYS_BEFORE = "THREE_DAYS_BEFORE"
+    ONE_DAY_BEFORE = "ONE_DAY_BEFORE"
+    TEN_MINUTES_BEFORE = "TEN_MINUTES_BEFORE"

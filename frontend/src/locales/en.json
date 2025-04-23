@@ -369,7 +369,8 @@
       "WATCH_VIDEO": "watch video",
       "SUBMIT_SURVEY": "submit survey",
       "ADD_TO_CALENDAR": "add to calendar",
-      "INVITE_FRIEND": "invite friend"
+      "INVITE_FRIEND": "invite friend",
+      "ANSWER_APPLICATION_SURVEY": "answer application survey"
     },
     "trackingTimeRange": {
       "TODAY": "today",

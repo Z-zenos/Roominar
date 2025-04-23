@@ -1,0 +1,34 @@
+from sqlmodel import Session, exists
+
+import backend.background_tasks.notification_tasks as notification_tasks
+from backend.core.error_code import ErrorCode, ErrorMessage
+from backend.core.exception import BadRequestException
+from backend.models import Bookmark, User
+from backend.utils.database import save
+
+
+async def create_event_bookmark(db: Session, current_user: User, event_id: int):
+    bookmark = db.scalar(
+        exists()
+        .where(Bookmark.user_id == current_user.id, Bookmark.event_id == event_id)
+        .select()
+    )
+
+    if bookmark:
+        raise BadRequestException(
+            ErrorCode.ERR_BOOKMARK_ALREADY_EXISTED,
+            ErrorMessage.ERR_BOOKMARK_ALREADY_EXISTED,
+        )
+
+    try:
+        new_bookmark = save(db, Bookmark(user_id=current_user.id, event_id=event_id))
+
+        notification_tasks.push_bookmark_event_notification.delay(
+            kwargs={"db": db, "event_id": event_id}
+        )
+
+        return new_bookmark.id
+
+    except Exception as e:
+        db.rollback()
+        raise e

@@ -41,5 +41,21 @@
     "parserOptions": {
         "project": "**/tsconfig.json",
         "sourceType": "module"
-    }
+    },
+    "overrides": [
+        {
+            "files": [
+                "public/firebase-messaging-sw.js"
+            ],
+            "parserOptions": {
+                "ecmaVersion": 2020,
+                "sourceType": "module"
+            },
+            "parser": "espree", // Use standard JS parser instead of TypeScript
+            "env": {
+                "browser": true,
+                "serviceworker": true
+            }
+        }
+    ]
 }

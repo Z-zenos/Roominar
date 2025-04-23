@@ -4,6 +4,7 @@ from .bookmark import Bookmark
 from .check_in import CheckIn
 from .event import Event
 from .follow import Follow
+from .notification import Notification
 from .organization import Organization
 from .question import Question
 from .site_visit import SiteVisit
@@ -20,6 +21,7 @@ from .transaction import Transaction
 from .transaction_item import TransactionItem
 from .user import User
 from .user_action import UserAction
+from .user_notification_token import UserNotificationToken
 
 all = (
     Application,
@@ -44,4 +46,6 @@ all = (
     Speaker,
     SiteVisit,
     UserAction,
+    Notification,
+    UserNotificationToken,
 )

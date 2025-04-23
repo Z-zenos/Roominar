@@ -2,13 +2,15 @@ import asyncio
 import os
 import time
 
+import uvicorn
+from celery import Celery
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from backend.api.v1.routes.router import api_router
 from backend.core import redis_client
+from backend.core.config import settings
 from backend.core.exception import (
     AccessDeniedException,
     BadRequestException,
@@ -19,6 +21,7 @@ from backend.core.response import (
     BadRequestResponse,
     UnauthorizedResponse,
 )
+from backend.routes.router import api_router
 
 app = FastAPI(title="Roominar", openapi_url="/api/v1/openapi.json")
 
@@ -27,11 +30,20 @@ time.tzset()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:3001"],
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:3001",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["content-disposition"],
+)
+
+celery = Celery(
+    __name__,
+    broker=settings.CELERY_BROKER_URL,
+    backend=settings.CELERY_RESULT_BACKEND,
 )
 
 
@@ -94,3 +106,23 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         status_code=422,
         content={"detail": exc.errors(), "body": exc.body},
     )
+
+
+if __name__ == "__main__":
+    # Check if certificates exist
+    cert_path = os.path.join(os.path.dirname(__file__), "certs", "server.crt")
+    key_path = os.path.join(os.path.dirname(__file__), "certs", "server.key")
+
+    # Use HTTPS if certificates exist
+    if os.path.exists(cert_path) and os.path.exists(key_path):
+        uvicorn.run(
+            "main:app",
+            host="127.0.0.1",
+            port=8000,
+            ssl_keyfile=key_path,
+            ssl_certfile=cert_path,
+            reload=True,
+        )
+    else:
+        # Fallback to HTTP
+        uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)

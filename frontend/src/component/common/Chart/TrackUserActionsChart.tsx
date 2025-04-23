@@ -31,6 +31,7 @@ import queryString from 'query-string';
 import { useEffect, useState } from 'react';
 import { Skeleton } from '@nextui-org/react';
 import { useTrackUserActionsQuery } from '@/src/api/organization.api';
+import Nodata from '../Nodata';
 
 const USER_ACTION_STORAGE_KEY = 'userActions';
 
@@ -59,7 +60,11 @@ export function TrackUserActionsChart() {
   const [filters, setFilters] =
     useState<OrganizationsApiTrackUserActionsRequest>({});
 
-  const { data: trackUserActions, refetch } = useTrackUserActionsQuery({
+  const {
+    data: trackUserActions,
+    refetch,
+    isLoading,
+  } = useTrackUserActionsQuery({
     ...queryString.parse(
       queryString.stringify(filters, { arrayFormat: 'bracket' }),
       { arrayFormat: 'bracket' },
@@ -78,7 +83,7 @@ export function TrackUserActionsChart() {
     defaultValues: {
       actionTypes: filters.actionTypes ?? [
         UserActionTypeCode.Bookmark,
-        UserActionTypeCode.ApplyEvent,
+        UserActionTypeCode.CancelTicket,
         UserActionTypeCode.PurchaseTicket,
       ],
       timeRange: filters.timeRange ?? TrackingTimeRangeCode.Last7Days,
@@ -126,7 +131,7 @@ export function TrackUserActionsChart() {
               />
             </div>
           </CardHeader>
-          {trackUserActions && trackUserActions.data.length > 0 ? (
+          {trackUserActions && trackUserActions.data.length > 0 && (
             <CardContent>
               <ChartContainer config={chartConfig}>
                 <LineChart
@@ -153,7 +158,7 @@ export function TrackUserActionsChart() {
                   {(
                     filters.actionTypes ?? [
                       UserActionTypeCode.Bookmark,
-                      UserActionTypeCode.ApplyEvent,
+                      UserActionTypeCode.CancelTicket,
                       UserActionTypeCode.PurchaseTicket,
                     ]
                   ).map((uatc) => (
@@ -171,9 +176,13 @@ export function TrackUserActionsChart() {
                 </LineChart>
               </ChartContainer>
             </CardContent>
-          ) : (
+          )}
+          {isLoading && (
             <Skeleton className='h-[200px] mx-20 my-6 rounded-md' />
           )}
+
+          {!isLoading && trackUserActions?.data.length === 0 && <Nodata />}
+
           <CardFooter>
             {/* <div className='flex w-full items-start gap-2 text-sm'>
               <div className='grid gap-2'>
