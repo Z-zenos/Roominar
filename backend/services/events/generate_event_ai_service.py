@@ -14,7 +14,8 @@ from backend.utils.parse_gemini_json_response import parse_gemini_json_response
 genai.configure(api_key=settings.GEMINI_API_KEY)
 
 
-async def generate_event_description(
+async def generate_event_content(
+    db: Session,
     request: GenerateEventAIRequest,
 ) -> dict[str, Any]:
     """
@@ -40,8 +41,14 @@ async def generate_event_description(
             else f"{int(duration_hours)} giờ"
         )
 
+        # Get tag names for better description generation
+        tags = []
+        if request.tags:
+            tags = db.exec(select(Tag.name).where(Tag.id.in_(request.tags))).all()
+            tags = [tag for tag in tags]
+
         # Format tags
-        tags_text = ", ".join(request.tags) if request.tags else "không có"
+        tags_text = ", ".join(tags) if tags else "không có"
 
         # Construct an optimized prompt
         prompt = f"""
@@ -56,6 +63,7 @@ async def generate_event_description(
             - Giá vé: {"Miễn phí" if request.price == 0 else f"{request.price:,} VND"}
             - Số lượng vé: {request.total_ticket_number} vé
             - Tag liên quan: {tags_text}
+            - Prompt của người dùng: {request.prompt}
 
             # YÊU CẦU NỘI DUNG
             Hãy tạo nội dung sự kiện hoàn chỉnh với các thành phần sau:
@@ -96,7 +104,9 @@ async def generate_event_description(
             }}
             ```
 
-            Lưu ý: Sử dụng tiếng Việt, tạo nội dung chất lượng cao, chuyên nghiệp, phù hợp với văn hóa Việt Nam và ngành tổ chức sự kiện.
+            Lưu ý:
+            - Sử dụng tiếng Việt, tạo nội dung chất lượng cao, chuyên nghiệp, phù hợp với văn hóa Việt Nam và ngành tổ chức sự kiện.
+            - Nếu người dùng cung cấp thêm prompt thông tin, hãy sử dụng nó để cải thiện nội dung.
         """
 
         # Generate content and handle response
@@ -146,13 +156,8 @@ async def generate_event_ai(
         Exception: On other errors
     """
     try:
-        # Get tag names for better description generation
-        if request.tags:
-            tags = db.exec(select(Tag.name).where(Tag.id.in_(request.tags))).all()
-            request.tags = [tag for tag in tags]
-
         # Generate AI description
-        event_data = await generate_event_description(request)
+        event_data = await generate_event_content(db, request)
 
         # Create a new event with AI-generated content
         # You can implement this part based on your application needs
