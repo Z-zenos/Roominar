@@ -40,7 +40,6 @@ export default function CalendarTimeline({
   aspectRatio = 1,
   ...props
 }: CalendarTimelineProps) {
-  console.log(events.filter((event) => event.start && event.end));
   return (
     <div className='calendar-container mt-2'>
       <FullCalendar

@@ -1080,7 +1080,7 @@ const FormTextarea = ({
           <FormControl>
             <Textarea
               placeholder={placeholder}
-              className='resize-none'
+              className='resize-none shadow-sm border border-gray-300 rounded-md'
               id={name}
               {...field}
             />
@@ -1222,7 +1222,7 @@ const FormInstructions = ({ className, children }: FormInstructionsProps) => {
   return (
     <ul
       className={clsx(
-        'mt-2 p-4 bg-emerald-50 flex flex-col justify-start gap-2 text-ss font-light list-disc pl-6 marker:text-blue-500',
+        'mt-2 p-4 bg-blue-sub flex flex-col justify-start gap-2 text-ss font-light list-disc pl-6 marker:text-blue-500',
         className,
       )}
     >

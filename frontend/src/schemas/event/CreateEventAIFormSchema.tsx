@@ -85,6 +85,8 @@ const eventAddressSchema = z
 
 const eventBaseSchema = z.object({
   name: z.string().trim().min(1, { message: 'required' }).max(1024),
+  prompt: z.string().trim().max(4096).nullable(),
+  description: z.string().trim().nullable(),
   tags: z.array(z.coerce.number()).nullable(),
   totalTicketNumber: z.coerce
     .number()

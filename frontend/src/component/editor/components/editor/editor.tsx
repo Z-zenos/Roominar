@@ -49,8 +49,14 @@ import Placeholder from './ui/Placeholder';
 import { CAN_USE_DOM } from './shared/canUseDOM';
 import { AutoFocusPlugin } from './plugins/AutoFocusPlugin';
 import MentionsPlugin from './plugins/MentionsPlugin';
+import type { EditorState } from 'lexical';
+import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 
-export default function Editor(): JSX.Element {
+export default function Editor({
+  onChange,
+}: {
+  onChange?: (editorState: EditorState) => void;
+}): JSX.Element {
   const { historyState } = useSharedHistoryContext();
   const {
     settings: {
@@ -104,6 +110,7 @@ export default function Editor(): JSX.Element {
           !isRichText ? 'plain-text' : ''
         }`}
       >
+        {onChange && <OnChangePlugin onChange={onChange} />}
         {isMaxLength && <MaxLengthPlugin maxLength={30} />}
         <DragDropPaste />
         <AutoFocusPlugin />

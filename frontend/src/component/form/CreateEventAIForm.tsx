@@ -8,9 +8,11 @@ import {
   FormCustomLabel,
   FormField,
   FormInput,
+  FormInstructions,
   FormItem,
   FormMessage,
   FormTagsInput,
+  FormTextarea,
 } from '@/src/component/form/Form';
 import {
   TicketDeliveryMethodCode,
@@ -18,10 +20,7 @@ import {
   type ErrorResponse400,
 } from '@/src/lib/api/generated';
 import toast from 'react-hot-toast';
-import {
-  useGenerateEventAIMutation,
-  useSaveDraftEventMutation,
-} from '@/src/api/event.api';
+import { useGenerateEventAIMutation } from '@/src/api/event.api';
 
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
@@ -41,10 +40,15 @@ import { GrLocation } from 'react-icons/gr';
 import { PiVideoBold } from 'react-icons/pi';
 import { RiRobot2Line } from 'react-icons/ri';
 import ElementLoading from '../common/Loader/ElementLoading';
+import AIGeneratingSpinner from '../common/Loader/AIGeneratingSpinner';
 
 const LazyMap = dynamic(() => import('../common/Map/Map'), {
   ssr: false,
   loading: () => <p>Loading...</p>,
+});
+
+const LexicalEditor = dynamic(() => import('../editor/app/app'), {
+  ssr: false,
 });
 
 const LazyCalendarTimeline = dynamic(
@@ -59,11 +63,14 @@ export default function CreateEventAIForm() {
   const t = useTranslations('form');
   const { data: tagData } = useListingTagsQuery();
   const { data: eventsTimeline } = useListingOrganizationEventsTimelineQuery();
+  const [isFirstTimeGenerate, setIsFirstTimeGenerate] = useState<boolean>(true);
 
   const form = useForm<CreateEventAIFormSchema>({
     mode: 'all',
     defaultValues: {
       name: '',
+      prompt: '',
+      description: '',
       tags: [],
 
       startAt: null,
@@ -122,19 +129,23 @@ export default function CreateEventAIForm() {
     }
   }, [form.formState, canFocus]);
 
-  const { trigger: generateEventAI, isMutating: isGenerating } =
-    useGenerateEventAIMutation({
-      onSuccess() {
-        toast.success('Save draft event successfully!');
-      },
-      onError(error: ApiException<unknown>) {
-        toast.error(
-          (error.body as ErrorResponse400)?.message ??
-            (error.body as ErrorResponse400)?.errorCode ??
-            'Unknown Error 😵',
-        );
-      },
-    });
+  const {
+    trigger: generateEventAI,
+    isMutating: isGenerating,
+    data: generatedContent,
+  } = useGenerateEventAIMutation({
+    onSuccess() {
+      toast.success('Save draft event successfully!');
+      setIsFirstTimeGenerate(false);
+    },
+    onError(error: ApiException<unknown>) {
+      toast.error(
+        (error.body as ErrorResponse400)?.message ??
+          (error.body as ErrorResponse400)?.errorCode ??
+          'Unknown Error 😵',
+      );
+    },
+  });
 
   function handleSelectDate(timeline: DateSelectArg) {
     const hasApplicationStartEnd =
@@ -220,7 +231,6 @@ export default function CreateEventAIForm() {
   }
 
   function handleGenerateEventAI(data: CreateEventAIFormSchema) {
-    console.log(data);
     generateEventAI({
       generateEventAIRequest: {
         name: data.name,
@@ -234,6 +244,7 @@ export default function CreateEventAIForm() {
         isOffline: data.isOffline,
         organizeAddress: data.organizeAddress ?? null,
         price: data.price,
+        prompt: data.prompt,
       },
     });
   }
@@ -245,14 +256,13 @@ export default function CreateEventAIForm() {
         onSubmit={form.handleSubmit(handleGenerateEventAI, onError)}
         className='grid grid-cols-12 items-start gap-10'
       >
-        <div className='grid grid-cols-2 gap-6 [&>div]:w-full bg-white rounded-md p-6 shadow-md 1200px:col-span-9 col-span-12 max-w-[1000px]'>
+        <div className='grid grid-cols-2 gap-6 [&>div]:w-full bg-white rounded-md p-6 shadow-md 1200px:col-span-6 col-span-12 max-w-[1000px]'>
           <div className='col-span-2'>
-            <h3 className='text-lg font-semibold'>Create an event with AI</h3>
-            <p className='text-gray-600 font-light text-sm'>
+            <FormInstructions className='text-gray-600 font-light text-sm'>
               Provide a few information about your event and our AI creation
               tool will use internal data and your writing styles from before
               events to build an event page. You can after update content.
-            </p>
+            </FormInstructions>
           </div>
           <div className='col-span-2'>
             <FormCustomLabel
@@ -506,10 +516,29 @@ export default function CreateEventAIForm() {
               data={tagData}
             />
           </div>
+        </div>
 
+        <div className='1200px:col-span-6 col-span-12'>
+          <FormCustomLabel
+            htmlFor='price'
+            custom={
+              <div className='flex items-center'>
+                <h3 className='text-nm font-medium my-3'>Prompt</h3>
+                <p className='text-gray-600 font-light text-sm max-w-[500px] text-wrap mb-[2px] ml-1'>
+                  (Optional)
+                </p>
+              </div>
+            }
+          />
+          <FormTextarea
+            name='prompt'
+            control={form.control}
+            placeholder="Describe the tone, format, or any extra touches you'd like"
+            className='w-full h-32'
+          />
           <button
             form='create-event-form'
-            className='mx-auto overflow-hidden w-[132px] p-2 h-12 bg-black text-white border-none rounded-md text-md font-bold cursor-pointer relative z-10 group col-span-2 flex justify-center items-center gap-1'
+            className='mx-auto mt-4 overflow-hidden w-[132px] p-2 h-12 bg-black text-white border-none rounded-md text-md font-bold cursor-pointer relative z-10 group col-span-2 flex justify-center items-center gap-1'
             type='submit'
           >
             {isGenerating && <Spinner />}
@@ -524,28 +553,28 @@ export default function CreateEventAIForm() {
               <RiRobot2Line className='inline w-5 h-5 mt-1' />
             </span>
           </button>
-        </div>
 
-        <div className='col-span-3'>
-          {/* <EventCard
-            event={{
-              id: 1,
-              slug: '',
-              organizationName: 'Roominar',
-              name: form.getValues('name'),
-              startAt: new Date('2024-10-06'),
-              endAt: new Date('2024-10-06'),
-              applicationStartAt: new Date('2024-10-06'),
-              applicationEndAt: new Date('2024-10-06'),
-              totalTicketNumber: 1,
-              coverImageUrl: '',
-              meetingToolCode: EventMeetingToolCode.Discord,
-              isOffline: true,
-              publishedAt: new Date('2024-10-06'),
-              tags: [],
-            }}
-            className='w-full'
-          /> */}
+          <main className='flex flex-col items-center justify-between my-4'>
+            {!isFirstTimeGenerate && (
+              <>
+                <h3>Generative Description</h3>
+                <LexicalEditor
+                  content={generatedContent?.description ?? ''}
+                  onChange={(editorState) => {
+                    // Convert editor state to string representation for storage
+                    const editorStateJSON = JSON.stringify(editorState);
+
+                    // You can now use this JSON string in your form
+                    console.log('Editor content changed:', editorStateJSON);
+
+                    // For example, set it in a hidden field or in your form state
+                    form.setValue('description', editorStateJSON);
+                  }}
+                />
+              </>
+            )}
+          </main>
+          {isGenerating && isFirstTimeGenerate && <AIGeneratingSpinner />}
         </div>
       </form>
     </Form>

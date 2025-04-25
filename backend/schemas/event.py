@@ -425,7 +425,8 @@ class GenerateEventAIRequest(BaseModel):
     is_online: bool
     price: int
 
-    tags: list[int | str] = Field([])
+    tags: list[int] = Field([])
+    prompt: str | None = Field(None, max_length=4096)
 
 
 class GenerateEventAIResponse(BaseModel):

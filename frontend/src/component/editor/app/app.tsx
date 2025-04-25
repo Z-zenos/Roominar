@@ -3,26 +3,26 @@
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 
 import { SharedAutocompleteContext } from '../components/editor/context/SharedAutocompleteContext';
-import {
-  SettingsContext,
-  useSettings,
-} from '../components/editor/context/SettingsContext';
-import { getPrepopulatedRichText } from '../components/editor/utils/getPrepopulatedRichText';
+import { SettingsContext } from '../components/editor/context/SettingsContext';
 import PlaygroundNodes from '../components/editor/nodes/PlaygroundNodes';
 import PlaygroundEditorTheme from '../components/editor/themes/PlaygroundEditorTheme';
 import { SharedHistoryContext } from '../components/editor/context/SharedHistoryContext';
 import { TableContext } from '../components/editor/plugins/TablePlugin';
 import Editor from '../components/editor/editor';
+import { $generateNodesFromDOM } from '@lexical/html';
 
 import './globals.css';
+import { $createParagraphNode, $getRoot, type EditorState } from 'lexical';
 
-export default function LexicalEditor(): JSX.Element {
-  const {
-    settings: { emptyEditor },
-  } = useSettings();
-
+export default function LexicalEditor({
+  onChange,
+  content,
+}: {
+  onChange?: (editorState: EditorState) => void;
+  content?: string; // HTML format
+}): JSX.Element {
   const initialConfig = {
-    editorState: emptyEditor ? undefined : getPrepopulatedRichText,
+    editorState: content ? prepareInitialState : undefined,
     namespace: 'Playground',
     nodes: [...PlaygroundNodes],
     onError: (error: Error) => {
@@ -31,6 +31,32 @@ export default function LexicalEditor(): JSX.Element {
     theme: PlaygroundEditorTheme,
   };
 
+  // Function to convert HTML to Lexical editor state
+  function prepareInitialState(editor: any) {
+    const root = $getRoot();
+
+    if (content) {
+      // Parse HTML into DOM nodes
+      const parser = new DOMParser();
+      const dom = parser.parseFromString(content, 'text/html');
+
+      // Convert DOM nodes to Lexical nodes
+      const nodes = $generateNodesFromDOM(editor, dom);
+
+      // Clear editor and insert nodes
+      root.clear();
+      nodes.forEach((node) => {
+        root.append(node);
+      });
+    }
+
+    // If no content, add a blank paragraph
+    if (root.getFirstChild() === null) {
+      const paragraph = $createParagraphNode();
+      root.append(paragraph);
+    }
+  }
+
   return (
     <SettingsContext>
       <LexicalComposer initialConfig={initialConfig}>
@@ -38,7 +64,7 @@ export default function LexicalEditor(): JSX.Element {
           <TableContext>
             <SharedAutocompleteContext>
               <div className='editor-shell'>
-                <Editor />
+                <Editor onChange={onChange} />
               </div>
             </SharedAutocompleteContext>
           </TableContext>
