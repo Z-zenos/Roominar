@@ -69,7 +69,8 @@
       "isPaid": "trả phí",
       "gallery": "thư viện ảnh và video",
       "timeline": "lịch trình",
-      "cancelReason": "lý do hủy"
+      "cancelReason": "lý do hủy",
+      "prompt": "prompt"
     },
     "message": {
       "error": {

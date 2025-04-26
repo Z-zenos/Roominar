@@ -76,6 +76,7 @@ class Settings(BaseSettings):
     STRIPE_WEBHOOK_SECRET: Optional[str]
 
     OPEN_AI_KEY: Optional[str]
+    GEMINI_API_KEY: Optional[str]
 
     REDIS_PORT: Optional[str]
     REDIS_HOST: Optional[str]

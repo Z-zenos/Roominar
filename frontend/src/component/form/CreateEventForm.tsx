@@ -529,7 +529,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                                 title: event.name,
                                 start: event.startAt,
                                 end: event.endAt,
-                                color: '#FF4500',
+                                color: '#d8fcff',
                               }))
                             : []),
                           ...(eventsTimeline
@@ -537,7 +537,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                                 title: event.name,
                                 start: event.applicationStartAt,
                                 end: event.applicationEndAt,
-                                color: '#FFD700',
+                                color: '#d8fcff',
                               }))
                             : []),
                         ]}

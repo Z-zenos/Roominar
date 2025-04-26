@@ -14,6 +14,7 @@ import type {
   EventsApiPublishEventRequest,
   EventsApiSaveDraftEventRequest,
   EventsApiSearchEventsRequest,
+  GenerateEventAIResponse,
   OrganizationsApiListingOrganizationEventsRequest,
   OrganizationsApiListingTopOrganizationEventsRequest,
 } from '../lib/api/generated';
@@ -215,11 +216,16 @@ export const useListingRecommendationEventsQuery = (
 };
 
 export const useGenerateEventAIMutation = <T>(
-  options?: SWRMutationConfiguration<number, T>,
+  options?: SWRMutationConfiguration<GenerateEventAIResponse, T>,
 ) => {
   const api = useApi();
   const key = 'generate-event-ai';
-  return useSWRMutation<number, T, typeof key, EventsApiGenerateEventAiRequest>(
+  return useSWRMutation<
+    GenerateEventAIResponse,
+    T,
+    typeof key,
+    EventsApiGenerateEventAiRequest
+  >(
     key,
     async (_: string, { arg }) => await api.events.generateEventAi(arg),
     options,

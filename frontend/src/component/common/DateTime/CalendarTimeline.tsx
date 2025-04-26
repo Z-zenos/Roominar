@@ -10,11 +10,14 @@ import type {
   EventChangeArg,
 } from '@fullcalendar/core';
 
+import './Calendar.css';
+
 interface CalendarTimelineEventItem {
   title: string;
   start: Date;
   end: Date;
   color: string;
+  textColor?: string;
 }
 
 interface CalendarTimelineProps extends CalendarOptions {

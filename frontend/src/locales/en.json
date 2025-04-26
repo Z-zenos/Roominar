@@ -69,7 +69,8 @@
       "isPaid": "paid",
       "gallery": "gallery",
       "timeline": "timeline",
-      "cancelReason": "cancellation reason"
+      "cancelReason": "cancellation reason",
+      "prompt": "prompt"
     },
     "message": {
       "error": {

@@ -18,6 +18,7 @@ from backend.schemas.check_in import CreateCheckInRequest
 from backend.schemas.event import (
     CreateDraftEventRequest,
     GenerateEventAIRequest,
+    GenerateEventAIResponse,
     GetDraftEventResponse,
     GetEventDetailResponse,
     ListingEventOptionsResponse,
@@ -197,7 +198,11 @@ async def save_draft_event(
     return await events_service.save_draft_event(db, organizer, request, event_id)
 
 
-@router.post("/ai/draft", response_model=int, responses=authenticated_api_responses)
+@router.post(
+    "/ai/draft",
+    response_model=GenerateEventAIResponse,
+    responses=authenticated_api_responses,
+)
 async def generate_event_ai(
     db: Session = Depends(get_read_db),
     organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),

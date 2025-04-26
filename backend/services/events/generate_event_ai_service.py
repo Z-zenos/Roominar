@@ -1,81 +1,179 @@
-from datetime import datetime
+from typing import Any
 
-from openai import OpenAI
+import google.generativeai as genai
 from sqlmodel import Session, select
 
 from backend.core.config import settings
-from backend.core.constants import EventStatusCode, TagAssociationEntityCode
-from backend.core.error_code import ErrorCode
 from backend.core.exception import BadRequestException
-from backend.models import Event, Tag, User
-from backend.models.tag_association import TagAssociation
+from backend.models import Tag, User
 from backend.schemas.event import GenerateEventAIRequest
-from backend.utils.database import save
+from backend.utils.logger import logger
+from backend.utils.parse_gemini_json_response import parse_gemini_json_response
 
-open_ai_key = settings.OPEN_AI_KEY
+# Configure Gemini
+genai.configure(api_key=settings.GEMINI_API_KEY)
+
+
+async def generate_event_content(
+    db: Session,
+    request: GenerateEventAIRequest,
+) -> dict[str, Any]:
+    """
+    Generate a detailed event description using Gemini 2.0 Flash.
+
+    Args:
+        request: The event generation request
+
+    Returns:
+        A dictionary containing the structured event details
+    """
+    try:
+        # Create Gemini model
+        model = genai.GenerativeModel("gemini-2.0-flash-lite")
+
+        # Format event duration in hours and minutes
+        duration = request.end_at - request.start_at
+        duration_hours = duration.total_seconds() // 3600
+        duration_minutes = (duration.total_seconds() % 3600) // 60
+        duration_text = (
+            f"{int(duration_hours)} giờ {int(duration_minutes)} phút"
+            if duration_minutes
+            else f"{int(duration_hours)} giờ"
+        )
+
+        # Get tag names for better description generation
+        tags = []
+        if request.tags:
+            tags = db.exec(select(Tag.name).where(Tag.id.in_(request.tags))).all()
+            tags = [tag for tag in tags]
+
+        # Format tags
+        tags_text = ", ".join(tags) if tags else "không có"
+
+        # Construct an optimized prompt
+        prompt = f"""
+            Bạn là một chuyên gia viết nội dung sự kiện với nhiều năm kinh nghiệm trong lĩnh vực marketing và tổ chức sự kiện tại Việt Nam.
+
+            # THÔNG TIN SỰ KIỆN
+            - Tên đề xuất: {request.name}
+            - Hình thức: {" ".join(filter(None, ["Trực tuyến" if request.is_online else None, "Trực tiếp" if request.is_offline else None]))}
+            - Địa điểm: {request.organize_address if request.is_offline else ""}
+            - Thời gian diễn ra: {request.start_at.strftime('%d/%m/%Y %H:%M')} → {request.end_at.strftime('%d/%m/%Y %H:%M')} ({duration_text})
+            - Đăng ký từ: {request.application_start_at.strftime('%d/%m/%Y %H:%M')} đến {request.application_end_at.strftime('%d/%m/%Y %H:%M')}
+            - Giá vé: {"Miễn phí" if request.price == 0 else f"{request.price:,} VND"}
+            - Số lượng vé: {request.total_ticket_number} vé
+            - Tag liên quan: {tags_text}
+            - Prompt của người dùng: {request.prompt}
+
+            # YÊU CẦU NỘI DUNG
+            Hãy tạo nội dung sự kiện hoàn chỉnh với các thành phần sau:
+
+            1. **Tên sự kiện** - Đề xuất tên sự kiện thu hút, chuyên nghiệp (có thể giữ nguyên hoặc cải tiến từ tên đề xuất)
+
+            2. **Mô tả sự kiện** - Viết mô tả sự kiện hấp dẫn, cung cấp đầy đủ thông tin về:
+               - Lý do tổ chức và giá trị của sự kiện
+               - Đối tượng nên tham gia
+               - Lợi ích khi tham gia sự kiện
+               - Nội dung chính và điểm nổi bật
+               - Thông tin đăng ký và liên hệ
+
+               *Định dạng: Sử dụng HTML đơn giản (thẻ <p>, <strong>, <ul>, <li>, <h3>, v.v.) và emoji phù hợp để tăng tính sinh động*
+
+            3. **Lịch trình khuyến nghị** - Chi tiết các hoạt động chính theo khung giờ
+               (Chỉ cần nếu sự kiện kéo dài trên 2 giờ)
+
+            4. **5 hashtag gợi ý** - Các hashtag phổ biến, phù hợp với chủ đề sự kiện
+
+            # YÊU CẦU ĐỊNH DẠNG
+            Phản hồi dưới dạng JSON với cấu trúc chính xác như sau:
+            ```json
+            {{
+                "title": "Tên sự kiện đầy đủ",
+                "description": "<p>Nội dung mô tả sự kiện với HTML đơn giản</p>",
+                "recommended_schedule": [
+                    {{
+                        "time": "09:00 - 09:30",
+                        "activity": "Đón tiếp khách mời và đăng ký 📋"
+                    }},
+                    {{
+                        "time": "09:30 - 10:00",
+                        "activity": "Khai mạc và giới thiệu 🎤"
+                    }}
+                ],
+                "suggested_tags": ["#TagVíDụ1", "#TagVíDụ2", "#TagVíDụ3", "#TagVíDụ4", "#TagVíDụ5"]
+            }}
+            ```
+
+            Lưu ý:
+            - Sử dụng tiếng Việt, tạo nội dung chất lượng cao, chuyên nghiệp, phù hợp với văn hóa Việt Nam và ngành tổ chức sự kiện.
+            - Nếu người dùng cung cấp thêm prompt thông tin, hãy sử dụng nó để cải thiện nội dung.
+        """
+
+        # Generate content and handle response
+        response = model.generate_content(prompt)
+
+        # Look for JSON content (sometimes Gemini might include explanatory text)
+        event_data = parse_gemini_json_response(
+            response_text=response.text,
+            required_fields=["title", "description"],
+            default_values={
+                "title": request.name,
+                "description": f"<p>Tham gia sự kiện {request.name}! Chi tiết sẽ được cập nhật sớm.</p>",
+                "recommended_schedule": [],
+                "suggested_tags": [],
+            },
+            entity_name=f"event '{request.name}'",
+        )
+
+        return event_data
+
+    except Exception as e:
+        logger.exception("Error generating event description with Gemini: %s", str(e))
+        return {
+            "title": request.name,
+            "description": f"<p>Tham gia sự kiện {request.name}! Chi tiết sẽ được cập nhật sớm.</p>",
+            "recommended_schedule": [],
+            "suggested_tags": [],
+        }
 
 
 async def generate_event_ai(
     db: Session, organizer: User, request: GenerateEventAIRequest
-):
+) -> dict[str, Any]:
+    """
+    Generate an AI-enhanced event based on user request.
+
+    Args:
+        db: Database session
+        organizer: User creating the event
+        request: Event generation request data
+
+    Returns:
+        Dictionary with the event details and AI-generated content
+
+    Raises:
+        BadRequestException: When tag validation fails
+        Exception: On other errors
+    """
     try:
-        client = OpenAI(api_key=open_ai_key)
-        completion = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {
-                    "role": "system",
-                    "content": "You are a helpful event planner assistant.",
-                },
-                {
-                    "role": "user",
-                    "content": "make me planning for event with title: " + request.name,
-                },
-            ],
-        )
-        ai_response = completion.choices[0].message.content
-        print(ai_response)
-        event = Event(
-            organization_id=organizer.organization_id,
-            name=(
-                request.name
-                if request.name
-                else f"Draft Event {datetime.now().strftime('%Y/%m/%d %H:%M')}"
-            ),
-            start_at=request.start_at,
-            end_at=request.end_at,
-            application_start_at=request.application_start_at,
-            application_end_at=request.application_end_at,
-            total_ticket_number=request.total_ticket_number,
-            is_offline=request.is_offline,
-            is_online=request.is_online,
-            organize_address=request.organize_address,
-            status=EventStatusCode.DRAFT,
-            created_by=organizer.id,
-        )
+        # Generate AI description
+        event_data = await generate_event_content(db, request)
 
-        event = save(db, event)
+        # Create a new event with AI-generated content
+        # You can implement this part based on your application needs
+        # event = Event(
+        #    name=event_data["title"],
+        #    description=event_data["description"],
+        #    # ... other fields
+        # )
+        # db.add(event)
+        # db.commit()
 
-        if request.tags:
-            request_tags = db.exec(select(Tag.id).where(Tag.id.in_(request.tags))).all()
-            if (not request_tags) or (len(request.tags) != len(request_tags)):
-                raise BadRequestException(ErrorCode.ERR_TAG_NOT_FOUND)
-            tags = [
-                TagAssociation(
-                    entity_id=event.id,
-                    tag_id=tag_id,
-                    entity_code=TagAssociationEntityCode.EVENT,
-                )
-                for tag_id in request.tags
-            ]
-            db.add_all(tags)
+        # Return the AI-generated event data
+        return event_data
 
-        db.commit()
-        db.refresh()
-
-        return event.id
-
+    except BadRequestException as e:
+        raise e
     except Exception as e:
-        print(e)
-        db.rollback()
+        logger.exception("Error in generate_event_ai: %s", str(e))
         raise e

@@ -18,6 +18,7 @@ import Button from '../../ui/Button';
 
 async function sendEditorState(editor: LexicalEditor): Promise<void> {
   const stringifiedEditorState = JSON.stringify(editor.getEditorState());
+  console.log('Sending editor state to server:', stringifiedEditorState);
   try {
     await fetch('http://localhost:1235/setEditorState', {
       body: stringifiedEditorState,
@@ -34,6 +35,7 @@ async function sendEditorState(editor: LexicalEditor): Promise<void> {
 
 async function validateEditorState(editor: LexicalEditor): Promise<void> {
   const stringifiedEditorState = JSON.stringify(editor.getEditorState());
+  console.log('Validating editor state on server:', stringifiedEditorState);
   let response = null;
   try {
     response = await fetch('http://localhost:1235/validateEditorState', {

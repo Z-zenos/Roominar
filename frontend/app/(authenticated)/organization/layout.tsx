@@ -22,14 +22,22 @@ import {
 } from '@/src/component/common/Sidebar';
 import { OrganizationSidebar } from '@/src/component/common/SideBar/OrganizationSidebar';
 import useWindowDimensions from '@/src/hooks/useWindowDimension';
-import clsx from 'clsx';
 import { useSession } from 'next-auth/react';
+import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import { CiBellOn } from 'react-icons/ci';
+
+const PAGE_METADATA = [
+  {
+    title: 'Create an event with AI',
+    description: 'Create an event with AI',
+    url: '/organization/events/create/auto',
+  },
+];
 
 export default function RootLayout({ children }) {
   const { width } = useWindowDimensions();
   const [isNotificationOpen, setIsNotificationOpen] = useState<boolean>(false);
+  const pathname = usePathname();
 
   const { status } = useSession();
   const {
@@ -52,6 +60,11 @@ export default function RootLayout({ children }) {
                   orientation='vertical'
                   className='mr-2 h-4'
                 />
+                <div className='col-span-2'>
+                  <h3 className='text-md font-semibold'>
+                    {PAGE_METADATA.find((item) => item.url === pathname)?.title}
+                  </h3>
+                </div>
               </div>
               {status === 'authenticated' && (
                 <SheetTrigger className='relative cursor-pointer mr-2'>

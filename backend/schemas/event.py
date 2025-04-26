@@ -426,6 +426,14 @@ class GenerateEventAIRequest(BaseModel):
     price: int
 
     tags: list[int] = Field([])
+    prompt: str | None = Field(None, max_length=4096)
+
+
+class GenerateEventAIResponse(BaseModel):
+    title: str
+    description: str
+    recommended_schedule: list[dict[str, str]] | None = None
+    suggested_tags: list[str] = []
 
 
 class ListingEventOptionsItem(BaseModel):
