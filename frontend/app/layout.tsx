@@ -31,7 +31,61 @@ export default async function RootLayout({
       lang='en'
       suppressHydrationWarning
     >
-      <head />
+      <head>
+        <meta
+          name='application-name'
+          content='Roominar'
+        />
+        <meta
+          name='apple-mobile-web-app-capable'
+          content='yes'
+        />
+        <meta
+          name='apple-mobile-web-app-status-bar-style'
+          content='default'
+        />
+        <meta
+          name='apple-mobile-web-app-title'
+          content='Roominar'
+        />
+        <meta
+          name='description'
+          content='Find and book virtual and physical event spaces'
+        />
+        <meta
+          name='format-detection'
+          content='telephone=no'
+        />
+        <meta
+          name='mobile-web-app-capable'
+          content='yes'
+        />
+        <meta
+          name='msapplication-TileColor'
+          content='#2B5797'
+        />
+        <meta
+          name='msapplication-tap-highlight'
+          content='no'
+        />
+        <meta
+          name='theme-color'
+          content='#000000'
+        />
+
+        <link
+          rel='apple-touch-icon'
+          href='/icons/apple-icon-180.png'
+        />
+        <link
+          rel='manifest'
+          href='/manifest.json'
+        />
+        <link
+          rel='shortcut icon'
+          href='/favicon.ico'
+        />
+      </head>
       <body
         className={clsx(
           'min-h-screen bg-background font-sans antialiased',
