@@ -42,28 +42,24 @@ import { getStoredFcmToken } from '@/src/hooks/useNotification';
 
 const menuItems = [
   {
-    title: 'My Profile',
-    url: '/my-profile',
+    title: 'Home',
+    url: '/home',
   },
   {
-    title: 'My Events',
-    url: '/my-events',
+    title: 'Search',
+    url: '/search',
   },
   {
     title: 'Host Event',
     url: '/organization/login',
   },
   {
-    title: 'Account Settings',
-    url: '/account-settings',
-  },
-  {
     title: 'Help Center',
     url: '/help-center',
   },
   {
-    title: 'Log out',
-    url: '#',
+    title: 'Log in',
+    url: '/login',
   },
 ];
 
@@ -137,7 +133,7 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
       <UINavbar
         isBordered
         classNames={{
-          wrapper: ['max-w-none px-[15%]', className],
+          wrapper: ['max-w-none 400px:px-[15%] px-4', className],
           item: [
             'flex',
             'relative',
@@ -162,7 +158,7 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
           />
           {hasLogo && (
             <NavbarBrand>
-              <Logo className='scale-120' />
+              <Logo className='400px:scale-120 400px:translate-y-0 scale-70 -translate-y-2' />
             </NavbarBrand>
           )}
         </NavbarContent>
@@ -189,31 +185,33 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
           ))}
         </NavbarContent>
         <NavbarContent justify='end'>
-          <Switch
-            defaultSelected={isEnglish}
-            size='lg'
-            color='success'
-            startContent={<span>🏴󠁧󠁢󠁥󠁮󠁧󠁿</span>}
-            endContent={<span>🇻🇳</span>}
-            onValueChange={async () => {
-              setIsEnglish(!isEnglish);
-              await setUserLocale(!isEnglish ? 'en' : 'vi');
-            }}
-            classNames={{
-              thumbIcon: 'font-light text-sm -mt-[2px]',
-              startContent: 'text-md ml-[2px] -mt-[2px]',
-              endContent: 'text-md mr-[2px] -mt-[2px]',
-              wrapper: 'w-16 bg-[#ffff00]',
-              thumb: isEnglish && 'translate-x-2',
-            }}
-            thumbIcon={({ isSelected, className }) =>
-              isSelected ? (
-                <span className={className}>en</span>
-              ) : (
-                <span className={className}>vi</span>
-              )
-            }
-          />
+          {width > 400 && (
+            <Switch
+              defaultSelected={isEnglish}
+              size='lg'
+              color='success'
+              startContent={<span>🏴󠁧󠁢󠁥󠁮󠁧󠁿</span>}
+              endContent={<span>🇻🇳</span>}
+              onValueChange={async () => {
+                setIsEnglish(!isEnglish);
+                await setUserLocale(!isEnglish ? 'en' : 'vi');
+              }}
+              classNames={{
+                thumbIcon: 'font-light text-sm -mt-[2px]',
+                startContent: 'text-md ml-[2px] -mt-[2px]',
+                endContent: 'text-md mr-[2px] -mt-[2px]',
+                wrapper: 'w-16 bg-[#ffff00]',
+                thumb: isEnglish && 'translate-x-2',
+              }}
+              thumbIcon={({ isSelected, className }) =>
+                isSelected ? (
+                  <span className={className}>en</span>
+                ) : (
+                  <span className={className}>vi</span>
+                )
+              }
+            />
+          )}
           {status === 'authenticated' && (
             <SheetTrigger className='relative cursor-pointer mr-2'>
               <NotificationIcon
@@ -285,7 +283,7 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
             </div>
           ) : (
             <>
-              <NavbarItem className='hidden lg:flex'>
+              <NavbarItem className='400px:hidden lg:flex'>
                 <Link
                   href='/login'
                   underline='hover'
@@ -326,6 +324,38 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
               </Link>
             </NavbarMenuItem>
           ))}
+          {width <= 400 && (
+            <NavbarItem
+              aria-current='page'
+              className='h-fit'
+            >
+              <Switch
+                defaultSelected={isEnglish}
+                size='lg'
+                color='success'
+                startContent={<span>🏴󠁧󠁢󠁥󠁮󠁧󠁿</span>}
+                endContent={<span>🇻🇳</span>}
+                onValueChange={async () => {
+                  setIsEnglish(!isEnglish);
+                  await setUserLocale(!isEnglish ? 'en' : 'vi');
+                }}
+                classNames={{
+                  thumbIcon: 'font-light text-sm -mt-[2px]',
+                  startContent: 'text-md ml-[2px] -mt-[2px]',
+                  endContent: 'text-md mr-[2px] -mt-[2px]',
+                  wrapper: 'w-16 bg-[#ffff00]',
+                  thumb: isEnglish && 'translate-x-2',
+                }}
+                thumbIcon={({ isSelected, className }) =>
+                  isSelected ? (
+                    <span className={className}>en</span>
+                  ) : (
+                    <span className={className}>vi</span>
+                  )
+                }
+              />
+            </NavbarItem>
+          )}
         </NavbarMenu>
       </UINavbar>
 

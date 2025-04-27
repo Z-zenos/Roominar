@@ -56,8 +56,12 @@ const HeadingGroup = ({
 }: HeadingGroupProps) => {
   return (
     <div className={clsx('mb-12 text-center ', className)}>
-      <h2 className='text-xl text-primary font-semibold'>{heading}</h2>
-      <h3 className='text-xm text-gray-600 font-light'>{subheading}</h3>
+      <h2 className='400px:text-xl text-lg text-primary font-semibold'>
+        {heading}
+      </h2>
+      <h3 className='400px:text-xm text-nm text-gray-600 font-light'>
+        {subheading}
+      </h3>
     </div>
   );
 };
@@ -88,8 +92,7 @@ export default function Home() {
 
   const { data: randomOrganizations, isLoading: isRandomOrganizationsLoading } =
     useListingRandomOrganizationsQuery();
-  const { data: randomSpeakers, isLoading: isRandomSpeakersLoading } =
-    useListingRandomSpeakersQuery();
+  const { data: randomSpeakers } = useListingRandomSpeakersQuery();
 
   const { data: tagRankData } = useListingTagRankQuery();
   const { data: eventRankData } = useListingEventRankQuery();
@@ -106,7 +109,7 @@ export default function Home() {
         <div className='z-10'>
           <h2
             className={clsx(
-              'flex justify-center items-center gap-5 italic text-lg',
+              'flex justify-center items-center 400px:gap-5 gap-3 italic 400px:text-lg text-md',
             )}
           >
             <span>Explore</span>
@@ -115,20 +118,20 @@ export default function Home() {
             <FaConnectdevelop className='text-primary' />
             <span>Elevate</span>
           </h2>
-          <h1 className='text-hg my-5 font-semibold'>
+          <h1 className='400px:text-hg text-xm 400px:my-5 my-3 font-semibold'>
             Web(<span className='text-gradient'>Sem</span>)inar &
-            <span className='text-gradient'>E</span>vent{' '}
+            <span className='text-gradient'> E</span>vent{' '}
             {new Date().getFullYear()} 🎉
           </h1>
           <p className='text-primary font-semibold mb-8'>
-            Search site for business seminars focusing on digital and AI
+            Search site for all type event focusing on digital and AI
             utilization
           </p>
           <span className='border-t-1 border-gray-600 border-b-1 py-1 px-4'>
             🚀 | YOU&apos;VE GOT PLANS?
           </span>
           <Input
-            className='max-w-[500px] mt-5 mx-auto'
+            className='400px:max-w-[500px] max-w-[300px] mt-5 mx-auto'
             placeholder='Search any event you want.'
             startContent={
               <CiSearch className='w-5 h-5 pointer-events-none flex-shrink-0' />
@@ -173,7 +176,7 @@ export default function Home() {
       </section>
 
       {/* === EVENT SECTION === */}
-      <section className='py-[40px] px-[15%]'>
+      <section className='400px:py-10 400px:px-[15%] px-[5%]'>
         <HeadingGroup
           heading={
             <span className='flex justify-center gap-2 items-center font-semibold text-green-500'>
@@ -183,7 +186,7 @@ export default function Home() {
           subheading='Elevate your virtual experiences with our all-in-one webinar and event management solutions.'
         />
 
-        <div className='mb-6'>
+        <div className='400px:mb-6'>
           <Swiper
             key={width > 1200 ? 5 : 3}
             autoplay={{
@@ -253,7 +256,7 @@ export default function Home() {
           Upcoming Event <MdKeyboardDoubleArrowRight size={20} />
         </Link>
 
-        <div className='border-l border-l-primary'>
+        <div className='400px:border-l 400px:border-l-primary'>
           <Swiper
             key={width > 1200 ? 4 : 2}
             autoplay={{
@@ -265,7 +268,7 @@ export default function Home() {
             pagination={{
               clickable: true,
             }}
-            slidesPerView={width > 1200 ? 4 : 2}
+            slidesPerView={width <= 400 ? 1 : width > 1200 ? 4 : 2}
             spaceBetween={30}
             wrapperClass='pb-2'
             onSlideChange={(swipper) => setActiveEvent(swipper.activeIndex)}
@@ -298,7 +301,9 @@ export default function Home() {
                   className={clsx('dark:rounded-lg dark:p-0')}
                 >
                   <EventCard
-                    direction={width > 800 ? 'vertical' : 'horizontal'}
+                    direction={
+                      width > 800 || width <= 400 ? 'vertical' : 'horizontal'
+                    }
                     event={event}
                     variant='standard'
                   />
