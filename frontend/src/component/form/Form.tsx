@@ -77,6 +77,7 @@ import { Textarea, type TextareaProps } from '../common/Input/Textarea';
 import Nodata from '../common/Nodata';
 import type Option from '@/src/types/Option';
 import { capitalize } from 'lodash-es';
+import useWindowDimensions from '@/src/hooks/useWindowDimension';
 
 const Form = FormProvider;
 
@@ -607,6 +608,7 @@ const FormTagsInput = ({
   title,
   ...props
 }: FormTagsInputProps) => {
+  const { width } = useWindowDimensions();
   const tags = useMemo(
     () =>
       data && data.data?.length
@@ -751,9 +753,9 @@ const FormTagsInput = ({
             <Modal
               isOpen={isOpen}
               onOpenChange={onOpenChange}
-              placement='top-center'
+              placement={width > 400 ? 'top-center' : 'center'}
               size='2xl'
-              className='max-h-[600px] overflow-y-scroll'
+              className='z-[100] pointer-events-auto'
             >
               <ModalContent>
                 {(onClose) => (
@@ -761,7 +763,7 @@ const FormTagsInput = ({
                     <ModalHeader className='flex flex-col gap-1'>
                       Tags
                     </ModalHeader>
-                    <ModalBody>
+                    <ModalBody className='400px:max-h-[600px] max-h-[500px]  overflow-y-scroll'>
                       {data && data.data.length > 0 ? (
                         data.data.map((tagGroup: TagGroup) => (
                           <div key={tagGroup.groupId}>
@@ -770,7 +772,7 @@ const FormTagsInput = ({
                             </h3>
                             <div
                               className={clsx(
-                                'grid grid-cols-4 gap-2 my-2 [&_.checkbox-title]:text-s',
+                                'grid 400px:grid-cols-4 grid-cols-2 gap-2 my-2 [&_.checkbox-title]:text-sm',
                               )}
                             >
                               {tagGroup.tags.map((tag: TagItem) => (
@@ -796,13 +798,13 @@ const FormTagsInput = ({
                     </ModalBody>
                     <ModalFooter>
                       <UIButton
-                        color='danger'
+                        color='default'
                         variant='flat'
                         onPress={onClose}
                       >
                         Close
                       </UIButton>
-                      <UIButton
+                      {/* <UIButton
                         color='primary'
                         onPress={() => {
                           if (onValueChange) onValueChange();
@@ -810,7 +812,7 @@ const FormTagsInput = ({
                         }}
                       >
                         Search
-                      </UIButton>
+                      </UIButton> */}
                     </ModalFooter>
                   </>
                 )}
@@ -1137,7 +1139,12 @@ const FormSelect = ({
             defaultValue={defaultValue}
           >
             <FormControl>
-              <SelectTrigger className={clsx('w-[180px] h-11', className)}>
+              <SelectTrigger
+                className={clsx(
+                  '400px:w-[180px] w-36 400px:h-11 h-8',
+                  className,
+                )}
+              >
                 <SelectValue
                   placeholder={
                     placeholder ??

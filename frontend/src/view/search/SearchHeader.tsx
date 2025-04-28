@@ -17,6 +17,7 @@ import {
 import { useRouter } from 'next/navigation';
 import debounce from 'lodash.debounce';
 import { optionify } from '@/src/utils/app.util';
+import useWindowDimensions from '@/src/hooks/useWindowDimension';
 
 interface SearchHeaderProps {
   total?: number;
@@ -34,28 +35,35 @@ function SearchHeader({
   const { control, getValues, reset } = form;
   const filters: { [key: string]: any } = getValues();
   const router = useRouter();
+  const { width } = useWindowDimensions();
 
   return (
-    <div className='pb-4 border-b border-b-gray-200 800px:px-0 400px:px-5'>
+    <div className='pb-4 border-b border-b-gray-200 800px:px-0 400px:px-5 px-0'>
       <div className='flex justify-between items-center flex-wrap gap-1'>
-        <div className='flex items-center justify-start gap-4 flex-wrap'>
-          <Button
-            className={clsx('gap-2 text-[17px] font-semibold text-white')}
-            type='submit'
-            color='primary'
-            radius='sm'
-            size='md'
-            startContent={<HiOutlineAdjustmentsHorizontal size={25} />}
-            isLoading={isFetching}
-          >
-            {isFetching ? 'Searching...' : 'Search'}
-          </Button>
+        <div className='flex items-center 400px:justify-start justify-between 400px:gap-4 gap-2 flex-wrap'>
+          {width > 400 && (
+            <Button
+              className={clsx(
+                'gap-2 400px:text-nm text-sm font-semibold text-white',
+              )}
+              type='submit'
+              color='primary'
+              radius='sm'
+              size={width > 400 ? 'md' : 'sm'}
+              startContent={
+                <HiOutlineAdjustmentsHorizontal size={width > 400 ? 25 : 20} />
+              }
+              isLoading={isFetching}
+            >
+              {isFetching ? 'Searching...' : 'Search'}
+            </Button>
+          )}
           <Button
             className={clsx(
-              'text-[17px] !px-3 !bg-orange-100 !text-orange-500 !hover:text-orange-500 !hover:border-orange-500 !hover:shadow-orange-100',
+              '400px:text-nm text-sm !px-3 !bg-orange-100 !text-orange-500 !hover:text-orange-500 !hover:border-orange-500 !hover:shadow-orange-100',
             )}
             radius='sm'
-            size='md'
+            size={width > 400 ? 'md' : 'sm'}
             onClick={() => {
               reset({
                 jobTypeCodes: [],
@@ -75,7 +83,18 @@ function SearchHeader({
           >
             Reset
           </Button>
-          <div className='600px:min-w-[300px] min-w-full'>
+
+          {width <= 400 && (
+            <FormSelect
+              options={optionify(EventSortByCode)}
+              i18nPath='code.sortBy.search'
+              control={control}
+              onValueChange={onValueChange}
+              defaultValue={getValues('sortBy')}
+              name='sortBy'
+            />
+          )}
+          <div className='600px:min-w-[300px] min-w-full 400px:my-0 my-2'>
             <FormInput
               name='keyword'
               leftIcon={<IoSearchOutline size={20} />}
@@ -88,32 +107,36 @@ function SearchHeader({
               )}
             />
           </div>
-          <FormCombobox
-            options={optionify(JobTypeCode)}
-            i18nPath='code.jobType'
-            name='jobTypeCodes'
-            control={control}
-            onValueChange={onValueChange}
-            title='job type'
-          />
+          {width > 400 && (
+            <FormCombobox
+              options={optionify(JobTypeCode)}
+              i18nPath='code.jobType'
+              name='jobTypeCodes'
+              control={control}
+              onValueChange={onValueChange}
+              title='job type'
+            />
+          )}
         </div>
-        <div className='flex items-center justify-start gap-4 400px:mt-3'>
-          <Text
-            content='Sort by:'
-            className='font-light text-gray-500'
-          />
-          <FormSelect
-            options={optionify(EventSortByCode)}
-            i18nPath='code.sortBy.search'
-            control={control}
-            onValueChange={onValueChange}
-            defaultValue={getValues('sortBy')}
-            name='sortBy'
-          />
-        </div>
+        {width > 400 && (
+          <div className='flex items-center justify-start gap-4 400px:mt-3'>
+            <Text
+              content='Sort by:'
+              className='font-light text-gray-500'
+            />
+            <FormSelect
+              options={optionify(EventSortByCode)}
+              i18nPath='code.sortBy.search'
+              control={control}
+              onValueChange={onValueChange}
+              defaultValue={getValues('sortBy')}
+              name='sortBy'
+            />
+          </div>
+        )}
       </div>
 
-      <div className='flex justify-between items-center mt-4 flex-wrap gap-2'>
+      <div className='flex justify-between items-center 400px:mt-4 flex-wrap gap-2'>
         <div className='flex justify-end items-center gap-4'>
           <Text
             content='Suggestion: '

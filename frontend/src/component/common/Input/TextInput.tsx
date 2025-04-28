@@ -27,7 +27,7 @@ function CustomInput(
   return (
     <div
       className={clsx(
-        'text-input-id group-input h-11 bg-white overflow-hidden cursor-pointer shadow-[2px_2px_10px_rgba(0,_0,_0,_0.075)] border  rounded-lg relative flex justify-between pl-1 gap-1 items-center hover:shadow-[0_1px_6px_rgb(0, 111, 238)]  transition-all',
+        'text-input-id group-input 400px:h-11 h-9 bg-white overflow-hidden cursor-pointer shadow-[2px_2px_5px_rgba(0,_0,_0,_0.050)] border rounded-lg relative flex justify-between pl-1 gap-1 items-center hover:shadow-[0_1px_6px_rgb(0, 111, 238)]  transition-all',
         error?.message
           ? 'border-error-main hover:border-error-main'
           : 'border-gray-main hover:border-primary',
@@ -37,7 +37,7 @@ function CustomInput(
       {leftIcon && (
         <span
           className={clsx(
-            'w-1/6 mx-auto dark:text-dark-main ',
+            '400px:w-1/6 w-[12%] mx-auto dark:text-dark-main ',
             styles.center,
             leftIconClassName,
           )}
@@ -59,7 +59,7 @@ function CustomInput(
       {rightIcon && (
         <span
           className={clsx(
-            'w-1/6 mx-auto min-w-[40px] h-full hover:bg-emerald-50 transition-all',
+            '400px:w-1/6 w-[12%] mx-auto min-w-[40px] h-full hover:bg-emerald-50 transition-all',
             styles.center,
           )}
         >

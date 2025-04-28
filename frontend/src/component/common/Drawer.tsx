@@ -5,6 +5,7 @@ import { Drawer as DrawerPrimitive } from 'vaul';
 
 import { Button } from '@nextui-org/button';
 import { cn } from '@/src/utils/app.util';
+import useWindowDimensions from '@/src/hooks/useWindowDimension';
 
 const DrawerBase = ({
   shouldScaleBackground = true,
@@ -119,19 +120,21 @@ interface DrawerProps {
 }
 
 export default function Drawer({ title, description, children }: DrawerProps) {
+  const { width } = useWindowDimensions();
   return (
     <DrawerBase>
       <DrawerTrigger asChild>
         <Button
-          variant='bordered'
-          className='w-[160px] 600px:ml-5'
+          variant='light'
+          className='400px:w-[160px] w-36 600px:ml-5 border border-gray-300 dark:border-gray-600'
           radius='sm'
+          size={width > 400 ? 'md' : 'sm'}
         >
           Open Filter
         </Button>
       </DrawerTrigger>
       <DrawerContent>
-        <div className='mx-auto w-full max-w-xl'>
+        <div className='mx-auto w-full 400px:max-h-auto max-h-[600px] overflow-y-scroll'>
           <DrawerHeader>
             <DrawerTitle>{title}</DrawerTitle>
             <DrawerDescription>{description}</DrawerDescription>
