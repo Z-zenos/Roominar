@@ -274,7 +274,7 @@ export default function Home() {
             onSlideChange={(swipper) => setActiveEvent(swipper.activeIndex)}
           >
             {isUpcomingEventsLoading && (
-              <div className='flex justify-between'>
+              <div className='flex justify-between 400px:gap-0 gap-10'>
                 <EventCardSkeleton
                   direction='vertical'
                   variant='simple'
@@ -298,7 +298,7 @@ export default function Home() {
               upcomingEvents.data.map((event) => (
                 <SwiperSlide
                   key={event.id}
-                  className={clsx('dark:rounded-lg dark:p-0')}
+                  className={clsx('dark:rounded-lg dark:p-0 mt-2')}
                 >
                   <EventCard
                     direction={
@@ -318,7 +318,7 @@ export default function Home() {
           Application Closing Soon Event
           <MdKeyboardDoubleArrowRight size={20} />
         </Link>
-        <div className='border-l border-l-warning'>
+        <div className='400px:border-l 400px:border-l-warning'>
           <Swiper
             key={width > 1200 ? 2 : 1}
             autoplay={{
@@ -354,9 +354,10 @@ export default function Home() {
                   className={clsx('dark:rounded-lg dark:p-0')}
                 >
                   <EventCard
-                    direction='horizontal'
+                    direction={width <= 400 ? 'vertical' : 'horizontal'}
                     event={event}
                     variant='standard'
+                    className='mt-2'
                   />
                 </SwiperSlide>
               ))}
@@ -365,16 +366,16 @@ export default function Home() {
       </section>
 
       {/* === ORGANIZATION SECTION === */}
-      <section className='px-[15%] mb-7'>
+      <section className='400px:px-[15%] px-[5%] mb-7 400px:mt-0 mt-4'>
         <div className='flex flex-wrap justify-between items-start gap-10 1200px:flex-row flex-col'>
           <div className='1200px:w-[70%] w-full'>
-            <h2 className='text-xl text-primary font-semibold flex justify-start items-center gap-2'>
+            <h2 className='400px:text-xl text-lg text-primary font-semibold flex justify-start items-center gap-2'>
               Organization <GoOrganization />
             </h2>
-            <h3 className='text-xm text-gray-600 font-light'>
+            <h3 className='400px:text-xm text-md text-gray-600 font-light'>
               Follow us to receive the latest news from the organization.
             </h3>
-            <div className='grid items-center gap-4 mt-6 1200px:grid-cols-3 grid-cols-2 '>
+            <div className='grid items-center gap-4 mt-6 1200px:grid-cols-3 400px:grid-cols-2 grid-cols-1'>
               {randomOrganizations &&
                 randomOrganizations.data?.length > 0 &&
                 randomOrganizations.data.map((organization, i) => (
@@ -392,9 +393,9 @@ export default function Home() {
                 </>
               )}
             </div>
-            <div className='flex justify-between gap-2 items-center bg-info-sub mt-8 rounded-md px-10 py-8'>
+            <div className='flex 400px:flex-row flex-col justify-between gap-2 items-center bg-info-sub 400px:mt-8 mt-4 rounded-md 400px:px-10 p-4 400px:py-8'>
               <div>
-                <h3 className='font-semibold text-xm text-info-main'>
+                <h3 className='font-semibold 400px:text-xm text-md text-info-main'>
                   Start an event with Roominar
                 </h3>
                 <p className='font-light opacity-75'>
@@ -413,16 +414,16 @@ export default function Home() {
             </div>
           </div>
           <div className='1200px:w-[25%] w-full'>
-            <h2 className='text-xl flex justify-end gap-1 items-center text-warning-main font-semibold'>
+            <h2 className='400px:text-xl text-lg flex justify-end gap-1 items-center text-warning-main font-semibold'>
               Ranking <PiRankingFill />
             </h2>
-            <div className='flex gap-5 items-center justify-between  w-full pt-8'>
+            <div className='flex gap-5 items-center justify-between w-full pt-8'>
               <RankingList
                 data={tagRankData?.tags}
                 title='Tags'
               />
             </div>
-            <div className='flex gap-5 items-center justify-between  w-full pt-8'>
+            <div className='flex gap-5 items-center justify-between w-full pt-8'>
               <RankingList
                 data={eventRankData?.events}
                 title='Events'
@@ -436,12 +437,12 @@ export default function Home() {
       </section>
 
       {/* === SPEAKER SECTION === */}
-      <section className='pb-[40px] px-[15%]'>
+      <section className='pb-[40px] 400px:px-[15%] px-[5%]'>
         <div>
-          <h2 className='text-xl text-purple-main font-semibold flex justify-start items-center gap-2'>
+          <h2 className='400px:text-xl text-lg text-purple-main font-semibold flex justify-start items-center gap-2'>
             Speaker <GiMicrophone />
           </h2>
-          <h3 className='text-xm text-gray-600 font-light'>
+          <h3 className='400px:text-xm text-md text-gray-600 font-light'>
             Inspiring insights from visionary Speaker.
           </h3>
           <div className='flex gap-5 items-center justify-between mt-6 flex-wrap'>
