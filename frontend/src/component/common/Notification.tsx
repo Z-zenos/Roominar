@@ -80,7 +80,7 @@ export function NotificationItem({
       </div>
 
       {/* Content */}
-      <div className='flex-1 text-sm text-gray-700'>
+      <div className='flex-1 text-sm text-gray-700 text-left'>
         <div
           className={clsx(
             isRead ? 'text-gray-500' : 'font-semibold text-gray-900',
