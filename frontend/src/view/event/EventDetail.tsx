@@ -19,7 +19,6 @@ import {
 } from '@nextui-org/react';
 import {
   FaChevronDown,
-  FaChevronUp,
   FaFacebookSquare,
   FaInstagram,
   FaLinkedin,
@@ -122,7 +121,6 @@ function EventDetail({ slug }: EventDetailProps) {
 
   const { width } = useWindowDimensions();
 
-  const [showMore, setShowMore] = useState<boolean>(false);
   const [isCopied, setIsCopied] = useState<boolean>(false);
 
   const sectionNavigationMenuRef = useRef<HTMLDivElement>(null);
@@ -176,7 +174,7 @@ function EventDetail({ slug }: EventDetailProps) {
   return isLoading && !event ? (
     <DotLoader />
   ) : (
-    <div className='w-full'>
+    <div className='w-full overflow-hidden'>
       <Head
         description='Detail information about specific event'
         keywords='Foreign Language,Webinar,Event,Sharing,Seminar,Ticket'
@@ -184,7 +182,7 @@ function EventDetail({ slug }: EventDetailProps) {
       />
       <div
         className={clsx(
-          'dark:bg-dark-sub w-full py-14 px-[15%] relative flex-wrap',
+          'dark:bg-dark-sub w-full 400px:py-14 py-8 400px:px-[15%] px-[5%] relative flex-wrap',
           styles.between,
         )}
       >
@@ -202,11 +200,11 @@ function EventDetail({ slug }: EventDetailProps) {
         </div>
         <div
           className={clsx(
-            'flex flex-col gap-7',
-            width > 1200 ? 'w-[70%]' : 'w-full mb-8',
+            'flex flex-col 400px:gap-7 gap-4',
+            width > 1200 ? 'w-[70%]' : 'w-full 400px:mb-8 mb-4',
           )}
         >
-          <div className='flex justify-between flex-wrap gap-4 w-[90%]'>
+          <div className='flex justify-between flex-wrap gap-4 400px:w-[90%] w-full'>
             <Breadcrumbs color='primary'>
               <BreadcrumbItem
                 className='hover:underline'
@@ -238,8 +236,10 @@ function EventDetail({ slug }: EventDetailProps) {
             classNames={{ wrapper: '!max-w-full' }}
             alt='Event banner image'
           />
-          <h2 className='text-primary font-bold text-xl'>{event?.name}</h2>
-          <div className={clsx(styles.flexStart, 'gap-2')}>
+          <h2 className='text-primary font-bold 400px:text-xl text-xm'>
+            {event?.name}
+          </h2>
+          <div className={clsx(styles.flexStart, 'gap-2 flex-wrap')}>
             {event?.tags.map((tag: TagItem) => (
               <Badge
                 title={tag.name}
@@ -254,13 +254,12 @@ function EventDetail({ slug }: EventDetailProps) {
           <div
             className={clsx(
               'bg-white shadow-[rgba(0,_0,_0,_0.05)_0px_6px_24px_0px,_rgba(0,_0,_0,_0.08)_0px_0px_0px_1px] border p-4 border-gray-100 rounded-md flex items-center gap-6',
-              width > 1200 ? 'flex-col' : 'flex-row justify-between',
+              width > 1200 || width <= 400
+                ? 'flex-col'
+                : 'flex-row justify-between',
             )}
           >
             <div>
-              <h4 className='text-green-500 font-semibold text-md'>
-                Social Media Share
-              </h4>
               <div
                 className={clsx(styles.between, 'mt-4 [&>*]:cursor-pointer')}
               >
@@ -316,7 +315,7 @@ function EventDetail({ slug }: EventDetailProps) {
               </div>
               <Button
                 color='primary'
-                className='my-3 mx-auto w-[160px] font-semibold'
+                className='400px:my-3 mt-3 mx-auto w-[160px] font-semibold'
                 radius='none'
                 onClick={() => {
                   if (
@@ -369,7 +368,7 @@ function EventDetail({ slug }: EventDetailProps) {
 
       <div
         className={clsx(
-          'dark:bg-dark-sub w-full py-14 px-[15%] relative flex-wrap flex justify-between items-start',
+          'dark:bg-dark-sub w-full 400px:py-14 py-6 400px:px-[15%] px-[5%] relative flex-wrap flex justify-between items-start',
         )}
       >
         <div
@@ -380,7 +379,7 @@ function EventDetail({ slug }: EventDetailProps) {
         >
           {/* === Timeline === */}
           <div>
-            <h3 className='font-semibold text-lg border-b border-b-gray-400'>
+            <h3 className='font-semibold 400px:text-lg text-xm border-b border-b-gray-400'>
               General Timeline
             </h3>
 
@@ -394,7 +393,9 @@ function EventDetail({ slug }: EventDetailProps) {
 
           {/* === LOCATION === */}
           <div>
-            <h3 className='font-semibold text-lg '>Offline address</h3>
+            <h3 className='font-semibold 400px:text-lg text-xm'>
+              Offline address
+            </h3>
             <div className='mt-3'>
               {/* https://maps.google.com/?saddr=Current+Location&daddr=${lat},${lng} */}
               <p className='font-light'>{event?.organizationAddress}</p>
@@ -411,35 +412,17 @@ function EventDetail({ slug }: EventDetailProps) {
 
           {/* === DESCRIPTION === */}
           <div>
-            <h3 className='font-semibold text-lg border-b border-b-gray-400'>
+            <h3 className='font-semibold 400px:text-lg text-xm border-b border-b-gray-400'>
               About this event
             </h3>
             <div className='mt-3'>
-              <p
-                className={clsx(
-                  'font-light line-clamp-6',
-                  showMore
-                    ? 'line-clamp-none'
-                    : ' overflow-hidden gradient-mask-b-0',
-                )}
-              >
-                {event?.description}
-              </p>
-              <Button
-                color='primary'
-                className={clsx('flex justify-start items-center gap-2 mt-3')}
-                onClick={() => setShowMore(!showMore)}
-                variant='light'
-                radius='sm'
-              >
-                Show more {!showMore ? <FaChevronDown /> : <FaChevronUp />}
-              </Button>
+              <p className='font-light'>{event?.description}</p>
             </div>
           </div>
 
           {/* === Detail Schedule === */}
           <div>
-            <h3 className='font-semibold text-lg border-b border-b-gray-400'>
+            <h3 className='font-semibold 400px:text-lg text-xm border-b border-b-gray-400'>
               Detail Schedule
             </h3>
             <div className='mt-3'>
@@ -471,7 +454,9 @@ function EventDetail({ slug }: EventDetailProps) {
 
           {/* === Refund Policy === */}
           <div>
-            <h3 className='font-semibold text-lg '>Refund Policy</h3>
+            <h3 className='font-semibold 400px:text-lg text-xm'>
+              Refund Policy
+            </h3>
             <div className='mt-3'>
               <p className='font-light'>No refund policy</p>
             </div>
@@ -479,7 +464,7 @@ function EventDetail({ slug }: EventDetailProps) {
 
           {/* === Speaker === */}
           <div>
-            <h3 className='font-semibold text-lg border-b border-b-gray-400'>
+            <h3 className='font-semibold 400px:text-lg text-xm border-b border-b-gray-400'>
               Speaker
             </h3>
 
@@ -500,7 +485,7 @@ function EventDetail({ slug }: EventDetailProps) {
             <h3
               className={clsx(
                 styles.flexStart,
-                'gap-2 text-lg font-semibold text-primary',
+                'gap-2 400px:text-lg text-xm font-semibold text-primary',
               )}
             >
               <GoOrganization />
@@ -540,7 +525,7 @@ function EventDetail({ slug }: EventDetailProps) {
                   {event?.organizationDescription}
                 </p>
 
-                <h3 className='font-semibold text-gray-700 text-nm cursor-pointer my-3'>
+                <h3 className='font-semibold text-gray-700 text-nm cursor-pointer 400px:my-3 my-2'>
                   Events ({event?.organizationEventNumber ?? 0})
                 </h3>
                 {topOrganizationEventsData &&
@@ -548,7 +533,7 @@ function EventDetail({ slug }: EventDetailProps) {
                     (topOrganizationEvent) => (
                       <div
                         key={`toe-${topOrganizationEvent.id}`}
-                        className='flex justify-start gap-3 my-6 items-start cursor-pointer'
+                        className='flex justify-start gap-3 400px:my-6 my-3 items-start cursor-pointer'
                         onClick={() => router.push(topOrganizationEvent?.slug)}
                       >
                         <Image
@@ -563,7 +548,7 @@ function EventDetail({ slug }: EventDetailProps) {
                             {topOrganizationEvent.name}
                           </h3>
                           <p className='text-ss font-light opacity-65'>
-                            Start at
+                            Start at{' '}
                             {formatEventDate(topOrganizationEvent.startAt)}
                           </p>
                         </div>
@@ -589,7 +574,7 @@ function EventDetail({ slug }: EventDetailProps) {
             <h3
               className={clsx(
                 styles.flexStart,
-                'gap-2 text-lg font-semibold text-orange-500 mt-5',
+                'gap-2 400px:text-lg text-xm font-semibold text-orange-500 mt-5',
               )}
             >
               <GiPartyPopper />
@@ -619,7 +604,7 @@ function EventDetail({ slug }: EventDetailProps) {
                       className={clsx('dark:rounded-lg dark:p-0')}
                     >
                       <div
-                        className='mt-3 border border-gray-200 shadow-sm p-2 cursor-pointer'
+                        className='mt-3 400px:border border-gray-200 shadow-sm p-2 cursor-pointer'
                         onClick={() => router.push(relatedEventPair[0]?.slug)}
                       >
                         <Image
@@ -632,14 +617,14 @@ function EventDetail({ slug }: EventDetailProps) {
                             {relatedEventPair[0]?.name}
                           </h3>
                           <p className='text-ss font-light opacity-65'>
-                            Start at
+                            Start at{' '}
                             {formatEventDate(relatedEventPair[0]?.startAt)}
                           </p>
                         </div>
                       </div>
 
                       <div
-                        className='mt-3 border border-gray-200 shadow-sm p-2 cursor-pointer'
+                        className='mt-3 400px:border border-gray-200 shadow-sm p-2 cursor-pointer'
                         onClick={() => router.push(relatedEventPair[1]?.slug)}
                       >
                         <Image
@@ -652,7 +637,7 @@ function EventDetail({ slug }: EventDetailProps) {
                             {relatedEventPair[1]?.name}
                           </h3>
                           <p className='text-ss font-light opacity-65'>
-                            Start at
+                            Start at{' '}
                             {formatEventDate(relatedEventPair[1]?.startAt)}
                           </p>
                         </div>
