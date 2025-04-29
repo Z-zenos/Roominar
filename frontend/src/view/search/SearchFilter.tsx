@@ -20,21 +20,27 @@ import {
 } from '@/src/lib/api/generated';
 import { useListingTagsQuery } from '@/src/api/tag.api';
 import { optionify } from '@/src/utils/app.util';
+import { Button } from '@nextui-org/react';
+import useWindowDimensions from '@/src/hooks/useWindowDimension';
+import { HiOutlineAdjustmentsHorizontal } from 'react-icons/hi2';
 
 interface SearchFilterProps {
   className?: string;
   control: Control<EventsApiSearchEventsRequest>;
   onValueChange: (data: EventsApiSearchEventsRequest) => void;
+  isFetching?: boolean;
 }
 
 function SearchFilter({
   className,
   control,
   onValueChange,
+  isFetching,
 }: SearchFilterProps) {
   const [showMoreIndustryCodes, setShowMoreIndustryCodes] =
     useState<boolean>(false);
   const { data: tagData } = useListingTagsQuery();
+  const { width } = useWindowDimensions();
 
   return (
     <div
@@ -131,6 +137,26 @@ function SearchFilter({
           onValueChange={onValueChange}
         />
       </FilterBox>
+
+      {width <= 400 && (
+        <div className='flex justify-center my-2'>
+          <Button
+            className={clsx(
+              'gap-2 400px:text-nm text-sm font-semibold text-white',
+            )}
+            type='submit'
+            color='primary'
+            radius='sm'
+            size='md'
+            startContent={
+              <HiOutlineAdjustmentsHorizontal size={width > 400 ? 25 : 20} />
+            }
+            isLoading={isFetching}
+          >
+            {isFetching ? 'Searching...' : 'Search'}
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

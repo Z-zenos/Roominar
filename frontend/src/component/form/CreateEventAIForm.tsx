@@ -564,9 +564,6 @@ export default function CreateEventAIForm() {
                     // Convert editor state to string representation for storage
                     const editorStateJSON = JSON.stringify(editorState);
 
-                    // You can now use this JSON string in your form
-                    console.log('Editor content changed:', editorStateJSON);
-
                     // For example, set it in a hidden field or in your form state
                     form.setValue('description', editorStateJSON);
                   }}

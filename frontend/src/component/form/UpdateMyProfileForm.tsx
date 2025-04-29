@@ -88,7 +88,7 @@ export default function UpdateMyProfileForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleUpdateMyProfile)}
-        className='lg:w-[800px] w-full mx-auto'
+        className='lg:w-[800px] w-full mx-auto 400px:px-0 px-[5%]'
       >
         <div
           className={clsx(styles.between, 'py-5 border-b border-b-slate-300')}
@@ -111,11 +111,11 @@ export default function UpdateMyProfileForm() {
         <div className='w-full mt-10'>
           <div
             className={clsx(
-              'grid gap-8 items-center',
+              'grid 400px:gap-8 gap-4 items-center',
               width < 1000 ? 'grid-cols-1' : 'grid-cols-2',
             )}
           >
-            <div className='self-start'>
+            <div className='self-start 400px:col-span-1 col-span-2'>
               <FormInput
                 id='firstName'
                 name='firstName'
@@ -129,7 +129,7 @@ export default function UpdateMyProfileForm() {
                 showError={true}
               />
             </div>
-            <div className='self-start'>
+            <div className='self-start 400px:col-span-1 col-span-2'>
               <FormInput
                 id='lastName'
                 name='lastName'
@@ -143,7 +143,7 @@ export default function UpdateMyProfileForm() {
                 showError={true}
               />
             </div>
-            <div className='self-start'>
+            <div className='self-start 400px:col-span-1 col-span-2'>
               <FormInput
                 id='workplaceName'
                 name='workplaceName'
@@ -162,7 +162,7 @@ export default function UpdateMyProfileForm() {
                 }
               />
             </div>
-            <div className='self-start'>
+            <div className='self-start 400px:col-span-1 col-span-2'>
               <FormInput
                 id='phone'
                 name='phone'
@@ -181,7 +181,7 @@ export default function UpdateMyProfileForm() {
                 }
               />
             </div>
-            <div className='self-start'>
+            <div className='self-start 400px:col-span-1 col-span-2'>
               <FormCustomLabel
                 htmlFor='avatarUrl'
                 label='avatarUrl'
@@ -194,7 +194,7 @@ export default function UpdateMyProfileForm() {
               />
             </div>
             &nbsp;
-            <div className='self-start'>
+            <div className='self-start 400px:col-span-1 col-span-2'>
               <FormCombobox
                 label='jobTypeCode'
                 options={optionify(JobTypeCode)}
@@ -210,7 +210,7 @@ export default function UpdateMyProfileForm() {
                 )}
               />
             </div>
-            <div className='self-start'>
+            <div className='self-start 400px:col-span-1 col-span-2'>
               <FormCombobox
                 label='industryCode'
                 options={optionify(IndustryCode)}

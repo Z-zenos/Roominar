@@ -9,9 +9,22 @@ interface TextProps extends DOMAttributes<HTMLDivElement> {
   className?: string;
 }
 
-export default function Text({ content, display = 'block', className, children, ...props }: TextProps) {
+export default function Text({
+  content,
+  display = 'block',
+  className,
+  children,
+  ...props
+}: TextProps) {
   return (
-    <div className={clsx('text-dark-main dark:text-white font-[500] font-Poppins', display, className)} {...props}>
+    <div
+      className={clsx(
+        'text-dark-main dark:text-white font-[500] font-Poppins 400px:text-md text-sm',
+        display,
+        className,
+      )}
+      {...props}
+    >
       {content}
       {children}
     </div>

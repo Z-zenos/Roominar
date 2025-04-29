@@ -20,7 +20,7 @@ export default function RootLayout({ children }) {
       <div className='flex 1400px:px-[15%] px-0 w-full'>
         <SidebarProvider open={width > 1200 ? true : false}>
           <AudienceSidebar />
-          <SidebarInset>
+          <SidebarInset className='400px:overflow-auto overflow-hidden'>
             <header className='flex h-16 shrink-0 items-center gap-2'>
               <div className='flex items-center gap-2 px-4'>
                 <SidebarTrigger className='-ml-1' />
@@ -30,8 +30,8 @@ export default function RootLayout({ children }) {
                 />
               </div>
             </header>
-            <div className='flex flex-1 flex-col gap-4 p-4 pt-0'>
-              <div className='rounded-xl bg-muted/50'>{children}</div>
+            <div className='flex flex-1 flex-col gap-4 p-4 400px:px-4 px-0'>
+              <div className='rounded-xl 400px:bg-muted/50'>{children}</div>
             </div>
           </SidebarInset>
         </SidebarProvider>

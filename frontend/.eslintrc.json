@@ -45,7 +45,8 @@
     "overrides": [
         {
             "files": [
-                "public/firebase-messaging-sw.js"
+                "public/firebase-messaging-sw.js",
+                "public/pwa-sw.js"
             ],
             "parserOptions": {
                 "ecmaVersion": 2020,

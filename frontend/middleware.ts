@@ -123,7 +123,8 @@ export default async function middleware(
     request.nextUrl.pathname === '/healthcheck' ||
     request.nextUrl.pathname.startsWith('/_next/') ||
     request.nextUrl.pathname.startsWith('/api/') ||
-    request.nextUrl.pathname === '/firebase-messaging-sw.js'
+    request.nextUrl.pathname === '/firebase-messaging-sw.js' ||
+    request.nextUrl.pathname === '/pwa-sw.js'
   ) {
     return NextResponse.next();
   }
@@ -157,8 +158,9 @@ export default async function middleware(
 }
 
 // Matcher configuration
+// Update the matcher config at the bottom of the file
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico|static|icons|images|svg|firebase-messaging-sw.js).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|static|icons|images|svg|firebase-messaging-sw.js|manifest.json|pwa-sw.js|workbox-*.js).*)',
   ],
 };

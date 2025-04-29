@@ -89,8 +89,39 @@
 ### 8. Test run frontend.
 
 - In frontend folder
+
   ```bash
     pnpm dev
+  ```
+
+- In order to open web in other devices like (laptop, mobile), you need add your IPv4 to main.py file origin cors and
+  change NEXT_PUBLIC_API_URL in .env. Example:
+
+  ```python
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[
+            "http://localhost:3000",
+            "http://localhost:3001",
+            "http://192.x.x.x:3000",
+        ],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+        expose_headers=["content-disposition"],
+    )
+  ```
+
+  and
+
+  ```typescript
+    NEXT_PUBLIC_API_URL=http://x.x.x.x:8000
+  ```
+
+  Run this command to access in other devices:
+
+  ```bash
+    pnpm run dev -- -H 0.0.0.0 -p 3000
   ```
 
 ### 9. Run Stripe CLI

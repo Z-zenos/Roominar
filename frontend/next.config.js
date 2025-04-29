@@ -1,5 +1,11 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const withNextIntl = require('next-intl/plugin')();
+const withPWA = require('next-pwa')({
+  dest: 'public',
+  register: true,
+  skipWaiting: true,
+  disable: process.env.NODE_ENV === 'development',
+});
 
 const IMAGE_DOMAINS = process.env.NEXT_PUBLIC_IMAGE_DOMAINS;
 /** @type {import("next").NextConfig} */
@@ -21,4 +27,5 @@ const nextConfig = {
     ],
   },
 };
-module.exports = withNextIntl(nextConfig);
+
+module.exports = withPWA(withNextIntl(nextConfig));

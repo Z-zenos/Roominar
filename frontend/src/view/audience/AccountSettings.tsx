@@ -11,9 +11,9 @@ import { MdOutlineSecurity } from 'react-icons/md';
 
 function AccountSetting() {
   return (
-    <div className='1400px:px-[15%] px-0 w-full'>
+    <div className='1400px:px-[15%] px-[5%] 400px:py-0 py-4 w-full overflow-hidden'>
       <div className='lg:w-[800px] w-full mx-auto mt-4'>
-        <Alert>
+        <Alert className='w-full'>
           <MdOutlineSecurity className='h-5 w-5' />
           <AlertTitle>Login & Security</AlertTitle>
           <AlertDescription className='font-light opacity-60 text-sm'>
