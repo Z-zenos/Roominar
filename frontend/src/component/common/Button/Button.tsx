@@ -10,9 +10,12 @@ export const buttonVariants = cva(
     variants: {
       variant: {
         default: 'bg-primary text-primary-foreground hover:bg-primary/90',
-        destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
-        outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
-        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        destructive:
+          'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+        outline:
+          'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
+        secondary:
+          'bg-secondary text-secondary-foreground hover:bg-secondary/80',
         ghost: 'hover:bg-accent hover:text-accent-foreground',
         link: 'text-primary underline-offset-4 hover:underline',
       },
@@ -62,9 +65,11 @@ function CustomButton(
       className={clsx(
         'px-6 py-2 rounded-md font-bold transition-all duration-200 flex items-center justify-center flex-wrap gap-2 border-2 active:shadow-none hover:shadow-[rgba(6,_24,_44,_0.4)_0px_0px_0px_2px,_rgba(6,_24,_44,_0.65)_0px_4px_6px_-1px,_rgba(255,_255,_255,_0.08)_0px_1px_0px_inset]',
         props.disabled && '!bg-gray-main disabled:pointer-events-none',
-        outline && 'transparent text-primary border-primary hover:bg-gray-100 dark:hover:text-dark-main',
+        outline &&
+          'transparent text-primary border-primary hover:bg-gray-100 dark:hover:text-dark-main',
         !border && 'border-none hover:border-none hover:shadow-none',
-        paint ?? 'bg-primary border-transparent text-white hover:bg-white hover:text-primary hover:border-primary',
+        paint ??
+          'bg-primary border-transparent text-white hover:bg-white hover:text-primary hover:border-primary',
         className,
       )}
       ref={ref}

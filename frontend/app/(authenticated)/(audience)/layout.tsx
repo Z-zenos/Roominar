@@ -30,8 +30,8 @@ export default function RootLayout({ children }) {
                 />
               </div>
             </header>
-            <div className='flex flex-1 flex-col gap-4 p-4 pt-0'>
-              <div className='rounded-xl bg-muted/50'>{children}</div>
+            <div className='flex flex-1 flex-col gap-4 p-4 400px:px-4 px-0'>
+              <div className='rounded-xl 400px:bg-muted/50'>{children}</div>
             </div>
           </SidebarInset>
         </SidebarProvider>

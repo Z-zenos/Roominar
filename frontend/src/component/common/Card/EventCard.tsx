@@ -71,7 +71,7 @@ function EventCard({
       className={clsx(
         '400px:rounded-lg 400px:shadow-[rgba(60,_64,_67,_0.15)_0px_1px_1px_0px,_rgba(60,_64,_67,_0.15)_0px_2px_4px_2px] active:shadow-none transition-all',
         direction === 'vertical'
-          ? 'min-w-[300px] w-[300px] 600px:max-w-[400px] max-w-[300px] border-t-gray-300 400px:border-t border-t-2'
+          ? 'min-w-[300px] w-[300px] 600px:max-w-[400px] max-w-[300px] border-t-gray-300 400px:border-t'
           : 'border border-gray-200 items-start px-3',
         variant === 'compact' ? 'py-0 bg-transparent' : 'py-3 bg-white',
         className,

@@ -473,8 +473,6 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
 
   if (isGetDraftEventLoading) return <DotLoader />;
 
-  console.log(form.formState.errors);
-
   return (
     <Sheet>
       <Form {...form}>

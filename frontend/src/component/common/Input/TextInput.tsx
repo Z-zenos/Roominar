@@ -48,7 +48,7 @@ function CustomInput(
       <input
         className={clsx(
           'w-full border-none focus:ring-0 rounded-lg h-full outline-none px-0 transition-all text-sm dark:bg-white dark:text-darma',
-          (leftIcon || rightIcon) && 'w-5/6',
+          (leftIcon || rightIcon) && '400px:w-5/6 w-[88%]',
           leftIcon && rightIcon && 'w-2/3',
           !leftIcon && !rightIcon && 'w-full px-2',
           rightIcon && '!px-2',
@@ -59,7 +59,7 @@ function CustomInput(
       {rightIcon && (
         <span
           className={clsx(
-            '400px:w-1/6 w-[12%] mx-auto min-w-[40px] h-full hover:bg-emerald-50 transition-all',
+            '400px:w-1/6 w-[12%] mx-auto 400px:min-w-[40px] h-full hover:bg-emerald-50 transition-all',
             styles.center,
           )}
         >
