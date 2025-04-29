@@ -20,7 +20,7 @@ export default function RootLayout({ children }) {
       <div className='flex 1400px:px-[15%] px-0 w-full'>
         <SidebarProvider open={width > 1200 ? true : false}>
           <AudienceSidebar />
-          <SidebarInset>
+          <SidebarInset className='400px:overflow-auto overflow-hidden'>
             <header className='flex h-16 shrink-0 items-center gap-2'>
               <div className='flex items-center gap-2 px-4'>
                 <SidebarTrigger className='-ml-1' />

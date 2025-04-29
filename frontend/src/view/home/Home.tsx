@@ -198,8 +198,8 @@ export default function Home() {
             pagination={{
               clickable: true,
             }}
-            slidesPerView={width > 1200 ? 5 : 3}
-            spaceBetween={30}
+            slidesPerView={width <= 400 ? 1 : width > 1200 ? 5 : 3}
+            spaceBetween={width > 400 ? 30 : 0}
             wrapperClass='pb-2'
             onSlideChange={(swipper) => setActiveEvent(swipper.activeIndex)}
           >
@@ -231,7 +231,9 @@ export default function Home() {
                   className={clsx('dark:rounded-lg dark:p-0')}
                 >
                   <EventCard
-                    direction={width > 800 ? 'vertical' : 'horizontal'}
+                    direction={
+                      width > 800 || width <= 400 ? 'vertical' : 'horizontal'
+                    }
                     event={event}
                     variant='compact'
                     className='!max-w-[250px] !min-w-[200px] !max-h-[200px]'
