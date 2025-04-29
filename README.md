@@ -118,6 +118,12 @@
     NEXT_PUBLIC_API_URL=http://x.x.x.x:8000
   ```
 
+  Run this command to access in other devices:
+
+  ```bash
+    pnpm run dev -- -H 0.0.0.0 -p 3000
+  ```
+
 ### 9. Run Stripe CLI
 
 - Get `STRIPE_SECRET_KEY` from Stripe Dashboard Developer API Key.

@@ -8,7 +8,6 @@ from backend.core.constants import (
     EventStatusCode,
     TagAssociationEntityCode,
 )
-from backend.models.application import Application
 from backend.models.bookmark import Bookmark
 from backend.models.event import Event
 from backend.models.organization import Organization
@@ -77,14 +76,6 @@ async def search_events(
         )
         .join(Organization, Event.organization_id == Organization.id)
         .outerjoin(Target, Event.target_id == Target.id)
-        .outerjoin(Application, Application.event_id == Event.id)
-        .outerjoin(
-            TagAssociation,
-            and_(
-                TagAssociation.entity_id == Event.id,
-                TagAssociation.entity_code == TagAssociationEntityCode.EVENT,
-            ),
-        )
         .outerjoin(EventTag, Event.id == EventTag.c.event_id)
         .outerjoin(SoldTicketsNumber, Event.id == SoldTicketsNumber.c.event_id)
     )
@@ -127,17 +118,11 @@ def count_events(
     query = (
         select(func.count(Event.id.distinct()))
         .join(Organization, Event.organization_id == Organization.id)
-        .join(Target, Event.target_id == Target.id)
-        .outerjoin(
-            TagAssociation,
-            and_(
-                Event.id == TagAssociation.entity_id,
-                TagAssociation.entity_code == TagAssociationEntityCode.EVENT,
-            ),
-        )
+        .outerjoin(Target, Event.target_id == Target.id)
         .where(and_(*filters["conditions"]))
     )
-    total = db.scalars(query).one()
+
+    total = db.scalar(query) or 0
 
     return total
 
@@ -194,7 +179,15 @@ def _build_filters_sort(query_params: SearchEventsQueryParams):
         filters.append(Event.organize_city_code.in_(query_params.city_codes))
 
     if query_params.tags:
-        filters.append(TagAssociation.tag_id.in_(query_params.tags))
+        event_tags_subquery = (
+            select(TagAssociation.entity_id)
+            .where(
+                TagAssociation.entity_code == TagAssociationEntityCode.EVENT,
+                TagAssociation.tag_id.in_(query_params.tags),
+            )
+            .distinct()
+        )
+        filters.append(Event.id.in_(event_tags_subquery))
 
     if query_params.start_at_from:
         filters.append(Event.start_at.cast(Date) >= query_params.start_at_from.date())
