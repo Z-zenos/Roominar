@@ -182,11 +182,13 @@ export const useDeleteCheckInMutation = <T>(
 
 export const useGetDraftEventQuery = (
   params?: EventsApiGetDraftEventRequest,
+  enabled?: boolean,
 ) => {
   const api = useApi();
   return useQuery({
     queryKey: ['get-draft-event'],
     queryFn: async () => await api.events.getDraftEvent(params),
+    enabled,
   });
 };
 

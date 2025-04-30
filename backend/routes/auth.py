@@ -24,6 +24,7 @@ from backend.schemas.auth import (
     ForgotPasswordRequest,
     ForgotPasswordResponse,
     GetMeResponse,
+    LoginRequest,
     LogoutRequest,
     RegisterAudienceRequest,
     RegisterAudienceResponse,
@@ -31,7 +32,6 @@ from backend.schemas.auth import (
     ResetPasswordRequest,
     SocialAuthRequest,
     TokenResponse,
-    UserLoginRequest,
     VerifyAudienceRequest,
 )
 
@@ -41,7 +41,7 @@ router = APIRouter()
 @router.post("/login", responses=public_api_responses, response_model=TokenResponse)
 async def login(
     db: Session = Depends(get_read_db),
-    request: UserLoginRequest = None,
+    request: LoginRequest = None,
     user_agent: str = Header(None),
 ) -> TokenResponse:
     user = auth_service.authenticate_user(db, **request.model_dump())
@@ -132,6 +132,8 @@ async def me(
             tags=tags_service.get_tag_association(
                 db, current_user.id, TagAssociationEntityCode.USER
             ),
+            organization_name=current_user.organization_name,
+            organization_avatar_url=current_user.organization_avatar_url,
         )
     )
 

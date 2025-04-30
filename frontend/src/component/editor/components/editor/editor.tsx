@@ -52,11 +52,15 @@ import MentionsPlugin from './plugins/MentionsPlugin';
 import type { EditorState } from 'lexical';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 
+interface EditorProps {
+  onChange?: (editorState: EditorState) => void;
+  onAutoGenerate?: () => void;
+}
+
 export default function Editor({
   onChange,
-}: {
-  onChange?: (editorState: EditorState) => void;
-}): JSX.Element {
+  onAutoGenerate,
+}: EditorProps): JSX.Element {
   const { historyState } = useSharedHistoryContext();
   const {
     settings: {
@@ -190,7 +194,10 @@ export default function Editor({
           </>
         )}
         <div>{showTableOfContents && <TableOfContentsPlugin />}</div>
-        <ActionsPlugin isRichText={isRichText} />
+        <ActionsPlugin
+          isRichText={isRichText}
+          onAutoGenerate={onAutoGenerate}
+        />
       </div>
     </>
   );

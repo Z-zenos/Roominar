@@ -247,7 +247,6 @@ class PublishEventRequest(BaseModel):
     ticket_ids: list[int] = Field([])
     survey_id: int | None
     target_id: int | None
-    comment: str | None
 
     tags: list[int] = Field([])
 
@@ -358,7 +357,6 @@ class GetDraftEventResponse(BaseModel):
     target: ListingTargetOptionsItem | None = None
     survey_id: int | None = None
     max_ticket_number_per_account: int | None = None
-    comment: str | None = None
 
 
 class SaveDraftEventRequest(BaseModel):
@@ -388,7 +386,6 @@ class SaveDraftEventRequest(BaseModel):
     ticket_ids: list[int] = Field([])
     survey_id: int | None
     target_id: int | None
-    comment: str | None
     tags: list[int] = Field([])
 
 

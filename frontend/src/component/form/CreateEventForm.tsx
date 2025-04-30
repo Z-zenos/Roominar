@@ -29,6 +29,7 @@ import {
 import toast from 'react-hot-toast';
 import type { CreateEventFormSchema } from '@/src/schemas/event/CreateEventFormSchema';
 import {
+  useGenerateEventAIMutation,
   useGetDraftEventQuery,
   usePublishEventMutation,
   useSaveDraftEventMutation,
@@ -81,11 +82,11 @@ import createEventFormSchema, {
 } from '@/src/schemas/event/CreateEventFormSchema';
 import clsx from 'clsx';
 import MultipleFilesUploader from '../common/Upload/MultipleFilesUploader';
-import CalendarTimeline from '../common/DateTime/CalendarTimeline';
 import dayjs from 'dayjs';
 import Spinner from '../common/Loader/Spinner';
 import type { DateSelectArg, EventChangeArg } from '@fullcalendar/core';
 import { useListingOrganizationEventsTimelineQuery } from '@/src/api/organization.api';
+import ElementLoading from '../common/Loader/ElementLoading';
 
 // const LexicalEditor = dynamic(() => import('../editor/app/app'), {
 //   ssr: false,
@@ -106,6 +107,23 @@ const TICKET_TABLE_COLUMNS = [
   { name: 'ACTIONS', uid: 'actions' },
 ];
 
+// const LazyMap = dynamic(() => import('../common/Map/Map'), {
+//   ssr: false,
+//   loading: () => <p>Loading...</p>,
+// });
+
+const LexicalEditor = dynamic(() => import('../editor/app/app'), {
+  ssr: false,
+});
+
+const LazyCalendarTimeline = dynamic(
+  () => import('../common/DateTime/CalendarTimeline'),
+  {
+    ssr: false,
+    loading: () => <ElementLoading title='Loading schedule timeline' />,
+  },
+);
+
 interface CreateEventFormProps {
   slug: string;
 }
@@ -114,12 +132,29 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
   const t = useTranslations('form');
 
   const { data: draftEvent, isLoading: isGetDraftEventLoading } =
-    useGetDraftEventQuery({ slug });
+    useGetDraftEventQuery({ slug }, true);
   const { data: tagData } = useListingTagsQuery();
   const { data: surveyOptions } = useListingSurveyOptionsQuery();
   const { data: targetOptions, refetch: refetchTargetOptions } =
     useListingTargetOptionsQuery();
   const { data: eventsTimeline } = useListingOrganizationEventsTimelineQuery();
+
+  const {
+    trigger: generateEventAI,
+    isMutating: isGenerating,
+    data: generatedContent,
+  } = useGenerateEventAIMutation({
+    onSuccess() {
+      toast.success('Save draft event successfully!');
+    },
+    onError(error: ApiException<unknown>) {
+      toast.error(
+        (error.body as ErrorResponse400)?.message ??
+          (error.body as ErrorResponse400)?.errorCode ??
+          'Unknown Error 😵',
+      );
+    },
+  });
 
   const [rightSidebarContent, setRightSidebarContent] = useState<
     'TICKET' | 'TARGET' | null
@@ -133,7 +168,6 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
       coverImageUrl: '',
       surveyId: undefined,
       targetId: undefined,
-      comment: '',
       tags: [],
 
       startAt: undefined,
@@ -163,7 +197,6 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
       coverImageUrl: draftEvent?.coverImageUrl ?? '',
       surveyId: draftEvent?.surveyId,
       targetId: draftEvent?.target?.id ?? null,
-      comment: draftEvent?.comment ?? '',
       tags: draftEvent?.tags?.map((tag) => tag.id) ?? [],
       startAt: draftEvent?.startAt,
       endAt: draftEvent?.endAt,
@@ -346,7 +379,6 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
     //     coverImageUrl: data.coverImageUrl,
     //     surveyId: data.surveyId,
     //     targetId: data.targetId,
-    //     comment: data.comment,
     //     status: data.status,
     //     ticketIds: data.ticketIds,
     //     tags: data.tags,
@@ -374,7 +406,6 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
         coverImageUrl: data.coverImageUrl,
         surveyId: data.surveyId,
         targetId: data.targetId ?? null,
-        comment: data.comment,
         ticketIds: data.ticketIds,
         tags: data.tags,
         totalTicketNumber: data.totalTicketNumber,
@@ -479,9 +510,9 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
         <form
           id='create-event-form'
           onSubmit={form.handleSubmit(handlePublishEvent, onError)}
-          className='grid grid-cols-12 items-start gap-10'
+          className='grid grid-cols-12 items-start gap-3'
         >
-          <div className='grid grid-cols-2 gap-6 [&>div]:w-full bg-white rounded-md p-6 shadow-md 1200px:col-span-9 col-span-12 max-w-[1000px]'>
+          <div className='grid grid-cols-2 gap-6 [&>div]:w-full bg-white rounded-md p-6 shadow-md 1200px:col-span-6 col-span-12 max-w-[1000px]'>
             <div className='col-span-2'>
               <FormInput
                 id='name'
@@ -502,13 +533,23 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                   <FormItem>
                     <FormCustomLabel
                       htmlFor='startAt'
-                      label='timeline'
+                      custom={
+                        <div>
+                          <h3 className='text-nm font-medium'>
+                            When does your event start and end?
+                          </h3>
+                          <span className='text-sm font-light inline-block text-gray-600 mb-3'>
+                            Select proper date in calendar. You can drag and
+                            drop event to any place you want.
+                          </span>
+                        </div>
+                      }
                       required
                     />
                     <FormControl>
-                      <CalendarTimeline
+                      <LazyCalendarTimeline
                         id='startAt'
-                        height={600}
+                        height={500}
                         events={[
                           {
                             title: 'Application start',
@@ -536,6 +577,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                                 start: event.applicationStartAt,
                                 end: event.applicationEndAt,
                                 color: '#d8fcff',
+                                textColor: '#246cff',
                               }))
                             : []),
                         ]}
@@ -557,67 +599,6 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                     )}
                   </FormItem>
                 )}
-              />
-            </div>
-
-            <div className='col-span-2'>
-              <FormField
-                control={form.control}
-                name='coverImageUrl'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormCustomLabel
-                      htmlFor='coverImageUrl'
-                      label='coverImageUrl'
-                      required
-                    />
-                    <FormControl>
-                      <ImageUploader
-                        name='coverImageUrl'
-                        onGetImageUrl={(url) => field.onChange(url)}
-                        variant='cover'
-                        // defaultImageUrl={auth?.user?.avatarUrl}
-                      />
-                    </FormControl>
-                    <FormMessage label='coverImageUrl' />
-                  </FormItem>
-                )}
-              />
-
-              <FormInstructions>
-                <li>
-                  This is the main image for your event. We recommend a 700 x
-                  350px (2:1 ratio) image.
-                </li>
-              </FormInstructions>
-            </div>
-
-            <div className='col-span-2'>
-              <FormCustomLabel
-                htmlFor='galleryUrls'
-                label='gallery'
-                custom={
-                  <div>
-                    <p className={clsx(styles.flexStart, 'mt-1')}>
-                      <BsStars size={20} />
-                      <span>
-                        <span className='font-semibold mr-2'>Pro tip:</span>
-                        Use photos that set the mood, and avoid distracting text
-                        overlays.
-                      </span>
-                    </p>
-                    <li className='bg-error text-sm ml-2 mb-1'>
-                      You can upload up to{' '}
-                      <span className='font-bold text-nm'>5</span> images to
-                      showcase your event.
-                    </li>
-                  </div>
-                }
-              />
-
-              <MultipleFilesUploader
-                name='galleryUrls'
-                onGetImageUrls={(urls) => form.setValue('galleryUrls', urls)}
               />
             </div>
 
@@ -747,18 +728,6 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
               )}
             />
 
-            <div className='border-y border-y-primary py-[2px] mt-4 col-span-2'>
-              <div className='border-y border-y-primary py-2'>
-                <h3 className='text-center text-md'>Description 🗒</h3>
-              </div>
-            </div>
-
-            <div className='col-span-2'>
-              <main className='flex flex-col items-center justify-between'>
-                {/* <LexicalEditor /> */}
-              </main>
-            </div>
-
             {/* === EVENT APPLICATION NUMBER & TICKETS === */}
             <h3 className='col-span-2 text-md p-3 border-l-4 border-l-primary'>
               Tickets 🎟
@@ -870,17 +839,6 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
               </SheetTrigger>
             </div>
 
-            <div className='col-span-2 mt-4'>
-              <FormTextarea
-                id='comment'
-                name='comment'
-                label='eventComment'
-                placeholder='Enter comment of organization for audience when they apply'
-                control={form.control}
-                showError={true}
-              />
-            </div>
-
             <div className='col-span-2'>
               <FormTagsInput
                 title='tags'
@@ -931,26 +889,86 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
             </div>
           </div>
 
-          <div className='col-span-3'>
-            {/* <EventCard
-            event={{
-              id: 1,
-              slug: '',
-              organizationName: 'Roominar',
-              name: form.getValues('name'),
-              startAt: new Date('2024-10-06'),
-              endAt: new Date('2024-10-06'),
-              applicationStartAt: new Date('2024-10-06'),
-              applicationEndAt: new Date('2024-10-06'),
-              totalTicketNumber: 1,
-              coverImageUrl: '',
-              meetingToolCode: EventMeetingToolCode.Discord,
-              isOffline: true,
-              publishedAt: new Date('2024-10-06'),
-              tags: [],
-            }}
-            className='w-full'
-          /> */}
+          <div className='col-span-6 p-3'>
+            <div className='col-span-2'>
+              <FormField
+                control={form.control}
+                name='coverImageUrl'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormCustomLabel
+                      htmlFor='coverImageUrl'
+                      label='coverImageUrl'
+                      required
+                    />
+                    <FormControl>
+                      <ImageUploader
+                        name='coverImageUrl'
+                        onGetImageUrl={(url) => field.onChange(url)}
+                        variant='cover'
+                        // defaultImageUrl={auth?.user?.avatarUrl}
+                      />
+                    </FormControl>
+                    <FormMessage label='coverImageUrl' />
+                  </FormItem>
+                )}
+              />
+
+              <FormInstructions>
+                <li>
+                  This is the main image for your event. We recommend a 700 x
+                  350px (2:1 ratio) image.
+                </li>
+              </FormInstructions>
+            </div>
+
+            <div className='border-y border-y-primary py-[2px] mt-4 '>
+              <div className='border-y border-y-primary py-2'>
+                <h3 className='text-center text-md'>Description 🗒</h3>
+              </div>
+            </div>
+            <main className='flex flex-col items-center justify-between'>
+              <LexicalEditor
+                content={generatedContent?.description ?? ''}
+                onChange={(editorState) => {
+                  // Convert editor state to string representation for storage
+                  const editorStateJSON = JSON.stringify(editorState);
+
+                  // For example, set it in a hidden field or in your form state
+                  form.setValue('description', editorStateJSON);
+                }}
+                onAutoGenerate={generateEventAI}
+              />
+            </main>
+
+            <div className='col-span-2'>
+              <FormCustomLabel
+                htmlFor='galleryUrls'
+                label='gallery'
+                custom={
+                  <div>
+                    <p className={clsx(styles.flexStart, 'mt-1')}>
+                      <BsStars size={20} />
+                      <span>
+                        <span className='font-semibold mr-2'>Pro tip:</span>
+                        Use photos that set the mood, and avoid distracting text
+                        overlays.
+                      </span>
+                    </p>
+                    <li className='bg-error text-sm ml-2 mb-1'>
+                      You can upload up to{' '}
+                      <span className='font-bold text-nm'>5</span> images to
+                      showcase your event.
+                    </li>
+                  </div>
+                }
+              />
+
+              <MultipleFilesUploader
+                name='galleryUrls'
+                onGetImageUrls={(urls) => form.setValue('galleryUrls', urls)}
+              />
+            </div>
           </div>
         </form>
       </Form>

@@ -35,6 +35,9 @@ import { usePathname, useRouter } from 'next/navigation';
 import { RoleCode } from '@/src/constants/role_code.constant';
 import type { Session } from 'next-auth';
 import clsx from 'clsx';
+import { useGetDraftEventQuery } from '@/src/api/event.api';
+import { EventStatusCode } from '@/src/lib/api/generated';
+import { Image } from '@nextui-org/react';
 
 const sidebarMenu = [
   {
@@ -51,7 +54,7 @@ const sidebarMenu = [
     items: [
       {
         title: 'Create New',
-        url: '/organization/events/create',
+        url: '/organization/events/[slug]/create',
         icon: <CreateEventIcon />,
       },
       {
@@ -114,6 +117,11 @@ export function OrganizationSidebar({
     }
   };
 
+  const { refetch: refetchGetDraftEvent } = useGetDraftEventQuery(
+    { slug: EventStatusCode.Draft }, // Trick to get draft event when click in sidebar
+    false,
+  );
+
   return (
     <Sidebar
       variant='inset'
@@ -128,11 +136,17 @@ export function OrganizationSidebar({
               asChild
             >
               <a href='#'>
-                <div className='flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground'>
-                  <Command className='size-4' />
+                <div className='flex items-center justify-center rounded-lg text-sidebar-primary-foreground'>
+                  <Image
+                    src={auth?.user?.organizationAvatarUrl}
+                    alt='organization avatar'
+                    className='aspect-square size-8'
+                  />
                 </div>
                 <div className='grid flex-1 text-left text-sm leading-tight'>
-                  <span className='truncate font-semibold'>Acme Inc</span>
+                  <span className='truncate font-semibold'>
+                    {auth?.user?.organizationName}
+                  </span>
                   <span className='truncate text-xs'>Enterprise</span>
                 </div>
               </a>
@@ -184,18 +198,31 @@ export function OrganizationSidebar({
                               <SidebarMenuSubButton
                                 asChild
                                 className={clsx(
+                                  'cursor-pointer',
                                   pathname.includes(subItem.url)
                                     ? 'text-primary [&_svg]:fill-primary [&_g]:fill-primary [&_path]:stroke-primary font-medium rounded-none border-b border-b-primary'
                                     : '!text-dark-main !font-light',
                                 )}
                               >
-                                <a
-                                  href={subItem.url}
+                                <p
                                   className='[&_svg]:w-[25px] [&_svg]:h-[25px]'
+                                  onClick={() => {
+                                    if (
+                                      subItem.url ===
+                                      '/organization/events/[slug]/create'
+                                    ) {
+                                      refetchGetDraftEvent().then((data) => {
+                                        console.log('draft', data.data);
+                                        router.push(
+                                          `/organization/events/${data?.data?.slug}/create`,
+                                        );
+                                      });
+                                    } else router.push(subItem.url);
+                                  }}
                                 >
                                   {/* {subItem.icon} */}
                                   <span>{subItem.title}</span>
-                                </a>
+                                </p>
                               </SidebarMenuSubButton>
                             </SidebarMenuSubItem>
                           ))}

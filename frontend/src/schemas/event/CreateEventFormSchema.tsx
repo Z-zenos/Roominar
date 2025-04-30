@@ -146,7 +146,6 @@ const eventBaseSchema = z.object({
   galleryUrls: z.array(z.string().url()).max(10),
   surveyId: z.coerce.number().nullable(),
   targetId: z.coerce.number().nullable(),
-  comment: z.string().trim().nullable(),
   tags: z.array(z.coerce.number()).nullable(),
 });
 

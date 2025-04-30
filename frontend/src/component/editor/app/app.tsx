@@ -14,13 +14,17 @@ import { $generateNodesFromDOM } from '@lexical/html';
 import './globals.css';
 import { $createParagraphNode, $getRoot, type EditorState } from 'lexical';
 
+interface LexicalEditorProps {
+  onChange?: (editorState: EditorState) => void;
+  content?: string;
+  onAutoGenerate?: () => void;
+}
+
 export default function LexicalEditor({
   onChange,
   content,
-}: {
-  onChange?: (editorState: EditorState) => void;
-  content?: string; // HTML format
-}): JSX.Element {
+  onAutoGenerate,
+}: LexicalEditorProps): JSX.Element {
   const initialConfig = {
     editorState: content ? prepareInitialState : undefined,
     namespace: 'Playground',

@@ -172,7 +172,7 @@ async def delete_event_bookmark(
 async def get_draft_event(
     db: Session = Depends(get_read_db),
     organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
-    slug: str = None,
+    slug: str | None = None,
 ):
     return await events_service.get_draft_event(db, organizer, slug)
 

@@ -1,4 +1,4 @@
-select {
+.editor-shell select {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -21,7 +21,7 @@ select {
   --select-arrow: var(--select-border);
 }
 
-.select {
+.editor-shell .select {
   min-width: 160px;
   max-width: 290px;
   border: 1px solid var(--select-border);

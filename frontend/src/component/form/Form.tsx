@@ -1141,7 +1141,7 @@ const FormSelect = ({
             <FormControl>
               <SelectTrigger
                 className={clsx(
-                  '400px:w-[180px] w-36 400px:h-11 h-8',
+                  '400px:w-[180px] 800px:w-full 800px:min-w-40 w-36 400px:h-11 h-8',
                   className,
                 )}
               >
