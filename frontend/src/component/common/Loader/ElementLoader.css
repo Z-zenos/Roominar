@@ -4,10 +4,10 @@
   align-items: center;
 }
 
-.icon {
+.element-loader .icon {
   height: 1.5rem;
   width: 1.5rem;
-  /* animation: spin 1s linear infinite; */
+  animation: spin 1s linear infinite;
   stroke: rgba(107, 114, 128, 1);
 }
 

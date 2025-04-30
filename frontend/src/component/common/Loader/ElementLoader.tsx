@@ -1,14 +1,14 @@
 'use client';
 
-import './ElementLoading.css';
+import './ElementLoader.css';
 
-interface ElementLoadingProps {
+interface ElementLoaderProps {
   title?: string;
 }
 
-function ElementLoading({ title = 'Loading' }: ElementLoadingProps) {
+function ElementLoader({ title = 'Loading' }: ElementLoaderProps) {
   return (
-    <div className='py-[10px] flex items-center justify-center'>
+    <div className='element-loader py-[10px] flex items-center justify-center'>
       <div
         aria-label={`${title}...`}
         role='status'
@@ -91,10 +91,10 @@ function ElementLoading({ title = 'Loading' }: ElementLoadingProps) {
             strokeWidth='24'
           ></line>
         </svg>
-        <span className='loading-text'>{title}...</span>
+        <span className='loading-text ml-2'>{title}...</span>
       </div>
     </div>
   );
 }
 
-export default ElementLoading;
+export default ElementLoader;

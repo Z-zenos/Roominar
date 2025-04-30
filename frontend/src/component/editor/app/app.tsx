@@ -68,7 +68,10 @@ export default function LexicalEditor({
           <TableContext>
             <SharedAutocompleteContext>
               <div className='editor-shell'>
-                <Editor onChange={onChange} />
+                <Editor
+                  onChange={onChange}
+                  onAutoGenerate={onAutoGenerate}
+                />
               </div>
             </SharedAutocompleteContext>
           </TableContext>

@@ -6,7 +6,7 @@ import {
   useGetTagStatsQuery,
   useListingOrganizationEventsTimelineQuery,
 } from '@/src/api/organization.api';
-import ElementLoading from '@/src/component/common/Loader/ElementLoading';
+import ElementLoading from '@/src/component/common/Loader/ElementLoader';
 import clsx from 'clsx';
 import { styles } from '@/src/constants/styles.constant';
 import { Image } from '@nextui-org/react';

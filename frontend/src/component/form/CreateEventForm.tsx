@@ -13,7 +13,6 @@ import {
   FormMessage,
   FormSelect,
   FormTagsInput,
-  FormTextarea,
 } from '@/src/component/form/Form';
 import type {
   ApiException,
@@ -76,7 +75,6 @@ import CreateTicketForm from './CreateTicketForm';
 import CreateTargetForm from './CreateTargetForm';
 import { useListingTargetOptionsQuery } from '@/src/api/target.api';
 import { cn, optionify } from '@/src/utils/app.util';
-import DotLoader from '../common/Loader/DotLoader';
 import createEventFormSchema, {
   eventDateSchema,
 } from '@/src/schemas/event/CreateEventFormSchema';
@@ -86,7 +84,8 @@ import dayjs from 'dayjs';
 import Spinner from '../common/Loader/Spinner';
 import type { DateSelectArg, EventChangeArg } from '@fullcalendar/core';
 import { useListingOrganizationEventsTimelineQuery } from '@/src/api/organization.api';
-import ElementLoading from '../common/Loader/ElementLoading';
+import ElementLoader from '../common/Loader/ElementLoader';
+import { $generateHtmlFromNodes } from '@lexical/html';
 
 // const LexicalEditor = dynamic(() => import('../editor/app/app'), {
 //   ssr: false,
@@ -114,13 +113,14 @@ const TICKET_TABLE_COLUMNS = [
 
 const LexicalEditor = dynamic(() => import('../editor/app/app'), {
   ssr: false,
+  loading: () => <ElementLoader title='Setup editor' />,
 });
 
 const LazyCalendarTimeline = dynamic(
   () => import('../common/DateTime/CalendarTimeline'),
   {
     ssr: false,
-    loading: () => <ElementLoading title='Loading schedule timeline' />,
+    loading: () => <ElementLoader title='Loading schedule timeline' />,
   },
 );
 
@@ -131,8 +131,7 @@ interface CreateEventFormProps {
 export default function CreateEventForm({ slug }: CreateEventFormProps) {
   const t = useTranslations('form');
 
-  const { data: draftEvent, isLoading: isGetDraftEventLoading } =
-    useGetDraftEventQuery({ slug }, true);
+  const { data: draftEvent } = useGetDraftEventQuery({ slug }, true);
   const { data: tagData } = useListingTagsQuery();
   const { data: surveyOptions } = useListingSurveyOptionsQuery();
   const { data: targetOptions, refetch: refetchTargetOptions } =
@@ -502,7 +501,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rightSidebarContent]);
 
-  if (isGetDraftEventLoading) return <DotLoader />;
+  // if (isGetDraftEventLoading) return <DotLoader />;
 
   return (
     <Sheet>
