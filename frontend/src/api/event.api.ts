@@ -121,11 +121,13 @@ export const usePublishEventMutation = <T>(
 
 export const useListingTicketsOfEventQuery = (
   params?: EventsApiListingTicketsOfEventRequest,
+  enabled?: boolean,
 ) => {
   const api = useApi();
   return useQuery({
     queryKey: ['listing-tickets-of-events'],
     queryFn: async () => await api.events.listingTicketsOfEvent(params),
+    enabled,
   });
 };
 

@@ -20,7 +20,7 @@ import type { TicketItem } from '@/src/lib/api/generated';
 import { TicketStatusCode } from '@/src/lib/api/generated';
 import type { ChipProps } from '@nextui-org/react';
 import { SheetTrigger } from '@/src/component/common/Sheet';
-import { useListingTicketsOfEventQuery } from '@/src/api/event.api';
+import Spinner from '@/src/component/common/Loader/Spinner';
 
 const statusColorMap: Record<string, ChipProps['color']> = {
   [TicketStatusCode.Available]: 'success',
@@ -38,20 +38,18 @@ const TICKET_TABLE_COLUMNS = [
 ];
 
 interface DraftTicketDataTableProps {
-  eventId?: number;
-  onAddTicketClick: () => void;
+  tickets?: TicketItem[];
+  isFetchingListingTicketsOfEvent?: boolean;
+  onOpenCreateTicketForm?: () => void;
+  onOpenUpdateTicketForm?: (ticketId: number) => void;
 }
 
 export default function DraftTicketDataTable({
-  eventId,
-  onAddTicketClick,
+  tickets,
+  isFetchingListingTicketsOfEvent,
+  onOpenCreateTicketForm,
+  onOpenUpdateTicketForm,
 }: DraftTicketDataTableProps) {
-  const {
-    data: tickets,
-    isFetching: isFetchingListingTicketsOfEvent,
-    refetch: refetchListingTicketsOfEvent,
-  } = useListingTicketsOfEventQuery({ eventId });
-
   const renderCell = (ticket: TicketItem, columnKey: string) => {
     const cellValue = columnKey !== 'actions' ? ticket[columnKey] : null;
 
@@ -59,7 +57,7 @@ export default function DraftTicketDataTable({
       case 'name':
         return (
           <div>
-            <p className='text-nm font-semibold'>{ticket.name}</p>
+            <p className='text-nm font-medium'>{ticket.name}</p>
             <p className='text-xs text-gray-600 font-ligth max-w-[200px] truncate'>
               {ticket.description}
             </p>
@@ -99,8 +97,13 @@ export default function DraftTicketDataTable({
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem>
-                  <SheetTrigger onClick={onAddTicketClick}>Edit</SheetTrigger>
+                <DropdownItem textValue='Edit'>
+                  <SheetTrigger
+                    onClick={() => onOpenUpdateTicketForm?.(ticket.id)}
+                    className='!w-full !block !text-left !justify-start'
+                  >
+                    Edit
+                  </SheetTrigger>
                 </DropdownItem>
                 <DropdownItem>Delete</DropdownItem>
               </DropdownMenu>
@@ -123,8 +126,10 @@ export default function DraftTicketDataTable({
         <div className='flex justify-end'>
           {/* === RIGHT SIDE BAR === */}
           <SheetTrigger
-            onClick={onAddTicketClick}
-            className='flex justify-center items-center gap-3 px-4 py-1 rounded-sm border-primary-300 hover:bg-primary hover:text-white hover:border-primary border transition-all text-sm'
+            onClick={onOpenCreateTicketForm}
+            className={`flex justify-center items-center gap-3 px-4 py-1 rounded-sm
+              border-primary-300 hover:bg-primary hover:text-white hover:border-primary
+              border transition-all text-sm`}
           >
             Add ticket
             <IoMdAddCircleOutline className='text-inline w-5 h-5' />
@@ -146,6 +151,8 @@ export default function DraftTicketDataTable({
       <TableBody
         emptyContent={'Not setup ticket yet'}
         items={tickets ?? []}
+        isLoading={isFetchingListingTicketsOfEvent}
+        loadingContent={<Spinner />}
       >
         {(item) => (
           <TableRow key={item.price}>

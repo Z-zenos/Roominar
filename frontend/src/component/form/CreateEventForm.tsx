@@ -26,6 +26,7 @@ import type { CreateEventFormSchema } from '@/src/schemas/event/CreateEventFormS
 import {
   useGenerateEventAIMutation,
   useGetDraftEventQuery,
+  useListingTicketsOfEventQuery,
   usePublishEventMutation,
   useSaveDraftEventMutation,
 } from '@/src/api/event.api';
@@ -102,6 +103,11 @@ const DraftTicketDataTable = dynamic(
   },
 );
 
+const UpdateTicketForm = dynamic(() => import('./UpdateTicketForm'), {
+  ssr: false,
+  loading: () => <ElementLoader title='Loading ticket form' />,
+});
+
 interface CreateEventFormProps {
   slug: string;
 }
@@ -115,6 +121,14 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
   const { data: targetOptions, refetch: refetchTargetOptions } =
     useListingTargetOptionsQuery();
   const { data: eventsTimeline } = useListingOrganizationEventsTimelineQuery();
+  const {
+    data: tickets,
+    isFetching: isFetchingListingTicketsOfEvent,
+    refetch: refetchListingTicketsOfEvent,
+  } = useListingTicketsOfEventQuery(
+    { eventId: draftEvent?.id },
+    draftEvent?.id ? true : false,
+  );
 
   const {
     trigger: generateEventAI,
@@ -134,8 +148,9 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
   });
 
   const [rightSidebarContent, setRightSidebarContent] = useState<
-    'TICKET' | 'TARGET' | null
+    'CREATE_TICKET' | 'UPDATE_TICKET' | 'TARGET' | null
   >();
+  const [selectedTicketId, setSelectedTicketId] = useState<number | null>(null);
 
   const form = useForm<CreateEventFormSchema>({
     mode: 'all',
@@ -405,10 +420,27 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
 
   const rightSidebar = useMemo(() => {
     switch (rightSidebarContent) {
-      case 'TICKET':
+      case 'CREATE_TICKET':
         return {
-          title: 'TICKET',
-          body: <CreateTicketForm />,
+          title: 'CREATE TICKET',
+          body: (
+            <CreateTicketForm
+              eventId={draftEvent?.id}
+              onCreate={refetchListingTicketsOfEvent}
+            />
+          ),
+          footer: null,
+        };
+
+      case 'UPDATE_TICKET':
+        return {
+          title: 'UPDATE TICKET',
+          body: (
+            <UpdateTicketForm
+              ticketId={selectedTicketId}
+              onUpdate={refetchListingTicketsOfEvent}
+            />
+          ),
           footer: null,
         };
 
@@ -744,8 +776,17 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
             <div className='col-span-2'>
               {draftEvent && (
                 <DraftTicketDataTable
-                  eventId={draftEvent?.id}
-                  onAddTicketClick={() => setRightSidebarContent('TICKET')}
+                  tickets={tickets}
+                  isFetchingListingTicketsOfEvent={
+                    isFetchingListingTicketsOfEvent
+                  }
+                  onOpenCreateTicketForm={() =>
+                    setRightSidebarContent('CREATE_TICKET')
+                  }
+                  onOpenUpdateTicketForm={(ticketId) => {
+                    setRightSidebarContent('UPDATE_TICKET');
+                    setSelectedTicketId(ticketId);
+                  }}
                 />
               )}
             </div>

@@ -8,48 +8,65 @@ import {
   FormTextarea,
 } from './Form';
 import { useForm } from 'react-hook-form';
-import {
-  createTicketFormSchema,
-  type CreateTicketFormSchema,
-} from '@/src/schemas/ticket/CreateTicketFormSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
 import {
   TicketDeliveryMethodCode,
   TicketTypeCode,
 } from '@/src/lib/api/generated';
-import { useCreateTicketMutation } from '@/src/api/ticket.api';
 import toast from 'react-hot-toast';
 import { optionify } from '@/src/utils/app.util';
+import {
+  updateTicketFormSchema,
+  type UpdateTicketFormSchema,
+} from '@/src/schemas/ticket/UpdateTicketFormSchema';
+import {
+  useGetDraftTicketQuery,
+  useUpdateTicketMutation,
+} from '@/src/api/ticket.api';
+import { useEffect } from 'react';
 
-interface CreateTicketFormProps {
-  eventId?: number;
-  onCreate?: () => void;
+interface UpdateTicketFormProps {
+  ticketId: number;
+  onUpdate?: () => void;
 }
 
-function CreateTicketForm({ eventId, onCreate }: CreateTicketFormProps) {
-  const form = useForm<CreateTicketFormSchema>({
+function UpdateTicketForm({ ticketId, onUpdate }: UpdateTicketFormProps) {
+  const { data: ticket } = useGetDraftTicketQuery({
+    ticketId: ticketId,
+  });
+
+  const form = useForm<UpdateTicketFormSchema>({
     mode: 'onChange',
     defaultValues: {
       name: '',
       quantity: 0,
       description: '',
       price: 0,
-      // expiredAt: undefined,
       type: TicketTypeCode.Free,
       deliveryMethod: TicketDeliveryMethodCode.Both,
-      // accessLinkUrl: undefined,
-      // status: TicketStatusCode.Available,
       salesStartAt: new Date(),
       salesEndAt: new Date(),
     },
-    resolver: zodResolver(createTicketFormSchema),
+    resolver: zodResolver(updateTicketFormSchema),
   });
 
-  const { trigger, isMutating: isCreating } = useCreateTicketMutation({
+  useEffect(() => {
+    form.reset({
+      name: ticket?.name,
+      quantity: ticket?.quantity,
+      description: ticket?.description ?? undefined,
+      price: ticket?.price,
+      type: ticket?.type,
+      deliveryMethod: ticket?.deliveryMethod,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(ticket)]);
+
+  const { trigger, isMutating: isUpdating } = useUpdateTicketMutation({
     onSuccess() {
-      toast.success('Create ticket successfully!');
-      onCreate?.();
+      toast.success('Update ticket successfully!');
+      onUpdate?.();
       form.reset();
     },
     onError(error: ApiException<unknown>) {
@@ -61,16 +78,16 @@ function CreateTicketForm({ eventId, onCreate }: CreateTicketFormProps) {
     },
   });
 
-  function handleCreateTicket(data: CreateTicketFormSchema) {
+  function handleUpdateTicket(data: UpdateTicketFormSchema) {
     trigger({
-      createTicketRequest: {
+      ticketId: ticketId,
+      updateTicketRequest: {
         name: data.name,
         description: data.description,
         quantity: +data?.quantity,
         price: +data?.price,
         type: data.type,
         deliveryMethod: data.deliveryMethod,
-        eventId: eventId ?? null,
         expiredAt: null,
         salesStartAt: null,
         salesEndAt: null,
@@ -82,8 +99,8 @@ function CreateTicketForm({ eventId, onCreate }: CreateTicketFormProps) {
   return (
     <Form {...form}>
       <form
-        id='create-ticket-form'
-        onSubmit={form.handleSubmit(handleCreateTicket)}
+        id='update-ticket-form'
+        onSubmit={form.handleSubmit(handleUpdateTicket)}
         className='my-6 pt-6 grid grid-cols-2 gap-4 border-t border-t-primary'
       >
         <FormInstructions className='col-span-2'>
@@ -162,18 +179,18 @@ function CreateTicketForm({ eventId, onCreate }: CreateTicketFormProps) {
 
         <Button
           color='primary'
-          isLoading={isCreating}
+          isLoading={isUpdating}
           radius='sm'
           className='mt-8 float-end'
-          form='create-ticket-form'
+          form='update-ticket-form'
           isDisabled={!form.formState.isValid}
           type='submit'
         >
-          Create Ticket
+          Update Ticket
         </Button>
       </form>
     </Form>
   );
 }
 
-export default CreateTicketForm;
+export default UpdateTicketForm;

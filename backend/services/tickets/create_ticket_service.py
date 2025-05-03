@@ -17,6 +17,7 @@ async def create_ticket(db: Session, request: CreateTicketRequest):
         access_link_url=request.access_link_url,
         sales_end_at=request.sales_end_at,
         sales_start_at=request.sales_start_at,
+        description=request.description,
     )
     try:
         ticket = save(db, ticket)

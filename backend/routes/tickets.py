@@ -5,6 +5,7 @@ import backend.services.tickets as ticket_service
 from backend.core.response import authenticated_api_responses
 from backend.db.database import get_read_db
 from backend.dependencies.authentication import get_current_user
+from backend.models.ticket import Ticket
 from backend.models.user import User
 from backend.schemas.ticket import (
     CancelTicketsRequest,
@@ -12,6 +13,7 @@ from backend.schemas.ticket import (
     GetTicketStatusCountsResponse,
     ListingMyTicketsQueryParams,
     ListingMyTicketsResponse,
+    UpdateTicketRequest,
 )
 
 router = APIRouter()
@@ -23,6 +25,25 @@ async def create_ticket(
     request: CreateTicketRequest = None,
 ):
     return await ticket_service.create_ticket(db, request)
+
+
+@router.patch("/{ticket_id}", response_model=int, responses=authenticated_api_responses)
+async def update_ticket(
+    db: Session = Depends(get_read_db),
+    ticket_id: int = None,
+    request: UpdateTicketRequest = None,
+):
+    return await ticket_service.update_ticket(db, ticket_id, request)
+
+
+@router.get(
+    "/{ticket_id}/draft", response_model=Ticket, responses=authenticated_api_responses
+)
+async def get_draft_ticket(
+    db: Session = Depends(get_read_db),
+    ticket_id: int = None,
+):
+    return await ticket_service.get_draft_ticket(db, ticket_id)
 
 
 @router.patch("/cancel", response_model=int, responses=authenticated_api_responses)

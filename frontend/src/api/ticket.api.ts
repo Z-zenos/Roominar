@@ -4,8 +4,10 @@ import useApi from '../lib/api/useApi';
 import type {
   TicketsApiCancelTicketsRequest,
   TicketsApiCreateTicketRequest,
+  TicketsApiGetDraftTicketRequest,
   TicketsApiGetTicketStatusCountsRequest,
   TicketsApiListingMyTicketsRequest,
+  TicketsApiUpdateTicketRequest,
 } from '../lib/api/generated';
 import { useQuery } from '@tanstack/react-query';
 import { toCamelCase } from '../utils/app.util';
@@ -18,6 +20,18 @@ export const useCreateTicketMutation = <T>(
   return useSWRMutation<number, T, typeof key, TicketsApiCreateTicketRequest>(
     key,
     async (_: string, { arg }) => await api.tickets.createTicket(arg),
+    options,
+  );
+};
+
+export const useUpdateTicketMutation = <T>(
+  options?: SWRMutationConfiguration<number, T>,
+) => {
+  const api = useApi();
+  const key = 'update-ticket';
+  return useSWRMutation<number, T, typeof key, TicketsApiUpdateTicketRequest>(
+    key,
+    async (_: string, { arg }) => await api.tickets.updateTicket(arg),
     options,
   );
 };
@@ -53,5 +67,15 @@ export const useGetTicketStatusCountsQuery = (
   return useQuery({
     queryKey: ['get-ticket-status-counts'],
     queryFn: async () => await api.tickets.getTicketStatusCounts(params),
+  });
+};
+
+export const useGetDraftTicketQuery = (
+  params?: TicketsApiGetDraftTicketRequest,
+) => {
+  const api = useApi();
+  return useQuery({
+    queryKey: ['get-draft-ticket', params.ticketId],
+    queryFn: async () => await api.tickets.getDraftTicket(params),
   });
 };
