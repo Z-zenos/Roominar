@@ -18,12 +18,14 @@ interface LexicalEditorProps {
   onChange?: (editorState: EditorState) => void;
   content?: string;
   onAutoGenerate?: () => void;
+  isGenerating?: boolean;
 }
 
 export default function LexicalEditor({
   onChange,
   content,
   onAutoGenerate,
+  isGenerating,
 }: LexicalEditorProps): JSX.Element {
   const initialConfig = {
     editorState: content ? prepareInitialState : undefined,
@@ -71,6 +73,7 @@ export default function LexicalEditor({
                 <Editor
                   onChange={onChange}
                   onAutoGenerate={onAutoGenerate}
+                  isGenerating={isGenerating}
                 />
               </div>
             </SharedAutocompleteContext>

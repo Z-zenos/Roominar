@@ -1,13 +1,12 @@
 'use client';
 
 import * as React from 'react';
-import { ChevronRight, Command } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuAction,
@@ -156,7 +155,6 @@ export function OrganizationSidebar({
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Platform</SidebarGroupLabel>
           <SidebarMenu>
             {sidebarMenu.map((item) => (
               <Collapsible

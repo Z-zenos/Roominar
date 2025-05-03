@@ -13,17 +13,13 @@ import {
   FormMessage,
   FormSelect,
   FormTagsInput,
+  FormTextarea,
 } from '@/src/component/form/Form';
-import type {
-  ApiException,
-  ErrorResponse400,
-  TicketItem,
-} from '@/src/lib/api/generated';
+import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
 import {
   CityCode,
   EventMeetingToolCode,
   SaveDraftEventRequestOrganizeCityCodeEnum,
-  TicketStatusCode,
 } from '@/src/lib/api/generated';
 import toast from 'react-hot-toast';
 import type { CreateEventFormSchema } from '@/src/schemas/event/CreateEventFormSchema';
@@ -36,28 +32,12 @@ import {
 import ImageUploader from '../common/Upload/ImageUploader';
 import { styles } from '@/src/constants/styles.constant';
 import { useTranslations } from 'next-intl';
-import type { ChipProps } from '@nextui-org/react';
-import {
-  Button,
-  Checkbox,
-  Chip,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-} from '@nextui-org/react';
+import { Button, Checkbox } from '@nextui-org/react';
 import { FaChevronRight, FaSquareArrowUpRight } from 'react-icons/fa6';
 
 import dynamic from 'next/dynamic';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { BsStars, BsThreeDots } from 'react-icons/bs';
-import { IoMdAddCircleOutline } from 'react-icons/io';
+import { useEffect, useMemo, useState } from 'react';
+import { BsStars } from 'react-icons/bs';
 import {
   Sheet,
   SheetContent,
@@ -71,8 +51,6 @@ import {
 import { useListingTagsQuery } from '@/src/api/tag.api';
 import { CiStickyNote } from 'react-icons/ci';
 import { useListingSurveyOptionsQuery } from '@/src/api/survey.api';
-import CreateTicketForm from './CreateTicketForm';
-import CreateTargetForm from './CreateTargetForm';
 import { useListingTargetOptionsQuery } from '@/src/api/target.api';
 import { cn, optionify } from '@/src/utils/app.util';
 import createEventFormSchema, {
@@ -85,26 +63,8 @@ import Spinner from '../common/Loader/Spinner';
 import type { DateSelectArg, EventChangeArg } from '@fullcalendar/core';
 import { useListingOrganizationEventsTimelineQuery } from '@/src/api/organization.api';
 import ElementLoader from '../common/Loader/ElementLoader';
-import { $generateHtmlFromNodes } from '@lexical/html';
-
-// const LexicalEditor = dynamic(() => import('../editor/app/app'), {
-//   ssr: false,
-// });
-
-const statusColorMap: Record<string, ChipProps['color']> = {
-  [TicketStatusCode.Available]: 'success',
-  [TicketStatusCode.SoldOut]: 'danger',
-  [TicketStatusCode.Canceled]: 'warning',
-};
-
-const TICKET_TABLE_COLUMNS = [
-  { name: 'NAME', uid: 'name' },
-  { name: 'PRICE', uid: 'price' },
-  { name: 'QUANTITY', uid: 'quantity' },
-  { name: 'STATUS', uid: 'status' },
-  { name: 'TYPE', uid: 'type' },
-  { name: 'ACTIONS', uid: 'actions' },
-];
+import { RiRobot2Line } from 'react-icons/ri';
+import { AiOutlineSend } from 'react-icons/ai';
 
 // const LazyMap = dynamic(() => import('../common/Map/Map'), {
 //   ssr: false,
@@ -121,6 +81,24 @@ const LazyCalendarTimeline = dynamic(
   {
     ssr: false,
     loading: () => <ElementLoader title='Loading schedule timeline' />,
+  },
+);
+
+const CreateTicketForm = dynamic(() => import('./CreateTicketForm'), {
+  ssr: false,
+  loading: () => <ElementLoader title='Loading ticket form' />,
+});
+
+const CreateTargetForm = dynamic(() => import('./CreateTargetForm'), {
+  ssr: false,
+  loading: () => <ElementLoader title='Loading target form' />,
+});
+
+const DraftTicketDataTable = dynamic(
+  () => import('@/src/view/ticket/DraftTicketDataTable'),
+  {
+    ssr: false,
+    loading: () => <ElementLoader title='Loading ticket table' />,
   },
 );
 
@@ -184,6 +162,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
       totalTicketNumber: 0,
       ticketIds: [],
       galleryUrls: [],
+      prompt: '',
     },
     resolver: zodResolver(createEventFormSchema),
     shouldFocusError: false,
@@ -214,6 +193,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
         draftEvent?.tickets?.map((ticket) => ticket.id)?.slice(0, 10) ?? [],
       galleryUrls: draftEvent?.gallery ?? [],
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(draftEvent)]);
 
   // using a state here to make the "scroll & focus" happen once per submission
@@ -369,32 +349,32 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
     return null; // No errors
   }
 
-  function handlePublishEvent(data: CreateEventFormSchema) {
-    // trigger({
-    //   eventId: 11,
-    //   publishEventRequest: {
-    //     name: data.name,
-    //     description: data.description,
-    //     coverImageUrl: data.coverImageUrl,
-    //     surveyId: data.surveyId,
-    //     targetId: data.targetId,
-    //     status: data.status,
-    //     ticketIds: data.ticketIds,
-    //     tags: data.tags,
-    //     totalTicketNumber: data.totalTicketNumber,
-    //     startAt: data.startAt,
-    //     endAt: data.endAt,
-    //     applicationEndAt: data.applicationEndAt,
-    //     applicationStartAt: data.applicationStartAt,
-    //     isOnline: data.isOnline,
-    //     isOffline: data.isOffline,
-    //     organizeAddress: data.organizeAddress,
-    //     organizeCityCode: PublishEventRequestOrganizeCityCodeEnum.Angiang,
-    //     meetingToolCode: data.meetingToolCode,
-    //     meetingUrl: data.meetingUrl,
-    //   },
-    // });
-  }
+  // function handlePublishEvent(data: CreateEventFormSchema) {
+  //   // trigger({
+  //   //   eventId: 11,
+  //   //   publishEventRequest: {
+  //   //     name: data.name,
+  //   //     description: data.description,
+  //   //     coverImageUrl: data.coverImageUrl,
+  //   //     surveyId: data.surveyId,
+  //   //     targetId: data.targetId,
+  //   //     status: data.status,
+  //   //     ticketIds: data.ticketIds,
+  //   //     tags: data.tags,
+  //   //     totalTicketNumber: data.totalTicketNumber,
+  //   //     startAt: data.startAt,
+  //   //     endAt: data.endAt,
+  //   //     applicationEndAt: data.applicationEndAt,
+  //   //     applicationStartAt: data.applicationStartAt,
+  //   //     isOnline: data.isOnline,
+  //   //     isOffline: data.isOffline,
+  //   //     organizeAddress: data.organizeAddress,
+  //   //     organizeCityCode: PublishEventRequestOrganizeCityCodeEnum.Angiang,
+  //   //     meetingToolCode: data.meetingToolCode,
+  //   //     meetingUrl: data.meetingUrl,
+  //   //   },
+  //   // });
+  // }
 
   function handleSaveDraftEvent(data: CreateEventFormSchema) {
     saveDraftEvent({
@@ -423,65 +403,6 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
     });
   }
 
-  const renderCell = useCallback((ticket: TicketItem, columnKey: string) => {
-    const cellValue = columnKey !== 'actions' ? ticket[columnKey] : null;
-
-    switch (columnKey) {
-      case 'name':
-        return (
-          <div>
-            <p className='text-nm font-semibold'>{ticket.name}</p>
-            <p className='text-xs text-gray-600 font-ligth max-w-[300px] truncate'>
-              {ticket.description}
-            </p>
-          </div>
-        );
-      case 'price':
-        return <p>{cellValue ? cellValue : 'Free'}</p>;
-
-      case 'quantity':
-        return <p>{cellValue}</p>;
-      case 'status':
-        return (
-          <Chip
-            className='capitalize'
-            color={statusColorMap[ticket.status]}
-            size='sm'
-            variant='flat'
-          >
-            {cellValue}
-          </Chip>
-        );
-
-      case 'type':
-        return <p>{cellValue}</p>;
-
-      case 'actions':
-        return (
-          <div className='relative flex justify-end items-center gap-2'>
-            <Dropdown>
-              <DropdownTrigger>
-                <Button
-                  isIconOnly
-                  size='sm'
-                  variant='light'
-                >
-                  <BsThreeDots className='text-default-300' />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu>
-                <DropdownItem>View</DropdownItem>
-                <DropdownItem>Edit</DropdownItem>
-                <DropdownItem>Delete</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
-        );
-      default:
-        return cellValue;
-    }
-  }, []);
-
   const rightSidebar = useMemo(() => {
     switch (rightSidebarContent) {
       case 'TICKET':
@@ -497,6 +418,9 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
           body: <CreateTargetForm />,
           footer: null,
         };
+
+      default:
+        return null;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rightSidebarContent]);
@@ -508,7 +432,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
       <Form {...form}>
         <form
           id='create-event-form'
-          onSubmit={form.handleSubmit(handlePublishEvent, onError)}
+          onSubmit={form.handleSubmit(() => {}, onError)}
           className='grid grid-cols-12 items-start gap-3'
         >
           <div className='grid grid-cols-2 gap-6 [&>div]:w-full bg-white rounded-md p-6 shadow-md 1200px:col-span-6 col-span-12 max-w-[1000px]'>
@@ -522,6 +446,9 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                 control={form.control}
                 showError={true}
                 autoComplete='on'
+                classNames={{
+                  label: 'text-nm font-medium',
+                }}
               />
             </div>
             <div className='col-span-2'>
@@ -598,6 +525,68 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                     )}
                   </FormItem>
                 )}
+              />
+            </div>
+
+            <div className='col-span-2'>
+              <FormField
+                control={form.control}
+                name='coverImageUrl'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormCustomLabel
+                      htmlFor='coverImageUrl'
+                      label='coverImageUrl'
+                      required
+                      className='text-nm font-medium'
+                    />
+                    <FormControl>
+                      <ImageUploader
+                        name='coverImageUrl'
+                        onGetImageUrl={(url) => field.onChange(url)}
+                        variant='cover'
+                        // defaultImageUrl={auth?.user?.avatarUrl}
+                      />
+                    </FormControl>
+                    <FormMessage label='coverImageUrl' />
+                  </FormItem>
+                )}
+              />
+
+              <FormInstructions>
+                <li>
+                  This is the main image for your event. We recommend a 700 x
+                  350px (2:1 ratio) image.
+                </li>
+              </FormInstructions>
+            </div>
+
+            <div className='col-span-2'>
+              <FormCustomLabel
+                htmlFor='galleryUrls'
+                label='gallery'
+                custom={
+                  <div>
+                    <p className={clsx(styles.flexStart, 'mt-1')}>
+                      <BsStars size={20} />
+                      <span>
+                        <span className='font-semibold mr-2'>Pro tip:</span>
+                        Use photos that set the mood, and avoid distracting text
+                        overlays.
+                      </span>
+                    </p>
+                    <li className='bg-error text-sm ml-2 mb-1'>
+                      You can upload up to{' '}
+                      <span className='font-bold text-nm'>5</span> images to
+                      showcase your event.
+                    </li>
+                  </div>
+                }
+              />
+
+              <MultipleFilesUploader
+                name='galleryUrls'
+                onGetImageUrls={(urls) => form.setValue('galleryUrls', urls)}
               />
             </div>
 
@@ -741,6 +730,9 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                 control={form.control}
                 showError={true}
                 type='number'
+                classNames={{
+                  label: 'text-nm font-medium',
+                }}
               />
             </div>
             <FormInstructions>
@@ -750,52 +742,13 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
               </li>
             </FormInstructions>
             <div className='col-span-2'>
-              <Table
-                aria-label='Example table with custom cells, pagination and sorting'
-                isHeaderSticky
-                classNames={{
-                  wrapper: 'max-h-[382px]',
-                }}
-                bottomContent={
-                  <div className='flex justify-end'>
-                    {/* === RIGHT SIDE BAR === */}
-                    <SheetTrigger
-                      onClick={() => setRightSidebarContent('TICKET')}
-                      className='flex justify-center items-center gap-3 px-6 py-3 rounded-sm border-primary-300 hover:bg-primary hover:text-white hover:border-primary border transition-all '
-                    >
-                      Add ticket
-                      <IoMdAddCircleOutline className='text-inline w-5 h-5' />
-                    </SheetTrigger>
-                  </div>
-                }
-              >
-                <TableHeader columns={TICKET_TABLE_COLUMNS}>
-                  {(column) => (
-                    <TableColumn
-                      key={column.uid}
-                      align={column.name === 'actions' ? 'center' : 'start'}
-                    >
-                      {column.name}
-                    </TableColumn>
-                  )}
-                </TableHeader>
-                <TableBody
-                  emptyContent={'Not setup ticket yet'}
-                  items={draftEvent?.tickets ?? []}
-                >
-                  {(item) => (
-                    <TableRow key={item.price}>
-                      {(columnKey) => (
-                        <TableCell>
-                          {renderCell(item, columnKey as string)}
-                        </TableCell>
-                      )}
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
+              {draftEvent && (
+                <DraftTicketDataTable
+                  eventId={draftEvent?.id}
+                  onAddTicketClick={() => setRightSidebarContent('TICKET')}
+                />
+              )}
             </div>
-
             {/* === MORE === */}
             <h3 className='col-span-2 text-md p-3 border-l-4 border-l-primary mt-6'>
               Advanced Information 🌟
@@ -812,6 +765,9 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                   label: `${so.name} (${so.questionNumber} questions)`,
                 }))}
                 className='w-full'
+                classNames={{
+                  label: 'text-nm font-medium',
+                }}
               />
             </div>
 
@@ -827,11 +783,14 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                     label: to.name,
                   }))}
                   className='w-full'
+                  classNames={{
+                    label: 'text-nm font-medium',
+                  }}
                 />
               </div>
 
               <SheetTrigger
-                className='hover:text-primary mt-3 hover:bg-white border border-primary py-2 px-4 bg-primary text-white transition-all'
+                className='hover:text-primary mt-3 hover:bg-white border border-primary py-1 px-4 bg-primary text-white transition-all text-sm'
                 onClick={() => setRightSidebarContent('TARGET')}
               >
                 Add new target +
@@ -845,6 +804,9 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                 label='tags'
                 control={form.control}
                 data={tagData}
+                classNames={{
+                  label: 'text-nm font-medium',
+                }}
               />
             </div>
 
@@ -888,44 +850,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
             </div>
           </div>
 
-          <div className='col-span-6 p-3'>
-            <div className='col-span-2'>
-              <FormField
-                control={form.control}
-                name='coverImageUrl'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormCustomLabel
-                      htmlFor='coverImageUrl'
-                      label='coverImageUrl'
-                      required
-                    />
-                    <FormControl>
-                      <ImageUploader
-                        name='coverImageUrl'
-                        onGetImageUrl={(url) => field.onChange(url)}
-                        variant='cover'
-                        // defaultImageUrl={auth?.user?.avatarUrl}
-                      />
-                    </FormControl>
-                    <FormMessage label='coverImageUrl' />
-                  </FormItem>
-                )}
-              />
-
-              <FormInstructions>
-                <li>
-                  This is the main image for your event. We recommend a 700 x
-                  350px (2:1 ratio) image.
-                </li>
-              </FormInstructions>
-            </div>
-
-            <div className='border-y border-y-primary py-[2px] mt-4 '>
-              <div className='border-y border-y-primary py-2'>
-                <h3 className='text-center text-md'>Description 🗒</h3>
-              </div>
-            </div>
+          <div className='col-span-6 p-2'>
             <main className='flex flex-col items-center justify-between'>
               <LexicalEditor
                 content={generatedContent?.description ?? ''}
@@ -937,36 +862,44 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                   form.setValue('description', editorStateJSON);
                 }}
                 onAutoGenerate={generateEventAI}
+                isGenerating={isGenerating}
               />
             </main>
 
-            <div className='col-span-2'>
-              <FormCustomLabel
-                htmlFor='galleryUrls'
-                label='gallery'
-                custom={
-                  <div>
-                    <p className={clsx(styles.flexStart, 'mt-1')}>
-                      <BsStars size={20} />
-                      <span>
-                        <span className='font-semibold mr-2'>Pro tip:</span>
-                        Use photos that set the mood, and avoid distracting text
-                        overlays.
-                      </span>
-                    </p>
-                    <li className='bg-error text-sm ml-2 mb-1'>
-                      You can upload up to{' '}
-                      <span className='font-bold text-nm'>5</span> images to
-                      showcase your event.
-                    </li>
-                  </div>
-                }
-              />
+            <div className='p-3 bg-white mt-4 shadow-md rounded-md'>
+              <div className={clsx(styles.flexStart, 'mb-2')}>
+                <h3 className='text-nm font-medium'>AI assistants</h3>
+                <RiRobot2Line size={20} />
+              </div>
+              <div className='relative'>
+                <FormTextarea
+                  id='prompt'
+                  name='prompt'
+                  placeholder='What do you want to ask AI?'
+                  control={form.control}
+                  showError={true}
+                  classNames={{
+                    label: 'text-nm font-medium',
+                  }}
+                  rows={5}
+                />
+                <Button
+                  variant='solid'
+                  className='absolute top-2 right-2'
+                  // onClick={() => {
+                  //   generateEventAI(form.getValues('prompt'));
+                  // }}
+                  size='sm'
+                  radius='sm'
+                  color='primary'
+                >
+                  <AiOutlineSend className='w-4 h-4' />
+                </Button>
+              </div>
 
-              <MultipleFilesUploader
-                name='galleryUrls'
-                onGetImageUrls={(urls) => form.setValue('galleryUrls', urls)}
-              />
+              <div className='min-h-[500px] max-h-[1000px] overflow-y-auto flex flex-col items-center justify-center mt-4'>
+                AI Response
+              </div>
             </div>
           </div>
         </form>

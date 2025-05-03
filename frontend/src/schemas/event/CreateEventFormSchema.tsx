@@ -147,6 +147,7 @@ const eventBaseSchema = z.object({
   surveyId: z.coerce.number().nullable(),
   targetId: z.coerce.number().nullable(),
   tags: z.array(z.coerce.number()).nullable(),
+  prompt: z.string().trim().max(1024).optional(),
 });
 
 const createEventFormSchema = z.intersection(

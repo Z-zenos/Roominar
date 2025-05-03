@@ -1,10 +1,8 @@
-import { Button, RadioGroup } from '@nextui-org/react';
-import { TicketTypeRadio } from '../common/RadioGroup';
-import clsx from 'clsx';
-import { styles } from '@/src/constants/styles.constant';
+import { Button } from '@nextui-org/react';
 import {
   Form,
   FormInput,
+  FormInstructions,
   FormRadioBoxList,
   FormSelect,
   FormTextarea,
@@ -26,9 +24,10 @@ import { optionify } from '@/src/utils/app.util';
 
 interface CreateTicketFormProps {
   eventId?: number;
+  onCreate?: () => void;
 }
 
-function CreateTicketForm({ eventId }: CreateTicketFormProps) {
+function CreateTicketForm({ eventId, onCreate }: CreateTicketFormProps) {
   const form = useForm<CreateTicketFormSchema>({
     mode: 'onChange',
     defaultValues: {
@@ -50,6 +49,7 @@ function CreateTicketForm({ eventId }: CreateTicketFormProps) {
   const { trigger, isMutating: isCreating } = useCreateTicketMutation({
     onSuccess() {
       toast.success('Create ticket successfully!');
+      onCreate?.();
       form.reset();
     },
     onError(error: ApiException<unknown>) {
@@ -86,23 +86,19 @@ function CreateTicketForm({ eventId }: CreateTicketFormProps) {
         onSubmit={form.handleSubmit(handleCreateTicket)}
         className='my-6 pt-6 grid grid-cols-2 gap-4 border-t border-t-primary'
       >
-        <RadioGroup className='col-span-2'>
-          <div className={clsx(styles.flexStart, 'gap-3')}>
-            <TicketTypeRadio
-              // description='Up to 20 items'
-              value='free'
-            >
-              Free
-            </TicketTypeRadio>
-            <TicketTypeRadio
-              // description='Unlimited items. $10 per month.'
-              value='paid'
-            >
-              Paid
-            </TicketTypeRadio>
-          </div>
-        </RadioGroup>
-
+        <FormInstructions className='col-span-2'>
+          <li>If you want to make free tickets, please set the price to 0.</li>
+        </FormInstructions>
+        <div className='col-span-2'>
+          <FormRadioBoxList
+            name='deliveryMethod'
+            control={form.control}
+            options={optionify(TicketDeliveryMethodCode)}
+            i18nPath='code.ticket.deliveryMethod'
+            direction='horizontal'
+            required
+          />
+        </div>
         <div className='col-span-2 mt-4'>
           <FormInput
             id='ticketName'
@@ -146,8 +142,7 @@ function CreateTicketForm({ eventId }: CreateTicketFormProps) {
             id='ticketDescription'
             name='description'
             label='ticketDescription'
-            required
-            placeholder='100'
+            placeholder='Describe details about the ticket (optional)'
             control={form.control}
             showError={true}
           />
@@ -163,18 +158,6 @@ function CreateTicketForm({ eventId }: CreateTicketFormProps) {
             options={optionify(TicketTypeCode)}
             i18nPath='code.ticket.type'
             className='w-full'
-          />
-        </div>
-
-        <div className='col-span-2'>
-          <FormRadioBoxList
-            name='deliveryMethod'
-            label='deliveryMethod'
-            control={form.control}
-            options={optionify(TicketDeliveryMethodCode)}
-            i18nPath='code.ticket.deliveryMethod'
-            direction='horizontal'
-            required
           />
         </div>
 

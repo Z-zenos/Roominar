@@ -15,6 +15,7 @@ import { useEffect, useState } from 'react';
 
 import useModal from '../../hooks/useModal';
 import Button from '../../ui/Button';
+import clsx from 'clsx';
 
 async function validateEditorState(editor: LexicalEditor): Promise<void> {
   const stringifiedEditorState = JSON.stringify(editor.getEditorState());
@@ -42,12 +43,14 @@ async function validateEditorState(editor: LexicalEditor): Promise<void> {
 interface ActionsPluginProps {
   isRichText: boolean;
   onAutoGenerate?: () => void;
+  isGenerating?: boolean;
 }
 
 export default function ActionsPlugin({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   isRichText,
   onAutoGenerate,
+  isGenerating,
 }: ActionsPluginProps): JSX.Element {
   const [editor] = useLexicalComposerContext();
   const [isEditable, setIsEditable] = useState(() => editor.isEditable());
@@ -181,7 +184,12 @@ export default function ActionsPlugin({
         </span>
 
         <span className='flex items-center justify-center gap-1 relative z-[1] dark:bg-neutral-950/90 bg-neutral-50/90 rounded-full py-2 px-4 pl-2 w-full'>
-          <span className='relative group-hover:scale-105 transition-transform group-hover:rotate-[360deg] duration-500'>
+          <span
+            className={clsx(
+              'relative group-hover:scale-105 transition-transform group-hover:rotate-[360deg] duration-500',
+              isGenerating && 'rotate-[360deg]',
+            )}
+          >
             <svg
               width='18'
               height='18'

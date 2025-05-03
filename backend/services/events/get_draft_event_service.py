@@ -37,6 +37,7 @@ async def get_draft_event(db: Session, organizer: User, slug: str | None):
     event["tickets"] = await ticket_service.listing_tickets_of_event(
         db, organizer, event["id"]
     )
+
     event["tags"] = tag_service.get_event_tags(db, event["id"])
     event["gallery"] = event["gallery"] or []
 

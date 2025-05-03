@@ -176,19 +176,23 @@ const FormControl = forwardRef<
   ElementRef<typeof Slot>,
   ComponentPropsWithoutRef<typeof Slot>
 >(({ ...props }, ref) => {
-  const { error, formItemId, formDescriptionId, formMessageId } =
-    useFormField();
+  const {
+    formItemId,
+    // error ,
+    // formDescriptionId,
+    // formMessageId
+  } = useFormField();
 
   return (
     <Slot
       ref={ref}
       id={formItemId}
-      aria-describedby={
-        !error
-          ? `${formDescriptionId}`
-          : `${formDescriptionId} ${formMessageId}`
-      }
-      aria-invalid={!!error}
+      // aria-describedby={
+      //   !error
+      //     ? `${formDescriptionId}`
+      //     : `${formDescriptionId} ${formMessageId}`
+      // }
+      // aria-invalid={!!error}
       {...props}
     />
   );
@@ -295,6 +299,7 @@ const FormInput = ({
   name,
   control,
   showError = false,
+  classNames,
   ...props
 }: FormInputProps) => {
   return (
@@ -302,13 +307,13 @@ const FormInput = ({
       control={control}
       name={name}
       render={({ field, fieldState }) => (
-        <FormItem className={props.classNames?.wrapper}>
+        <FormItem className={classNames?.wrapper}>
           {props.label && (
             <FormCustomLabel
               htmlFor={name}
               label={props.label}
               required={props.required}
-              className={props.classNames?.label}
+              className={classNames?.label}
             />
           )}
           <FormControl>
@@ -1147,8 +1152,10 @@ const FormSelect = ({
               >
                 <SelectValue
                   placeholder={
-                    placeholder ??
-                    `${i18nPath ? t(options[0]?.label) : options[0]?.label}`
+                    field.value
+                      ? t(field.value)
+                      : (placeholder ??
+                        `${i18nPath ? t(options[0]?.label) : options[0]?.label}`)
                   }
                 />
               </SelectTrigger>

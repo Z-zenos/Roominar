@@ -55,11 +55,13 @@ import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 interface EditorProps {
   onChange?: (editorState: EditorState) => void;
   onAutoGenerate?: () => void;
+  isGenerating?: boolean;
 }
 
 export default function Editor({
   onChange,
   onAutoGenerate,
+  isGenerating,
 }: EditorProps): JSX.Element {
   const { historyState } = useSharedHistoryContext();
   const {
@@ -74,7 +76,7 @@ export default function Editor({
   } = useSettings();
   const isEditable = useLexicalEditable();
   const text = isRichText
-    ? 'Enter some rich text...'
+    ? 'Describe all event content here...'
     : 'Enter some plain text...';
   const placeholder = <Placeholder>{text}</Placeholder>;
   const [floatingAnchorElem, setFloatingAnchorElem] =
@@ -197,6 +199,7 @@ export default function Editor({
         <ActionsPlugin
           isRichText={isRichText}
           onAutoGenerate={onAutoGenerate}
+          isGenerating={isGenerating}
         />
       </div>
     </>
