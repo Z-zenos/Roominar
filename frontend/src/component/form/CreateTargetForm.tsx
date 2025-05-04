@@ -1,3 +1,5 @@
+'use client';
+
 import { Form, FormCustomLabel, FormField, FormInput, FormItem } from './Form';
 import type { ControllerRenderProps } from 'react-hook-form';
 import { useForm } from 'react-hook-form';

@@ -21,6 +21,7 @@ import { TicketStatusCode } from '@/src/lib/api/generated';
 import type { ChipProps } from '@nextui-org/react';
 import { SheetTrigger } from '@/src/component/common/Sheet';
 import Spinner from '@/src/component/common/Loader/Spinner';
+import { useCallback } from 'react';
 
 const statusColorMap: Record<string, ChipProps['color']> = {
   [TicketStatusCode.Available]: 'success',
@@ -50,7 +51,7 @@ export default function DraftTicketDataTable({
   onOpenCreateTicketForm,
   onOpenUpdateTicketForm,
 }: DraftTicketDataTableProps) {
-  const renderCell = (ticket: TicketItem, columnKey: string) => {
+  const renderCell = useCallback((ticket: TicketItem, columnKey: string) => {
     const cellValue = columnKey !== 'actions' ? ticket[columnKey] : null;
 
     switch (columnKey) {
@@ -97,13 +98,12 @@ export default function DraftTicketDataTable({
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem textValue='Edit'>
-                  <SheetTrigger
-                    onClick={() => onOpenUpdateTicketForm?.(ticket.id)}
-                    className='!w-full !block !text-left !justify-start'
-                  >
-                    Edit
-                  </SheetTrigger>
+                <DropdownItem
+                  as={SheetTrigger}
+                  onClick={() => onOpenUpdateTicketForm?.(ticket.id)}
+                  className='!w-full !block !text-left !justify-start'
+                >
+                  Edit
                 </DropdownItem>
                 <DropdownItem>Delete</DropdownItem>
               </DropdownMenu>
@@ -113,7 +113,8 @@ export default function DraftTicketDataTable({
       default:
         return cellValue;
     }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Table
