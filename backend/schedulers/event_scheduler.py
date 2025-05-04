@@ -108,8 +108,6 @@ def _remind_upcoming_events(time_window: timedelta, type_code: NotificationTypeC
             )
         ).all()
 
-        print(target_time_start, target_time_end)
-
         logger.info(
             f"Found {len(transactions)} transactions for upcoming events in the next {time_window}"
         )

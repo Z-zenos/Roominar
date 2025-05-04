@@ -64,10 +64,17 @@ function UpdateTicketForm({ ticketId, onUpdate }: UpdateTicketFormProps) {
   }, [JSON.stringify(ticket)]);
 
   const { trigger, isMutating: isUpdating } = useUpdateTicketMutation({
-    onSuccess() {
+    onSuccess(updatedData) {
       toast.success('Update ticket successfully!');
       onUpdate?.();
-      form.reset();
+      form.reset({
+        name: updatedData.name,
+        quantity: updatedData.quantity,
+        description: updatedData.description ?? undefined,
+        price: updatedData.price,
+        type: updatedData.type,
+        deliveryMethod: updatedData.deliveryMethod,
+      });
     },
     onError(error: ApiException<unknown>) {
       toast.error(

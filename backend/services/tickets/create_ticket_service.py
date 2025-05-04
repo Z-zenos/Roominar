@@ -1,11 +1,29 @@
-from sqlmodel import Session
+from sqlmodel import Session, select
 
+from backend.core.error_code import ErrorCode, ErrorMessage
+from backend.core.exception import BadRequestException
+from backend.models.event import Event
 from backend.models.ticket import Ticket
+from backend.models.user import User
 from backend.schemas.ticket import CreateTicketRequest
-from backend.utils.database import save
+from backend.utils.database import fetch_one, save
 
 
-async def create_ticket(db: Session, request: CreateTicketRequest):
+async def create_ticket(db: Session, organizer: User, request: CreateTicketRequest):
+    event = fetch_one(
+        db,
+        select(Event).where(
+            Event.id == request.event_id,
+            Event.organization_id == organizer.organization_id,
+        ),
+    )
+
+    if not event:
+        raise BadRequestException(
+            ErrorCode.ERR_EVENT_NOT_FOUND,
+            ErrorMessage.ERR_EVENT_NOT_FOUND,
+        )
+
     ticket = Ticket(
         event_id=request.event_id,
         name=request.name,

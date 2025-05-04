@@ -5,13 +5,10 @@ from backend.core.exception import BadRequestException
 from backend.models.event import Event
 from backend.models.ticket import Ticket
 from backend.models.user import User
-from backend.schemas.ticket import UpdateTicketRequest
-from backend.utils.database import fetch_one, save
+from backend.utils.database import fetch_one
 
 
-async def update_ticket(
-    db: Session, organizer: User, request: UpdateTicketRequest, ticket_id: int
-):
+async def delete_ticket(db: Session, organizer: User, ticket_id: int):
     ticket = fetch_one(
         db,
         select(Ticket)
@@ -26,21 +23,9 @@ async def update_ticket(
             ErrorMessage.ERR_TICKET_NOT_FOUND,
         )
 
-    ticket.name = request.name
-    ticket.quantity = request.quantity
-    ticket.price = request.price
-    ticket.expired_at = request.expired_at
-    ticket.type = request.type
-    ticket.delivery_method = request.delivery_method
-    ticket.access_link_url = request.access_link_url
-    ticket.sales_end_at = request.sales_end_at
-    ticket.sales_start_at = request.sales_start_at
-    ticket.description = request.description
-
     try:
-        ticket = save(db, ticket)
-
-        return ticket
+        db.delete(ticket)
+        db.commit()
     except Exception as e:
         db.rollback()
         raise e

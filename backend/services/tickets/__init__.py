@@ -1,5 +1,6 @@
 from .cancel_tickets_service import cancel_tickets
 from .create_ticket_service import create_ticket
+from .delete_ticket_service import delete_ticket
 from .get_draft_ticket_service import get_draft_ticket
 from .get_ticket_status_counts_service import get_ticket_status_counts
 from .listing_my_tickets_service import listing_my_tickets
@@ -14,4 +15,5 @@ all = (
     get_ticket_status_counts,
     update_ticket,
     get_draft_ticket,
+    delete_ticket,
 )

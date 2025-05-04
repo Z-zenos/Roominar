@@ -210,7 +210,6 @@ export function OrganizationSidebar({
                                       '/organization/events/[slug]/create'
                                     ) {
                                       refetchGetDraftEvent().then((data) => {
-                                        console.log('draft', data.data);
                                         router.push(
                                           `/organization/events/${data?.data?.slug}/create`,
                                         );

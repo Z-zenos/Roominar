@@ -455,7 +455,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
         return null;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rightSidebarContent]);
+  }, [rightSidebarContent, selectedTicketId]);
 
   // if (isGetDraftEventLoading) return <DotLoader />;
 
@@ -787,6 +787,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                     setRightSidebarContent('UPDATE_TICKET');
                     setSelectedTicketId(ticketId);
                   }}
+                  onDeleteTicket={refetchListingTicketsOfEvent}
                 />
               )}
             </div>
