@@ -41,6 +41,7 @@ import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 
 // import '@/styles/custom.module.css';
+import '@/src/component/editor/components/editor/themes/PlaygroundEditorTheme.css';
 
 // import required modules
 import { Autoplay, FreeMode, Pagination } from 'swiper/modules';
@@ -416,7 +417,9 @@ function EventDetail({ slug }: EventDetailProps) {
               About this event
             </h3>
             <div className='mt-3'>
-              <p className='font-light'>{event?.description}</p>
+              <div
+                dangerouslySetInnerHTML={{ __html: event?.description }}
+              ></div>
             </div>
           </div>
 

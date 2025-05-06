@@ -12,10 +12,14 @@ import Editor from '../components/editor/editor';
 import { $generateNodesFromDOM } from '@lexical/html';
 
 import './globals.css';
+import type { LexicalEditor as LexicalEditorState } from 'lexical';
 import { $createParagraphNode, $getRoot, type EditorState } from 'lexical';
 
 interface LexicalEditorProps {
-  onChange?: (editorState: EditorState) => void;
+  onChange?: (
+    editorState: EditorState,
+    lexicalEditor: LexicalEditorState,
+  ) => void;
   content?: string;
   onAutoGenerate?: () => void;
   isGenerating?: boolean;

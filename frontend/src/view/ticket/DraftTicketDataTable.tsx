@@ -80,7 +80,7 @@ export default function DraftTicketDataTable({
       case 'name':
         return (
           <div>
-            <p className='text-nm font-medium'>{ticket.name}</p>
+            <p className='text-sm font-medium'>{ticket.name}</p>
             <p className='text-xs text-gray-600 font-ligth max-w-[200px] truncate'>
               {ticket.description}
             </p>

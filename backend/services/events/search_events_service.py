@@ -71,7 +71,13 @@ async def search_events(
             Event.is_offline,
             Event.meeting_tool_code,
             Event.published_at,
-            EventTag.c.tags,
+            case(
+                (
+                    EventTag.c.tags.isnot(None),
+                    EventTag.c.tags,
+                ),
+                else_=func.json_build_array(),
+            ).label("tags"),
             SoldTicketsNumber.c.sold_tickets_number,
         )
         .join(Organization, Event.organization_id == Organization.id)

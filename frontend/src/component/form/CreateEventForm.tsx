@@ -19,6 +19,7 @@ import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
 import {
   CityCode,
   EventMeetingToolCode,
+  PublishEventRequestOrganizeCityCodeEnum,
   SaveDraftEventRequestOrganizeCityCodeEnum,
 } from '@/src/lib/api/generated';
 import toast from 'react-hot-toast';
@@ -66,6 +67,7 @@ import { useListingOrganizationEventsTimelineQuery } from '@/src/api/organizatio
 import ElementLoader from '../common/Loader/ElementLoader';
 import { RiRobot2Line } from 'react-icons/ri';
 import { AiOutlineSend } from 'react-icons/ai';
+import { exportHTML } from '../editor/components/editor/utils/html';
 
 // const LazyMap = dynamic(() => import('../common/Map/Map'), {
 //   ssr: false,
@@ -364,32 +366,30 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
     return null; // No errors
   }
 
-  // function handlePublishEvent(data: CreateEventFormSchema) {
-  //   // trigger({
-  //   //   eventId: 11,
-  //   //   publishEventRequest: {
-  //   //     name: data.name,
-  //   //     description: data.description,
-  //   //     coverImageUrl: data.coverImageUrl,
-  //   //     surveyId: data.surveyId,
-  //   //     targetId: data.targetId,
-  //   //     status: data.status,
-  //   //     ticketIds: data.ticketIds,
-  //   //     tags: data.tags,
-  //   //     totalTicketNumber: data.totalTicketNumber,
-  //   //     startAt: data.startAt,
-  //   //     endAt: data.endAt,
-  //   //     applicationEndAt: data.applicationEndAt,
-  //   //     applicationStartAt: data.applicationStartAt,
-  //   //     isOnline: data.isOnline,
-  //   //     isOffline: data.isOffline,
-  //   //     organizeAddress: data.organizeAddress,
-  //   //     organizeCityCode: PublishEventRequestOrganizeCityCodeEnum.Angiang,
-  //   //     meetingToolCode: data.meetingToolCode,
-  //   //     meetingUrl: data.meetingUrl,
-  //   //   },
-  //   // });
-  // }
+  function handlePublishEvent(data: CreateEventFormSchema) {
+    publishEvent({
+      eventId: draftEvent?.id,
+      publishEventRequest: {
+        name: data.name,
+        description: data.description,
+        coverImageUrl: data.coverImageUrl,
+        surveyId: data.surveyId,
+        targetId: data.targetId,
+        tags: data.tags,
+        totalTicketNumber: data.totalTicketNumber,
+        startAt: data.startAt,
+        endAt: data.endAt,
+        applicationEndAt: data.applicationEndAt,
+        applicationStartAt: data.applicationStartAt,
+        isOnline: data.isOnline,
+        isOffline: data.isOffline,
+        organizeAddress: data.organizeAddress,
+        organizeCityCode: PublishEventRequestOrganizeCityCodeEnum.Hanoi,
+        meetingToolCode: data.meetingToolCode,
+        meetingUrl: data.meetingUrl,
+      },
+    });
+  }
 
   function handleSaveDraftEvent(data: CreateEventFormSchema) {
     saveDraftEvent({
@@ -400,7 +400,6 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
         coverImageUrl: data.coverImageUrl,
         surveyId: data.surveyId,
         targetId: data.targetId ?? null,
-        ticketIds: data.ticketIds,
         tags: data.tags,
         totalTicketNumber: data.totalTicketNumber,
         startAt: data.startAt,
@@ -464,7 +463,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
       <Form {...form}>
         <form
           id='create-event-form'
-          onSubmit={form.handleSubmit(() => {}, onError)}
+          onSubmit={form.handleSubmit(handlePublishEvent, onError)}
           className='grid grid-cols-12 items-start gap-3'
         >
           <div className='grid grid-cols-2 gap-6 [&>div]:w-full bg-white rounded-md p-6 shadow-md 1200px:col-span-6 col-span-12 max-w-[1000px]'>
@@ -896,12 +895,10 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
             <main className='flex flex-col items-center justify-between'>
               <LexicalEditor
                 content={generatedContent?.description ?? ''}
-                onChange={(editorState) => {
-                  // Convert editor state to string representation for storage
-                  const editorStateJSON = JSON.stringify(editorState);
-
+                onChange={(editorState, lexicalEditor) => {
+                  const htmlContent = exportHTML(lexicalEditor);
                   // For example, set it in a hidden field or in your form state
-                  form.setValue('description', editorStateJSON);
+                  form.setValue('description', htmlContent);
                 }}
                 onAutoGenerate={generateEventAI}
                 isGenerating={isGenerating}

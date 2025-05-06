@@ -49,11 +49,11 @@ import Placeholder from './ui/Placeholder';
 import { CAN_USE_DOM } from './shared/canUseDOM';
 import { AutoFocusPlugin } from './plugins/AutoFocusPlugin';
 import MentionsPlugin from './plugins/MentionsPlugin';
-import type { EditorState } from 'lexical';
+import type { EditorState, LexicalEditor } from 'lexical';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 
 interface EditorProps {
-  onChange?: (editorState: EditorState) => void;
+  onChange?: (editorState: EditorState, lexicalEditor: LexicalEditor) => void;
   onAutoGenerate?: () => void;
   isGenerating?: boolean;
 }
