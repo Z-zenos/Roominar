@@ -132,23 +132,6 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
     draftEvent?.id ? true : false,
   );
 
-  const {
-    trigger: generateEventAI,
-    isMutating: isGenerating,
-    data: generatedContent,
-  } = useGenerateEventAIMutation({
-    onSuccess() {
-      toast.success('Save draft event successfully!');
-    },
-    onError(error: ApiException<unknown>) {
-      toast.error(
-        (error.body as ErrorResponse400)?.message ??
-          (error.body as ErrorResponse400)?.errorCode ??
-          'Unknown Error 😵',
-      );
-    },
-  });
-
   const [rightSidebarContent, setRightSidebarContent] = useState<
     'CREATE_TICKET' | 'UPDATE_TICKET' | 'TARGET' | null
   >();
@@ -175,9 +158,6 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
       organizeCityCode: undefined,
       meetingToolCode: undefined,
       meetingUrl: '',
-
-      totalTicketNumber: 0,
-      ticketIds: [],
       galleryUrls: [],
       prompt: '',
     },
@@ -204,10 +184,6 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
       organizeCityCode: draftEvent?.organizeCityCode as CityCode,
       meetingToolCode: draftEvent?.meetingToolCode ?? EventMeetingToolCode.Zoom,
       meetingUrl: draftEvent?.meetingUrl ?? '',
-
-      totalTicketNumber: draftEvent?.totalTicketNumber ?? 0,
-      ticketIds:
-        draftEvent?.tickets?.map((ticket) => ticket.id)?.slice(0, 10) ?? [],
       galleryUrls: draftEvent?.gallery ?? [],
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -273,6 +249,22 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
     useSaveDraftEventMutation({
       onSuccess() {
         toast.success('Save draft event successfully!');
+      },
+      onError(error: ApiException<unknown>) {
+        toast.error(
+          (error.body as ErrorResponse400)?.message ??
+            (error.body as ErrorResponse400)?.errorCode ??
+            'Unknown Error 😵',
+        );
+      },
+    });
+
+  const { trigger: generateEventAI, isMutating: isGenerating } =
+    useGenerateEventAIMutation({
+      onSuccess(data) {
+        form.setValue('description', data?.description ?? '');
+        form.trigger('description');
+        form.setValue('name', data?.title ?? '');
       },
       onError(error: ApiException<unknown>) {
         toast.error(
@@ -376,13 +368,12 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
         surveyId: data.surveyId,
         targetId: data.targetId,
         tags: data.tags,
-        totalTicketNumber: data.totalTicketNumber,
         startAt: data.startAt,
         endAt: data.endAt,
         applicationEndAt: data.applicationEndAt,
         applicationStartAt: data.applicationStartAt,
-        isOnline: data.isOnline,
-        isOffline: data.isOffline,
+        isOnline: data.isOnline ?? false,
+        isOffline: data.isOffline ?? false,
         organizeAddress: data.organizeAddress,
         organizeCityCode: PublishEventRequestOrganizeCityCodeEnum.Hanoi,
         meetingToolCode: data.meetingToolCode,
@@ -401,7 +392,6 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
         surveyId: data.surveyId,
         targetId: data.targetId ?? null,
         tags: data.tags,
-        totalTicketNumber: data.totalTicketNumber,
         startAt: data.startAt,
         endAt: data.endAt,
         applicationEndAt: data.applicationEndAt,
@@ -576,7 +566,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                         name='coverImageUrl'
                         onGetImageUrl={(url) => field.onChange(url)}
                         variant='cover'
-                        // defaultImageUrl={auth?.user?.avatarUrl}
+                        defaultImageUrl={draftEvent?.coverImageUrl}
                       />
                     </FormControl>
                     <FormMessage label='coverImageUrl' />
@@ -751,27 +741,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
             <h3 className='col-span-2 text-md p-3 border-l-4 border-l-primary'>
               Tickets 🎟
             </h3>
-            <div>
-              <FormInput
-                id='totalTicketNumber'
-                name='totalTicketNumber'
-                label='totalTicketNumber'
-                required
-                placeholder='100'
-                control={form.control}
-                showError={true}
-                type='number'
-                classNames={{
-                  label: 'text-nm font-medium',
-                }}
-              />
-            </div>
-            <FormInstructions>
-              <li>
-                The order quantity must always be greater than or equal to the
-                total number of tickets you set.
-              </li>
-            </FormInstructions>
+
             <div className='col-span-2'>
               {draftEvent && (
                 <DraftTicketDataTable
@@ -894,13 +864,33 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
           <div className='col-span-6 p-2'>
             <main className='flex flex-col items-center justify-between'>
               <LexicalEditor
-                content={generatedContent?.description ?? ''}
-                onChange={(editorState, lexicalEditor) => {
+                content={form.getValues('description')}
+                onChange={(_, lexicalEditor) => {
                   const htmlContent = exportHTML(lexicalEditor);
-                  // For example, set it in a hidden field or in your form state
                   form.setValue('description', htmlContent);
                 }}
-                onAutoGenerate={generateEventAI}
+                onAutoGenerate={() =>
+                  generateEventAI({
+                    generateEventAIRequest: {
+                      name: form.getValues('name'),
+                      startAt: form.getValues('startAt'),
+                      endAt: form.getValues('endAt'),
+                      applicationStartAt: form.getValues('applicationStartAt'),
+                      applicationEndAt: form.getValues('applicationEndAt'),
+                      isOnline: form.getValues('isOnline') ?? false,
+                      isOffline: form.getValues('isOffline') ?? false,
+                      organizeAddress: form.getValues('organizeAddress'),
+                      price:
+                        tickets.reduce((acc, ticket) => acc + ticket.price, 0) /
+                        tickets.reduce(
+                          (acc, ticket) => acc + ticket.quantity,
+                          0,
+                        ),
+                      tags: form.getValues('tags'),
+                      prompt: form.getValues('prompt'),
+                    },
+                  })
+                }
                 isGenerating={isGenerating}
               />
             </main>

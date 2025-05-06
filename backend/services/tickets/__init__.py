@@ -1,4 +1,5 @@
 from .cancel_tickets_service import cancel_tickets
+from .create_default_ticket_service import create_default_ticket
 from .create_ticket_service import create_ticket
 from .delete_ticket_service import delete_ticket
 from .get_draft_ticket_service import get_draft_ticket
@@ -16,4 +17,5 @@ all = (
     update_ticket,
     get_draft_ticket,
     delete_ticket,
+    create_default_ticket,
 )

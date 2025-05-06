@@ -78,6 +78,7 @@ export default function LexicalEditor({
                   onChange={onChange}
                   onAutoGenerate={onAutoGenerate}
                   isGenerating={isGenerating}
+                  content={content}
                 />
               </div>
             </SharedAutocompleteContext>

@@ -51,18 +51,23 @@ import { AutoFocusPlugin } from './plugins/AutoFocusPlugin';
 import MentionsPlugin from './plugins/MentionsPlugin';
 import type { EditorState, LexicalEditor } from 'lexical';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { importHTML } from './utils/html';
 
 interface EditorProps {
   onChange?: (editorState: EditorState, lexicalEditor: LexicalEditor) => void;
   onAutoGenerate?: () => void;
   isGenerating?: boolean;
+  content?: string;
 }
 
 export default function Editor({
   onChange,
   onAutoGenerate,
   isGenerating,
+  content,
 }: EditorProps): JSX.Element {
+  const [editor] = useLexicalComposerContext();
   const { historyState } = useSharedHistoryContext();
   const {
     settings: {
@@ -107,6 +112,12 @@ export default function Editor({
       window.removeEventListener('resize', updateViewPortWidth);
     };
   }, [isSmallWidthViewport]);
+
+  useEffect(() => {
+    if (content) {
+      importHTML(editor, content);
+    }
+  }, [editor, content]);
 
   return (
     <>

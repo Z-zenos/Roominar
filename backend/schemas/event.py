@@ -229,7 +229,6 @@ class PublishEventRequest(BaseModel):
     application_start_at: datetime
     application_end_at: datetime
 
-    total_ticket_number: int
     cover_image_url: str = Field(max_length=2048)
     gallery: list[str] = Field([])
 
@@ -249,12 +248,12 @@ class PublishEventRequest(BaseModel):
 
     tags: list[int] = Field([])
 
-    @field_validator("is_online", "is_offline")
+    @field_validator("is_online")
     def validate_online_offline(cls, v: str | None, values: ValidationInfo):
         if (
             not v
-            and not values.data.get("is_online")
             and not values.data.get("is_offline")
+            and not values.data.get("is_online")
         ):
             raise BadRequestException(
                 ErrorCode.ERR_EVENT_NEIHER_ONLINE_NOR_OFFLINE,
@@ -372,7 +371,6 @@ class SaveDraftEventRequest(BaseModel):
     application_start_at: datetime | None
     application_end_at: datetime | None
 
-    total_ticket_number: int | None = Field(le=1000)
     cover_image_url: str | None = Field(max_length=2048)
     gallery: list[str] = Field([])
 
@@ -416,8 +414,6 @@ class GenerateEventAIRequest(BaseModel):
     end_at: datetime
     application_start_at: datetime
     application_end_at: datetime
-
-    total_ticket_number: int = Field(le=1000)
 
     is_offline: bool
     organize_address: str | None = Field(max_length=255)

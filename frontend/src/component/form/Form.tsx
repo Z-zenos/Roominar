@@ -1153,7 +1153,9 @@ const FormSelect = ({
                 <SelectValue
                   placeholder={
                     field.value
-                      ? t(field.value)
+                      ? i18nPath
+                        ? t(field.value)
+                        : field.value
                       : (placeholder ??
                         `${i18nPath ? t(options[0]?.label) : options[0]?.label}`)
                   }

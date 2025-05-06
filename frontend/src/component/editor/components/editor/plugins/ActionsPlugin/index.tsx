@@ -58,7 +58,6 @@ export default function ActionsPlugin({
   const [connected, setConnected] = useState(false);
   const [isEditorEmpty, setIsEditorEmpty] = useState(true);
   const [modal, showModal] = useModal();
-  // const { isCollabActive } = useCollaborationContext();
 
   useEffect(() => {
     return mergeRegister(
@@ -148,10 +147,9 @@ export default function ActionsPlugin({
       </button>
 
       <button
+        type='button'
         className='group relative dark:bg-neutral-800 bg-neutral-200 rounded-full p-px overflow-hidden mx-2 mt-1'
         onClick={onAutoGenerate}
-        title='Read-Only Mode'
-        aria-label={`${!isEditable ? 'Unlock' : 'Lock'} read-only mode`}
       >
         <span className='absolute inset-0 rounded-full overflow-hidden'>
           <span className='inset-0 absolute pointer-events-none select-none'>
