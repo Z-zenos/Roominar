@@ -75,8 +75,12 @@ function SearchEvent() {
         : null,
       sortBy: (searchParams.get('sort_by') as EventSortByCode) ?? undefined,
       startAtRange: {
-        from: dayjs(searchParams.get('start_at_from')).toDate(),
-        to: dayjs(searchParams.get('start_at_to')).toDate(),
+        from: searchParams.get('start_at_from')
+          ? dayjs(searchParams.get('start_at_from')).toDate()
+          : null,
+        to: searchParams.get('start_at_to')
+          ? dayjs(searchParams.get('start_at_to')).toDate()
+          : null,
       } as DateRange,
     },
   });

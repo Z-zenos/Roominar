@@ -80,6 +80,8 @@ function SearchHeader({
                   from: null,
                   to: null,
                 },
+                startAtFrom: undefined,
+                startAtTo: undefined,
               });
               router.push('/search');
             }}
