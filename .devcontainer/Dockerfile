@@ -75,6 +75,7 @@ WORKDIR /workspace
 
 # Copy files from host into image
 COPY . .
+RUN chmod +x /entrypoint.sh
+CMD ["/entrypoint.sh"]
 
-
-EXPOSE 8000 3000
+EXPOSE 2001 2002

@@ -9,7 +9,7 @@ from backend.utils.logger import logger
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file="backend/.env", case_sensitive=True, env_file_encoding="utf-8"
+        env_file="../.env", case_sensitive=True, env_file_encoding="utf-8"
     )
 
     PROJECT: str = "Roominar"
