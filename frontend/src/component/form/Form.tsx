@@ -300,6 +300,7 @@ const FormInput = ({
   control,
   showError = false,
   classNames,
+  onValueChange,
   ...props
 }: FormInputProps) => {
   return (
@@ -323,7 +324,7 @@ const FormInput = ({
               error={fieldState.error}
               onChange={(e: ChangeEvent<HTMLInputElement>) => {
                 field.onChange(e);
-                props.onValueChange && props.onValueChange(e.target.value);
+                onValueChange && onValueChange(e.target.value);
               }}
             />
           </FormControl>
@@ -346,6 +347,7 @@ const FormCheckBoxList = ({
   classNames,
   i18nPath,
   direction = 'horizontal',
+  onValueChange,
   ...props
 }: FormCheckBoxListProps) => {
   return (
@@ -387,7 +389,6 @@ const FormCheckBoxList = ({
                         <FormControl>
                           <Checkbox
                             checked={field?.value?.includes(option.value)}
-                            {...props}
                             onCheckedChange={(checked) => {
                               let newItems = null;
 
@@ -401,10 +402,11 @@ const FormCheckBoxList = ({
                                 );
                               }
                               field.onChange(newItems);
-                              if (props.onValueChange) props.onValueChange();
+                              if (onValueChange) onValueChange();
                             }}
                             label={option.label}
                             i18nPath={i18nPath}
+                            {...props}
                           />
                         </FormControl>
                       </FormItem>
@@ -444,12 +446,12 @@ const FormCheckBox = ({
             <Checkbox
               checked={field?.value}
               label={props.label}
-              {...props}
               onCheckedChange={(checked) => {
                 field.onChange(checked);
                 onValueChange && onValueChange();
               }}
               i18nPath={props.i18nPath}
+              {...props}
             />
           </FormControl>
           {props.showError && <FormMessage label={props.label} />}
@@ -1116,6 +1118,7 @@ const FormSelect = ({
   defaultValue,
   onSelect,
   placeholder,
+  onValueChange,
   ...props
 }: FormSelectProps) => {
   const t = useTranslations(i18nPath);
@@ -1139,7 +1142,7 @@ const FormSelect = ({
             onValueChange={(value: string) => {
               field.onChange(value);
               if (onSelect) onSelect(value);
-              if (props.onValueChange) props.onValueChange();
+              if (onValueChange) onValueChange();
             }}
             defaultValue={defaultValue}
           >

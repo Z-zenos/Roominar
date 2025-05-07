@@ -196,10 +196,16 @@ def _build_filters_sort(query_params: SearchEventsQueryParams):
         filters.append(Event.id.in_(event_tags_subquery))
 
     if query_params.start_at_from:
-        filters.append(Event.start_at.cast(Date) >= query_params.start_at_from.date())
+        filters.append(
+            Event.start_at.cast(Date)
+            >= datetime.strptime(query_params.start_at_from, "%Y-%m-%d").date()
+        )
 
     if query_params.start_at_to:
-        filters.append(Event.start_at.cast(Date) <= query_params.start_at_to.date())
+        filters.append(
+            Event.start_at.cast(Date)
+            <= datetime.strptime(query_params.start_at_to, "%Y-%m-%d").date()
+        )
 
     if query_params.organization_id:
         filters.append(Event.organization_id == query_params.organization_id)

@@ -64,8 +64,8 @@ class SearchEventsQueryParams(BaseModel):
     city_codes: list[str] = Field(Query(default=None))
     tags: list[int] = Field(Query(default=None))
 
-    start_at_from: datetime | None = Field(Query(default=None))
-    start_at_to: datetime | None = Field(Query(default=None))
+    start_at_from: str | None = Field(Query(default=None))
+    start_at_to: str | None = Field(Query(default=None))
 
     organization_id: int | None = Field(Query(default=None))
 

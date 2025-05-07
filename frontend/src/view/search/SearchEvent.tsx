@@ -65,10 +65,10 @@ function SearchEvent() {
       cityCodes: searchParams.getAll('city_codes[]') || undefined,
       tags: (searchParams.getAll('tags[]') as unknown as number[]) || undefined,
       startAtFrom: searchParams.get('start_at_from')
-        ? dayjs(searchParams.get('start_at_from')).toDate()
+        ? dayjs(searchParams.get('start_at_from')).format('YYYY-MM-DD')
         : null,
       startAtTo: searchParams.get('start_at_to')
-        ? dayjs(searchParams.get('start_at_to')).toDate()
+        ? dayjs(searchParams.get('start_at_to')).format('YYYY-MM-DD')
         : null,
       sortBy: (searchParams.get('sort_by') as EventSortByCode) ?? undefined,
     },

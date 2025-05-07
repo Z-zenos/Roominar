@@ -125,7 +125,7 @@ function OrganizationProfile({ slug }: OrganizationProfileProps) {
               {organization.tags.map((tag: TagItem, i: number) => (
                 <Link
                   underline='hover'
-                  key={`event-card-tag-${tag.id}`}
+                  key={`organization-${organization.id}-card-tag-${tag.id}`}
                   className='cursor-pointer hover:underline text-gray-500 text-sm mr-2 hover:text-primary'
                   onClick={() => router.push(`/search?tags[]=${tag.id}`)}
                 >
