@@ -5,7 +5,6 @@ import type {
   EventsApiDeleteCheckInRequest,
   EventsApiDeleteEventBookmarkRequest,
   EventsApiGenerateEventAiRequest,
-  EventsApiGetDraftEventRequest,
   EventsApiGetEventDetailRequest,
   EventsApiListingMyEventsRequest,
   EventsApiListingRecommendationEventsRequest,
@@ -182,14 +181,11 @@ export const useDeleteCheckInMutation = <T>(
   );
 };
 
-export const useGetDraftEventQuery = (
-  params?: EventsApiGetDraftEventRequest,
-  enabled?: boolean,
-) => {
+export const useGetDraftEventQuery = (enabled?: boolean) => {
   const api = useApi();
   return useQuery({
     queryKey: ['get-draft-event'],
-    queryFn: async () => await api.events.getDraftEvent(params),
+    queryFn: async () => await api.events.getDraftEvent(),
     enabled,
   });
 };

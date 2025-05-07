@@ -10,15 +10,12 @@ from backend.models import Event, User
 from backend.utils.database import fetch_one, save
 
 
-async def get_draft_event(db: Session, organizer: User, slug: str | None):
+async def get_draft_event(db: Session, organizer: User):
     try:
         query = select(Event).where(
             Event.organization_id == organizer.organization_id,
             Event.status == EventStatusCode.DRAFT,
         )
-
-        if slug and slug != EventStatusCode.DRAFT:
-            query = query.where(Event.slug == slug)
 
         event = fetch_one(db, query)
 

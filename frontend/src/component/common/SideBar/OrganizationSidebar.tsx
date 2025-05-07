@@ -35,7 +35,6 @@ import { RoleCode } from '@/src/constants/role_code.constant';
 import type { Session } from 'next-auth';
 import clsx from 'clsx';
 import { useGetDraftEventQuery } from '@/src/api/event.api';
-import { EventStatusCode } from '@/src/lib/api/generated';
 import { Image } from '@nextui-org/react';
 
 const sidebarMenu = [
@@ -116,10 +115,7 @@ export function OrganizationSidebar({
     }
   };
 
-  const { refetch: refetchGetDraftEvent } = useGetDraftEventQuery(
-    { slug: EventStatusCode.Draft }, // Trick to get draft event when click in sidebar
-    false,
-  );
+  const { refetch: refetchGetDraftEvent } = useGetDraftEventQuery(false);
 
   return (
     <Sidebar

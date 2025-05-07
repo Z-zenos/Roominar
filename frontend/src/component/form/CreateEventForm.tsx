@@ -110,14 +110,10 @@ const UpdateTicketForm = dynamic(() => import('./UpdateTicketForm'), {
   loading: () => <ElementLoader title='Loading ticket form' />,
 });
 
-interface CreateEventFormProps {
-  slug: string;
-}
-
-export default function CreateEventForm({ slug }: CreateEventFormProps) {
+export default function CreateEventForm() {
   const t = useTranslations('form');
 
-  const { data: draftEvent } = useGetDraftEventQuery({ slug }, true);
+  const { data: draftEvent } = useGetDraftEventQuery(true);
   const { data: tagData } = useListingTagsQuery();
   const { data: surveyOptions } = useListingSurveyOptionsQuery();
   const { data: targetOptions, refetch: refetchTargetOptions } =
