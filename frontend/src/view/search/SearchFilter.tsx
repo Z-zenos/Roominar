@@ -131,7 +131,7 @@ function SearchFilter({
         />
         <Label className='mt-3'>Start date</Label>
         <FormDateRangePicker
-          name='start_at_range'
+          name='startAtRange'
           control={control}
           className='w-full'
           onValueChange={onValueChange}

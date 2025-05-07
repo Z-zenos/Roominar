@@ -76,6 +76,10 @@ function SearchHeader({
                   from: null,
                   to: null,
                 },
+                startAtRange: {
+                  from: null,
+                  to: null,
+                },
               });
               router.push('/search');
             }}

@@ -71,6 +71,7 @@ export function searchQuery(
   for (const query of exclude_queries) {
     delete refineQuery[query];
   }
+
   refineQuery = camelToSnake(refineQuery);
 
   for (const key in refineQuery) {

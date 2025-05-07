@@ -22,6 +22,7 @@ import type {
   JobTypeCode,
 } from '@/src/lib/api/generated';
 import dayjs from 'dayjs';
+import type { DateRange } from 'react-day-picker';
 
 function SearchEvent() {
   const searchParams = useSearchParams();
@@ -48,7 +49,9 @@ function SearchEvent() {
     [width],
   );
 
-  const form = useForm<EventsApiSearchEventsRequest>({
+  const form = useForm<
+    EventsApiSearchEventsRequest & { startAtRange?: DateRange }
+  >({
     mode: 'all',
     defaultValues: {
       keyword: searchParams.get('keyword') || '',
@@ -71,21 +74,25 @@ function SearchEvent() {
         ? dayjs(searchParams.get('start_at_to')).format('YYYY-MM-DD')
         : null,
       sortBy: (searchParams.get('sort_by') as EventSortByCode) ?? undefined,
+      startAtRange: {
+        from: dayjs(searchParams.get('start_at_from')).toDate(),
+        to: dayjs(searchParams.get('start_at_to')).toDate(),
+      } as DateRange,
     },
   });
 
   function handleSearch(data: any = {}) {
-    if (form.getValues()['start_at_range']) {
-      const start_at_range = form.getValues()['start_at_range'];
-      data.start_at_from = dayjs(start_at_range.from).format('YYYY-MM-DD');
-      data.start_at_to = dayjs(start_at_range.to).format('YYYY-MM-DD');
+    if (form.getValues('startAtRange')) {
+      const startAtRange = form.getValues('startAtRange');
+      data.startAtFrom = dayjs(startAtRange.from).format('YYYY-MM-DD');
+      data.startAtTo = dayjs(startAtRange.to).format('YYYY-MM-DD');
     }
     const filters: EventsApiSearchEventsRequest = {
       ...form.getValues(),
       ...data,
     };
 
-    const exclude_queries = ['start_at_range'];
+    const exclude_queries = ['startAtRange', 'start_at_range'];
 
     searchQuery(router, filters, searchParams, exclude_queries);
   }
