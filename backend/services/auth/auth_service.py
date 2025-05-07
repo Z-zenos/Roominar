@@ -1,12 +1,26 @@
 from sqlmodel import Session, select
 
+from backend.core.constants import RoleCode
+from backend.models.organization import Organization
 from backend.models.user import User
 from backend.services.auth.password_service import verify_password
 from backend.utils.database import fetch_one
 
 
-def get_user_by_email(db: Session, email: str, role_code: str) -> User | None:
-    query = select(User).where(User.email == email, User.role_code == role_code)
+def get_user_by_email(db: Session, email: str, role_code: RoleCode) -> User | None:
+    query = (
+        select(
+            User.__table__.columns,
+            Organization.name.label("organization_name"),
+            Organization.avatar_url.label("organization_avatar_url"),
+        )
+        .outerjoin(Organization, Organization.id == User.organization_id)
+        .where(
+            User.email == email,
+            User.role_code == role_code,
+        )
+    )
+
     return fetch_one(db, query)
 
 

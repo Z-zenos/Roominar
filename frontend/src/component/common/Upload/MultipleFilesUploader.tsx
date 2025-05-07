@@ -37,7 +37,7 @@ const MultipleFilesUploader = ({
   }, [u.images, onGetImageUrls]);
 
   return (
-    <div className={clsx('bg-white rounded-xl mx-auto mt-4', className)}>
+    <div className={clsx('rounded-xl mx-auto mt-4', className)}>
       <div className='grid grid-cols-3 gap-4 group relative'>
         {u.images.map((image, index) => (
           <div

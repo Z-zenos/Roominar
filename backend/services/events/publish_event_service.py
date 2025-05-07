@@ -7,8 +7,10 @@ from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.models import Event, Tag, User
 from backend.models.tag_association import TagAssociation
+from backend.models.ticket import Ticket
+from backend.models.ticket_inventory import TicketInventory
 from backend.schemas.event import PublishEventRequest
-from backend.utils.database import fetch_one, save
+from backend.utils.database import fetch_all, fetch_one, save
 
 
 async def publish_event(
@@ -38,7 +40,7 @@ async def publish_event(
             # Remove existing tags associated with the event
             db.exec(
                 delete(TagAssociation)
-                .where(TagAssociation.entity_id == event.id)
+                .where(TagAssociation.entity_id == event_id)
                 .where(TagAssociation.entity_code == TagAssociationEntityCode.EVENT)
             )
 
@@ -50,13 +52,35 @@ async def publish_event(
                 raise BadRequestException(ErrorCode.ERR_TAG_NOT_FOUND)
             tags = [
                 TagAssociation(
-                    entity_id=event.id,
+                    entity_id=event_id,
                     tag_id=tag_id,
                     entity_code=TagAssociationEntityCode.EVENT,
                 )
                 for tag_id in request.tags
             ]
             db.add_all(tags)
+
+        tickets = fetch_all(
+            db,
+            select(Ticket)
+            .join(Event, Event.id == Ticket.event_id)
+            .where(
+                Ticket.event_id == event_id,
+            ),
+        )
+
+        ticket_inventories = []
+        for ticket in tickets:
+            ticket = dict(ticket)
+            ticket_inventory = TicketInventory(
+                ticket_id=ticket["id"],
+                event_id=event_id,
+                available_quantity=ticket["quantity"],
+            )
+            ticket_inventories.append(ticket_inventory)
+            event.total_ticket_number = 0
+            event.total_ticket_number += ticket["quantity"]
+        db.add_all(ticket_inventories)
 
         db.flush()
         save(db, event)

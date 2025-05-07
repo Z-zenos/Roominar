@@ -12,15 +12,25 @@ import Editor from '../components/editor/editor';
 import { $generateNodesFromDOM } from '@lexical/html';
 
 import './globals.css';
+import type { LexicalEditor as LexicalEditorState } from 'lexical';
 import { $createParagraphNode, $getRoot, type EditorState } from 'lexical';
+
+interface LexicalEditorProps {
+  onChange?: (
+    editorState: EditorState,
+    lexicalEditor: LexicalEditorState,
+  ) => void;
+  content?: string;
+  onAutoGenerate?: () => void;
+  isGenerating?: boolean;
+}
 
 export default function LexicalEditor({
   onChange,
   content,
-}: {
-  onChange?: (editorState: EditorState) => void;
-  content?: string; // HTML format
-}): JSX.Element {
+  onAutoGenerate,
+  isGenerating,
+}: LexicalEditorProps): JSX.Element {
   const initialConfig = {
     editorState: content ? prepareInitialState : undefined,
     namespace: 'Playground',
@@ -64,7 +74,12 @@ export default function LexicalEditor({
           <TableContext>
             <SharedAutocompleteContext>
               <div className='editor-shell'>
-                <Editor onChange={onChange} />
+                <Editor
+                  onChange={onChange}
+                  onAutoGenerate={onAutoGenerate}
+                  isGenerating={isGenerating}
+                  content={content}
+                />
               </div>
             </SharedAutocompleteContext>
           </TableContext>

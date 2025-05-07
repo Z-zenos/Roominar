@@ -59,7 +59,7 @@ function OrganizationCard({ organization, className }: OrganizationCardProps) {
             <Link
               href={`#`}
               underline='hover'
-              key={`event-card-tag-${tag.id}`}
+              key={`organization-${organization.id}-card-tag-${tag.id}`}
               className={clsx(
                 'text-sm font-light text-gray-700 hover:text-primary',
               )}

@@ -64,8 +64,8 @@ class SearchEventsQueryParams(BaseModel):
     city_codes: list[str] = Field(Query(default=None))
     tags: list[int] = Field(Query(default=None))
 
-    start_at_from: datetime | None = Field(Query(default=None))
-    start_at_to: datetime | None = Field(Query(default=None))
+    start_at_from: str | None = Field(Query(default=None))
+    start_at_to: str | None = Field(Query(default=None))
 
     organization_id: int | None = Field(Query(default=None))
 
@@ -127,7 +127,7 @@ class GetEventDetailResponse(BaseModel):
     is_bookmarked: bool | None = None
     organization_name: str
     meeting_url: str | None = None
-    meeting_tool_code: EventMeetingToolCode
+    meeting_tool_code: EventMeetingToolCode | None = None
     organization_id: int | None = None
     organization_url: str | None = None
     organization_address: str | None = None
@@ -229,7 +229,6 @@ class PublishEventRequest(BaseModel):
     application_start_at: datetime
     application_end_at: datetime
 
-    total_ticket_number: int
     cover_image_url: str = Field(max_length=2048)
     gallery: list[str] = Field([])
 
@@ -244,16 +243,18 @@ class PublishEventRequest(BaseModel):
 
     meeting_tool_code: EventMeetingToolCode | None
     meeting_url: str | None = Field(max_length=2048)
-    ticket_ids: list[int] = Field([])
     survey_id: int | None
     target_id: int | None
-    comment: str | None
 
     tags: list[int] = Field([])
 
     @field_validator("is_online")
     def validate_online_offline(cls, v: str | None, values: ValidationInfo):
-        if not v and not values.data.get("is_online"):
+        if (
+            not v
+            and not values.data.get("is_offline")
+            and not values.data.get("is_online")
+        ):
             raise BadRequestException(
                 ErrorCode.ERR_EVENT_NEIHER_ONLINE_NOR_OFFLINE,
                 ErrorMessage.ERR_EVENT_NEIHER_ONLINE_NOR_OFFLINE,
@@ -284,8 +285,8 @@ class ListingOrganizationEventsQueryParams(BaseModel):
     tags: list[int] = Field(Query(default=None))
     meeting_tool_codes: list[EventMeetingToolCode] = Field(Query(default=[]))
 
-    start_at_from: datetime | None = Field(Query(default=None))
-    start_at_to: datetime | None = Field(Query(default=None))
+    start_at_from: str | None = Field(Query(default=None))
+    start_at_to: str | None = Field(Query(default=None))
     event_status: list[EventStatusCode] = Field(Query(default=[]))
     time_status: EventTimeStatusCode | None = Field(Query(default=None))
 
@@ -358,7 +359,6 @@ class GetDraftEventResponse(BaseModel):
     target: ListingTargetOptionsItem | None = None
     survey_id: int | None = None
     max_ticket_number_per_account: int | None = None
-    comment: str | None = None
 
 
 class SaveDraftEventRequest(BaseModel):
@@ -371,7 +371,6 @@ class SaveDraftEventRequest(BaseModel):
     application_start_at: datetime | None
     application_end_at: datetime | None
 
-    total_ticket_number: int | None = Field(le=1000)
     cover_image_url: str | None = Field(max_length=2048)
     gallery: list[str] = Field([])
 
@@ -385,10 +384,8 @@ class SaveDraftEventRequest(BaseModel):
     meeting_tool_code: EventMeetingToolCode | None
     meeting_url: str | None = Field(max_length=2048)
 
-    ticket_ids: list[int] = Field([])
     survey_id: int | None
     target_id: int | None
-    comment: str | None
     tags: list[int] = Field([])
 
 
@@ -417,8 +414,6 @@ class GenerateEventAIRequest(BaseModel):
     end_at: datetime
     application_start_at: datetime
     application_end_at: datetime
-
-    total_ticket_number: int = Field(le=1000)
 
     is_offline: bool
     organize_address: str | None = Field(max_length=255)

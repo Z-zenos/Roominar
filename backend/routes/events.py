@@ -118,6 +118,18 @@ async def listing_recommendation_events(
 
 
 @router.get(
+    "/draft",
+    response_model=GetDraftEventResponse,
+    responses=authenticated_api_responses,
+)
+async def get_draft_event(
+    db: Session = Depends(get_read_db),
+    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+):
+    return await events_service.get_draft_event(db, organizer)
+
+
+@router.get(
     "/{slug}", response_model=GetEventDetailResponse, responses=public_api_responses
 )
 async def get_event_detail(
@@ -162,19 +174,6 @@ async def delete_event_bookmark(
     current_user: User = Depends(get_current_user),
 ):
     return await events_service.delete_event_bookmark(db, current_user, event_id)
-
-
-@router.get(
-    "/draft/{slug}",
-    response_model=GetDraftEventResponse,
-    responses=authenticated_api_responses,
-)
-async def get_draft_event(
-    db: Session = Depends(get_read_db),
-    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
-    slug: str = None,
-):
-    return await events_service.get_draft_event(db, organizer, slug)
 
 
 @router.post("/draft", response_model=int, responses=authenticated_api_responses)

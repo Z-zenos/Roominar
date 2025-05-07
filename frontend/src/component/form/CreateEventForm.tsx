@@ -15,49 +15,31 @@ import {
   FormTagsInput,
   FormTextarea,
 } from '@/src/component/form/Form';
-import type {
-  ApiException,
-  ErrorResponse400,
-  TicketItem,
-} from '@/src/lib/api/generated';
+import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
 import {
   CityCode,
   EventMeetingToolCode,
+  PublishEventRequestOrganizeCityCodeEnum,
   SaveDraftEventRequestOrganizeCityCodeEnum,
-  TicketStatusCode,
 } from '@/src/lib/api/generated';
 import toast from 'react-hot-toast';
 import type { CreateEventFormSchema } from '@/src/schemas/event/CreateEventFormSchema';
 import {
+  useGenerateEventAIMutation,
   useGetDraftEventQuery,
+  useListingTicketsOfEventQuery,
   usePublishEventMutation,
   useSaveDraftEventMutation,
 } from '@/src/api/event.api';
 import ImageUploader from '../common/Upload/ImageUploader';
 import { styles } from '@/src/constants/styles.constant';
 import { useTranslations } from 'next-intl';
-import type { ChipProps } from '@nextui-org/react';
-import {
-  Button,
-  Checkbox,
-  Chip,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-} from '@nextui-org/react';
+import { Button, Checkbox } from '@nextui-org/react';
 import { FaChevronRight, FaSquareArrowUpRight } from 'react-icons/fa6';
 
 import dynamic from 'next/dynamic';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { BsStars, BsThreeDots } from 'react-icons/bs';
-import { IoMdAddCircleOutline } from 'react-icons/io';
+import { useEffect, useMemo, useState } from 'react';
+import { BsStars } from 'react-icons/bs';
 import {
   Sheet,
   SheetContent,
@@ -71,59 +53,85 @@ import {
 import { useListingTagsQuery } from '@/src/api/tag.api';
 import { CiStickyNote } from 'react-icons/ci';
 import { useListingSurveyOptionsQuery } from '@/src/api/survey.api';
-import CreateTicketForm from './CreateTicketForm';
-import CreateTargetForm from './CreateTargetForm';
 import { useListingTargetOptionsQuery } from '@/src/api/target.api';
 import { cn, optionify } from '@/src/utils/app.util';
-import DotLoader from '../common/Loader/DotLoader';
 import createEventFormSchema, {
   eventDateSchema,
 } from '@/src/schemas/event/CreateEventFormSchema';
 import clsx from 'clsx';
 import MultipleFilesUploader from '../common/Upload/MultipleFilesUploader';
-import CalendarTimeline from '../common/DateTime/CalendarTimeline';
 import dayjs from 'dayjs';
 import Spinner from '../common/Loader/Spinner';
 import type { DateSelectArg, EventChangeArg } from '@fullcalendar/core';
 import { useListingOrganizationEventsTimelineQuery } from '@/src/api/organization.api';
+import ElementLoader from '../common/Loader/ElementLoader';
+import { RiRobot2Line } from 'react-icons/ri';
+import { AiOutlineSend } from 'react-icons/ai';
+import { exportHTML } from '../editor/components/editor/utils/html';
 
-// const LexicalEditor = dynamic(() => import('../editor/app/app'), {
+// const LazyMap = dynamic(() => import('../common/Map/Map'), {
 //   ssr: false,
+//   loading: () => <p>Loading...</p>,
 // });
 
-const statusColorMap: Record<string, ChipProps['color']> = {
-  [TicketStatusCode.Available]: 'success',
-  [TicketStatusCode.SoldOut]: 'danger',
-  [TicketStatusCode.Canceled]: 'warning',
-};
+const LexicalEditor = dynamic(() => import('../editor/app/app'), {
+  ssr: false,
+  loading: () => <ElementLoader title='Setup editor' />,
+});
 
-const TICKET_TABLE_COLUMNS = [
-  { name: 'NAME', uid: 'name' },
-  { name: 'PRICE', uid: 'price' },
-  { name: 'QUANTITY', uid: 'quantity' },
-  { name: 'STATUS', uid: 'status' },
-  { name: 'TYPE', uid: 'type' },
-  { name: 'ACTIONS', uid: 'actions' },
-];
+const LazyCalendarTimeline = dynamic(
+  () => import('../common/DateTime/CalendarTimeline'),
+  {
+    ssr: false,
+    loading: () => <ElementLoader title='Loading schedule timeline' />,
+  },
+);
 
-interface CreateEventFormProps {
-  slug: string;
-}
+const CreateTicketForm = dynamic(() => import('./CreateTicketForm'), {
+  ssr: false,
+  loading: () => <ElementLoader title='Loading ticket form' />,
+});
 
-export default function CreateEventForm({ slug }: CreateEventFormProps) {
+const CreateTargetForm = dynamic(() => import('./CreateTargetForm'), {
+  ssr: false,
+  loading: () => <ElementLoader title='Loading target form' />,
+});
+
+const DraftTicketDataTable = dynamic(
+  () => import('@/src/view/ticket/DraftTicketDataTable'),
+  {
+    ssr: false,
+    loading: () => <ElementLoader title='Loading ticket table' />,
+  },
+);
+
+const UpdateTicketForm = dynamic(() => import('./UpdateTicketForm'), {
+  ssr: false,
+  loading: () => <ElementLoader title='Loading ticket form' />,
+});
+
+export default function CreateEventForm() {
   const t = useTranslations('form');
 
-  const { data: draftEvent, isLoading: isGetDraftEventLoading } =
-    useGetDraftEventQuery({ slug });
+  const { data: draftEvent } = useGetDraftEventQuery(true);
   const { data: tagData } = useListingTagsQuery();
   const { data: surveyOptions } = useListingSurveyOptionsQuery();
   const { data: targetOptions, refetch: refetchTargetOptions } =
     useListingTargetOptionsQuery();
   const { data: eventsTimeline } = useListingOrganizationEventsTimelineQuery();
+  const {
+    data: tickets,
+    isFetching: isFetchingListingTicketsOfEvent,
+    refetch: refetchListingTicketsOfEvent,
+  } = useListingTicketsOfEventQuery(
+    { eventId: draftEvent?.id },
+    draftEvent?.id ? true : false,
+  );
 
   const [rightSidebarContent, setRightSidebarContent] = useState<
-    'TICKET' | 'TARGET' | null
+    'CREATE_TICKET' | 'UPDATE_TICKET' | 'TARGET' | null
   >();
+  const [selectedTicketId, setSelectedTicketId] = useState<number | null>(null);
 
   const form = useForm<CreateEventFormSchema>({
     mode: 'all',
@@ -133,7 +141,6 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
       coverImageUrl: '',
       surveyId: undefined,
       targetId: undefined,
-      comment: '',
       tags: [],
 
       startAt: undefined,
@@ -147,10 +154,8 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
       organizeCityCode: undefined,
       meetingToolCode: undefined,
       meetingUrl: '',
-
-      totalTicketNumber: 0,
-      ticketIds: [],
       galleryUrls: [],
+      prompt: '',
     },
     resolver: zodResolver(createEventFormSchema),
     shouldFocusError: false,
@@ -163,7 +168,6 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
       coverImageUrl: draftEvent?.coverImageUrl ?? '',
       surveyId: draftEvent?.surveyId,
       targetId: draftEvent?.target?.id ?? null,
-      comment: draftEvent?.comment ?? '',
       tags: draftEvent?.tags?.map((tag) => tag.id) ?? [],
       startAt: draftEvent?.startAt,
       endAt: draftEvent?.endAt,
@@ -176,12 +180,9 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
       organizeCityCode: draftEvent?.organizeCityCode as CityCode,
       meetingToolCode: draftEvent?.meetingToolCode ?? EventMeetingToolCode.Zoom,
       meetingUrl: draftEvent?.meetingUrl ?? '',
-
-      totalTicketNumber: draftEvent?.totalTicketNumber ?? 0,
-      ticketIds:
-        draftEvent?.tickets?.map((ticket) => ticket.id)?.slice(0, 10) ?? [],
       galleryUrls: draftEvent?.gallery ?? [],
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(draftEvent)]);
 
   // using a state here to make the "scroll & focus" happen once per submission
@@ -244,6 +245,22 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
     useSaveDraftEventMutation({
       onSuccess() {
         toast.success('Save draft event successfully!');
+      },
+      onError(error: ApiException<unknown>) {
+        toast.error(
+          (error.body as ErrorResponse400)?.message ??
+            (error.body as ErrorResponse400)?.errorCode ??
+            'Unknown Error 😵',
+        );
+      },
+    });
+
+  const { trigger: generateEventAI, isMutating: isGenerating } =
+    useGenerateEventAIMutation({
+      onSuccess(data) {
+        form.setValue('description', data?.description ?? '');
+        form.trigger('description');
+        form.setValue('name', data?.title ?? '');
       },
       onError(error: ApiException<unknown>) {
         toast.error(
@@ -338,31 +355,27 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
   }
 
   function handlePublishEvent(data: CreateEventFormSchema) {
-    // trigger({
-    //   eventId: 11,
-    //   publishEventRequest: {
-    //     name: data.name,
-    //     description: data.description,
-    //     coverImageUrl: data.coverImageUrl,
-    //     surveyId: data.surveyId,
-    //     targetId: data.targetId,
-    //     comment: data.comment,
-    //     status: data.status,
-    //     ticketIds: data.ticketIds,
-    //     tags: data.tags,
-    //     totalTicketNumber: data.totalTicketNumber,
-    //     startAt: data.startAt,
-    //     endAt: data.endAt,
-    //     applicationEndAt: data.applicationEndAt,
-    //     applicationStartAt: data.applicationStartAt,
-    //     isOnline: data.isOnline,
-    //     isOffline: data.isOffline,
-    //     organizeAddress: data.organizeAddress,
-    //     organizeCityCode: PublishEventRequestOrganizeCityCodeEnum.Angiang,
-    //     meetingToolCode: data.meetingToolCode,
-    //     meetingUrl: data.meetingUrl,
-    //   },
-    // });
+    publishEvent({
+      eventId: draftEvent?.id,
+      publishEventRequest: {
+        name: data.name,
+        description: data.description,
+        coverImageUrl: data.coverImageUrl,
+        surveyId: data.surveyId,
+        targetId: data.targetId,
+        tags: data.tags,
+        startAt: data.startAt,
+        endAt: data.endAt,
+        applicationEndAt: data.applicationEndAt,
+        applicationStartAt: data.applicationStartAt,
+        isOnline: data.isOnline ?? false,
+        isOffline: data.isOffline ?? false,
+        organizeAddress: data.organizeAddress,
+        organizeCityCode: PublishEventRequestOrganizeCityCodeEnum.Hanoi,
+        meetingToolCode: data.meetingToolCode,
+        meetingUrl: data.meetingUrl,
+      },
+    });
   }
 
   function handleSaveDraftEvent(data: CreateEventFormSchema) {
@@ -374,10 +387,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
         coverImageUrl: data.coverImageUrl,
         surveyId: data.surveyId,
         targetId: data.targetId ?? null,
-        comment: data.comment,
-        ticketIds: data.ticketIds,
         tags: data.tags,
-        totalTicketNumber: data.totalTicketNumber,
         startAt: data.startAt,
         endAt: data.endAt,
         applicationEndAt: data.applicationEndAt,
@@ -393,71 +403,29 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
     });
   }
 
-  const renderCell = useCallback((ticket: TicketItem, columnKey: string) => {
-    const cellValue = columnKey !== 'actions' ? ticket[columnKey] : null;
-
-    switch (columnKey) {
-      case 'name':
-        return (
-          <div>
-            <p className='text-nm font-semibold'>{ticket.name}</p>
-            <p className='text-xs text-gray-600 font-ligth max-w-[300px] truncate'>
-              {ticket.description}
-            </p>
-          </div>
-        );
-      case 'price':
-        return <p>{cellValue ? cellValue : 'Free'}</p>;
-
-      case 'quantity':
-        return <p>{cellValue}</p>;
-      case 'status':
-        return (
-          <Chip
-            className='capitalize'
-            color={statusColorMap[ticket.status]}
-            size='sm'
-            variant='flat'
-          >
-            {cellValue}
-          </Chip>
-        );
-
-      case 'type':
-        return <p>{cellValue}</p>;
-
-      case 'actions':
-        return (
-          <div className='relative flex justify-end items-center gap-2'>
-            <Dropdown>
-              <DropdownTrigger>
-                <Button
-                  isIconOnly
-                  size='sm'
-                  variant='light'
-                >
-                  <BsThreeDots className='text-default-300' />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu>
-                <DropdownItem>View</DropdownItem>
-                <DropdownItem>Edit</DropdownItem>
-                <DropdownItem>Delete</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
-        );
-      default:
-        return cellValue;
-    }
-  }, []);
-
   const rightSidebar = useMemo(() => {
     switch (rightSidebarContent) {
-      case 'TICKET':
+      case 'CREATE_TICKET':
         return {
-          title: 'TICKET',
-          body: <CreateTicketForm />,
+          title: 'CREATE TICKET',
+          body: (
+            <CreateTicketForm
+              eventId={draftEvent?.id}
+              onCreate={refetchListingTicketsOfEvent}
+            />
+          ),
+          footer: null,
+        };
+
+      case 'UPDATE_TICKET':
+        return {
+          title: 'UPDATE TICKET',
+          body: (
+            <UpdateTicketForm
+              ticketId={selectedTicketId}
+              onUpdate={refetchListingTicketsOfEvent}
+            />
+          ),
           footer: null,
         };
 
@@ -467,11 +435,14 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
           body: <CreateTargetForm />,
           footer: null,
         };
+
+      default:
+        return null;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rightSidebarContent]);
+  }, [rightSidebarContent, selectedTicketId]);
 
-  if (isGetDraftEventLoading) return <DotLoader />;
+  // if (isGetDraftEventLoading) return <DotLoader />;
 
   return (
     <Sheet>
@@ -479,9 +450,9 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
         <form
           id='create-event-form'
           onSubmit={form.handleSubmit(handlePublishEvent, onError)}
-          className='grid grid-cols-12 items-start gap-10'
+          className='grid grid-cols-12 items-start gap-3'
         >
-          <div className='grid grid-cols-2 gap-6 [&>div]:w-full bg-white rounded-md p-6 shadow-md 1200px:col-span-9 col-span-12 max-w-[1000px]'>
+          <div className='grid grid-cols-2 gap-6 [&>div]:w-full bg-white rounded-md p-6 shadow-md 1200px:col-span-6 col-span-12 max-w-[1000px]'>
             <div className='col-span-2'>
               <FormInput
                 id='name'
@@ -492,6 +463,9 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                 control={form.control}
                 showError={true}
                 autoComplete='on'
+                classNames={{
+                  label: 'text-nm font-medium',
+                }}
               />
             </div>
             <div className='col-span-2'>
@@ -502,13 +476,23 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                   <FormItem>
                     <FormCustomLabel
                       htmlFor='startAt'
-                      label='timeline'
+                      custom={
+                        <div>
+                          <h3 className='text-nm font-medium'>
+                            When does your event start and end?
+                          </h3>
+                          <span className='text-sm font-light inline-block text-gray-600 mb-3'>
+                            Select proper date in calendar. You can drag and
+                            drop event to any place you want.
+                          </span>
+                        </div>
+                      }
                       required
                     />
                     <FormControl>
-                      <CalendarTimeline
+                      <LazyCalendarTimeline
                         id='startAt'
-                        height={600}
+                        height={500}
                         events={[
                           {
                             title: 'Application start',
@@ -536,6 +520,7 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                                 start: event.applicationStartAt,
                                 end: event.applicationEndAt,
                                 color: '#d8fcff',
+                                textColor: '#246cff',
                               }))
                             : []),
                         ]}
@@ -570,13 +555,14 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                       htmlFor='coverImageUrl'
                       label='coverImageUrl'
                       required
+                      className='text-nm font-medium'
                     />
                     <FormControl>
                       <ImageUploader
                         name='coverImageUrl'
                         onGetImageUrl={(url) => field.onChange(url)}
                         variant='cover'
-                        // defaultImageUrl={auth?.user?.avatarUrl}
+                        defaultImageUrl={draftEvent?.coverImageUrl}
                       />
                     </FormControl>
                     <FormMessage label='coverImageUrl' />
@@ -747,87 +733,29 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
               )}
             />
 
-            <div className='border-y border-y-primary py-[2px] mt-4 col-span-2'>
-              <div className='border-y border-y-primary py-2'>
-                <h3 className='text-center text-md'>Description 🗒</h3>
-              </div>
-            </div>
-
-            <div className='col-span-2'>
-              <main className='flex flex-col items-center justify-between'>
-                {/* <LexicalEditor /> */}
-              </main>
-            </div>
-
             {/* === EVENT APPLICATION NUMBER & TICKETS === */}
             <h3 className='col-span-2 text-md p-3 border-l-4 border-l-primary'>
               Tickets 🎟
             </h3>
-            <div>
-              <FormInput
-                id='totalTicketNumber'
-                name='totalTicketNumber'
-                label='totalTicketNumber'
-                required
-                placeholder='100'
-                control={form.control}
-                showError={true}
-                type='number'
-              />
-            </div>
-            <FormInstructions>
-              <li>
-                The order quantity must always be greater than or equal to the
-                total number of tickets you set.
-              </li>
-            </FormInstructions>
-            <div className='col-span-2'>
-              <Table
-                aria-label='Example table with custom cells, pagination and sorting'
-                isHeaderSticky
-                classNames={{
-                  wrapper: 'max-h-[382px]',
-                }}
-                bottomContent={
-                  <div className='flex justify-end'>
-                    {/* === RIGHT SIDE BAR === */}
-                    <SheetTrigger
-                      onClick={() => setRightSidebarContent('TICKET')}
-                      className='flex justify-center items-center gap-3 px-6 py-3 rounded-sm border-primary-300 hover:bg-primary hover:text-white hover:border-primary border transition-all '
-                    >
-                      Add ticket
-                      <IoMdAddCircleOutline className='text-inline w-5 h-5' />
-                    </SheetTrigger>
-                  </div>
-                }
-              >
-                <TableHeader columns={TICKET_TABLE_COLUMNS}>
-                  {(column) => (
-                    <TableColumn
-                      key={column.uid}
-                      align={column.name === 'actions' ? 'center' : 'start'}
-                    >
-                      {column.name}
-                    </TableColumn>
-                  )}
-                </TableHeader>
-                <TableBody
-                  emptyContent={'Not setup ticket yet'}
-                  items={draftEvent?.tickets ?? []}
-                >
-                  {(item) => (
-                    <TableRow key={item.price}>
-                      {(columnKey) => (
-                        <TableCell>
-                          {renderCell(item, columnKey as string)}
-                        </TableCell>
-                      )}
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </div>
 
+            <div className='col-span-2'>
+              {draftEvent && (
+                <DraftTicketDataTable
+                  tickets={tickets}
+                  isFetchingListingTicketsOfEvent={
+                    isFetchingListingTicketsOfEvent
+                  }
+                  onOpenCreateTicketForm={() =>
+                    setRightSidebarContent('CREATE_TICKET')
+                  }
+                  onOpenUpdateTicketForm={(ticketId) => {
+                    setRightSidebarContent('UPDATE_TICKET');
+                    setSelectedTicketId(ticketId);
+                  }}
+                  onDeleteTicket={refetchListingTicketsOfEvent}
+                />
+              )}
+            </div>
             {/* === MORE === */}
             <h3 className='col-span-2 text-md p-3 border-l-4 border-l-primary mt-6'>
               Advanced Information 🌟
@@ -844,6 +772,9 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                   label: `${so.name} (${so.questionNumber} questions)`,
                 }))}
                 className='w-full'
+                classNames={{
+                  label: 'text-nm font-medium',
+                }}
               />
             </div>
 
@@ -859,26 +790,18 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                     label: to.name,
                   }))}
                   className='w-full'
+                  classNames={{
+                    label: 'text-nm font-medium',
+                  }}
                 />
               </div>
 
               <SheetTrigger
-                className='hover:text-primary mt-3 hover:bg-white border border-primary py-2 px-4 bg-primary text-white transition-all'
+                className='hover:text-primary mt-3 hover:bg-white border border-primary py-1 px-4 bg-primary text-white transition-all text-sm'
                 onClick={() => setRightSidebarContent('TARGET')}
               >
                 Add new target +
               </SheetTrigger>
-            </div>
-
-            <div className='col-span-2 mt-4'>
-              <FormTextarea
-                id='comment'
-                name='comment'
-                label='eventComment'
-                placeholder='Enter comment of organization for audience when they apply'
-                control={form.control}
-                showError={true}
-              />
             </div>
 
             <div className='col-span-2'>
@@ -888,6 +811,9 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
                 label='tags'
                 control={form.control}
                 data={tagData}
+                classNames={{
+                  label: 'text-nm font-medium',
+                }}
               />
             </div>
 
@@ -931,26 +857,75 @@ export default function CreateEventForm({ slug }: CreateEventFormProps) {
             </div>
           </div>
 
-          <div className='col-span-3'>
-            {/* <EventCard
-            event={{
-              id: 1,
-              slug: '',
-              organizationName: 'Roominar',
-              name: form.getValues('name'),
-              startAt: new Date('2024-10-06'),
-              endAt: new Date('2024-10-06'),
-              applicationStartAt: new Date('2024-10-06'),
-              applicationEndAt: new Date('2024-10-06'),
-              totalTicketNumber: 1,
-              coverImageUrl: '',
-              meetingToolCode: EventMeetingToolCode.Discord,
-              isOffline: true,
-              publishedAt: new Date('2024-10-06'),
-              tags: [],
-            }}
-            className='w-full'
-          /> */}
+          <div className='col-span-6 p-2'>
+            <main className='flex flex-col items-center justify-between'>
+              <LexicalEditor
+                content={form.getValues('description')}
+                onChange={(_, lexicalEditor) => {
+                  const htmlContent = exportHTML(lexicalEditor);
+                  form.setValue('description', htmlContent);
+                }}
+                onAutoGenerate={() =>
+                  generateEventAI({
+                    generateEventAIRequest: {
+                      name: form.getValues('name'),
+                      startAt: form.getValues('startAt'),
+                      endAt: form.getValues('endAt'),
+                      applicationStartAt: form.getValues('applicationStartAt'),
+                      applicationEndAt: form.getValues('applicationEndAt'),
+                      isOnline: form.getValues('isOnline') ?? false,
+                      isOffline: form.getValues('isOffline') ?? false,
+                      organizeAddress: form.getValues('organizeAddress'),
+                      price:
+                        tickets.reduce((acc, ticket) => acc + ticket.price, 0) /
+                        tickets.reduce(
+                          (acc, ticket) => acc + ticket.quantity,
+                          0,
+                        ),
+                      tags: form.getValues('tags'),
+                      prompt: form.getValues('prompt'),
+                    },
+                  })
+                }
+                isGenerating={isGenerating}
+              />
+            </main>
+
+            <div className='p-3 bg-white mt-4 shadow-md rounded-md'>
+              <div className={clsx(styles.flexStart, 'mb-2')}>
+                <h3 className='text-nm font-medium'>AI assistants</h3>
+                <RiRobot2Line size={20} />
+              </div>
+              <div className='relative'>
+                <FormTextarea
+                  id='prompt'
+                  name='prompt'
+                  placeholder='What do you want to ask AI?'
+                  control={form.control}
+                  showError={true}
+                  classNames={{
+                    label: 'text-nm font-medium',
+                  }}
+                  rows={5}
+                />
+                <Button
+                  variant='solid'
+                  className='absolute top-2 right-2'
+                  // onClick={() => {
+                  //   generateEventAI(form.getValues('prompt'));
+                  // }}
+                  size='sm'
+                  radius='sm'
+                  color='primary'
+                >
+                  <AiOutlineSend className='w-4 h-4' />
+                </Button>
+              </div>
+
+              <div className='min-h-[500px] max-h-[1000px] overflow-y-auto flex flex-col items-center justify-center mt-4'>
+                AI Response
+              </div>
+            </div>
           </div>
         </form>
       </Form>

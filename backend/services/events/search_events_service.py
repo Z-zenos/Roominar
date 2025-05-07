@@ -71,7 +71,13 @@ async def search_events(
             Event.is_offline,
             Event.meeting_tool_code,
             Event.published_at,
-            EventTag.c.tags,
+            case(
+                (
+                    EventTag.c.tags.isnot(None),
+                    EventTag.c.tags,
+                ),
+                else_=func.json_build_array(),
+            ).label("tags"),
             SoldTicketsNumber.c.sold_tickets_number,
         )
         .join(Organization, Event.organization_id == Organization.id)
@@ -190,10 +196,16 @@ def _build_filters_sort(query_params: SearchEventsQueryParams):
         filters.append(Event.id.in_(event_tags_subquery))
 
     if query_params.start_at_from:
-        filters.append(Event.start_at.cast(Date) >= query_params.start_at_from.date())
+        filters.append(
+            Event.start_at.cast(Date)
+            >= datetime.strptime(query_params.start_at_from, "%Y-%m-%d").date()
+        )
 
     if query_params.start_at_to:
-        filters.append(Event.start_at.cast(Date) <= query_params.start_at_to.date())
+        filters.append(
+            Event.start_at.cast(Date)
+            <= datetime.strptime(query_params.start_at_to, "%Y-%m-%d").date()
+        )
 
     if query_params.organization_id:
         filters.append(Event.organization_id == query_params.organization_id)

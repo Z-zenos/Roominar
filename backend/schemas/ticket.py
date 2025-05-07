@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Optional
 
 from fastapi import Query
 from pydantic import BaseModel, ConfigDict, Field
@@ -21,26 +20,41 @@ from backend.schemas.common import PaginationResponse
 class TicketItem(BaseModel):
     id: int
     name: str
-    available_quantity: Optional[int]
-    sold_quantity: Optional[int]
+    available_quantity: int | None = None
+    sold_quantity: int | None = None
     quantity: int
-    description: Optional[str]
-    price: Optional[float]
-    expired_at: Optional[datetime]
-    type: Optional[TicketTypeCode]
-    status: Optional[TicketStatusCode]
-    sales_start_at: Optional[datetime]
-    sales_end_at: Optional[datetime]
-    delivery_method: Optional[TicketDeliveryMethodCode]
-    cancellation_policy_code: Optional[TicketCancellationPolicyCode]
-    cancellation_policy_extra_description: Optional[str]
-    purchaseble: Optional[bool]
+    description: str | None = None
+    price: float | None = None
+    expired_at: datetime | None = None
+    type: TicketTypeCode | None = None
+    status: TicketStatusCode | None = None
+    sales_start_at: datetime | None = None
+    sales_end_at: datetime | None = None
+    delivery_method: TicketDeliveryMethodCode | None = None
+    cancellation_policy_code: TicketCancellationPolicyCode | None = None
+    cancellation_policy_extra_description: str | None = None
+    purchaseble: bool | None = None
 
 
 class CreateTicketRequest(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True)
 
     event_id: int | None
+    name: str = Field(max_length=255)
+    quantity: int = Field(ge=1)
+    description: str | None
+    price: float = Field(default=0, ge=0)
+    expired_at: datetime | None
+    type: TicketTypeCode
+    delivery_method: TicketDeliveryMethodCode
+    access_link_url: str | None
+    sales_start_at: datetime | None
+    sales_end_at: datetime | None
+
+
+class UpdateTicketRequest(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+
     name: str = Field(max_length=255)
     quantity: int = Field(ge=1)
     description: str | None

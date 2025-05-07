@@ -5,7 +5,6 @@ import type {
   EventsApiDeleteCheckInRequest,
   EventsApiDeleteEventBookmarkRequest,
   EventsApiGenerateEventAiRequest,
-  EventsApiGetDraftEventRequest,
   EventsApiGetEventDetailRequest,
   EventsApiListingMyEventsRequest,
   EventsApiListingRecommendationEventsRequest,
@@ -121,11 +120,13 @@ export const usePublishEventMutation = <T>(
 
 export const useListingTicketsOfEventQuery = (
   params?: EventsApiListingTicketsOfEventRequest,
+  enabled?: boolean,
 ) => {
   const api = useApi();
   return useQuery({
     queryKey: ['listing-tickets-of-events'],
     queryFn: async () => await api.events.listingTicketsOfEvent(params),
+    enabled,
   });
 };
 
@@ -133,10 +134,6 @@ export const useListingOrganizationEventsQuery = (
   params?: OrganizationsApiListingOrganizationEventsRequest,
 ) => {
   params = toCamelCase(params);
-  if (params.startAtFrom) {
-    params.startAtFrom = new Date(params.startAtFrom);
-  }
-  if (params.startAtTo) params.startAtTo = new Date(params.startAtTo);
   const api = useApi();
   return useQuery({
     queryKey: ['listing-organization-events', params],
@@ -180,13 +177,12 @@ export const useDeleteCheckInMutation = <T>(
   );
 };
 
-export const useGetDraftEventQuery = (
-  params?: EventsApiGetDraftEventRequest,
-) => {
+export const useGetDraftEventQuery = (enabled?: boolean) => {
   const api = useApi();
   return useQuery({
     queryKey: ['get-draft-event'],
-    queryFn: async () => await api.events.getDraftEvent(params),
+    queryFn: async () => await api.events.getDraftEvent(),
+    enabled,
   });
 };
 

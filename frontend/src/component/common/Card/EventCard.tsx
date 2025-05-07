@@ -297,7 +297,7 @@ function EventCard({
               <Link
                 href={`?${searchParams.toString() ? searchParams.toString() + '&' : ''}tags[]=${tag.id}`}
                 underline='hover'
-                key={`event-card-tag-${tag.id}`}
+                key={`event-${event.id}-card-tag-${tag.id}`}
                 className={clsx(
                   'text-sm font-light text-gray-700 hover:text-primary',
                   searchParams.getAll('tags[]').includes(tag.id + '') &&

@@ -1,6 +1,6 @@
 @import 'https://fonts.googleapis.com/css?family=Reenie+Beanie';
 
-body {
+.editor-shell body {
   margin: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, '.SFNSText-Regular',
     sans-serif;
@@ -10,7 +10,7 @@ body {
   padding: 0 20px;
 }
 
-header {
+.editor-shell header {
   max-width: 580px;
   margin: auto;
   position: relative;
@@ -18,19 +18,19 @@ header {
   justify-content: center;
 }
 
-header a {
+.editor-shell header a {
   max-width: 220px;
   margin: 20px 0 0 0;
   display: block;
 }
 
-header img {
+.editor-shell header img {
   display: block;
   height: 100%;
   width: 100%;
 }
 
-header h1 {
+.editor-shell header h1 {
   text-align: left;
   color: #333;
   display: inline-block;
@@ -38,8 +38,8 @@ header h1 {
 }
 
 .editor-shell {
-  margin: 20px auto;
-  border-radius: 2px;
+  margin: 0 auto;
+  border-radius: 8px;
   max-width: 1000px;
   width: 100%;
   border: 1px solid #eee;
@@ -47,6 +47,7 @@ header h1 {
   position: relative;
   line-height: 1.7;
   font-weight: 400;
+  box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.05);
 }
 
 .editor-shell .editor-container {
@@ -55,19 +56,22 @@ header h1 {
   display: block;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
+  min-height: 320px;
 }
 
 .editor-shell .editor-container.tree-view {
   border-radius: 0;
+  min-height: 320px;
 }
 
 .editor-shell .editor-container.plain-text {
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
+  min-height: 320px;
 }
 
 .editor-scroller {
-  min-height: 150px;
+  min-height: 320px;
   border: 0;
   display: flex;
   position: relative;
@@ -1433,10 +1437,11 @@ button.action-button:disabled {
   border-top-right-radius: 10px;
   vertical-align: middle;
   overflow: auto;
-  height: 36px;
+  height: 80px;
   position: sticky;
   top: 0;
   z-index: 2;
+  flex-wrap: wrap;
 }
 
 button.toolbar-item {

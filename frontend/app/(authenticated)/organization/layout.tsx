@@ -21,7 +21,6 @@ import {
   SidebarTrigger,
 } from '@/src/component/common/Sidebar';
 import { OrganizationSidebar } from '@/src/component/common/SideBar/OrganizationSidebar';
-import useWindowDimensions from '@/src/hooks/useWindowDimension';
 import { useSession } from 'next-auth/react';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
@@ -35,7 +34,6 @@ const PAGE_METADATA = [
 ];
 
 export default function RootLayout({ children }) {
-  const { width } = useWindowDimensions();
   const [isNotificationOpen, setIsNotificationOpen] = useState<boolean>(false);
   const pathname = usePathname();
 
@@ -50,7 +48,7 @@ export default function RootLayout({ children }) {
       onOpenChange={setIsNotificationOpen}
     >
       <div className='flex w-full h-full'>
-        <SidebarProvider open={width > 1200 ? true : false}>
+        <SidebarProvider defaultOpen={true}>
           <OrganizationSidebar />
           <SidebarInset>
             <header className='flex h-16 shrink-0 w-full items-center justify-between gap-2 pr-6'>

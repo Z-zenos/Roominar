@@ -19,6 +19,8 @@ class UserBase(BaseModel):
     job_type_code: str | None = None
     avatar_url: str | None = None
     tags: list[TagItem] = Field([])
+    organization_name: str | None = None
+    organization_avatar_url: str | None = None
 
 
 class UpdateUserRequest(BaseModel):

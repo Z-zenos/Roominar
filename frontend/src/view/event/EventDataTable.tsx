@@ -60,6 +60,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/src/component/common/Sheet';
+import type { DateRange } from 'react-day-picker';
 
 const columns = [
   { name: 'Name', uid: 'name', sortable: true },
@@ -87,7 +88,11 @@ export default function EventDataTable() {
     'EVENT_DETAIL' | null
   >();
 
-  const form = useForm<OrganizationsApiListingOrganizationEventsRequest>({
+  const form = useForm<
+    OrganizationsApiListingOrganizationEventsRequest & {
+      startAtRange?: DateRange;
+    }
+  >({
     mode: 'all',
     defaultValues: {
       keyword: searchParams.get('keyword') || '',
@@ -96,10 +101,10 @@ export default function EventDataTable() {
         (searchParams.getAll('meetingToolCodes[]') as EventMeetingToolCode[]) ||
         undefined,
       startAtFrom: searchParams.get('start_at_from')
-        ? dayjs(searchParams.get('start_at_from')).toDate()
+        ? dayjs(searchParams.get('start_at_from')).format('YYYY-MM-DD')
         : undefined,
       startAtTo: searchParams.get('start_at_to')
-        ? dayjs(searchParams.get('start_at_to')).toDate()
+        ? dayjs(searchParams.get('start_at_to')).format('YYYY-MM-DD')
         : undefined,
       eventStatus:
         (searchParams.getAll('event_status[]') as EventStatusCode[]) ||
@@ -109,6 +114,14 @@ export default function EventDataTable() {
 
       sortBy:
         (searchParams.get('sort_by') as ManageEventSortByCode) ?? undefined,
+      startAtRange: {
+        from: searchParams.get('start_at_from')
+          ? dayjs(searchParams.get('start_at_from')).toDate()
+          : null,
+        to: searchParams.get('start_at_to')
+          ? dayjs(searchParams.get('start_at_to')).toDate()
+          : null,
+      } as DateRange,
     },
   });
 
@@ -132,17 +145,17 @@ export default function EventDataTable() {
   }, [rightSidebarContent]);
 
   function handleSearch(data: any = {}) {
-    if (form.getValues()['start_at_range']) {
-      const start_at_range = form.getValues()['start_at_range'];
-      data.start_at_from = dayjs(start_at_range.from).format('YYYY-MM-DD');
-      data.start_at_to = dayjs(start_at_range.to).format('YYYY-MM-DD');
+    if (form.getValues('startAtRange')) {
+      const startAtRange = form.getValues('startAtRange');
+      data.startAtFrom = dayjs(startAtRange.from).format('YYYY-MM-DD');
+      data.startAtTo = dayjs(startAtRange.to).format('YYYY-MM-DD');
     }
     const filters: OrganizationsApiListingOrganizationEventsRequest = {
       ...form.getValues(),
       ...data,
     };
 
-    const exclude_queries = ['start_at_range'];
+    const exclude_queries = ['startAtRange', 'start_at_range'];
 
     searchQuery(router, filters, searchParams, exclude_queries);
   }
@@ -340,6 +353,11 @@ export default function EventDataTable() {
                     },
                     startAtFrom: undefined,
                     startAtTo: undefined,
+
+                    startAtRange: {
+                      from: null,
+                      to: null,
+                    },
                   });
                   router.push('/organization/events');
                 }}
@@ -378,7 +396,7 @@ export default function EventDataTable() {
               />
 
               <FormDateRangePicker
-                name='start_at_range'
+                name='startAtRange'
                 control={form.control}
                 className='w-full'
                 onValueChange={handleSearch}

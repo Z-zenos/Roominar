@@ -47,7 +47,6 @@ import clsx from 'clsx';
 import { GrPowerReset } from 'react-icons/gr';
 import ReactPaginate from 'react-paginate';
 import useWindowDimensions from '@/src/hooks/useWindowDimension';
-import { BsThreeDots } from 'react-icons/bs';
 import { useListingAttendeesQuery } from '@/src/api/organization.api';
 import { useTranslations } from 'next-intl';
 import useHighlightMatchedText from '@/src/hooks/useHighlightMatchedText';
@@ -72,12 +71,6 @@ import {
   SheetTrigger,
 } from '@/src/component/common/Sheet';
 import AttendeeDetail from './AttendeeDetail';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/src/component/common/DropdownMenu';
 import Chip from '@/src/component/common/Chip';
 import { IoIosCheckboxOutline, IoIosRemoveCircleOutline } from 'react-icons/io';
 
@@ -267,7 +260,7 @@ export default function AttendeeDataTable() {
       //   };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rightSidebarContent]);
+  }, [rightSidebarContent, selectedAttendeeId]);
 
   const renderCell = useCallback(
     (attendee: ListingAttendeesItem, columnKey: Key) => {
@@ -359,50 +352,39 @@ export default function AttendeeDataTable() {
 
         case 'actions':
           return (
-            <div className='relative flex justify-center items-center gap-2 hover:bg-gray-200'>
-              <DropdownMenu>
-                <DropdownMenuTrigger
-                  className={clsx(styles.center, 'w-full h-10')}
-                >
-                  <BsThreeDots className='text-default-500 cursor-pointer' />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem>
-                    <SheetTrigger
-                      onClick={() => {
-                        setRightSidebarContent('ATTENDEE_DETAIL');
-                        setSelectedAttendeeId(attendee.id);
-                      }}
-                      className={clsx(styles.between, 'gap-2')}
-                    >
-                      <AiOutlineEye className='w-5 h-5' />
-                      View Detail
-                    </SheetTrigger>
-                  </DropdownMenuItem>
-
-                  <DropdownMenuItem>
-                    <div
-                      onClick={() => handleCheckIn(attendee)}
-                      className={clsx(styles.between, 'gap-2 cursor-pointer')}
-                    >
-                      {checkedInAttendees.has(attendee.checkInId) ? (
-                        <IoIosRemoveCircleOutline className='w-5 h-5' />
-                      ) : (
-                        <IoIosCheckboxOutline className='w-5 h-5' />
-                      )}
-                      {checkedInAttendees.has(attendee.checkInId)
-                        ? 'Uncheck'
-                        : 'Check In'}
-                    </div>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+            <div
+              className='relative flex justify-center items-center gap-2'
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+            >
+              <SheetTrigger
+                onClick={() => {
+                  setSelectedAttendeeId(attendee.id);
+                  setRightSidebarContent('ATTENDEE_DETAIL');
+                }}
+                className={clsx(styles.between, 'gap-2')}
+              >
+                <AiOutlineEye className='w-5 h-5' />
+              </SheetTrigger>
+              <div
+                onClick={() => handleCheckIn(attendee)}
+                className={clsx(styles.between, 'gap-2 cursor-pointer')}
+              >
+                {checkedInAttendees.has(attendee.checkInId) ? (
+                  <IoIosRemoveCircleOutline className='w-5 h-5' />
+                ) : (
+                  <IoIosCheckboxOutline className='w-5 h-5' />
+                )}
+              </div>
             </div>
           );
         default:
           return cellValue;
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 

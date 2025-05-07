@@ -1,8 +1,8 @@
 from datetime import datetime
 from typing import Optional
 
-import slugify
 from pydantic import model_validator
+from slugify import slugify
 from sqlmodel import ARRAY, DateTime, Enum, Field, String, Text
 
 from backend.core.constants import EventMeetingToolCode, EventStatusCode
@@ -55,7 +55,6 @@ class Event(BaseModel, table=True):
     # survey_form_url: Optional[str] = Field(sa_type=String(2048))
 
     target_id: Optional[int] = Field(foreign_key="targets.id")
-    comment: Optional[str] = Field(sa_type=Text)
 
     published_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
     application_form_url: Optional[str] = Field(sa_type=String(2048))

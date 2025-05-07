@@ -14,6 +14,7 @@ async def listing_tickets_of_event(db: Session, organizer: User, event_id: int):
         .where(
             Ticket.event_id == event_id,
             Event.organization_id == organizer.organization_id,
-        ),
+        )
+        .order_by(Ticket.created_at.desc()),
     )
     return tickets

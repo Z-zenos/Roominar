@@ -64,7 +64,7 @@ const authOptions: NextAuthOptions = {
             throw Error('Invalid credentials');
           }
           return await makeAuthApi().login({
-            userLoginRequest: {
+            loginRequest: {
               email,
               password,
               rememberMe: Boolean(rememberMe),

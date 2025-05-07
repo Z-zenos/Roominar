@@ -176,19 +176,23 @@ const FormControl = forwardRef<
   ElementRef<typeof Slot>,
   ComponentPropsWithoutRef<typeof Slot>
 >(({ ...props }, ref) => {
-  const { error, formItemId, formDescriptionId, formMessageId } =
-    useFormField();
+  const {
+    formItemId,
+    // error ,
+    // formDescriptionId,
+    // formMessageId
+  } = useFormField();
 
   return (
     <Slot
       ref={ref}
       id={formItemId}
-      aria-describedby={
-        !error
-          ? `${formDescriptionId}`
-          : `${formDescriptionId} ${formMessageId}`
-      }
-      aria-invalid={!!error}
+      // aria-describedby={
+      //   !error
+      //     ? `${formDescriptionId}`
+      //     : `${formDescriptionId} ${formMessageId}`
+      // }
+      // aria-invalid={!!error}
       {...props}
     />
   );
@@ -295,6 +299,8 @@ const FormInput = ({
   name,
   control,
   showError = false,
+  classNames,
+  onValueChange,
   ...props
 }: FormInputProps) => {
   return (
@@ -302,13 +308,13 @@ const FormInput = ({
       control={control}
       name={name}
       render={({ field, fieldState }) => (
-        <FormItem className={props.classNames?.wrapper}>
+        <FormItem className={classNames?.wrapper}>
           {props.label && (
             <FormCustomLabel
               htmlFor={name}
               label={props.label}
               required={props.required}
-              className={props.classNames?.label}
+              className={classNames?.label}
             />
           )}
           <FormControl>
@@ -318,7 +324,7 @@ const FormInput = ({
               error={fieldState.error}
               onChange={(e: ChangeEvent<HTMLInputElement>) => {
                 field.onChange(e);
-                props.onValueChange && props.onValueChange(e.target.value);
+                onValueChange && onValueChange(e.target.value);
               }}
             />
           </FormControl>
@@ -341,6 +347,7 @@ const FormCheckBoxList = ({
   classNames,
   i18nPath,
   direction = 'horizontal',
+  onValueChange,
   ...props
 }: FormCheckBoxListProps) => {
   return (
@@ -382,7 +389,6 @@ const FormCheckBoxList = ({
                         <FormControl>
                           <Checkbox
                             checked={field?.value?.includes(option.value)}
-                            {...props}
                             onCheckedChange={(checked) => {
                               let newItems = null;
 
@@ -396,10 +402,11 @@ const FormCheckBoxList = ({
                                 );
                               }
                               field.onChange(newItems);
-                              if (props.onValueChange) props.onValueChange();
+                              if (onValueChange) onValueChange();
                             }}
                             label={option.label}
                             i18nPath={i18nPath}
+                            {...props}
                           />
                         </FormControl>
                       </FormItem>
@@ -439,12 +446,12 @@ const FormCheckBox = ({
             <Checkbox
               checked={field?.value}
               label={props.label}
-              {...props}
               onCheckedChange={(checked) => {
                 field.onChange(checked);
                 onValueChange && onValueChange();
               }}
               i18nPath={props.i18nPath}
+              {...props}
             />
           </FormControl>
           {props.showError && <FormMessage label={props.label} />}
@@ -1111,6 +1118,7 @@ const FormSelect = ({
   defaultValue,
   onSelect,
   placeholder,
+  onValueChange,
   ...props
 }: FormSelectProps) => {
   const t = useTranslations(i18nPath);
@@ -1134,21 +1142,25 @@ const FormSelect = ({
             onValueChange={(value: string) => {
               field.onChange(value);
               if (onSelect) onSelect(value);
-              if (props.onValueChange) props.onValueChange();
+              if (onValueChange) onValueChange();
             }}
             defaultValue={defaultValue}
           >
             <FormControl>
               <SelectTrigger
                 className={clsx(
-                  '400px:w-[180px] w-36 400px:h-11 h-8',
+                  '400px:w-[180px] 800px:w-full 800px:min-w-40 w-36 400px:h-11 h-8',
                   className,
                 )}
               >
                 <SelectValue
                   placeholder={
-                    placeholder ??
-                    `${i18nPath ? t(options[0]?.label) : options[0]?.label}`
+                    field.value
+                      ? i18nPath
+                        ? t(field.value)
+                        : field.value
+                      : (placeholder ??
+                        `${i18nPath ? t(options[0]?.label) : options[0]?.label}`)
                   }
                 />
               </SelectTrigger>

@@ -152,10 +152,16 @@ def _build_filters_sort(
         filters.append(Event.meeting_tool_code.in_(query_params.meeting_tool_codes))
 
     if query_params.start_at_from:
-        filters.append(Event.start_at.cast(Date) >= query_params.start_at_from.date())
+        filters.append(
+            Event.start_at.cast(Date)
+            >= datetime.strptime(query_params.start_at_from, "%Y-%m-%d").date()
+        )
 
     if query_params.start_at_to:
-        filters.append(Event.start_at.cast(Date) <= query_params.start_at_to.date())
+        filters.append(
+            Event.start_at.cast(Date)
+            <= datetime.strptime(query_params.start_at_to, "%Y-%m-%d").date()
+        )
 
     if query_params.event_status:
         filters.append(Event.status.in_(query_params.event_status))

@@ -14,7 +14,7 @@ from backend.schemas.common import password_validator
 from backend.schemas.user import UserBase
 
 
-class UserLoginRequest(BaseModel):
+class LoginRequest(BaseModel):
     email: EmailStr
     password: str = Field(min_length=8, max_length=255)
     role_code: str

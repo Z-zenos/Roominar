@@ -61,7 +61,6 @@ async def generate_event_content(
             - Thời gian diễn ra: {request.start_at.strftime('%d/%m/%Y %H:%M')} → {request.end_at.strftime('%d/%m/%Y %H:%M')} ({duration_text})
             - Đăng ký từ: {request.application_start_at.strftime('%d/%m/%Y %H:%M')} đến {request.application_end_at.strftime('%d/%m/%Y %H:%M')}
             - Giá vé: {"Miễn phí" if request.price == 0 else f"{request.price:,} VND"}
-            - Số lượng vé: {request.total_ticket_number} vé
             - Tag liên quan: {tags_text}
             - Prompt của người dùng: {request.prompt}
 

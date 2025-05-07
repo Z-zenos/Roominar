@@ -127,13 +127,6 @@ const eventAddressSchema = z
     },
   );
 
-const eventTicketSchema = z.object({
-  totalTicketNumber: z.coerce
-    .number()
-    .refine((n) => n > 0, { message: 'minimumTotalTicketNumber' }),
-  ticketIds: z.array(z.number()),
-});
-
 const eventBaseSchema = z.object({
   name: z.string().trim().min(1, { message: 'required' }).max(1024),
   description: z.string().trim().min(1),
@@ -146,13 +139,13 @@ const eventBaseSchema = z.object({
   galleryUrls: z.array(z.string().url()).max(10),
   surveyId: z.coerce.number().nullable(),
   targetId: z.coerce.number().nullable(),
-  comment: z.string().trim().nullable(),
   tags: z.array(z.coerce.number()).nullable(),
+  prompt: z.string().trim().max(1024).optional(),
 });
 
 const createEventFormSchema = z.intersection(
   eventBaseSchema,
-  eventDateSchema.and(eventAddressSchema).and(eventTicketSchema),
+  eventDateSchema.and(eventAddressSchema),
 );
 
 type CreateEventFormSchema = z.infer<typeof createEventFormSchema>;
