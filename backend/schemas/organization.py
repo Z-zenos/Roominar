@@ -205,3 +205,23 @@ class GetTicketStatsResponse(BaseModel):
     reserved_percentage: float
     total_revenue: float
     total_tickets: int
+
+
+class ListingAttendeesRankingItem(BaseModel):
+    id: int
+    full_name: str
+    email: str
+    avatar_url: str | None = None
+    total_score: int
+
+
+class ListingAttendeesRankingQueryParams(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    keyword: str | None = Field(None)
+    event_id: int | None = Field(None)
+    month: int | None = Field(None)
+    year: int | None = Field(None)
+
+    page: int | None = Field(Query(default=1, ge=1))
+    per_page: int | None = Field(Query(default=10, le=100, ge=1))

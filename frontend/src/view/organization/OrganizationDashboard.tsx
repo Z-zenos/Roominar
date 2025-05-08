@@ -16,6 +16,7 @@ import { getCookie } from 'cookies-next';
 import { TagStatsChart } from '@/src/component/common/Chart/TagStatsChart';
 import { TrackUserActionsChart } from '@/src/component/common/Chart/TrackUserActionsChart';
 import { TicketStatsChart } from '@/src/component/common/Chart/TicketStatsChart';
+import AttendeesRanking from '../attendee/AttendeesRanking';
 
 const LazyCalendarTimeline = dynamic(
   () => import('@/src/component/common/DateTime/CalendarTimeline'),
@@ -132,41 +133,45 @@ export default function OrganizationDashboard() {
             <TicketStatsChart />
           </div>
         </div>
-        <div className='1200px:col-span-2 max-h-[600px] col-span-3 bg-white p-4 rounded-lg shadow-md'>
-          <LazyCalendarTimeline
-            height={520}
-            aspectRatio={1.35}
-            events={[
-              ...(eventsTimeline
-                ? eventsTimeline.map((event) => ({
-                    title: event.name,
-                    start: event.startAt,
-                    end: event.endAt,
-                    color: '#3048ff',
-                  }))
-                : []),
-              ...(eventsTimeline
-                ? eventsTimeline.map((event) => ({
-                    title: event.name,
-                    start: event.applicationStartAt,
-                    end: event.applicationEndAt,
-                    color: '#ff5c00',
-                  }))
-                : []),
-            ]}
-            dayMaxEventRows={2}
-            dayHeaderClassNames={[
-              'text-[14px] first:text-red-500 last:text-blue-500',
-            ]}
-            dayCellClassNames={['text-[14px]']}
-            eventClassNames={['text-xs font-semibold']}
-            titleFormat={() => 'Event Schedule'}
-            headerToolbar={{
-              left: 'prev,next',
-              center: 'title',
-              right: 'dayGridMonth,timeGridWeek',
-            }}
-          />
+        <div className='1200px:col-span-2 col-span-3'>
+          <div className='max-h-[600px] bg-white rounded-lg shadow-md p-4'>
+            <LazyCalendarTimeline
+              height={520}
+              aspectRatio={1.35}
+              events={[
+                ...(eventsTimeline
+                  ? eventsTimeline.map((event) => ({
+                      title: event.name,
+                      start: event.startAt,
+                      end: event.endAt,
+                      color: '#3048ff',
+                    }))
+                  : []),
+                ...(eventsTimeline
+                  ? eventsTimeline.map((event) => ({
+                      title: event.name,
+                      start: event.applicationStartAt,
+                      end: event.applicationEndAt,
+                      color: '#ff5c00',
+                    }))
+                  : []),
+              ]}
+              dayMaxEventRows={2}
+              dayHeaderClassNames={[
+                'text-[14px] first:text-red-500 last:text-blue-500',
+              ]}
+              dayCellClassNames={['text-[14px]']}
+              eventClassNames={['text-xs font-semibold']}
+              titleFormat={() => 'Event Schedule'}
+              headerToolbar={{
+                left: 'prev,next',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek',
+              }}
+            />
+          </div>
+
+          <AttendeesRanking />
         </div>
       </div>
       <div className='grid 1200px:grid-cols-5 grid-cols-3 gap-4 p-8'></div>

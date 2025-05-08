@@ -1,10 +1,15 @@
-from sqlmodel import Session, exists
+from sqlmodel import Session, select
 
-from backend.core.constants import CheckInMethodCode
+from backend.core.constants import CheckInMethodCode, UserActionTypeCode
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.models.check_in import CheckIn
+from backend.models.event import Event
+from backend.models.organization import Organization
+from backend.models.transaction_item import TransactionItem
+from backend.models.user_action import UserAction
 from backend.schemas.check_in import CreateCheckInRequest
+from backend.utils.database import save
 
 
 async def create_check_in(
@@ -12,13 +17,20 @@ async def create_check_in(
     request: CreateCheckInRequest,
     event_id: int,
 ):
-    check_in = db.scalar(
-        exists()
-        .where(
-            CheckIn.event_id == event_id,
-            CheckIn.application_id == request.application_id,
+    check_in = (
+        db.exec(
+            select(
+                CheckIn.id.label("check_in_id"),
+                TransactionItem.user_id.label("user_id"),
+                Organization.id.label("organization_id"),
+            )
+            .join(TransactionItem, TransactionItem.id == CheckIn.transaction_item_id)
+            .join(Event, Event.id == CheckIn.event_id)
+            .join(Organization, Organization.id == Event.organization_id)
+            .where(CheckIn.event_id == event_id)
         )
-        .select()
+        .mappings()
+        .one_or_none()
     )
 
     if check_in:
@@ -36,7 +48,14 @@ async def create_check_in(
             checkin_method_code=CheckInMethodCode.MANUAL,
         )
         db.add(check_in)
-        db.commit()
+
+        user_action = UserAction(
+            user_id=check_in.user_id,
+            event_id=event_id,
+            organization_id=check_in.organization_id,
+            action_type=UserActionTypeCode.CHECK_IN,
+        )
+        save(db, user_action)
 
         return check_in.id
 

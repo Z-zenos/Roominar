@@ -32,6 +32,8 @@ from backend.schemas.organization import (
     GetTicketStatsQueryParams,
     GetTicketStatsResponse,
     ListingAttendeesQueryParams,
+    ListingAttendeesRankingItem,
+    ListingAttendeesRankingQueryParams,
     ListingAttendeesResponse,
     ListingRandomOrganizationsResponse,
     TrackUserActionsQueryParams,
@@ -178,6 +180,24 @@ async def download_attendees_csv(
     response = StreamingResponse(iter([stream.getvalue()]), media_type="text/csv")
     response.headers["Content-Disposition"] = "attachment; filename=attendees.csv"
     return response
+
+
+@router.get(
+    "/attendees/ranking",
+    response_model=list[ListingAttendeesRankingItem],
+    responses=authenticated_api_responses,
+)
+async def listing_attendees_ranking(
+    db: Session = Depends(get_read_db),
+    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+    query_params: ListingAttendeesRankingQueryParams = Depends(
+        ListingAttendeesRankingQueryParams
+    ),
+):
+    attendees = await organizations_service.listing_attendees_ranking(
+        db, organizer, query_params
+    )
+    return attendees
 
 
 @router.get(

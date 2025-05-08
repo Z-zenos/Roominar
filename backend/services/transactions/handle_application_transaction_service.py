@@ -66,6 +66,7 @@ async def handle_application_transaction(db: Session, request: Request):
         tickets = result["tickets"]
         total_requested_quantity = result["total_requested_quantity"]
         application = result["application"]
+        event = result["event"]
 
         # Create Application
         if not application:
@@ -103,6 +104,7 @@ async def handle_application_transaction(db: Session, request: Request):
                     user_id=user_id,
                     event_id=event_id,
                     action_type=UserActionTypeCode.ANSWER_APPLICATION_SURVEY,
+                    organization_id=event["organization_id"],
                 )
                 db.add(user_action)
                 db.bulk_save_objects(survey_responses)
