@@ -9,7 +9,7 @@ services:
     ports:
       - 2001:2001 # Backend (uvicorn, FastAPI...)
       - 2002:2002 # Frontend
-    command: sleep infinity
+    restart: unless-stopped
     depends_on:
       - db
     env_file:

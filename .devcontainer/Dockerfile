@@ -68,14 +68,14 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     echo 'eval "$(starship init bash)"' >>/home/app/.bashrc && \
     rm -rf /var/lib/apt/lists/*
 
-USER app
+USER root
+COPY . /workspace
+RUN chmod +x /workspace/entrypoint.sh && \
+    chown -R app:app /workspace
 
-# will become mountpoint of our code
+USER app
 WORKDIR /workspace
 
-# Copy files from host into image
-COPY . .
-RUN chmod +x /entrypoint.sh
-CMD ["/entrypoint.sh"]
+CMD ["/workspace/entrypoint.sh"]
 
 EXPOSE 2001 2002
