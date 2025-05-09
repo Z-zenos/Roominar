@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Literal
 
 from fastapi import Query
 from pydantic import BaseModel, ConfigDict, Field
@@ -213,6 +214,11 @@ class ListingAttendeesRankingItem(BaseModel):
     email: str
     avatar_url: str | None = None
     total_score: int
+    purchase_number: int = 0
+    checkin_number: int = 0
+    survey_number: int = 0
+    prev_score: int | None = None
+    rank_change: Literal["up", "down", "same", "new"]
 
 
 class ListingAttendeesRankingQueryParams(BaseModel):
@@ -220,8 +226,8 @@ class ListingAttendeesRankingQueryParams(BaseModel):
 
     keyword: str | None = Field(None)
     event_id: int | None = Field(None)
-    month: int | None = Field(None)
-    year: int | None = Field(None)
+    month: int | None = Field(default=datetime.now().month)
+    year: int | None = Field(default=datetime.now().year)
 
     page: int | None = Field(Query(default=1, ge=1))
     per_page: int | None = Field(Query(default=10, le=100, ge=1))

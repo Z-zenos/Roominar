@@ -1,10 +1,25 @@
 'use client';
 
 import { useListingAttendeesRankingQuery } from '@/src/api/organization.api';
-import { Avatar, Tooltip } from '@nextui-org/react';
+import { Tooltip } from '@nextui-org/react';
 import clsx from 'clsx';
-import { forwardRef } from 'react';
+import type { Key } from 'react';
+import { forwardRef, useCallback } from 'react';
 import { IoIosInformationCircleOutline } from 'react-icons/io';
+import {
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+  User,
+} from '@nextui-org/react';
+import type { ListingAttendeesRankingItem } from '@/src/lib/api/generated';
+import { BiDownArrow, BiUpArrow } from 'react-icons/bi';
+import { SheetTrigger } from '@/src/component/common/Sheet';
+import { AiOutlineEye } from 'react-icons/ai';
+import { styles } from '@/src/constants/styles.constant';
 
 const ForwardedIoIcon = forwardRef<
   HTMLSpanElement,
@@ -16,13 +31,118 @@ const ForwardedIoIcon = forwardRef<
 ));
 ForwardedIoIcon.displayName = 'ForwardedIoIcon';
 
+const columns = [
+  { name: 'Rank', uid: 'no', sortable: false },
+  { name: 'Trend', uid: 'trend', sortable: false }, // up/down icon
+  { name: 'User', uid: 'user_info', sortable: false }, // avatar + full name + email
+  { name: 'Tickets Purchased', uid: 'purchase_number', sortable: true },
+  { name: 'Check-ins', uid: 'checkin_number', sortable: true },
+  { name: 'Surveys Completed', uid: 'survey_number', sortable: true },
+  { name: 'Ranking Score', uid: 'ranking_score', sortable: true },
+  { name: 'Actions', uid: 'actions', sortable: false },
+];
+
 export default function AttendeesRanking() {
-  const { data: attendeesRanking } = useListingAttendeesRankingQuery();
+  const { data: attendeesRanking, isLoading: isLoadingAttendeesRanking } =
+    useListingAttendeesRankingQuery();
+
+  const renderCell = useCallback(
+    (attendee: ListingAttendeesRankingItem, columnKey: Key) => {
+      const cellValue = attendee[columnKey as string];
+
+      switch (columnKey) {
+        case 'no':
+          return <p>{attendee.id}</p>;
+
+        case 'trend':
+          return (
+            <div className='flex items-center justify-center'>
+              {attendee.rankChange === 'up' ? (
+                <BiUpArrow className='text-green-500' />
+              ) : (
+                <BiDownArrow className='text-red-500 rotate-180' />
+              )}
+            </div>
+          );
+
+        case 'user_info':
+          return (
+            <User
+              avatarProps={{
+                src: attendee.avatarUrl,
+                className: 'w-[40px] h-[40px]',
+              }}
+              name={
+                <div className='ml-2'>
+                  <p>{attendee.fullName}</p>
+                  <p className='text-gray-600 font-semibold'>
+                    {attendee.email}
+                  </p>
+                </div>
+              }
+            />
+          );
+
+        case 'purchase_number':
+          return (
+            <div className='flex items-center justify-center'>
+              <p>{attendee.purchaseNumber}</p>
+            </div>
+          );
+
+        case 'checkin_number':
+          return (
+            <div className='flex items-center justify-center'>
+              <p>{attendee.checkinNumber}</p>
+            </div>
+          );
+
+        case 'survey_number':
+          return (
+            <div className='flex items-center justify-center'>
+              <p>{attendee.surveyNumber}</p>
+            </div>
+          );
+
+        case 'ranking_score':
+          return (
+            <div className='flex items-center justify-center'>
+              <p>{attendee.totalScore}</p>
+            </div>
+          );
+
+        case 'actions':
+          return (
+            <div
+              className='relative flex justify-center items-center gap-2'
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+            >
+              <SheetTrigger
+                onClick={() => {
+                  // setSelectedAttendeeId(attendee.id);
+                  // setRightSidebarContent('ATTENDEE_DETAIL');
+                }}
+                className={clsx(styles.between, 'gap-2')}
+              >
+                <AiOutlineEye className='w-5 h-5' />
+              </SheetTrigger>
+            </div>
+          );
+        default:
+          return cellValue;
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
 
   return (
     <ul
       role='list'
-      className='bg-white rounded-lg shadow-md px-8 py-4 mt-6'
+      className='bg-white rounded-lg shadow-md p-4 mt-6'
     >
       <h3 className='text-md text-orange-500 mb-2 font-semibold flex justify-start items-center gap-2'>
         Attendees Ranking{' '}
@@ -80,48 +200,43 @@ export default function AttendeesRanking() {
           <ForwardedIoIcon size={25} />
         </Tooltip>
       </h3>
-      {attendeesRanking &&
-        attendeesRanking?.length > 0 &&
-        attendeesRanking.map((attendee, i) => (
-          <li
-            className='flex justify-between gap-x-6 py-5'
-            key={attendee.id}
-          >
-            <div className='flex items-center min-w-0 gap-x-4'>
-              <Avatar
-                isBordered
-                radius='full'
-                size='md'
-                src={attendee.avatarUrl}
-              />
-              <div className='min-w-0 flex-auto'>
-                <p className='text-nm font-medium text-gray-900'>
-                  {attendee.fullName}
-                </p>
-                <p className='truncate text-sm text-gray-500'>
-                  {attendee.email}
-                </p>
-              </div>
-            </div>
-            <div className='hidden shrink-0 sm:flex sm:flex-col sm:items-end'>
-              <p className='text-sm leading-6 text-gray-900'>
-                <span
-                  className={clsx(
-                    i === 0 && 'font-bold text-md text-success-main',
-                    i === 1 && 'font-bold text-md text-info-main',
-                    i === 2 && 'font-bold text-md text-warning-main',
-                  )}
-                >
-                  {attendee.totalScore}
-                </span>{' '}
-                points
-              </p>
-              {/* <p className='mt-1 text-xs leading-5 text-gray-500'>
-                Last seen <time dateTime='2023-01-23T13:23Z'>3h ago</time>
-              </p> */}
-            </div>
-          </li>
-        ))}
+      <Table
+        aria-label='Example table with custom cells, pagination and sorting'
+        isHeaderSticky
+        bottomContentPlacement='outside'
+        classNames={{
+          wrapper: 'max-h-[600px] w-full mt-4 max-w-[400px]',
+          th: 'text-wrap max-w-[100px]',
+        }}
+        topContentPlacement='outside'
+        removeWrapper
+      >
+        <TableHeader columns={columns}>
+          {(column) => (
+            <TableColumn
+              key={column.uid}
+              align={column.uid === 'actions' ? 'center' : 'start'}
+              allowsSorting={column.sortable}
+            >
+              {column.name}
+            </TableColumn>
+          )}
+        </TableHeader>
+        <TableBody
+          emptyContent={
+            isLoadingAttendeesRanking ? 'Loading...' : 'No data found'
+          }
+          items={attendeesRanking ?? []}
+        >
+          {(item) => (
+            <TableRow key={item.id}>
+              {(columnKey) => (
+                <TableCell>{renderCell(item, columnKey)}</TableCell>
+              )}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
     </ul>
   );
 }

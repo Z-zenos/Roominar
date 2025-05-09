@@ -29,9 +29,9 @@ import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
 import queryString from 'query-string';
 import { useEffect, useState } from 'react';
-import { Skeleton } from '@nextui-org/react';
 import { useTrackUserActionsQuery } from '@/src/api/organization.api';
 import Nodata from '../Nodata';
+import ElementLoader from '../Loader/ElementLoader';
 
 const USER_ACTION_STORAGE_KEY = 'userActions';
 
@@ -178,7 +178,7 @@ export function TrackUserActionsChart() {
             </CardContent>
           )}
           {isLoading && (
-            <Skeleton className='h-[200px] mx-20 my-6 rounded-md' />
+            <ElementLoader title='Analyzing your events and data...' />
           )}
 
           {!isLoading && trackUserActions?.data.length === 0 && <Nodata />}

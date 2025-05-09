@@ -37,6 +37,27 @@ async def listing_attendees_ranking(
     if cached:
         return json.loads(cached)
 
+    # Time filters
+    def get_period_range(month: int, year: int):
+        start_date = datetime(year, month, 1)
+        if month == 12:
+            end_date = datetime(year + 1, 1, 1)
+        else:
+            end_date = datetime(year, month + 1, 1)
+        return start_date, end_date
+
+    if not (query_params.month and query_params.year):
+        raise ValueError("Month and year are required for ranking comparison.")
+
+    current_start, current_end = get_period_range(query_params.month, query_params.year)
+
+    if query_params.month == 1:
+        prev_start, prev_end = get_period_range(12, query_params.year - 1)
+    else:
+        prev_start, prev_end = get_period_range(
+            query_params.month - 1, query_params.year
+        )
+
     event_stmt = select(Event.id).where(
         Event.organization_id == organizer.organization_id,
         Event.status == EventStatusCode.PUBLIC,
@@ -46,17 +67,7 @@ async def listing_attendees_ranking(
 
     filters = [UserAction.event_id.in_(event_stmt)]
 
-    # Time filter (month/year)
-    if query_params.month and query_params.year:
-        start_date = datetime(query_params.year, query_params.month, 1)
-        if query_params.month == 12:
-            end_date = datetime(query_params.year + 1, 1, 1)
-        else:
-            end_date = datetime(query_params.year, query_params.month + 1, 1)
-        filters.append(UserAction.created_at >= start_date)
-        filters.append(UserAction.created_at < end_date)
-
-    # Score mapping
+    # Score case
     score_case = case(
         *(
             ((UserAction.action_type == action_type, score))
@@ -65,7 +76,26 @@ async def listing_attendees_ranking(
         else_=0,
     )
 
-    # Base query
+    # Số lần hành động theo loại
+    def action_count_case(action_code):
+        return func.sum(case((UserAction.action_type == action_code, 1), else_=0))
+
+    # Subquery: Điểm ở kỳ trước để so sánh xếp hạng
+    prev_query = (
+        select(
+            User.id.label("user_id"),
+            func.sum(score_case).label("prev_score"),
+        )
+        .join(UserAction, User.id == UserAction.user_id)
+        .where(
+            *filters,
+            UserAction.created_at >= prev_start,
+            UserAction.created_at < prev_end,
+        )
+        .group_by(User.id)
+    ).subquery()
+
+    # Main query: điểm kỳ hiện tại + số lần hành động
     query = (
         select(
             User.id,
@@ -73,33 +103,60 @@ async def listing_attendees_ranking(
             User.email,
             User.avatar_url,
             func.sum(score_case).label("total_score"),
+            action_count_case(UserActionTypeCode.PURCHASE_TICKET).label(
+                "purchase_count"
+            ),
+            action_count_case(UserActionTypeCode.CHECK_IN).label("checkin_count"),
+            action_count_case(UserActionTypeCode.ANSWER_APPLICATION_SURVEY).label(
+                "survey_count"
+            ),
+            prev_query.c.prev_score,
         )
         .join(UserAction, User.id == UserAction.user_id)
-        .where(*filters)
-        .group_by(User.id, User.first_name, User.last_name, User.email, User.avatar_url)
-        .having(func.sum(score_case) > 10)
-    )
-
-    # Keyword filter
-    if query_params.keyword:
-        keyword = f"%{query_params.keyword.lower()}%"
-        query = query.where(
-            func.lower(User.first_name + " " + User.last_name).ilike(keyword)
-            | func.lower(User.email).ilike(keyword)
+        .outerjoin(prev_query, prev_query.c.user_id == User.id)
+        .where(
+            *filters,
+            UserAction.created_at >= current_start,
+            UserAction.created_at < current_end,
         )
-
-    query = (
-        query.order_by(func.sum(score_case).desc())
-        .offset((query_params.page - 1) * query_params.per_page)
-        .limit(query_params.per_page)
+        .group_by(
+            User.id,
+            User.first_name,
+            User.last_name,
+            User.email,
+            User.avatar_url,
+            prev_query.c.prev_score,
+        )
+        .having(func.sum(score_case) > 10)
+        .order_by(func.sum(score_case).desc())
     )
 
-    result = db.exec(query).mappings().all()
-    result = [dict(row) for row in result]
+    all_rows = db.exec(query).mappings().all()
+    all_rows = [dict(row) for row in all_rows]
 
-    redis_client.setex(
-        cache_key,
-        CACHE_EXPIRE_SECONDS,
-        json.dumps(result),
-    )
-    return result
+    # Gán thứ hạng hiện tại và trước đó
+    current_ranking = {row["id"]: idx for idx, row in enumerate(all_rows)}
+    prev_ranking_query = sorted(all_rows, key=lambda x: -(x.get("prev_score") or 0))
+    prev_ranking = {row["id"]: idx for idx, row in enumerate(prev_ranking_query)}
+
+    for row in all_rows:
+        uid = row["id"]
+        prev_rank = prev_ranking.get(uid)
+        current_rank = current_ranking[uid]
+        if prev_rank is None:
+            trend = "new"
+        elif prev_rank > current_rank:
+            trend = "up"
+        elif prev_rank < current_rank:
+            trend = "down"
+        else:
+            trend = "same"
+        row["rank_change"] = trend
+
+    # Paging
+    start = (query_params.page - 1) * query_params.per_page
+    end = start + query_params.per_page
+    paginated_result = all_rows[start:end]
+
+    redis_client.setex(cache_key, CACHE_EXPIRE_SECONDS, json.dumps(paginated_result))
+    return paginated_result

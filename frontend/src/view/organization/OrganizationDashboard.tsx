@@ -32,12 +32,14 @@ export default function OrganizationDashboard() {
     getCookie('NEXT_LOCALE') === 'en' || !getCookie('NEXT_LOCALE'),
   );
 
-  const { data: dashboardData } = useGetOrganizationDashboardQuery();
-  const { data: tagStats } = useGetTagStatsQuery();
+  const { data: dashboardData, isLoading: isLoadingDashboardData } =
+    useGetOrganizationDashboardQuery();
+  const { data: tagStats, isLoading: isLoadingTagStats } =
+    useGetTagStatsQuery();
 
   return (
     <>
-      <div className='grid 1200px:grid-cols-5 grid-cols-3 gap-4 p-8'>
+      <div className='grid 1200px:grid-cols-5 grid-cols-3 gap-4 p-4 items-baseline'>
         <div className='col-span-3 grid grid-cols-3 gap-2'>
           <div
             className={clsx(
@@ -120,17 +122,20 @@ export default function OrganizationDashboard() {
                 </div>
               </>
             )}
+
+            {isLoadingDashboardData && (
+              <div className='flex w-full items-center justify-center'>
+                <ElementLoading title='Loading dashboard data...' />
+              </div>
+            )}
           </div>
 
           <div className='col-span-3'>
             <TrackUserActionsChart />
           </div>
-          <div className='col-span-1'>
-            {tagStats && <TagStatsChart data={tagStats.data} />}
-          </div>
 
-          <div className='col-span-2'>
-            <TicketStatsChart />
+          <div className='col-span-3'>
+            <AttendeesRanking />
           </div>
         </div>
         <div className='1200px:col-span-2 col-span-3'>
@@ -170,11 +175,15 @@ export default function OrganizationDashboard() {
               }}
             />
           </div>
-
-          <AttendeesRanking />
+          <TicketStatsChart />
+          {tagStats && <TagStatsChart data={tagStats.data} />}
+          {isLoadingTagStats && (
+            <div className='flex w-full items-center justify-center'>
+              <ElementLoading title='Loading tag stats...' />
+            </div>
+          )}
         </div>
       </div>
-      <div className='grid 1200px:grid-cols-5 grid-cols-3 gap-4 p-8'></div>
     </>
   );
 }

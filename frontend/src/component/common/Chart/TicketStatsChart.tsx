@@ -18,12 +18,12 @@ import { getCookie } from 'cookies-next';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useGetTicketStatsQuery } from '@/src/api/organization.api';
-import { Skeleton } from '@nextui-org/react';
 import queryString from 'query-string';
 import { Form, FormCustomLabel, FormSelect } from '../../form/Form';
 import { optionify } from '@/src/utils/app.util';
 import { useListingEventOptionsQuery } from '@/src/api/event.api';
 import Nodata from '../Nodata';
+import ElementLoader from '../Loader/ElementLoader';
 
 const TICKET_STATS_STORAGE_KEY = 'ticketStats';
 
@@ -119,7 +119,7 @@ export function TicketStatsChart() {
       <Form {...form}>
         <form className='flex flex-col'>
           <CardHeader className='items-center pb-0'>
-            {ticketStats ? (
+            {ticketStats && (
               <CardTitle className='font-medium'>
                 Ticket Stats ({ticketStats.totalTickets}) - Revenue:{' '}
                 {new Number(ticketStats.totalRevenue).toLocaleString(
@@ -130,8 +130,6 @@ export function TicketStatsChart() {
                   },
                 )}
               </CardTitle>
-            ) : (
-              <Skeleton className='h-[40px] w-full rounded-md' />
             )}
           </CardHeader>
           {ticketStats && (
@@ -240,7 +238,7 @@ export function TicketStatsChart() {
               </div>
             </div>
           )}
-          {isLoading && <Skeleton className='h-[150px] mx-6 my-6 rounded-md' />}
+          {isLoading && <ElementLoader title='Calculating tickets...' />}
           {!isLoading && !ticketStats && ticketStats?.totalTickets === 0 && (
             <Nodata />
           )}
