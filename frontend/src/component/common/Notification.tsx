@@ -40,7 +40,6 @@ export function NotificationItem({
   isRead,
   avatarUrl,
   actionUrl,
-  typeCode,
   onRefetch,
 }: NotificationItemProps) {
   useDayjsLocale();
@@ -126,7 +125,7 @@ export function NotificationList({
     if (scrollTop + clientHeight >= scrollHeight - 100) {
       fetchNextPage();
     }
-  }, []);
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   // Infinite scroll handler
   useEffect(() => {

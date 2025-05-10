@@ -20,6 +20,7 @@ import { BiDownArrow, BiUpArrow } from 'react-icons/bi';
 import { SheetTrigger } from '@/src/component/common/Sheet';
 import { AiOutlineEye } from 'react-icons/ai';
 import { styles } from '@/src/constants/styles.constant';
+import { useRightSidebar } from '@/src/contexts/RightSidebarContext';
 
 const ForwardedIoIcon = forwardRef<
   HTMLSpanElement,
@@ -43,6 +44,7 @@ const columns = [
 ];
 
 export default function AttendeesRanking() {
+  const { open } = useRightSidebar();
   const { data: attendeesRanking, isLoading: isLoadingAttendeesRanking } =
     useListingAttendeesRankingQuery();
 
@@ -121,10 +123,7 @@ export default function AttendeesRanking() {
               }}
             >
               <SheetTrigger
-                onClick={() => {
-                  // setSelectedAttendeeId(attendee.id);
-                  // setRightSidebarContent('ATTENDEE_DETAIL');
-                }}
+                onClick={() => open('ATTENDEE_DETAIL', attendee.id)}
                 className={clsx(styles.between, 'gap-2')}
               >
                 <AiOutlineEye className='w-5 h-5' />
@@ -142,7 +141,7 @@ export default function AttendeesRanking() {
   return (
     <ul
       role='list'
-      className='bg-white rounded-lg shadow-md p-4 mt-6'
+      className='bg-white rounded-lg shadow-md p-4 mt-2'
     >
       <h3 className='text-md text-orange-500 mb-2 font-semibold flex justify-start items-center gap-2'>
         Attendees Ranking{' '}

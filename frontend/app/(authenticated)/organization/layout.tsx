@@ -1,29 +1,22 @@
 'use client';
 
 import { useGetTotalUnreadNotificationsQuery } from '@/src/api/user.api';
-import {
-  NotificationIcon,
-  NotificationList,
-} from '@/src/component/common/Notification';
+import { NotificationIcon } from '@/src/component/common/Notification';
 import { Separator } from '@/src/component/common/Separator';
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetOverlay,
-  SheetTitle,
-  SheetTrigger,
-} from '@/src/component/common/Sheet';
+import { Sheet, SheetTrigger } from '@/src/component/common/Sheet';
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from '@/src/component/common/Sidebar';
 import { OrganizationSidebar } from '@/src/component/common/SideBar/OrganizationSidebar';
+import {
+  RightSidebarProvider,
+  useRightSidebar,
+} from '@/src/contexts/RightSidebarContext';
 import { useSession } from 'next-auth/react';
+import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
 
 const PAGE_METADATA = [
   {
@@ -33,19 +26,29 @@ const PAGE_METADATA = [
   },
 ];
 
-export default function RootLayout({ children }) {
-  const [isNotificationOpen, setIsNotificationOpen] = useState<boolean>(false);
-  const pathname = usePathname();
+const LazyRightSidebar = dynamic(
+  () => import('@/src/view/organization/OrganizationRightSidebar'),
+  {
+    ssr: false,
+  },
+);
 
+// This is the inner component that will use the context
+function LayoutContent({ children }) {
+  const pathname = usePathname();
   const { status } = useSession();
   const {
     data: totalUnreadNotifications,
     refetch: refetchTotalUnreadNotifications,
   } = useGetTotalUnreadNotificationsQuery(status === 'authenticated');
+  const { open, isOpen, close } = useRightSidebar();
+
   return (
     <Sheet
-      open={isNotificationOpen}
-      onOpenChange={setIsNotificationOpen}
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) close();
+      }}
     >
       <div className='flex w-full h-full'>
         <SidebarProvider defaultOpen={true}>
@@ -65,7 +68,10 @@ export default function RootLayout({ children }) {
                 </div>
               </div>
               {status === 'authenticated' && (
-                <SheetTrigger className='relative cursor-pointer mr-2'>
+                <SheetTrigger
+                  className='relative cursor-pointer mr-2'
+                  onClick={() => open('NOTIFICATION_LIST')}
+                >
                   <NotificationIcon
                     totalUnreadNotifications={totalUnreadNotifications}
                   />
@@ -80,22 +86,17 @@ export default function RootLayout({ children }) {
           </SidebarInset>
         </SidebarProvider>
 
-        <SheetOverlay>
-          <SheetContent
-            side='right'
-            className='min-w-[400px]'
-          >
-            <SheetHeader>
-              <SheetTitle className='text-primary'>Notifications</SheetTitle>
-              <SheetDescription />
-              <NotificationList
-                onRefetch={refetchTotalUnreadNotifications}
-                onClose={() => setIsNotificationOpen(false)}
-              />
-            </SheetHeader>
-          </SheetContent>
-        </SheetOverlay>
+        <LazyRightSidebar refetch={refetchTotalUnreadNotifications} />
       </div>
     </Sheet>
+  );
+}
+
+// The outer component that provides the context
+export default function RootLayout({ children }) {
+  return (
+    <RightSidebarProvider>
+      <LayoutContent>{children}</LayoutContent>
+    </RightSidebarProvider>
   );
 }

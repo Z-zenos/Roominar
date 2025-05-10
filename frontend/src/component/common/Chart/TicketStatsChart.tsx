@@ -115,7 +115,7 @@ export function TicketStatsChart() {
   }, [form, form.watch, refetch]);
 
   return (
-    <Card>
+    <Card className='my-2'>
       <Form {...form}>
         <form className='flex flex-col'>
           <CardHeader className='items-center pb-0'>

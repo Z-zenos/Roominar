@@ -1,7 +1,7 @@
 'use client';
 
 import type { Key } from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   Table,
   TableHeader,
@@ -60,19 +60,10 @@ import { TbFileTypeCsv } from 'react-icons/tb';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { AiOutlineEye } from 'react-icons/ai';
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetOverlay,
-  SheetTitle,
-  SheetTrigger,
-} from '@/src/component/common/Sheet';
-import AttendeeDetail from './AttendeeDetail';
+import { SheetTrigger } from '@/src/component/common/Sheet';
 import Chip from '@/src/component/common/Chip';
 import { IoIosCheckboxOutline, IoIosRemoveCircleOutline } from 'react-icons/io';
+import { useRightSidebar } from '@/src/contexts/RightSidebarContext';
 
 const columns = [
   { name: 'Apply Time', uid: 'apply_time', sortable: false },
@@ -98,18 +89,14 @@ export default function AttendeeDataTable() {
   );
 
   const [selectedKeys, setSelectedKeys] = useState<any>(new Set());
-  const [selectedAttendeeId, setSelectedAttendeeId] = useState<number | null>(
-    null,
-  );
+
   const { data, isFetching } = useListingAttendeesQuery({
     ...queryString.parse(searchParams.toString(), { arrayFormat: 'bracket' }),
   });
   const [page, setPage] = useState<number>(data?.page || 1);
   const pageCount = Math.ceil(data?.total / data?.perPage);
   const { data: auth } = useSession();
-  const [rightSidebarContent, setRightSidebarContent] = useState<
-    'ATTENDEE_DETAIL' | null
-  >();
+  const { open } = useRightSidebar();
 
   const form = useForm<OrganizationsApiListingAttendeesRequest>({
     mode: 'all',
@@ -243,25 +230,6 @@ export default function AttendeeDataTable() {
     });
   };
 
-  const rightSidebar = useMemo(() => {
-    switch (rightSidebarContent) {
-      case 'ATTENDEE_DETAIL':
-        return {
-          title: 'ATTENDEE DETAIL',
-          body: <AttendeeDetail id={selectedAttendeeId} />,
-          footer: null,
-        };
-
-      // case 'TARGET':
-      //   return {
-      //     title: 'TARGET',
-      //     body: <CreateTargetForm />,
-      //     footer: null,
-      //   };
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rightSidebarContent, selectedAttendeeId]);
-
   const renderCell = useCallback(
     (attendee: ListingAttendeesItem, columnKey: Key) => {
       const cellValue = attendee[columnKey as string];
@@ -360,10 +328,7 @@ export default function AttendeeDataTable() {
               }}
             >
               <SheetTrigger
-                onClick={() => {
-                  setSelectedAttendeeId(attendee.id);
-                  setRightSidebarContent('ATTENDEE_DETAIL');
-                }}
+                onClick={() => open('ATTENDEE_DETAIL', attendee.id)}
                 className={clsx(styles.between, 'gap-2')}
               >
                 <AiOutlineEye className='w-5 h-5' />
@@ -389,7 +354,7 @@ export default function AttendeeDataTable() {
   );
 
   return (
-    <Sheet>
+    <>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSearch)}>
           <div className='flex justify-between items-center flex-wrap gap-1'>
@@ -558,22 +523,6 @@ export default function AttendeeDataTable() {
           />
         )}
       </div>
-
-      <SheetOverlay>
-        <SheetContent
-          side='right'
-          className='min-w-[600px]'
-        >
-          <SheetHeader>
-            <SheetTitle className='text-primary'>
-              {rightSidebar?.title}
-            </SheetTitle>
-            <SheetDescription />
-          </SheetHeader>
-          {rightSidebar?.body}
-          <SheetFooter>{rightSidebar?.footer}</SheetFooter>
-        </SheetContent>
-      </SheetOverlay>
-    </Sheet>
+    </>
   );
 }
