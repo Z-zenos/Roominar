@@ -82,16 +82,8 @@ class Settings(BaseSettings):
     REDIS_HOST: Optional[str]
     REDIS_URL: Optional[str]
 
-    KAFKA_BROKER_HOST: Optional[str]
-    KAFKA_BROKER_PORT: Optional[str]
-    KAFKA_TOPIC: Optional[str]
-
     CELERY_BROKER_URL: Optional[str]
     CELERY_RESULT_BACKEND: Optional[str]
-
-    FLOWER_PORT: Optional[str]
-
-    ZOOKEEPER_CLIENT_PORT: Optional[str]
 
     ENVIRONMENT: Literal["dev", "staging", "production"] = "dev"
 

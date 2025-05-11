@@ -167,3 +167,16 @@ export const useGetTicketStatsQuery = (
     staleTime: 1000 * 60,
   });
 };
+
+export const useListingAttendeesRankingQuery = (
+  params?: OrganizationsApiListingAttendeesRequest,
+) => {
+  params = toCamelCase(params);
+  const api = useApi();
+  return useQuery({
+    queryKey: ['listing-attendees-ranking', JSON.stringify(params)],
+    queryFn: async () =>
+      await api.organizations.listingAttendeesRanking(params),
+    staleTime: 1000 * 60,
+  });
+};

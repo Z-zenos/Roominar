@@ -16,6 +16,7 @@ import { getCookie } from 'cookies-next';
 import { TagStatsChart } from '@/src/component/common/Chart/TagStatsChart';
 import { TrackUserActionsChart } from '@/src/component/common/Chart/TrackUserActionsChart';
 import { TicketStatsChart } from '@/src/component/common/Chart/TicketStatsChart';
+import AttendeesRanking from '../attendee/AttendeesRanking';
 
 const LazyCalendarTimeline = dynamic(
   () => import('@/src/component/common/DateTime/CalendarTimeline'),
@@ -31,12 +32,14 @@ export default function OrganizationDashboard() {
     getCookie('NEXT_LOCALE') === 'en' || !getCookie('NEXT_LOCALE'),
   );
 
-  const { data: dashboardData } = useGetOrganizationDashboardQuery();
-  const { data: tagStats } = useGetTagStatsQuery();
+  const { data: dashboardData, isLoading: isLoadingDashboardData } =
+    useGetOrganizationDashboardQuery();
+  const { data: tagStats, isLoading: isLoadingTagStats } =
+    useGetTagStatsQuery();
 
   return (
     <>
-      <div className='grid 1200px:grid-cols-5 grid-cols-3 gap-4 p-8'>
+      <div className='grid 1200px:grid-cols-5 grid-cols-3 gap-4 p-4 items-baseline'>
         <div className='col-span-3 grid grid-cols-3 gap-2'>
           <div
             className={clsx(
@@ -119,57 +122,68 @@ export default function OrganizationDashboard() {
                 </div>
               </>
             )}
+
+            {isLoadingDashboardData && (
+              <div className='flex w-full items-center justify-center'>
+                <ElementLoading title='Loading dashboard data...' />
+              </div>
+            )}
           </div>
 
           <div className='col-span-3'>
             <TrackUserActionsChart />
           </div>
-          <div className='col-span-1'>
-            {tagStats && <TagStatsChart data={tagStats.data} />}
-          </div>
 
-          <div className='col-span-2'>
-            <TicketStatsChart />
+          <div className='col-span-3'>
+            <AttendeesRanking />
           </div>
         </div>
-        <div className='1200px:col-span-2 max-h-[600px] col-span-3 bg-white p-4 rounded-lg shadow-md'>
-          <LazyCalendarTimeline
-            height={520}
-            aspectRatio={1.35}
-            events={[
-              ...(eventsTimeline
-                ? eventsTimeline.map((event) => ({
-                    title: event.name,
-                    start: event.startAt,
-                    end: event.endAt,
-                    color: '#3048ff',
-                  }))
-                : []),
-              ...(eventsTimeline
-                ? eventsTimeline.map((event) => ({
-                    title: event.name,
-                    start: event.applicationStartAt,
-                    end: event.applicationEndAt,
-                    color: '#ff5c00',
-                  }))
-                : []),
-            ]}
-            dayMaxEventRows={2}
-            dayHeaderClassNames={[
-              'text-[14px] first:text-red-500 last:text-blue-500',
-            ]}
-            dayCellClassNames={['text-[14px]']}
-            eventClassNames={['text-xs font-semibold']}
-            titleFormat={() => 'Event Schedule'}
-            headerToolbar={{
-              left: 'prev,next',
-              center: 'title',
-              right: 'dayGridMonth,timeGridWeek',
-            }}
-          />
+        <div className='1200px:col-span-2 col-span-3'>
+          <div className='max-h-[600px] bg-white rounded-lg shadow-md p-4'>
+            <LazyCalendarTimeline
+              height={520}
+              aspectRatio={1.35}
+              events={[
+                ...(eventsTimeline
+                  ? eventsTimeline.map((event) => ({
+                      title: event.name,
+                      start: event.startAt,
+                      end: event.endAt,
+                      color: '#3048ff',
+                    }))
+                  : []),
+                ...(eventsTimeline
+                  ? eventsTimeline.map((event) => ({
+                      title: event.name,
+                      start: event.applicationStartAt,
+                      end: event.applicationEndAt,
+                      color: '#ff5c00',
+                    }))
+                  : []),
+              ]}
+              dayMaxEventRows={2}
+              dayHeaderClassNames={[
+                'text-[14px] first:text-red-500 last:text-blue-500',
+              ]}
+              dayCellClassNames={['text-[14px]']}
+              eventClassNames={['text-xs font-semibold']}
+              titleFormat={() => 'Event Schedule'}
+              headerToolbar={{
+                left: 'prev,next',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek',
+              }}
+            />
+          </div>
+          <TicketStatsChart />
+          {tagStats && <TagStatsChart data={tagStats.data} />}
+          {isLoadingTagStats && (
+            <div className='flex w-full items-center justify-center'>
+              <ElementLoading title='Loading tag stats...' />
+            </div>
+          )}
         </div>
       </div>
-      <div className='grid 1200px:grid-cols-5 grid-cols-3 gap-4 p-8'></div>
     </>
   );
 }

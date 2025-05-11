@@ -126,11 +126,11 @@ export function TagStatsChart({ data }: TagStatsChartProps) {
                 dataKey='name'
                 position='insideLeft'
                 offset={8}
-                className='fill-white font-semibold'
+                className='fill-white text-md font-semibold'
                 content={({ x, y, value, index }) => (
                   <text
                     x={(x as number) + 10}
-                    y={(y as number) + 14}
+                    y={(y as number) + 28}
                     fill={
                       index === 0
                         ? '#249055'

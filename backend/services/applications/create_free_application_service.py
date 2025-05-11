@@ -3,10 +3,12 @@ from sqlmodel import Session
 import backend.services.applications as applications_service
 import backend.services.auth.token_service as token_service
 from backend.background_tasks.transaction_tasks import process_free_application
+from backend.core.constants import UserActionTypeCode
 from backend.models.application import Application
 from backend.models.survey_response_result import SurveyResponseResult
 from backend.models.transaction import TransactionStatusCode
 from backend.models.user import User
+from backend.models.user_action import UserAction
 from backend.schemas.application import CreateApplicationRequest
 from backend.utils.database import save
 
@@ -24,7 +26,7 @@ async def create_free_application(
         tickets = result["tickets"]
         total_requested_quantity = result["total_requested_quantity"]
         application = result["application"]
-        result["event"]
+        event = result["event"]
 
         # Create Application
         if not application:
@@ -61,7 +63,14 @@ async def create_free_application(
                 )
                 for srr in create_application_request.survey_response_results
             ]
+            user_action = UserAction(
+                user_id=current_user.id,
+                event_id=event_id,
+                organization_id=event["organization_id"],
+                action_type=UserActionTypeCode.ANSWER_APPLICATION_SURVEY,
+            )
             db.bulk_save_objects(survey_responses)
+            save(db, user_action)
 
         session_token = token_service.gen_payment_session_token(
             0, current_user.id, TransactionStatusCode.PENDING
