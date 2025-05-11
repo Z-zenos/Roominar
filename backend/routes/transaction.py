@@ -4,14 +4,10 @@ from fastapi import APIRouter, Depends, Request
 from sqlmodel import Session
 
 import backend.services.transactions as transaction_service
-from backend.core.kafka_client import get_kafka_producer
 from backend.core.response import public_api_responses
 from backend.db.database import get_read_db
 
 router = APIRouter()
-
-
-producer = get_kafka_producer()
 
 
 @router.post(
@@ -29,12 +25,7 @@ async def handle_application_transaction(
 @router.post("/webhook/payment")
 async def payment_webhook(request: Request = None):
     data = await request.json()
-    transaction_id = data.get("transaction_id")
-    status = data.get("status")
-
-    if transaction_id:
-        producer.send(
-            "payment_status", {"transaction_id": transaction_id, "status": status}
-        )
+    data.get("transaction_id")
+    data.get("status")
 
     return {"status": "OK"}
