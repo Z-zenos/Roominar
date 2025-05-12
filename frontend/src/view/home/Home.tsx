@@ -199,7 +199,6 @@ export default function Home() {
               clickable: true,
             }}
             slidesPerView={width <= 400 ? 1 : width > 1200 ? 5 : 3}
-            spaceBetween={width > 400 ? 30 : 0}
             wrapperClass='pb-2'
             onSlideChange={(swipper) => setActiveEvent(swipper.activeIndex)}
           >
@@ -225,7 +224,7 @@ export default function Home() {
             )}
             {!isRecommendationEventsLoading &&
               recommendedEvents &&
-              recommendedEvents.data.map((event) => (
+              recommendedEvents.data.map((event, i) => (
                 <SwiperSlide
                   key={event.id}
                   className={clsx('dark:rounded-lg dark:p-0')}
@@ -236,7 +235,18 @@ export default function Home() {
                     }
                     event={event}
                     variant='compact'
-                    className='!max-w-[250px] !min-w-[200px] !max-h-[200px]'
+                    className={clsx(
+                      '!max-w-[250px] !min-w-[200px] !max-h-[200px]',
+                    )}
+                    style={{
+                      transform: `perspective(1000px) rotateY(${activeEvent === i ? -20 : activeEvent === i - 4 ? 20 : 0}deg) scale(${
+                        activeEvent === i || activeEvent === i - 4
+                          ? 0.9
+                          : activeEvent === i - 2
+                            ? 1.1
+                            : 1
+                      })`,
+                    }}
                   />
                 </SwiperSlide>
               ))}

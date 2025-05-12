@@ -34,6 +34,7 @@ interface EventCardProps {
   direction?: 'horizontal' | 'vertical';
   variant?: 'compact' | 'standard' | 'detailed';
   event: SearchEventsItem | MyEventItem;
+  style?: React.CSSProperties;
 }
 
 function EventCard({
@@ -41,6 +42,7 @@ function EventCard({
   direction = 'vertical',
   variant = 'detailed',
   event,
+  style,
 }: EventCardProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -76,6 +78,7 @@ function EventCard({
         variant === 'compact' ? 'py-0 bg-transparent' : 'py-3 bg-white',
         className,
       )}
+      style={style}
     >
       <div
         className={clsx(
