@@ -48,12 +48,7 @@ function HorizontalTimeline({
   }, [applicationStartAt, applicationEndAt, startAt, endAt]);
 
   return (
-    <div
-      className={clsx(
-        'w-full max-w-6xl mx-auto 400px:bg-blue-50 bg-gray-50',
-        className,
-      )}
-    >
+    <div className={clsx('w-full max-w-6xl mx-auto', className)}>
       <div className='w-full py-6'>
         <div className='flex'>
           <div className='w-1/4'>

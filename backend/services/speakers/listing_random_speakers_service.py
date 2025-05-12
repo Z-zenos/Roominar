@@ -13,6 +13,7 @@ async def listing_random_speakers(db: Session):
                 Speaker.avatar_url,
                 Speaker.industry_code,
                 Speaker.job_type_code,
+                Speaker.slug,
             )
             .order_by(func.random())
             .limit(4)
