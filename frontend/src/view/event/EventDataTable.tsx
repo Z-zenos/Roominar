@@ -402,7 +402,7 @@ export default function EventDataTable() {
                 onValueChange={handleSearch}
               />
             </div>
-            <div className='flex items-center justify-start gap-4 400px:mt-3 mt-0'>
+            <div className='flex items-center justify-start gap-4 450px:mt-3 mt-0'>
               {/* <Text
                 content='Sort by:'
                 className='font-light text-gray-500'

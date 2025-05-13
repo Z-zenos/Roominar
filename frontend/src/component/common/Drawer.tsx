@@ -126,15 +126,15 @@ export default function Drawer({ title, description, children }: DrawerProps) {
       <DrawerTrigger asChild>
         <Button
           variant='light'
-          className='400px:w-[160px] w-36 600px:ml-5 border border-gray-300 dark:border-gray-600'
+          className='450px:w-[160px] w-36 600px:ml-5 border border-gray-300 dark:border-gray-600'
           radius='sm'
-          size={width > 400 ? 'md' : 'sm'}
+          size={width > 450 ? 'md' : 'sm'}
         >
           Open Filter
         </Button>
       </DrawerTrigger>
       <DrawerContent>
-        <div className='mx-auto w-full 400px:max-h-auto max-h-[600px] overflow-y-scroll'>
+        <div className='mx-auto w-full 450px:max-h-auto max-h-[600px] overflow-y-scroll'>
           <DrawerHeader>
             <DrawerTitle>{title}</DrawerTitle>
             <DrawerDescription>{description}</DrawerDescription>

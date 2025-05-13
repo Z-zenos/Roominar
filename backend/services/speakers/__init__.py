@@ -1,3 +1,4 @@
+from .get_speaker_detail_service import get_speaker_detail
 from .listing_random_speakers_service import listing_random_speakers
 
-all = listing_random_speakers
+all = listing_random_speakers, get_speaker_detail

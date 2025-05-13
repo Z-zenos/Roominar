@@ -1,9 +1,12 @@
 from typing import Optional
 
+from pydantic import model_validator
+from slugify import slugify
 from sqlmodel import ARRAY, Enum, Field, String
 
 from backend.core.constants import IndustryCode, JobTypeCode
 from backend.models.base_model import BaseModel
+from backend.utils.random import generate_random_string
 
 
 class Speaker(BaseModel, table=True):
@@ -24,3 +27,20 @@ class Speaker(BaseModel, table=True):
     twitter_url: Optional[str] = Field(sa_type=String(2048))
     linkedin_url: Optional[str] = Field(sa_type=String(2048))
     youtube_url: Optional[str] = Field(sa_type=String(2048))
+    slug: Optional[str] = Field(
+        default=None,
+        sa_type=String(255),
+        nullable=False,
+        index=True,
+    )
+
+    @model_validator(mode="before")
+    @classmethod
+    def set_slug(cls, values: dict):
+        name = values.get("name")
+        slug = values.get("slug")
+        if not slug and name:
+            slug_base = slugify(name)
+            random_part = generate_random_string(8)
+            values["slug"] = f"{slug_base}-{random_part}"
+        return values

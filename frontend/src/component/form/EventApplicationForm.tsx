@@ -170,7 +170,7 @@ export default function EventApplicationForm({
   return (
     <Form {...form}>
       {event?.applicationEndAt < new Date() && (
-        <Alert className='400px:px-[15%] px-[5%] rounded-none fixed bg-white z-20'>
+        <Alert className='450px:px-[15%] px-[5%] rounded-none fixed bg-white z-20'>
           <AlertTitle>Event Application Expired!</AlertTitle>
           <AlertDescription className='font-light opacity-60 text-sm'>
             The application period for this event has ended. Please check{' '}
@@ -196,7 +196,7 @@ export default function EventApplicationForm({
             }
           })}
           className={clsx(
-            'grid grid-cols-7 w-full items-start gap-10 mx-auto 400px:py-20 py-10',
+            'grid grid-cols-7 w-full items-start gap-10 mx-auto 450px:py-20 py-10',
             width < 1000 && 'px-[5%]',
             width > 1400 && 'px-[15%]',
             width < 1400 && width > 1000 && 'px-[10%]',
@@ -276,7 +276,7 @@ export default function EventApplicationForm({
                   </p>
                 </div>
               )}
-              <div className='grid 1200px:grid-cols-1 400px:grid-cols-2 grid-cols-1'>
+              <div className='grid 1200px:grid-cols-1 450px:grid-cols-2 grid-cols-1'>
                 {event &&
                   event.tickets.map((ticket: TicketItem, index: number) => (
                     <UICheckbox
@@ -450,8 +450,8 @@ export default function EventApplicationForm({
           </div>
 
           <div className={clsx(width > 1200 ? 'col-span-5' : 'col-span-7')}>
-            <div className='w-full 400px:shadow-[rgba(0,_0,_0,_0.16)_0px_1px_4px] 400px:border border-gray-200 400px:px-10 400px:py-6 rounded-md 400px:bg-white'>
-              <h2 className='400px:text-lg text-xm font-semibold text-primary'>
+            <div className='w-full 450px:shadow-[rgba(0,_0,_0,_0.16)_0px_1px_4px] 450px:border border-gray-200 450px:px-10 450px:py-6 rounded-md 450px:bg-white'>
+              <h2 className='450px:text-lg text-xm font-semibold text-primary'>
                 Enter your detail information ✍
               </h2>
 
@@ -466,7 +466,7 @@ export default function EventApplicationForm({
               )}
               <div
                 className={clsx(
-                  'grid 400px:gap-8 gap-4 items-center',
+                  'grid 450px:gap-8 gap-4 items-center',
                   width < 600 ? 'grid-cols-1' : 'grid-cols-2',
                 )}
               >

@@ -104,7 +104,7 @@ function SearchEvent() {
   return (
     <Form {...form}>
       <form
-        className={clsx(styles.section, '400px:mt-8')}
+        className={clsx(styles.section, '450px:mt-8')}
         onSubmit={form.handleSubmit(handleSearch)}
       >
         <SearchHeader
@@ -113,7 +113,7 @@ function SearchEvent() {
           onValueChange={handleSearch}
           isFetching={isFetching}
         />
-        <div className='400px:py-10 py-4 flex 1000px:flex-row 1000px:justify-between 1000px:items-start flex-col items-center justify-center gap-3'>
+        <div className='450px:py-10 py-4 flex 1000px:flex-row 1000px:justify-between 1000px:items-start flex-col items-center justify-center gap-3'>
           {!data && isLoading ? (
             <div className='mx-auto'>
               <DotLoader />

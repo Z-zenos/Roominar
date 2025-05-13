@@ -19,7 +19,7 @@ export default function Text({
   return (
     <div
       className={clsx(
-        'text-dark-main dark:text-white font-[500] font-Poppins 400px:text-md text-sm',
+        'text-dark-main dark:text-white font-[500] font-Poppins 450px:text-md text-sm',
         display,
         className,
       )}

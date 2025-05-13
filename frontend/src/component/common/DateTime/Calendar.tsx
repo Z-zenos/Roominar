@@ -34,11 +34,11 @@ function Calendar({
         head_row: 'flex',
         head_cell:
           'text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]',
-        row: 'flex w-full 400px:mt-2 mt-0',
-        cell: '400px:h-9 w-9 h-7 text-center 400px:text-sm text-ss p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20',
+        row: 'flex w-full 450px:mt-2 mt-0',
+        cell: '450px:h-9 w-9 h-7 text-center 450px:text-sm text-ss p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20',
         day: cn(
           buttonVariants({ variant: 'ghost' }),
-          '400px:h-9 400px:w-9 w-7 h-7 p-0 font-normal aria-selected:opacity-100',
+          '450px:h-9 450px:w-9 w-7 h-7 p-0 font-normal aria-selected:opacity-100',
         ),
         day_range_end: 'day-range-end',
         day_selected:

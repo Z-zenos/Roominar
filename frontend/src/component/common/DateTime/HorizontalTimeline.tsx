@@ -48,12 +48,7 @@ function HorizontalTimeline({
   }, [applicationStartAt, applicationEndAt, startAt, endAt]);
 
   return (
-    <div
-      className={clsx(
-        'w-full max-w-6xl mx-auto 400px:bg-blue-50 bg-gray-50',
-        className,
-      )}
-    >
+    <div className={clsx('w-full max-w-6xl mx-auto', className)}>
       <div className='w-full py-6'>
         <div className='flex'>
           <div className='w-1/4'>
@@ -80,7 +75,7 @@ function HorizontalTimeline({
 
             <div className='text-xs text-center md:text-base'>
               <p>Start apply</p>
-              <p className='mt-1 font-semibold 400px:text-sm text-xs'>
+              <p className='mt-1 font-semibold 450px:text-sm text-xs'>
                 {formatEventDate(applicationStartAt)}
               </p>
             </div>
@@ -126,7 +121,7 @@ function HorizontalTimeline({
 
             <div className='text-xs text-center md:text-base'>
               <p>Finish apply</p>
-              <p className='mt-1 font-semibold 400px:text-sm text-xs'>
+              <p className='mt-1 font-semibold 450px:text-sm text-xs'>
                 {formatEventDate(applicationEndAt)}
               </p>
             </div>
@@ -172,7 +167,7 @@ function HorizontalTimeline({
 
             <div className='text-xs text-center md:text-base'>
               <p>Start at</p>
-              <p className='mt-1 font-semibold 400px:text-sm text-xs'>
+              <p className='mt-1 font-semibold 450px:text-sm text-xs'>
                 {formatEventDate(startAt)}
               </p>
             </div>
@@ -218,7 +213,7 @@ function HorizontalTimeline({
 
             <div className='text-xs text-center md:text-base'>
               <p>Finish at</p>
-              <p className='mt-1 font-semibold 400px:text-sm text-xs'>
+              <p className='mt-1 font-semibold 450px:text-sm text-xs'>
                 {formatEventDate(endAt)}
               </p>
             </div>

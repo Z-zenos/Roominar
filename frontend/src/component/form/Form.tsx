@@ -760,7 +760,7 @@ const FormTagsInput = ({
             <Modal
               isOpen={isOpen}
               onOpenChange={onOpenChange}
-              placement={width > 400 ? 'top-center' : 'center'}
+              placement={width > 450 ? 'top-center' : 'center'}
               size='2xl'
               className='z-[100] pointer-events-auto'
             >
@@ -770,7 +770,7 @@ const FormTagsInput = ({
                     <ModalHeader className='flex flex-col gap-1'>
                       Tags
                     </ModalHeader>
-                    <ModalBody className='400px:max-h-[600px] max-h-[500px]  overflow-y-scroll'>
+                    <ModalBody className='450px:max-h-[600px] max-h-[500px]  overflow-y-scroll'>
                       {data && data.data.length > 0 ? (
                         data.data.map((tagGroup: TagGroup) => (
                           <div key={tagGroup.groupId}>
@@ -779,7 +779,7 @@ const FormTagsInput = ({
                             </h3>
                             <div
                               className={clsx(
-                                'grid 400px:grid-cols-4 grid-cols-2 gap-2 my-2 [&_.checkbox-title]:text-sm',
+                                'grid 450px:grid-cols-4 grid-cols-2 gap-2 my-2 [&_.checkbox-title]:text-sm',
                               )}
                             >
                               {tagGroup.tags.map((tag: TagItem) => (
@@ -1149,7 +1149,7 @@ const FormSelect = ({
             <FormControl>
               <SelectTrigger
                 className={clsx(
-                  '400px:w-[180px] 800px:w-full 800px:min-w-40 w-36 400px:h-11 h-8',
+                  '450px:w-[180px] 800px:w-full 800px:min-w-40 w-36 450px:h-11 h-8',
                   className,
                 )}
               >

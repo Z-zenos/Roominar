@@ -28,6 +28,8 @@ export const pathPermissionMaster = {
     '/organization/login',
     '/organization/register',
     '/icon.ico',
+    '/organization/[slug]',
+    '/speaker/[slug]',
   ],
   SPEAKER: ['/login', '/organization/login'],
   ORGANIZER: [
@@ -59,6 +61,7 @@ export const pathPermissionMaster = {
     '/organization/register',
     '/icon.ico',
     '/organization/[slug]',
+    '/speaker/[slug]',
   ],
 };
 

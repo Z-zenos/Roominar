@@ -34,6 +34,7 @@ interface EventCardProps {
   direction?: 'horizontal' | 'vertical';
   variant?: 'compact' | 'standard' | 'detailed';
   event: SearchEventsItem | MyEventItem;
+  style?: React.CSSProperties;
 }
 
 function EventCard({
@@ -41,6 +42,7 @@ function EventCard({
   direction = 'vertical',
   variant = 'detailed',
   event,
+  style,
 }: EventCardProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -69,13 +71,14 @@ function EventCard({
   return (
     <div
       className={clsx(
-        '400px:rounded-lg 400px:shadow-[rgba(60,_64,_67,_0.15)_0px_1px_1px_0px,_rgba(60,_64,_67,_0.15)_0px_2px_4px_2px] active:shadow-none transition-all',
+        '450px:rounded-lg 450px:shadow-[rgba(60,_64,_67,_0.15)_0px_1px_1px_0px,_rgba(60,_64,_67,_0.15)_0px_2px_4px_2px] active:shadow-none transition-all',
         direction === 'vertical'
-          ? 'min-w-[300px] w-[300px] 600px:max-w-[400px] max-w-[300px] border-t-gray-300 400px:border-t'
+          ? '450px:min-w-[300px] w-[300px] 600px:max-w-[400px] 450px:max-w-[300px] max-w-[400px] min-w-full border-t-gray-300 450px:border-t'
           : 'border border-gray-200 items-start px-3',
         variant === 'compact' ? 'py-0 bg-transparent' : 'py-3 bg-white',
         className,
       )}
+      style={style}
     >
       <div
         className={clsx(
@@ -218,7 +221,7 @@ function EventCard({
                   ? 'rounded-md max-h-[200px]'
                   : 'rounded-none',
                 variant === 'compact' && 'rounded-md',
-                width <= 400 && 'rounded-md',
+                width <= 450 && 'rounded-md',
               )}
             />
           </div>

@@ -1,7 +1,5 @@
 from sqlmodel import Session, select, text
 
-from backend.core.error_code import ErrorCode, ErrorMessage
-from backend.core.exception import BadRequestException
 from backend.models.event import Event
 from backend.models.target import Target
 
@@ -19,9 +17,7 @@ async def listing_related_events(db: Session, slug: str):
     )
 
     if not targets:
-        raise BadRequestException(
-            ErrorCode.ERR_EVENT_NOT_FOUND, ErrorMessage.ERR_EVENT_NOT_FOUND
-        )
+        return []
 
     events = (
         db.exec(

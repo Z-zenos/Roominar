@@ -78,7 +78,7 @@ export function DateRangePicker({
 
           <Button
             className={clsx(
-              'text-sm font-semibold !text-dark-main mx-4 400px:mb-3 400px:mt-0 mb-1 -mt-3 bg-white border border-dark-main',
+              'text-sm font-semibold !text-dark-main mx-4 450px:mb-3 450px:mt-0 mb-1 -mt-3 bg-white border border-dark-main',
             )}
             onClick={() => {
               if (onDateRangeSelect) onDateRangeSelect();
