@@ -13,7 +13,7 @@ export default function apiConfig(session: Session) {
       },
     },
     baseServer: new ServerConfiguration(
-      process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
+      process.env.NEXT_PUBLIC_API_URL || 'http://localhost:2001',
       {},
     ),
     promiseMiddleware: [

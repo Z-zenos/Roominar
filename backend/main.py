@@ -120,11 +120,11 @@ if __name__ == "__main__":
         uvicorn.run(
             "main:app",
             host="127.0.0.1",
-            port=8000,
+            port=2001,
             ssl_keyfile=key_path,
             ssl_certfile=cert_path,
             reload=True,
         )
     else:
         # Fallback to HTTP
-        uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+        uvicorn.run("main:app", host="127.0.0.1", port=2001, reload=True)
