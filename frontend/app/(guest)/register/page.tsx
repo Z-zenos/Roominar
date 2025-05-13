@@ -2,7 +2,7 @@ import RegisterAudienceForm from '@/src/component/form/RegisterAudienceForm';
 
 async function Page() {
   return (
-    <div className='mx-auto 400px:w-[700px] w-full 400px:px-auto px-[5%] py-[5%]'>
+    <div className='mx-auto 450px:w-[700px] w-full 450px:px-auto px-[5%] py-[5%]'>
       <h2 className='text-primary text-lg font-semibold flex justify-start items-center gap-3'>
         Welcome 👋🏻
       </h2>

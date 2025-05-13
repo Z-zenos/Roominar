@@ -183,7 +183,7 @@ function EventDetail({ slug }: EventDetailProps) {
       />
       <div
         className={clsx(
-          'dark:bg-dark-sub w-full 400px:py-14 py-8 400px:px-[15%] px-[5%] relative flex-wrap',
+          'dark:bg-dark-sub w-full 450px:py-14 py-8 450px:px-[15%] px-[5%] relative flex-wrap',
           styles.between,
         )}
       >
@@ -201,11 +201,11 @@ function EventDetail({ slug }: EventDetailProps) {
         </div>
         <div
           className={clsx(
-            'flex flex-col 400px:gap-7 gap-4',
-            width > 1200 ? 'w-[70%]' : 'w-full 400px:mb-8 mb-4',
+            'flex flex-col 450px:gap-7 gap-4',
+            width > 1200 ? 'w-[70%]' : 'w-full 450px:mb-8 mb-4',
           )}
         >
-          <div className='flex justify-between flex-wrap gap-4 400px:w-[90%] w-full'>
+          <div className='flex justify-between flex-wrap gap-4 450px:w-[90%] w-full'>
             <Breadcrumbs color='primary'>
               <BreadcrumbItem
                 className='hover:underline'
@@ -219,7 +219,11 @@ function EventDetail({ slug }: EventDetailProps) {
               >
                 Events
               </BreadcrumbItem>
-              <BreadcrumbItem>{event?.name}</BreadcrumbItem>
+              <BreadcrumbItem>
+                <span className='break-words whitespace-normal'>
+                  {event?.name}
+                </span>
+              </BreadcrumbItem>
             </Breadcrumbs>
             <Chip
               content={event?.viewNumber + ''}
@@ -237,7 +241,7 @@ function EventDetail({ slug }: EventDetailProps) {
             classNames={{ wrapper: '!max-w-full' }}
             alt='Event banner image'
           />
-          <h2 className='text-primary font-bold 400px:text-xl text-xm'>
+          <h2 className='text-primary font-bold 450px:text-xl text-xm'>
             {event?.name}
           </h2>
           <div className={clsx(styles.flexStart, 'gap-2 flex-wrap')}>
@@ -255,7 +259,7 @@ function EventDetail({ slug }: EventDetailProps) {
           <div
             className={clsx(
               'bg-white shadow-[rgba(0,_0,_0,_0.05)_0px_6px_24px_0px,_rgba(0,_0,_0,_0.08)_0px_0px_0px_1px] border p-4 border-gray-100 rounded-md flex items-center gap-6',
-              width > 1200 || width <= 400
+              width > 1200 || width <= 450
                 ? 'flex-col'
                 : 'flex-row justify-between',
             )}
@@ -316,7 +320,7 @@ function EventDetail({ slug }: EventDetailProps) {
               </div>
               <Button
                 color='primary'
-                className='400px:my-3 mt-3 mx-auto w-[160px] font-semibold'
+                className='450px:my-3 mt-3 mx-auto w-[160px] font-semibold'
                 radius='none'
                 onClick={() => {
                   if (
@@ -369,7 +373,7 @@ function EventDetail({ slug }: EventDetailProps) {
 
       <div
         className={clsx(
-          'dark:bg-dark-sub w-full 400px:py-14 py-6 400px:px-[15%] px-[5%] relative flex-wrap flex justify-between items-start',
+          'dark:bg-dark-sub w-full 450px:py-14 py-6 450px:px-[15%] px-[5%] relative flex-wrap flex justify-between items-start',
         )}
       >
         <div
@@ -380,7 +384,7 @@ function EventDetail({ slug }: EventDetailProps) {
         >
           {/* === Timeline === */}
           <div>
-            <h3 className='font-semibold 400px:text-lg text-xm border-b border-b-gray-400'>
+            <h3 className='font-semibold 450px:text-lg text-xm border-b border-b-gray-400'>
               General Timeline
             </h3>
 
@@ -394,7 +398,7 @@ function EventDetail({ slug }: EventDetailProps) {
 
           {/* === LOCATION === */}
           <div>
-            <h3 className='font-semibold 400px:text-lg text-xm'>
+            <h3 className='font-semibold 450px:text-lg text-xm'>
               Offline address
             </h3>
             <div className='mt-3'>
@@ -413,7 +417,7 @@ function EventDetail({ slug }: EventDetailProps) {
 
           {/* === DESCRIPTION === */}
           <div>
-            <h3 className='font-semibold 400px:text-lg text-xm border-b border-b-gray-400'>
+            <h3 className='font-semibold 450px:text-lg text-xm border-b border-b-gray-400'>
               About this event
             </h3>
             <div className='mt-3'>
@@ -425,7 +429,7 @@ function EventDetail({ slug }: EventDetailProps) {
 
           {/* === Detail Schedule === */}
           <div>
-            <h3 className='font-semibold 400px:text-lg text-xm border-b border-b-gray-400'>
+            <h3 className='font-semibold 450px:text-lg text-xm border-b border-b-gray-400'>
               Detail Schedule
             </h3>
             <div className='mt-3'>
@@ -457,7 +461,7 @@ function EventDetail({ slug }: EventDetailProps) {
 
           {/* === Refund Policy === */}
           <div>
-            <h3 className='font-semibold 400px:text-lg text-xm'>
+            <h3 className='font-semibold 450px:text-lg text-xm'>
               Refund Policy
             </h3>
             <div className='mt-3'>
@@ -467,7 +471,7 @@ function EventDetail({ slug }: EventDetailProps) {
 
           {/* === Speaker === */}
           <div>
-            <h3 className='font-semibold 400px:text-lg text-xm border-b border-b-gray-400'>
+            <h3 className='font-semibold 450px:text-lg text-xm border-b border-b-gray-400'>
               Speaker
             </h3>
 
@@ -488,7 +492,7 @@ function EventDetail({ slug }: EventDetailProps) {
             <h3
               className={clsx(
                 styles.flexStart,
-                'gap-2 400px:text-lg text-xm font-semibold text-primary',
+                'gap-2 450px:text-lg text-xm font-semibold text-primary',
               )}
             >
               <GoOrganization />
@@ -528,7 +532,7 @@ function EventDetail({ slug }: EventDetailProps) {
                   {event?.organizationDescription}
                 </p>
 
-                <h3 className='font-semibold text-gray-700 text-nm cursor-pointer 400px:my-3 my-2'>
+                <h3 className='font-semibold text-gray-700 text-nm cursor-pointer 450px:my-3 my-2'>
                   Events ({event?.organizationEventNumber ?? 0})
                 </h3>
                 {topOrganizationEventsData &&
@@ -536,7 +540,7 @@ function EventDetail({ slug }: EventDetailProps) {
                     (topOrganizationEvent) => (
                       <div
                         key={`toe-${topOrganizationEvent.id}`}
-                        className='flex justify-start gap-3 400px:my-6 my-3 items-start cursor-pointer'
+                        className='flex justify-start gap-3 450px:my-6 my-3 items-start cursor-pointer'
                         onClick={() => router.push(topOrganizationEvent?.slug)}
                       >
                         <Image
@@ -574,15 +578,18 @@ function EventDetail({ slug }: EventDetailProps) {
           </div>
 
           <div>
-            <h3
-              className={clsx(
-                styles.flexStart,
-                'gap-2 400px:text-lg text-xm font-semibold text-orange-500 mt-5',
+            {relatedEventsData?.events &&
+              relatedEventsData?.events?.length > 0 && (
+                <h3
+                  className={clsx(
+                    styles.flexStart,
+                    'gap-2 450px:text-lg text-xm font-semibold text-orange-500 mt-5',
+                  )}
+                >
+                  <GiPartyPopper />
+                  Related Events
+                </h3>
               )}
-            >
-              <GiPartyPopper />
-              Related Events
-            </h3>
 
             <Swiper
               key={1}
@@ -607,7 +614,7 @@ function EventDetail({ slug }: EventDetailProps) {
                       className={clsx('dark:rounded-lg dark:p-0')}
                     >
                       <div
-                        className='mt-3 400px:border border-gray-200 shadow-sm p-2 cursor-pointer'
+                        className='mt-3 450px:border border-gray-200 shadow-sm p-2 cursor-pointer'
                         onClick={() => router.push(relatedEventPair[0]?.slug)}
                       >
                         <Image
@@ -627,7 +634,7 @@ function EventDetail({ slug }: EventDetailProps) {
                       </div>
 
                       <div
-                        className='mt-3 400px:border border-gray-200 shadow-sm p-2 cursor-pointer'
+                        className='mt-3 450px:border border-gray-200 shadow-sm p-2 cursor-pointer'
                         onClick={() => router.push(relatedEventPair[1]?.slug)}
                       >
                         <Image

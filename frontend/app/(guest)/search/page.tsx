@@ -39,7 +39,7 @@ const Page: FC<Props> = () => {
             ),
           },
         ]}
-        className='400px:px-[10%] px-[5%]'
+        className='450px:px-[10%] px-[5%]'
         tabClassName='max-w-[400px] mx-auto'
       />
     </>

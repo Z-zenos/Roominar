@@ -2,7 +2,7 @@ from datetime import datetime
 
 import pytz
 from fastapi import BackgroundTasks
-from sqlmodel import Session
+from sqlmodel import Session, select
 
 import backend.services.auth as auth_service
 from backend.core.config import settings
@@ -20,7 +20,9 @@ async def register_audience(
     db: Session, worker: BackgroundTasks, request: RegisterAudienceRequest
 ) -> User:
     email = request.email
-    user = auth_service.get_user_by_email(db, email, RoleCode.AUDIENCE)
+    user = db.exec(
+        select(User).where(User.email == email, User.role_code == RoleCode.AUDIENCE)
+    ).one_or_none()
 
     if user and user.email_verified_at:
         raise BadRequestException(
@@ -34,6 +36,7 @@ async def register_audience(
 
     try:
         if user and user.verify_email_token_expire_at > datetime.now(pytz.utc):
+            print(user, encrypted_verify_token)
             user.verify_email_token = encrypted_verify_token
             user.verify_email_token_expire_at = verify_expire_at
             new_user = save(db, user)

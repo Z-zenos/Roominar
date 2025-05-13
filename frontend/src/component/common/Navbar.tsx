@@ -133,7 +133,7 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
       <UINavbar
         isBordered
         classNames={{
-          wrapper: ['max-w-none 400px:px-[15%] px-4', className],
+          wrapper: ['max-w-none 450px:px-[15%] px-4', className],
           item: [
             'flex',
             'relative',
@@ -158,7 +158,7 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
           />
           {hasLogo && (
             <NavbarBrand>
-              <Logo className='400px:scale-120 400px:translate-y-0 scale-70 -translate-y-2' />
+              <Logo className='450px:scale-120 450px:translate-y-0 scale-70 -translate-y-2' />
             </NavbarBrand>
           )}
         </NavbarContent>
@@ -185,7 +185,7 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
           ))}
         </NavbarContent>
         <NavbarContent justify='end'>
-          {width > 400 && (
+          {width > 450 && (
             <Switch
               defaultSelected={isEnglish}
               size='lg'
@@ -283,7 +283,7 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
             </div>
           ) : (
             <>
-              <NavbarItem className='400px:hidden lg:flex'>
+              <NavbarItem className='450px:hidden lg:flex'>
                 <Link
                   href='/login'
                   underline='hover'
@@ -324,7 +324,7 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
               </Link>
             </NavbarMenuItem>
           ))}
-          {width <= 400 && (
+          {width <= 450 && (
             <NavbarItem
               aria-current='page'
               className='h-fit'

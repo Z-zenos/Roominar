@@ -21,6 +21,9 @@
   will reopen vscode, run project in Dev Container Environment and install all necessary packages for backend and frontend
   environment. Wait about ~7 minutes for completely installing.
 
+- Note:
+  - `docker exec -it --user root 23 /bin/bash` for running container as root
+
 ### 3. Test run backend.
 
 - In root folder, run backend:

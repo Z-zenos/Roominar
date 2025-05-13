@@ -9,7 +9,7 @@ import {
 
 function OrganizationCardSkeleton() {
   return (
-    <Card className='max-w-[290px]'>
+    <Card className='450px:max-w-[290px] max-w-full'>
       <CardHeader className='justify-between'>
         <div className='flex gap-5'>
           <Skeleton className='rounded-full w-12 h-12' />
@@ -22,6 +22,7 @@ function OrganizationCardSkeleton() {
           radius='full'
           size='sm'
           variant='solid'
+          isDisabled
         >
           Follow
         </Button>

@@ -56,10 +56,10 @@ const HeadingGroup = ({
 }: HeadingGroupProps) => {
   return (
     <div className={clsx('mb-12 text-center ', className)}>
-      <h2 className='400px:text-xl text-lg text-primary font-semibold'>
+      <h2 className='450px:text-xl text-lg text-primary font-semibold'>
         {heading}
       </h2>
-      <h3 className='400px:text-xm text-nm text-gray-600 font-light'>
+      <h3 className='450px:text-xm text-nm text-gray-600 font-light'>
         {subheading}
       </h3>
     </div>
@@ -109,7 +109,7 @@ export default function Home() {
         <div className='z-10'>
           <h2
             className={clsx(
-              'flex justify-center items-center 400px:gap-5 gap-3 italic 400px:text-lg text-md',
+              'flex justify-center items-center 450px:gap-5 gap-3 italic 450px:text-lg text-md',
             )}
           >
             <span>Explore</span>
@@ -118,7 +118,7 @@ export default function Home() {
             <FaConnectdevelop className='text-primary' />
             <span>Elevate</span>
           </h2>
-          <h1 className='400px:text-hg text-xm 400px:my-5 my-3 font-semibold'>
+          <h1 className='450px:text-hg text-xm 450px:my-5 my-3 font-semibold'>
             Web(<span className='text-gradient'>Sem</span>)inar &
             <span className='text-gradient'> E</span>vent{' '}
             {new Date().getFullYear()} 🎉
@@ -131,7 +131,7 @@ export default function Home() {
             🚀 | YOU&apos;VE GOT PLANS?
           </span>
           <Input
-            className='400px:max-w-[500px] max-w-[300px] mt-5 mx-auto'
+            className='450px:max-w-[500px] max-w-[300px] mt-5 mx-auto'
             placeholder='Search any event you want.'
             startContent={
               <CiSearch className='w-5 h-5 pointer-events-none flex-shrink-0' />
@@ -176,7 +176,7 @@ export default function Home() {
       </section>
 
       {/* === EVENT SECTION === */}
-      <section className='400px:py-10 400px:px-[15%] px-[5%]'>
+      <section className='450px:py-10 450px:px-[15%] px-[5%]'>
         <HeadingGroup
           heading={
             <span className='flex justify-center gap-2 items-center font-semibold text-green-500'>
@@ -186,7 +186,7 @@ export default function Home() {
           subheading='Elevate your virtual experiences with our all-in-one webinar and event management solutions.'
         />
 
-        <div className='400px:mb-6'>
+        <div className='450px:mb-6'>
           <Swiper
             key={width > 1200 ? 5 : 3}
             autoplay={{
@@ -198,7 +198,7 @@ export default function Home() {
             pagination={{
               clickable: true,
             }}
-            slidesPerView={width <= 400 ? 1 : width > 1200 ? 5 : 3}
+            slidesPerView={width <= 450 ? 1 : width > 1200 ? 5 : 3}
             wrapperClass='pb-2'
             onSlideChange={(swipper) => setActiveEvent(swipper.activeIndex)}
           >
@@ -231,7 +231,7 @@ export default function Home() {
                 >
                   <EventCard
                     direction={
-                      width > 800 || width <= 400 ? 'vertical' : 'horizontal'
+                      width > 800 || width <= 450 ? 'vertical' : 'horizontal'
                     }
                     event={event}
                     variant='compact'
@@ -268,7 +268,7 @@ export default function Home() {
           Upcoming Event <MdKeyboardDoubleArrowRight size={20} />
         </Link>
 
-        <div className='400px:border-l 400px:border-l-primary'>
+        <div className='450px:border-l 450px:border-l-primary'>
           <Swiper
             key={width > 1200 ? 4 : 2}
             autoplay={{
@@ -280,13 +280,13 @@ export default function Home() {
             pagination={{
               clickable: true,
             }}
-            slidesPerView={width <= 400 ? 1 : width > 1200 ? 4 : 2}
+            slidesPerView={width <= 450 ? 1 : width > 1200 ? 4 : 2}
             spaceBetween={30}
             wrapperClass='pb-2'
             onSlideChange={(swipper) => setActiveEvent(swipper.activeIndex)}
           >
             {isUpcomingEventsLoading && (
-              <div className='flex justify-between 400px:gap-0 gap-10'>
+              <div className='flex justify-between 450px:gap-0 gap-10'>
                 <EventCardSkeleton
                   direction='vertical'
                   variant='simple'
@@ -314,7 +314,7 @@ export default function Home() {
                 >
                   <EventCard
                     direction={
-                      width > 800 || width <= 400 ? 'vertical' : 'horizontal'
+                      width > 800 || width <= 450 ? 'vertical' : 'horizontal'
                     }
                     event={event}
                     variant='standard'
@@ -330,7 +330,7 @@ export default function Home() {
           Application Closing Soon Event
           <MdKeyboardDoubleArrowRight size={20} />
         </Link>
-        <div className='400px:border-l 400px:border-l-warning'>
+        <div className='450px:border-l 450px:border-l-warning'>
           <Swiper
             key={width > 1200 ? 2 : 1}
             autoplay={{
@@ -347,7 +347,7 @@ export default function Home() {
             wrapperClass='pb-2'
           >
             {isApplicationClosingSoonEventsLoading && (
-              <div className='flex justify-between gap-8'>
+              <div className='450px:flex 450px:justify-between gap-8'>
                 <EventCardSkeleton
                   direction='horizontal'
                   variant='simple'
@@ -355,6 +355,7 @@ export default function Home() {
                 <EventCardSkeleton
                   direction='horizontal'
                   variant='simple'
+                  className='450px:block hidden'
                 />
               </div>
             )}
@@ -366,7 +367,7 @@ export default function Home() {
                   className={clsx('dark:rounded-lg dark:p-0')}
                 >
                   <EventCard
-                    direction={width <= 400 ? 'vertical' : 'horizontal'}
+                    direction={width <= 450 ? 'vertical' : 'horizontal'}
                     event={event}
                     variant='standard'
                     className='mt-2'
@@ -378,16 +379,16 @@ export default function Home() {
       </section>
 
       {/* === ORGANIZATION SECTION === */}
-      <section className='400px:px-[15%] px-[5%] mb-7 400px:mt-0 mt-4'>
+      <section className='450px:px-[15%] px-[5%] mb-7 450px:mt-0 mt-4'>
         <div className='flex flex-wrap justify-between items-start gap-10 1200px:flex-row flex-col'>
           <div className='1200px:w-[70%] w-full'>
-            <h2 className='400px:text-xl text-lg text-primary font-semibold flex justify-start items-center gap-2'>
+            <h2 className='450px:text-xl text-lg text-primary font-semibold flex justify-start items-center gap-2'>
               Organization <GoOrganization />
             </h2>
-            <h3 className='400px:text-xm text-md text-gray-600 font-light'>
+            <h3 className='450px:text-xm text-md text-gray-600 font-light'>
               Follow us to receive the latest news from the organization.
             </h3>
-            <div className='grid items-center gap-4 mt-6 1200px:grid-cols-3 400px:grid-cols-2 grid-cols-1'>
+            <div className='grid items-center gap-4 mt-6 1200px:grid-cols-3 450px:grid-cols-2 grid-cols-1'>
               {randomOrganizations &&
                 randomOrganizations.data?.length > 0 &&
                 randomOrganizations.data.map((organization, i) => (
@@ -405,9 +406,9 @@ export default function Home() {
                 </>
               )}
             </div>
-            <div className='flex 400px:flex-row flex-col justify-between gap-2 items-center bg-info-sub 400px:mt-8 mt-4 rounded-md 400px:px-10 p-4 400px:py-8'>
+            <div className='flex 450px:flex-row flex-col justify-between gap-2 items-center bg-info-sub 450px:mt-8 mt-4 rounded-md 450px:px-10 p-4 450px:py-8'>
               <div>
-                <h3 className='font-semibold 400px:text-xm text-md text-info-main'>
+                <h3 className='font-semibold 450px:text-xm text-md text-info-main'>
                   Start an event with Roominar
                 </h3>
                 <p className='font-light opacity-75'>
@@ -426,7 +427,7 @@ export default function Home() {
             </div>
           </div>
           <div className='1200px:w-[25%] w-full'>
-            <h2 className='400px:text-xl text-lg flex justify-end gap-1 items-center text-warning-main font-semibold'>
+            <h2 className='450px:text-xl text-lg flex justify-end gap-1 items-center text-warning-main font-semibold'>
               Ranking <PiRankingFill />
             </h2>
             <div className='flex gap-5 items-center justify-between w-full pt-8'>
@@ -449,15 +450,15 @@ export default function Home() {
       </section>
 
       {/* === SPEAKER SECTION === */}
-      <section className='pb-[40px] 400px:px-[15%] px-[5%]'>
+      <section className='pb-[40px] 450px:px-[15%] px-[5%]'>
         <div>
-          <h2 className='400px:text-xl text-lg text-purple-main font-semibold flex justify-start items-center gap-2'>
+          <h2 className='450px:text-xl text-lg text-purple-main font-semibold flex justify-start items-center gap-2'>
             Speaker <GiMicrophone />
           </h2>
-          <h3 className='400px:text-xm text-md text-gray-600 font-light'>
+          <h3 className='450px:text-xm text-md text-gray-600 font-light'>
             Inspiring insights from visionary Speaker.
           </h3>
-          <div className='flex gap-5 items-center justify-between mt-6 flex-wrap'>
+          <div className='grid gap-5 items-center justify-between mt-6 1200px:grid-cols-4 grid-cols-2'>
             {randomSpeakers &&
               randomSpeakers?.data?.map((speaker, i) => (
                 <SpeakerCard

@@ -1,6 +1,5 @@
 from sqlmodel import Session, exists
 
-import backend.background_tasks.notification_tasks as notification_tasks
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.models import Bookmark, User
@@ -22,10 +21,6 @@ async def create_event_bookmark(db: Session, current_user: User, event_id: int):
 
     try:
         new_bookmark = save(db, Bookmark(user_id=current_user.id, event_id=event_id))
-
-        notification_tasks.push_bookmark_event_notification.delay(
-            kwargs={"db": db, "event_id": event_id}
-        )
 
         return new_bookmark.id
 

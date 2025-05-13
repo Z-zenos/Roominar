@@ -45,7 +45,7 @@ function SearchFilter({
   return (
     <div
       className={clsx(
-        'border border-gray-300 rounded-sm 1000px:block 600px:grid 600px:grid-cols-2 600px:gap-2 400px:grid-cols-1 1000px:max-w-[300px] min-w-[250px]',
+        'border border-gray-300 rounded-sm 1000px:block 600px:grid 600px:grid-cols-2 600px:gap-2 450px:grid-cols-1 1000px:max-w-[300px] min-w-[250px]',
         className,
       )}
     >
@@ -138,18 +138,18 @@ function SearchFilter({
         />
       </FilterBox>
 
-      {width <= 400 && (
+      {width <= 450 && (
         <div className='flex justify-center my-2'>
           <Button
             className={clsx(
-              'gap-2 400px:text-nm text-sm font-semibold text-white',
+              'gap-2 450px:text-nm text-sm font-semibold text-white',
             )}
             type='submit'
             color='primary'
             radius='sm'
             size='md'
             startContent={
-              <HiOutlineAdjustmentsHorizontal size={width > 400 ? 25 : 20} />
+              <HiOutlineAdjustmentsHorizontal size={width > 450 ? 25 : 20} />
             }
             isLoading={isFetching}
           >

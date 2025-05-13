@@ -73,7 +73,7 @@ export default function ChangePasswordForm() {
             'gap-4 !items-end mt-8 pt-6 border-t border-t-gray-300',
           )}
         >
-          <div className='self-start 400px:min-w-[300px] mr-[6px]'>
+          <div className='self-start 450px:min-w-[300px] mr-[6px]'>
             <h3 className='font-semibold'>Password</h3>
             <p className='opacity-60 font-light text-sm'>
               Last updated 9 month(s) ago.
@@ -96,7 +96,7 @@ export default function ChangePasswordForm() {
           <div className='w-full mt-4 bg-emerald-50 p-5 rounded-md animate-appearance-in'>
             <div
               className={clsx(
-                'grid 400px:gap-8 gap-4 items-start w-full',
+                'grid 450px:gap-8 gap-4 items-start w-full',
                 width < 1000 ? 'grid-cols-1' : 'grid-cols-2',
               )}
             >
@@ -203,11 +203,11 @@ export default function ChangePasswordForm() {
 
             <div className='flex justify-between mt-4 gap-3'>
               <ul className='list-disc pl-2'>
-                <li className='opacity-60 font-light text-sm 400px:w-[400px] w-fit'>
+                <li className='opacity-60 font-light text-sm 450px:w-[400px] w-fit'>
                   Password must contain at least 1 letter, 1 number and 1
                   symbol.
                 </li>
-                <li className='opacity-60 font-light text-sm 400px:w-[400px]'>
+                <li className='opacity-60 font-light text-sm 450px:w-[400px]'>
                   Min length is 8 characters.
                 </li>
               </ul>

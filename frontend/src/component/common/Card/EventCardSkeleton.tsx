@@ -21,7 +21,7 @@ function EventCardSkeleton({
       className={clsx(
         'bg-white rounded-lg py-3 shadow-[rgba(60,_64,_67,_0.15)_0px_1px_1px_0px,_rgba(60,_64,_67,_0.15)_0px_2px_4px_2px] cursor-pointer active:shadow-none transition-all',
         direction === 'vertical'
-          ? 'min-w-[300px] w-[300px] 600px:max-w-[400px] max-w-[300px] border-t border-t-gray-300'
+          ? '450px:min-w-[300px] w-[300px] min-w-full 600px:max-w-[400px] 450px:max-w-[300px] max-w-[400px] border-t border-t-gray-300'
           : 'border border-gray-200 items-start px-3 w-full',
         className,
       )}
