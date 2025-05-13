@@ -1,19 +1,18 @@
-"""Migrate Database
+"""Migrate db
 
-Revision ID: 208a06d4a9e5
+Revision ID: 9baff2f2be36
 Revises:
-Create Date: 2025-04-12 15:46:45.199167
+Create Date: 2025-05-13 13:23:27.483917
 
 """
 
 from typing import Sequence, Union
 
 import sqlalchemy as sa
-import sqlmodel
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "208a06d4a9e5"
+revision: str = "9baff2f2be36"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -118,7 +117,7 @@ def upgrade() -> None:
     )
     op.create_table(
         "user_actions",
-        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("id", sa.BIGINT(), nullable=False),
         sa.Column(
             "created_at",
             sa.DateTime(timezone=True),
@@ -166,7 +165,13 @@ def upgrade() -> None:
         sa.Column(
             "device_type",
             sa.Enum(
-                "DESKTOP", "MOBILE", "TABLET", "WEB", "OTHER", name="devicetypecode"
+                "DESKTOP",
+                "ANDROID",
+                "IOS",
+                "TABLET",
+                "WEB",
+                "OTHER",
+                name="devicetypecode",
             ),
             nullable=True,
         ),
@@ -451,12 +456,7 @@ def upgrade() -> None:
         sa.Column("end_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("application_start_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("application_end_at", sa.DateTime(timezone=True), nullable=True),
-        sa.Column(
-            "slug",
-            sa.String(length=36),
-            server_default=sa.text("gen_random_uuid()"),
-            nullable=False,
-        ),
+        sa.Column("slug", sa.String(length=255), nullable=False),
         sa.Column(
             "status",
             sa.Enum("PUBLIC", "DRAFT", "PRIVATE", "DEFERRED", name="eventstatuscode"),
@@ -486,13 +486,13 @@ def upgrade() -> None:
         sa.Column("meeting_url", sa.String(length=2048), nullable=True),
         sa.Column("survey_id", sa.Integer(), nullable=True),
         sa.Column("target_id", sa.Integer(), nullable=True),
-        sa.Column("comment", sa.Text(), nullable=True),
         sa.Column("published_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("application_form_url", sa.String(length=2048), nullable=True),
         sa.Column("view_number", sa.Integer(), nullable=True),
         sa.Column("max_ticket_number_per_account", sa.Integer(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
     )
+    op.create_index(op.f("ix_events_slug"), "events", ["slug"], unique=False)
     op.create_table(
         "notifications",
         sa.Column("id", sa.BIGINT(), nullable=False),
@@ -513,8 +513,9 @@ def upgrade() -> None:
         sa.Column("sender_id", sa.Integer(), nullable=True),
         sa.Column("receiver_id", sa.Integer(), nullable=True),
         sa.Column("content", sa.JSON(), nullable=True),
-        sa.Column("type_code", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+        sa.Column("type_code", sa.String(), nullable=False),
         sa.Column("is_read", sa.Boolean(), nullable=False),
+        sa.Column("action_url", sa.String(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
@@ -698,6 +699,41 @@ def upgrade() -> None:
             nullable=False,
         ),
         sa.PrimaryKeyConstraint("id"),
+    )
+    op.create_table(
+        "user_notification_tokens",
+        sa.Column("id", sa.BIGINT(), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column("created_by", sa.Integer(), nullable=True),
+        sa.Column("updated_by", sa.Integer(), nullable=True),
+        sa.Column("user_id", sa.Integer(), nullable=False),
+        sa.Column("fcm_token", sa.String(), nullable=False),
+        sa.Column(
+            "device_type",
+            sa.Enum(
+                "DESKTOP",
+                "ANDROID",
+                "IOS",
+                "TABLET",
+                "WEB",
+                "OTHER",
+                name="devicetypecode",
+            ),
+            nullable=True,
+        ),
+        sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("fcm_token"),
     )
     op.create_table(
         "answers",
@@ -886,7 +922,13 @@ def upgrade() -> None:
         sa.Column(
             "device_type",
             sa.Enum(
-                "DESKTOP", "MOBILE", "TABLET", "WEB", "OTHER", name="devicetypecode"
+                "DESKTOP",
+                "ANDROID",
+                "IOS",
+                "TABLET",
+                "WEB",
+                "OTHER",
+                name="devicetypecode",
             ),
             nullable=True,
         ),
@@ -1030,7 +1072,7 @@ def upgrade() -> None:
         sa.Column("email", sa.String(length=255), nullable=False),
         sa.Column("question_id", sa.Integer(), nullable=False),
         sa.Column("answers_ids", sa.ARRAY(sa.Integer()), nullable=False),
-        sa.Column("answer_text", sqlmodel.sql.sqltypes.AutoString(), nullable=True),
+        sa.Column("answer_text", sa.String(255), nullable=True),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
@@ -1102,15 +1144,15 @@ def upgrade() -> None:
         sa.Column("exchange_rate", sa.Float(), nullable=False),
         sa.Column(
             "stripe_payment_intent_id",
-            sqlmodel.sql.sqltypes.AutoString(),
+            sa.String(255),
             nullable=True,
         ),
         sa.Column(
             "stripe_checkout_session_id",
-            sqlmodel.sql.sqltypes.AutoString(),
+            sa.String(255),
             nullable=True,
         ),
-        sa.Column("reference", sqlmodel.sql.sqltypes.AutoString(), nullable=True),
+        sa.Column("reference", sa.String(255), nullable=True),
         sa.Column(
             "status",
             sa.Enum(
@@ -1253,10 +1295,12 @@ def downgrade() -> None:
     op.drop_table("bookmarks")
     op.drop_table("applications")
     op.drop_table("answers")
+    op.drop_table("user_notification_tokens")
     op.drop_table("tag_associations")
     op.drop_table("speakers")
     op.drop_table("questions")
     op.drop_table("notifications")
+    op.drop_index(op.f("ix_events_slug"), table_name="events")
     op.drop_table("events")
     op.drop_table("users")
     op.drop_table("targets")

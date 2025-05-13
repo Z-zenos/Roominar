@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "generate-api": "npx @openapitools/openapi-generator-cli generate --enable-post-process-file -g typescript -t generator/template/typescript -o src/lib/api/generated --additional-properties=supportsES6=true,useObjectParameters=true -i",
-    "generate-api-local": "npm run generate-api -- http://localhost:8000/api/v1/openapi.json && eslint --fix src/lib/api/generated || echo 0",
+    "generate-api-local": "npm run generate-api -- http://localhost:2001/api/v1/openapi.json && eslint --fix src/lib/api/generated || echo 0",
     "generate-api-deploy": "npm run generate-api -- src/lib/api/apidoc.json && eslint --fix src/lib/api/generated || echo 0"
   },
   "dependencies": {
