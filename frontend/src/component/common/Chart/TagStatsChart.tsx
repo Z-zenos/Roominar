@@ -33,6 +33,7 @@ import {
   useDisclosure,
 } from '@nextui-org/react';
 import RankingList from '../Ranking/RankingList';
+import Nodata from '../Nodata';
 
 interface TagStatsChartProps {
   data: TagStatsItem[];
@@ -85,79 +86,82 @@ export function TagStatsChart({ data }: TagStatsChartProps) {
           >
             Show more
           </span>
+          {!data.length && <Nodata />}
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig}>
-          <BarChart
-            accessibilityLayer
-            data={chartData}
-            layout='vertical'
-            margin={{
-              right: 20,
-            }}
-          >
-            <CartesianGrid horizontal={false} />
-            <YAxis
-              dataKey='name'
-              type='category'
-              tickLine={false}
-              tickMargin={10}
-              axisLine={false}
-              tickFormatter={(value) => value.slice(0, 3)}
-              hide
-            />
-            <XAxis
-              dataKey='usageCount'
-              type='number'
-              hide
-            />
-            {/* <ChartTooltip
+        {data.length > 0 && (
+          <ChartContainer config={chartConfig}>
+            <BarChart
+              accessibilityLayer
+              data={chartData}
+              layout='vertical'
+              margin={{
+                right: 20,
+              }}
+            >
+              <CartesianGrid horizontal={false} />
+              <YAxis
+                dataKey='name'
+                type='category'
+                tickLine={false}
+                tickMargin={10}
+                axisLine={false}
+                tickFormatter={(value) => value.slice(0, 3)}
+                hide
+              />
+              <XAxis
+                dataKey='usageCount'
+                type='number'
+                hide
+              />
+              {/* <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent indicator='line' />}
             /> */}
-            <Bar
-              dataKey='usageCount'
-              layout='vertical'
-              radius={4}
-              fillOpacity={1}
-            >
-              <LabelList
-                dataKey='name'
-                position='insideLeft'
-                offset={8}
-                className='fill-white text-md font-semibold'
-                content={({ x, y, value, index }) => (
-                  <text
-                    x={(x as number) + 10}
-                    y={(y as number) + 28}
-                    fill={
-                      index === 0
-                        ? '#249055'
-                        : index === 1
-                          ? '#246cff'
-                          : index === 2
-                            ? '#fcb400'
-                            : '#fff'
-                    }
-                    fontSize={12}
-                    fontWeight='bold'
-                    textAnchor='left'
-                  >
-                    {value}
-                  </text>
-                )}
-              />
-              <LabelList
+              <Bar
                 dataKey='usageCount'
-                position='right'
-                offset={8}
-                className='fill-foreground'
-                fontSize={12}
-              />
-            </Bar>
-          </BarChart>
-        </ChartContainer>
+                layout='vertical'
+                radius={4}
+                fillOpacity={1}
+              >
+                <LabelList
+                  dataKey='name'
+                  position='insideLeft'
+                  offset={8}
+                  className='fill-white text-md font-semibold'
+                  content={({ x, y, value, index }) => (
+                    <text
+                      x={(x as number) + 10}
+                      y={(y as number) + 28}
+                      fill={
+                        index === 0
+                          ? '#249055'
+                          : index === 1
+                            ? '#246cff'
+                            : index === 2
+                              ? '#fcb400'
+                              : '#fff'
+                      }
+                      fontSize={12}
+                      fontWeight='bold'
+                      textAnchor='left'
+                    >
+                      {value}
+                    </text>
+                  )}
+                />
+                <LabelList
+                  dataKey='usageCount'
+                  position='right'
+                  offset={8}
+                  className='fill-foreground'
+                  fontSize={12}
+                />
+              </Bar>
+            </BarChart>
+          </ChartContainer>
+        )}
       </CardContent>
       <CardFooter className='flex-col items-start gap-2 text-sm'>
         {/* <div className='flex gap-2 font-medium leading-none'>

@@ -69,7 +69,8 @@
       "gallery": "thư viện ảnh và video",
       "timeline": "lịch trình",
       "cancelReason": "lý do hủy",
-      "prompt": "prompt"
+      "prompt": "prompt",
+      "slug": "homepage tổ chức"
     },
     "message": {
       "error": {

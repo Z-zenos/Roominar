@@ -11,7 +11,7 @@ async def get_organization_dashboard(db: Session, organizer: User):
                 COUNT(*) AS total_events,
                 COUNT(*) FILTER (
                     WHERE NOW() BETWEEN events.start_at AND events.end_at
-                ) AS ongoing_events
+                ) AS total_ongoing_events
             FROM events
             WHERE organization_id = :org_id AND status = 'PUBLIC'
         ),
@@ -34,7 +34,7 @@ async def get_organization_dashboard(db: Session, organizer: User):
         ),
         actual_attendees AS (
             SELECT
-                COUNT(ticket_id) AS actual_attendees
+                COUNT(ticket_id) AS total_actual_attendees
             FROM check_ins
             JOIN events ON check_ins.event_id = events.id
             WHERE events.organization_id = :org_id AND events.status = 'PUBLIC'
@@ -42,12 +42,12 @@ async def get_organization_dashboard(db: Session, organizer: User):
         )
         SELECT
             ec.total_events,
-            ec.ongoing_events,
+            ec.total_ongoing_events,
             0 as total_visitors,
             rc.total_revenue,
             0 as total_members,
             tc.total_tickets_sold,
-            aa.actual_attendees
+            aa.total_actual_attendees
         FROM event_counts ec
         JOIN ticket_counts tc ON true
         JOIN revenue_counts rc ON true
@@ -58,4 +58,16 @@ async def get_organization_dashboard(db: Session, organizer: User):
     dashboard = db.exec(
         query, params={"org_id": organizer.organization_id}
     ).one_or_none()
+
+    if not dashboard:
+        return {
+            "total_events": 0,
+            "total_ongoing_events": 0,
+            "total_visitors": 0,
+            "total_revenue": 0,
+            "total_members": 0,
+            "total_tickets_sold": 0,
+            "total_actual_attendees": 0,
+        }
+
     return dashboard

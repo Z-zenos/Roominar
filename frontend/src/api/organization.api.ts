@@ -11,17 +11,18 @@ import type {
   OrganizationsApiListingAttendeesRequest,
   OrganizationsApiRegisterOrganizationRequest,
   OrganizationsApiTrackUserActionsRequest,
+  RegisterOrganizationResponse,
 } from '../lib/api/generated';
 import { useQuery } from '@tanstack/react-query';
 import { toCamelCase } from '../utils/app.util';
 
 export const useRegisterOrganizationMutation = <T>(
-  options?: SWRMutationConfiguration<number, T>,
+  options?: SWRMutationConfiguration<RegisterOrganizationResponse, T>,
 ) => {
   const api = useApi();
   const key = 'register-audience';
   return useSWRMutation<
-    number,
+    RegisterOrganizationResponse,
     T,
     typeof key,
     OrganizationsApiRegisterOrganizationRequest

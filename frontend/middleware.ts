@@ -55,6 +55,7 @@ export const pathPermissionMaster = {
     '/not-found',
     '/forgot-password',
     '/email/verify/[token]',
+    '/email/verify/organization/[token]',
     '/email/change/[token]',
     '/email/revert/[token]',
     '/organization/login',
