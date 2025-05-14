@@ -36,14 +36,13 @@ async def register_audience(
 
     try:
         if user and user.verify_email_token_expire_at > datetime.now(pytz.utc):
-            print(user, encrypted_verify_token)
             user.verify_email_token = encrypted_verify_token
             user.verify_email_token_expire_at = verify_expire_at
             new_user = save(db, user)
 
             context = {
                 "url": f"""
-                    {settings.WEB_URL}/email/verify/{user.verify_email_token}
+                    {settings.WEB_URL}/email/verify/{verify_token}
                 """,
                 "expire_at": user.verify_email_token_expire_at.strftime(
                     "%Y/%m/%d %H:%M"

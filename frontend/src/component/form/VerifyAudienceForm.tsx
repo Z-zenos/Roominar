@@ -68,7 +68,7 @@ function VerifyAudienceForm({ token }: VerifyAudienceFormProps) {
       verifyAudienceRequest: {
         industryCode: value.industryCode,
         jobTypeCode: value.jobTypeCode,
-        tags: value.tags,
+        tags: selectedTags,
       },
     });
   };
@@ -87,36 +87,27 @@ function VerifyAudienceForm({ token }: VerifyAudienceFormProps) {
         onSubmit={form.handleSubmit(handleUpdateAndVerify)}
         className={clsx('flex items-center justify-center flex-col')}
       >
-        <div>
-          <Button
-            className='mr-3 text-black bg-slate-100 border-gray-400 border px-10 font-bold'
-            radius='sm'
-            variant='solid'
-            onClick={() => router.push('/login')}
-          >
-            Skip
-          </Button>
-          <Button
-            className={clsx(
-              ' text-info-main bg-transparent border-info-main border px-10 font-bold',
-              !form.formState.isValid &&
-                'bg-slate-400, border-slate-400 text-slate-500',
-            )}
-            radius='sm'
-            variant='flat'
-            type='submit'
-            isLoading={isVerifying}
-            disabled={!form.formState.isValid}
-          >
-            Update & Verify
-          </Button>
-        </div>
+        <Button
+          className={clsx(
+            ' text-info-main bg-transparent border-info-main border px-10 font-bold',
+            !form.formState.isValid &&
+              'bg-slate-400, border-slate-400 text-slate-500',
+          )}
+          radius='sm'
+          variant='flat'
+          type='submit'
+          isLoading={isVerifying}
+          disabled={!form.formState.isValid}
+        >
+          Update & Verify
+        </Button>
         <div className={clsx(styles.between, 'flex-wrap gap-20 mt-8')}>
           <div>
             <div className='mb-6 block'>
               <FormCustomLabel
                 htmlFor='jobTypeCode'
                 label='jobTypeCode'
+                className='text-md mb-1 font-medium flex items-center justify-center'
               />
               <h4 className='font-light opacity-80 text-sm'>
                 Explore Opportunities Tailored to Your Profession and <br />
@@ -139,6 +130,7 @@ function VerifyAudienceForm({ token }: VerifyAudienceFormProps) {
               <FormCustomLabel
                 htmlFor='industryCode'
                 label='industryCode'
+                className='text-md mb-1 font-medium flex items-center justify-center'
               />
 
               <h4 className='font-light opacity-80 text-sm'>
