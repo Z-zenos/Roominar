@@ -42,7 +42,7 @@ async def register_audience(
 
             context = {
                 "url": f"""
-                    {settings.WEB_URL}/email/verify/{user.verify_email_token}
+                    {settings.WEB_URL}/email/verify/{verify_token}
                 """,
                 "expire_at": user.verify_email_token_expire_at.strftime(
                     "%Y/%m/%d %H:%M"

@@ -76,6 +76,7 @@ def validate_encrypted_token(token_col: str):
     def wrapper(db: DBDep, token: str):
         hashed_token = hashlib.sha256(token.encode("utf-8")).hexdigest()
         # Find user based on reset token.
+
         user = db.scalar(select(User).where(column(token_col) == hashed_token))
 
         if not user:

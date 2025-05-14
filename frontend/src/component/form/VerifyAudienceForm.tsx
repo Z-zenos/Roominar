@@ -68,7 +68,7 @@ function VerifyAudienceForm({ token }: VerifyAudienceFormProps) {
       verifyAudienceRequest: {
         industryCode: value.industryCode,
         jobTypeCode: value.jobTypeCode,
-        tags: value.tags,
+        tags: selectedTags,
       },
     });
   };
@@ -107,6 +107,7 @@ function VerifyAudienceForm({ token }: VerifyAudienceFormProps) {
               <FormCustomLabel
                 htmlFor='jobTypeCode'
                 label='jobTypeCode'
+                className='text-md mb-1 font-medium flex items-center justify-center'
               />
               <h4 className='font-light opacity-80 text-sm'>
                 Explore Opportunities Tailored to Your Profession and <br />
@@ -129,6 +130,7 @@ function VerifyAudienceForm({ token }: VerifyAudienceFormProps) {
               <FormCustomLabel
                 htmlFor='industryCode'
                 label='industryCode'
+                className='text-md mb-1 font-medium flex items-center justify-center'
               />
 
               <h4 className='font-light opacity-80 text-sm'>
