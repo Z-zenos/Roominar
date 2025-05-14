@@ -36,7 +36,6 @@ async def register_audience(
 
     try:
         if user and user.verify_email_token_expire_at > datetime.now(pytz.utc):
-            print(user, encrypted_verify_token)
             user.verify_email_token = encrypted_verify_token
             user.verify_email_token_expire_at = verify_expire_at
             new_user = save(db, user)
