@@ -421,6 +421,10 @@ export default function Home() {
                 className='mt-3 text-info-main bg-transparent border-info-main border px-10 font-bold'
                 radius='sm'
                 variant='flat'
+                onPress={() =>
+                  status == 'unauthenticated' &&
+                  router.push('/organization/login')
+                }
               >
                 Create a free event
               </Button>

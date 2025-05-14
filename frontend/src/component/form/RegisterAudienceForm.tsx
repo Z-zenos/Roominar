@@ -18,14 +18,17 @@ import { Link } from '@nextui-org/link';
 import { styles } from '@/src/constants/styles.constant';
 import Button from '../common/Button/Button';
 import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
-import RegisterAudienceSuccess from '@/src/view/audience/RegisterAudienceSuccess';
 import type { RegisterAudienceFormSchema } from '@/src/schemas/auth/RegisterAudienceFormSchema';
 import { registerAudienceFormSchema } from '@/src/schemas/auth/RegisterAudienceFormSchema';
 import { useRegisterAudienceMutation } from '@/src/api/auth.api';
+import RegisterSuccess from '@/src/view/audience/RegisterSuccess';
+import { useRouter } from 'next/navigation';
 
 function RegisterAudienceForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isRegisterSuccess, setIsRegisterSuccess] = useState<boolean>(false);
+  const router = useRouter();
 
   const form = useForm<RegisterAudienceFormSchema>({
     mode: 'all',
@@ -58,7 +61,6 @@ function RegisterAudienceForm() {
     },
   });
 
-  const [isRegisterSuccess, setIsRegisterSuccess] = useState<boolean>(false);
   const handleRegister = (value: RegisterAudienceFormSchema) => {
     trigger({
       registerAudienceRequest: {
@@ -78,7 +80,7 @@ function RegisterAudienceForm() {
         className={clsx('flex items-center justify-center flex-col')}
       >
         {isRegisterSuccess ? (
-          <RegisterAudienceSuccess
+          <RegisterSuccess
             email={data.email}
             expireAt={data.expireAt}
           />
@@ -239,7 +241,13 @@ function RegisterAudienceForm() {
 
             <p className={clsx('mt-4 gap-2 font-light', styles.center)}>
               Want to host your own event?
-              <Button className='outline-none'>Navigate to organization</Button>
+              <Button
+                type='button'
+                className='outline-none'
+                onClick={() => router.push('/organization/register')}
+              >
+                Navigate to organization
+              </Button>
             </p>
           </>
         )}

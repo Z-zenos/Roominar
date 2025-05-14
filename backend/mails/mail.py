@@ -43,6 +43,22 @@ class Email:
         )
         await FastMail(conf).send_message(message)
 
+    async def send_org_email(
+        self, receivers: str | list, template: str, subject: str, data
+    ):
+        content = self.render_template(template, {**self.constant_data, **data})
+
+        if isinstance(receivers, str):
+            receivers = [receivers]
+
+        message = MessageSchema(
+            subject=subject,
+            recipients=list(receivers),
+            template_body=content,
+            subtype=MessageType.html,
+        )
+        await FastMail(conf).send_message(message)
+
     def render_template(self, template_name: str, data: dict[str, Any]) -> str:
         template_folder = settings.TEMPLATE_FOLDER
 

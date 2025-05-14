@@ -1,14 +1,17 @@
-import type { RegisterAudienceResponse } from '@/src/lib/api/generated';
+import type {
+  RegisterAudienceResponse,
+  RegisterOrganizationResponse,
+} from '@/src/lib/api/generated';
 import { formatEventDate } from '@/src/utils/app.util';
 import { Button } from '@nextui-org/button';
 import { Link } from '@nextui-org/link';
 
-function RegisterAudienceSuccess({
+function RegisterSuccess({
   email,
   expireAt,
-}: RegisterAudienceResponse) {
+}: RegisterAudienceResponse | RegisterOrganizationResponse) {
   return (
-    <div className='flex items-center justify-center bg-gray-100'>
+    <div className='flex items-center justify-center'>
       <div className='bg-white p-8 rounded-lg shadow-lg w-full max-w-lg'>
         <h2 className='text-pink-600 text-lg font-bold text-center mb-4'>
           Currently, You Are Temporarily Registered
@@ -59,4 +62,4 @@ function RegisterAudienceSuccess({
   );
 }
 
-export default RegisterAudienceSuccess;
+export default RegisterSuccess;

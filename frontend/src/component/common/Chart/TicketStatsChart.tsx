@@ -132,7 +132,7 @@ export function TicketStatsChart() {
               </CardTitle>
             )}
           </CardHeader>
-          {ticketStats && (
+          {ticketStats && ticketStats.totalTickets > 0 && (
             <div className='grid grid-cols-6'>
               <CardContent className='col-span-4 pb-0'>
                 <ChartContainer
@@ -239,9 +239,7 @@ export function TicketStatsChart() {
             </div>
           )}
           {isLoading && <ElementLoader title='Calculating tickets...' />}
-          {!isLoading && !ticketStats && ticketStats?.totalTickets === 0 && (
-            <Nodata />
-          )}
+          {!isLoading && ticketStats?.totalTickets === 0 && <Nodata />}
         </form>
       </Form>
     </Card>

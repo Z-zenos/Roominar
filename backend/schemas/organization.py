@@ -147,12 +147,12 @@ class GetOrganizationDetailResponse(BaseModel):
 
 class GetOrganizationDashboardResponse(BaseModel):
     total_events: int | None = None
-    ongoing_events: int | None = None
+    total_ongoing_events: int | None = None
     total_visitors: int | None = None
     total_revenue: int | None = None
     total_members: int | None = None
     total_tickets_sold: int | None = None
-    actual_attendees: int | None = None
+    total_actual_attendees: int | None = None
 
 
 class TagStatsItem(BaseModel):
@@ -231,3 +231,8 @@ class ListingAttendeesRankingQueryParams(BaseModel):
 
     page: int | None = Field(Query(default=1, ge=1))
     per_page: int | None = Field(Query(default=10, le=100, ge=1))
+
+
+class RegisterOrganizationResponse(BaseModel):
+    email: str
+    expire_at: datetime

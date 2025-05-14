@@ -69,7 +69,8 @@
       "gallery": "gallery",
       "timeline": "timeline",
       "cancelReason": "cancellation reason",
-      "prompt": "prompt"
+      "prompt": "prompt",
+      "slug": "organization homepage"
     },
     "message": {
       "error": {

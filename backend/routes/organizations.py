@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, BackgroundTasks, Depends
 from fastapi.responses import StreamingResponse
 from sqlmodel import Session
 
@@ -36,6 +36,7 @@ from backend.schemas.organization import (
     ListingAttendeesRankingQueryParams,
     ListingAttendeesResponse,
     ListingRandomOrganizationsResponse,
+    RegisterOrganizationResponse,
     TrackUserActionsQueryParams,
     TrackUserActionsResponse,
 )
@@ -45,15 +46,18 @@ router = APIRouter()
 
 @router.post(
     "/register",
-    response_model=int,
+    response_model=RegisterOrganizationResponse,
     responses=public_api_responses,
 )
 async def register_organization(
     db: Session = Depends(get_read_db),
+    worker: BackgroundTasks = None,
     request: RegisterOrganizationRequest = None,
 ):
-    organization_id = await auth_service.register_organization(db, request)
-    return organization_id
+    new_user = await auth_service.register_organization(db, worker, request)
+    return RegisterOrganizationResponse(
+        email=new_user.email, expire_at=new_user.verify_email_token_expire_at
+    )
 
 
 @router.get(

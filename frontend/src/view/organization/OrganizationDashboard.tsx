@@ -81,7 +81,7 @@ export default function OrganizationDashboard() {
                       )}
                     >
                       <GoDotFill />
-                      {dashboardData.actualAttendees} actual participants{' '}
+                      {dashboardData.totalActualAttendees} actual participants{' '}
                     </p>
                   </div>
                 </div>
