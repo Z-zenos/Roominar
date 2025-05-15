@@ -165,6 +165,6 @@ export default async function middleware(
 // Update the matcher config at the bottom of the file
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico|static|icons|images|svg|firebase-messaging-sw.js|manifest.json|pwa-sw.js|workbox-*.js).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|static|icons|screenshots|images|svg|firebase-messaging-sw.js|manifest.json|pwa-sw.js|workbox-*.js).*)',
   ],
 };
