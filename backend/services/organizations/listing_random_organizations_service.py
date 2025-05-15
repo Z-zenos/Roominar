@@ -1,4 +1,4 @@
-from sqlmodel import Session, and_, distinct, func, literal, select
+from sqlmodel import Session, and_, case, distinct, func, literal, select
 
 from backend.core.constants import FollowEntityCode, TagAssociationEntityCode
 from backend.models.event import Event
@@ -68,7 +68,10 @@ async def listing_random_organizations(db: Session, user: User):
                 Organization.name,
                 Organization.avatar_url,
                 Organization.description,
-                OrganizationTag.c.tags,
+                case(
+                    (OrganizationTag.c.tags.is_(None), literal("[]")),
+                    else_=OrganizationTag.c.tags,
+                ).label("tags"),
                 OrganizationEventFollowCount.c.event_number,
                 OrganizationEventFollowCount.c.follower_number,
                 OrganizationEventFollowCount.c.is_followed,
