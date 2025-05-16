@@ -69,10 +69,10 @@ import { RiRobot2Line } from 'react-icons/ri';
 import { AiOutlineSend } from 'react-icons/ai';
 import { exportHTML } from '../editor/components/editor/utils/html';
 
-// const LazyMap = dynamic(() => import('../common/Map/Map'), {
-//   ssr: false,
-//   loading: () => <p>Loading...</p>,
-// });
+const LazyMap = dynamic(() => import('../common/Map/Map'), {
+  ssr: false,
+  loading: () => <p>Loading...</p>,
+});
 
 const LexicalEditor = dynamic(() => import('../editor/app/app'), {
   ssr: false,
@@ -151,6 +151,9 @@ export default function CreateEventForm() {
       isOnline: undefined,
       isOffline: undefined,
       organizeAddress: '',
+      lat: undefined,
+      lng: undefined,
+
       organizeCityCode: undefined,
       meetingToolCode: undefined,
       meetingUrl: '',
@@ -177,6 +180,9 @@ export default function CreateEventForm() {
       isOnline: draftEvent?.isOnline,
       isOffline: draftEvent?.isOffline,
       organizeAddress: draftEvent?.organizeAddress ?? '',
+      lat: draftEvent?.lat,
+      lng: draftEvent?.lng,
+
       organizeCityCode: draftEvent?.organizeCityCode as CityCode,
       meetingToolCode: draftEvent?.meetingToolCode ?? EventMeetingToolCode.Zoom,
       meetingUrl: draftEvent?.meetingUrl ?? '',
@@ -202,6 +208,7 @@ export default function CreateEventForm() {
 
       const inputOrderNames = [
         'name',
+        'description',
         'startAt',
         'coverImageUrl',
         'isOnline',
@@ -371,6 +378,8 @@ export default function CreateEventForm() {
         isOnline: data.isOnline ?? false,
         isOffline: data.isOffline ?? false,
         organizeAddress: data.organizeAddress,
+        lat: data.lat,
+        lng: data.lng,
         organizeCityCode: PublishEventRequestOrganizeCityCodeEnum.Hanoi,
         meetingToolCode: data.meetingToolCode,
         meetingUrl: data.meetingUrl,
@@ -395,6 +404,8 @@ export default function CreateEventForm() {
         isOnline: data.isOnline,
         isOffline: data.isOffline,
         organizeAddress: data.organizeAddress ?? null,
+        lat: data.lat,
+        lng: data.lng,
         organizeCityCode: SaveDraftEventRequestOrganizeCityCodeEnum.Hanoi,
         meetingToolCode: data.meetingToolCode,
         meetingUrl: data.meetingUrl,
@@ -402,6 +413,22 @@ export default function CreateEventForm() {
       },
     });
   }
+
+  const getAddressFromLatLng = async ([lat, lng]: [number, number]) => {
+    const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`;
+
+    const response = await fetch(url, {
+      headers: {
+        Accept: 'application/json',
+        'User-Agent': 'your-app-name (your@email.com)', // Nominatim yêu cầu User-Agent
+      },
+    });
+
+    if (!response.ok) throw new Error('Failed to fetch address');
+    const data = await response.json();
+
+    return data.display_name as string;
+  };
 
   const rightSidebar = useMemo(() => {
     switch (rightSidebarContent) {
@@ -728,6 +755,16 @@ export default function CreateEventForm() {
                       </div>
                     </Checkbox>
                   </FormControl>
+                  {form.getValues('isOffline') && (
+                    <LazyMap
+                      className='mx-auto'
+                      onMarkerChange={async (latlng) => {
+                        form.setValue('organizeAddress', 'Loading...');
+                        const address = await getAddressFromLatLng(latlng);
+                        form.setValue('organizeAddress', address);
+                      }}
+                    />
+                  )}
                   <FormMessage label='isOffline' />
                 </FormItem>
               )}
@@ -889,6 +926,10 @@ export default function CreateEventForm() {
                 }
                 isGenerating={isGenerating}
               />
+              <FormMessage
+                label='description'
+                className='mt-2'
+              />
             </main>
 
             <div className='p-3 bg-white mt-4 shadow-md rounded-md'>
@@ -923,7 +964,7 @@ export default function CreateEventForm() {
               </div>
 
               <div className='min-h-[500px] max-h-[1000px] overflow-y-auto flex flex-col items-center justify-center mt-4'>
-                AI Response
+                AI Response (Comming soon)
               </div>
             </div>
           </div>

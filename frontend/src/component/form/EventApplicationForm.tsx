@@ -115,12 +115,14 @@ export default function EventApplicationForm({
     return form.getValues('tickets').reduce((acc, ticket) => {
       return acc + ticket.price * ticket.quantity;
     }, 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(form.getValues('tickets'))]);
 
   const totalTickets = useMemo(() => {
     return form.getValues('tickets').reduce((acc, ticket) => {
       return acc + ticket.quantity;
     }, 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(form.getValues('tickets'))]);
 
   const { trigger, isMutating: isCreating } = useCreateFreeApplicationMutation({
@@ -338,7 +340,7 @@ export default function EventApplicationForm({
                               <div className='text-sm w-full'>
                                 <span>Price: </span>
                                 <span className='text-primary font-semibold ml-2'>
-                                  {ticket.price}
+                                  {formatMoney(ticket.price)}
                                 </span>
                               </div>
                             ) : (

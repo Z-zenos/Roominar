@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from geoalchemy2.shape import from_shape
+from shapely import Point
 from sqlmodel import Session, delete, select
 
 from backend.core.constants import EventStatusCode, TagAssociationEntityCode
@@ -37,6 +39,10 @@ async def save_draft_event(
             if request.name
             else f"Draft Event {datetime.now().strftime('%Y/%m/%d %H:%M')}"
         )
+
+        if request.lat and request.lng:
+            # event.coordinate = f"POINT({request.lng} {request.lat})"
+            event.coordinate = from_shape(Point(request.lng, request.lat), srid=4326)
 
         if request.tags:
             # Remove existing tags associated with the event
