@@ -12,19 +12,19 @@ import {
   JobTypeCode,
   type ApiException,
   type ErrorResponse400,
-  type TagItem,
 } from '@/src/lib/api/generated';
 import { optionify } from '@/src/utils/app.util';
 import Tag from '../common/Tag/Tag';
 import { useListingTagsQuery } from '@/src/api/tag.api';
 import TagSkeleton from '../common/Tag/TagSkeleton';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@nextui-org/button';
 import type { VerifyAudienceFormSchema } from '@/src/schemas/auth/VerifyAudienceFormSchema';
 import { verifyAudienceFormSchema } from '@/src/schemas/auth/VerifyAudienceFormSchema';
 import { useVerifyAudienceMutation } from '@/src/api/auth.api';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import type ITag from '@/src/types/Tag';
 
 interface VerifyAudienceFormProps {
   token: string;
@@ -61,6 +61,18 @@ function VerifyAudienceForm({ token }: VerifyAudienceFormProps) {
   });
 
   const [selectedTags, setSelectedTags] = useState<number[]>([]);
+  const [tags, setTags] = useState<ITag[]>([]);
+
+  useEffect(() => {
+    if (tagData?.data) {
+      setTags(
+        tagData.data.map((tagGroup) => ({
+          groupId: tagGroup.groupId,
+          name: tagGroup.groupName,
+        })),
+      );
+    }
+  }, [tagData]);
 
   const handleUpdateAndVerify = (value: VerifyAudienceFormSchema) => {
     trigger({
@@ -73,11 +85,39 @@ function VerifyAudienceForm({ token }: VerifyAudienceFormProps) {
     });
   };
 
-  const handleSelectTag = (id: number) => {
-    if (selectedTags.includes(id)) {
-      setSelectedTags((prev) => prev.filter((tag) => tag !== id));
+  const handleSelectTag = (tag: ITag) => {
+    let childTags: ITag[] = [];
+    if (tag.groupId) {
+      const groupIndex = tags.findIndex((item) => item.groupId === tag.groupId);
+      childTags = tagData.data
+        .find((group) => group.groupId === tag.groupId)
+        .tags.map((item) => ({
+          groupId: undefined,
+          id: item.id,
+          name: item.name,
+        }));
+
+      setTags((prev) => {
+        const newTags = [...prev];
+        newTags.splice(groupIndex, 1, ...childTags);
+        return newTags;
+      });
+    }
+
+    let selectedTagId = undefined;
+    if (childTags.length > 0) {
+      selectedTagId = childTags.find((item) => item.name === tag.name).id;
+      setSelectedTags((prev) => [...prev, selectedTagId]);
     } else {
-      setSelectedTags([...selectedTags, id]);
+      selectedTagId = tag.id;
+      setSelectedTags((prev) => {
+        const isTagSelected = prev.includes(selectedTagId);
+        if (isTagSelected) {
+          return prev.filter((item) => item !== selectedTagId);
+        } else {
+          return [...prev, selectedTagId];
+        }
+      });
     }
   };
 
@@ -165,18 +205,15 @@ function VerifyAudienceForm({ token }: VerifyAudienceFormProps) {
           </h4>
 
           <div className='flex justify-center gap-3 items-center py-8 flex-wrap'>
-            {tagData &&
-              tagData?.data
-                ?.reduce((acc, group) => acc.concat(group.tags), [])
-                .map((tag: TagItem) => (
-                  <Tag
-                    title={tag.name}
-                    key={tag.id}
-                    id={tag.id}
-                    onSelect={handleSelectTag}
-                    active={selectedTags.includes(tag.id)}
-                  />
-                ))}
+            {tags.length > 0 &&
+              tags.map((tag: ITag) => (
+                <Tag
+                  tag={tag}
+                  key={tag.groupId ? `group-${tag.groupId}` : `tag-${tag.id}`}
+                  onSelect={handleSelectTag}
+                  active={selectedTags.includes(tag.id)}
+                />
+              ))}
             {isListingTagsLoading &&
               Array.from({ length: 10 }, (_, k) => <TagSkeleton key={k} />)}
           </div>

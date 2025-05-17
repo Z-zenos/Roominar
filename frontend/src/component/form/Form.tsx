@@ -51,11 +51,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../common/Select';
-import type {
-  ListingTagsResponse,
-  TagGroup,
-  TagItem,
-} from '@/src/lib/api/generated';
+import type { TagGroup, TagItem } from '@/src/lib/api/generated';
 import { styles } from '@/src/constants/styles.constant';
 import { IoClose } from 'react-icons/io5';
 import {
@@ -78,6 +74,7 @@ import Nodata from '../common/Nodata';
 import type Option from '@/src/types/Option';
 import { capitalize } from 'lodash-es';
 import useWindowDimensions from '@/src/hooks/useWindowDimension';
+import { useListingTagsQuery } from '@/src/api/tag.api';
 
 const Form = FormProvider;
 
@@ -603,11 +600,9 @@ FormCombobox.displayName = 'FormCombobox';
 
 interface FormTagsInputProps extends FormItemProps {
   className?: string;
-  data?: ListingTagsResponse;
   title?: string;
 }
 const FormTagsInput = ({
-  data,
   name,
   control,
   onValueChange,
@@ -615,6 +610,8 @@ const FormTagsInput = ({
   title,
   ...props
 }: FormTagsInputProps) => {
+  const { data } = useListingTagsQuery();
+  const t = useTranslations('code');
   const { width } = useWindowDimensions();
   const tags = useMemo(
     () =>
@@ -676,10 +673,14 @@ const FormTagsInput = ({
                   >
                     <span className='break-all max-w-[90%]'>
                       {'#' +
-                        tags?.find(
-                          (tag: { value: number; label: string }) =>
-                            tag.value === id,
-                        )?.label}
+                        t(
+                          `tag.${
+                            tags?.find(
+                              (tag: { value: number; label: string }) =>
+                                tag.value === id,
+                            )?.label
+                          }`,
+                        )}
                     </span>
                     <IoClose
                       onClick={() => {
@@ -727,7 +728,7 @@ const FormTagsInput = ({
                     <CommandGroup>
                       {tags.map((item: { value: number; label: string }) => (
                         <CommandItem
-                          value={item.label}
+                          value={t(`tag.${item.label}`)}
                           key={`command-${item.value}`}
                           onSelect={() => {
                             handleSelectTags(field, item.value);
@@ -740,7 +741,7 @@ const FormTagsInput = ({
                           {field?.value?.includes(item.value) && (
                             <Check className='mr-2 h-4 w-4' />
                           )}
-                          {item.label}
+                          {t(`tag.${item.label}`)}
                         </CommandItem>
                       ))}
                     </CommandGroup>
@@ -775,7 +776,7 @@ const FormTagsInput = ({
                         data.data.map((tagGroup: TagGroup) => (
                           <div key={tagGroup.groupId}>
                             <h3 className='py-1 px-3 bg-emerald-50'>
-                              {tagGroup.groupName}
+                              {t(`tagGroup.${tagGroup.groupName}`)}
                             </h3>
                             <div
                               className={clsx(
@@ -793,7 +794,9 @@ const FormTagsInput = ({
                                     tag.id + '',
                                   )}
                                 >
-                                  {tag.name.toLowerCase()}
+                                  <span className='break-words whitespace-normal'>
+                                    {t(`tag.${tag.name}`)}
+                                  </span>
                                 </Checkbox>
                               ))}
                             </div>
@@ -811,15 +814,6 @@ const FormTagsInput = ({
                       >
                         Close
                       </UIButton>
-                      {/* <UIButton
-                        color='primary'
-                        onPress={() => {
-                          if (onValueChange) onValueChange();
-                          onClose();
-                        }}
-                      >
-                        Search
-                      </UIButton> */}
                     </ModalFooter>
                   </>
                 )}

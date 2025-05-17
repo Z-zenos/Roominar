@@ -18,7 +18,6 @@ import {
   IndustryCode,
   type EventsApiSearchEventsRequest,
 } from '@/src/lib/api/generated';
-import { useListingTagsQuery } from '@/src/api/tag.api';
 import { optionify } from '@/src/utils/app.util';
 import { Button } from '@nextui-org/react';
 import useWindowDimensions from '@/src/hooks/useWindowDimension';
@@ -39,7 +38,6 @@ function SearchFilter({
 }: SearchFilterProps) {
   const [showMoreIndustryCodes, setShowMoreIndustryCodes] =
     useState<boolean>(false);
-  const { data: tagData } = useListingTagsQuery();
   const { width } = useWindowDimensions();
 
   return (
@@ -78,7 +76,6 @@ function SearchFilter({
           name='tags'
           control={control}
           onValueChange={onValueChange}
-          data={tagData}
         />
       </FilterBox>
 

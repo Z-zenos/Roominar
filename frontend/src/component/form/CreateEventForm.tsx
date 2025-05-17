@@ -50,7 +50,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '../common/Sheet';
-import { useListingTagsQuery } from '@/src/api/tag.api';
 import { CiStickyNote } from 'react-icons/ci';
 import { useListingSurveyOptionsQuery } from '@/src/api/survey.api';
 import { useListingTargetOptionsQuery } from '@/src/api/target.api';
@@ -114,7 +113,6 @@ export default function CreateEventForm() {
   const t = useTranslations('form');
 
   const { data: draftEvent } = useGetDraftEventQuery(true);
-  const { data: tagData } = useListingTagsQuery();
   const { data: surveyOptions } = useListingSurveyOptionsQuery();
   const { data: targetOptions, refetch: refetchTargetOptions } =
     useListingTargetOptionsQuery();
@@ -847,7 +845,6 @@ export default function CreateEventForm() {
                 name='tags'
                 label='tags'
                 control={form.control}
-                data={tagData}
                 classNames={{
                   label: 'text-nm font-medium',
                 }}
