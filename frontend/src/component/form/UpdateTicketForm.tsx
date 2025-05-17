@@ -1,6 +1,7 @@
 import { Button } from '@nextui-org/react';
 import {
   Form,
+  FormDateRangePicker,
   FormInput,
   FormInstructions,
   FormRadioBoxList,
@@ -25,6 +26,7 @@ import {
   useUpdateTicketMutation,
 } from '@/src/api/ticket.api';
 import { useEffect } from 'react';
+import type { DateRange } from 'react-day-picker';
 
 interface UpdateTicketFormProps {
   ticketId: number;
@@ -36,7 +38,7 @@ function UpdateTicketForm({ ticketId, onUpdate }: UpdateTicketFormProps) {
     ticketId: ticketId,
   });
 
-  const form = useForm<UpdateTicketFormSchema>({
+  const form = useForm<UpdateTicketFormSchema & { saleTime: DateRange }>({
     mode: 'onChange',
     defaultValues: {
       name: '',
@@ -47,6 +49,7 @@ function UpdateTicketForm({ ticketId, onUpdate }: UpdateTicketFormProps) {
       deliveryMethod: TicketDeliveryMethodCode.Both,
       salesStartAt: new Date(),
       salesEndAt: new Date(),
+      saleTime: undefined,
     },
     resolver: zodResolver(updateTicketFormSchema),
   });
@@ -57,8 +60,14 @@ function UpdateTicketForm({ ticketId, onUpdate }: UpdateTicketFormProps) {
       quantity: ticket?.quantity,
       description: ticket?.description ?? undefined,
       price: ticket?.price,
-      type: ticket?.type,
+      type: ticket?.type as TicketTypeCode,
       deliveryMethod: ticket?.deliveryMethod,
+      salesStartAt: ticket?.salesStartAt,
+      salesEndAt: ticket?.salesEndAt,
+      saleTime: {
+        from: ticket?.salesStartAt,
+        to: ticket?.salesEndAt,
+      },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(ticket)]);
@@ -74,6 +83,12 @@ function UpdateTicketForm({ ticketId, onUpdate }: UpdateTicketFormProps) {
         price: updatedData.price,
         type: updatedData.type,
         deliveryMethod: updatedData.deliveryMethod,
+        salesStartAt: updatedData.salesStartAt,
+        salesEndAt: updatedData.salesEndAt,
+        saleTime: {
+          from: updatedData.salesStartAt,
+          to: updatedData.salesEndAt,
+        },
       });
     },
     onError(error: ApiException<unknown>) {
@@ -96,8 +111,8 @@ function UpdateTicketForm({ ticketId, onUpdate }: UpdateTicketFormProps) {
         type: data.type,
         deliveryMethod: data.deliveryMethod,
         expiredAt: null,
-        salesStartAt: null,
-        salesEndAt: null,
+        salesStartAt: form.getValues('saleTime')?.from,
+        salesEndAt: form.getValues('saleTime')?.to,
         accessLinkUrl: null,
       },
     });
@@ -161,6 +176,15 @@ function UpdateTicketForm({ ticketId, onUpdate }: UpdateTicketFormProps) {
         </div>
 
         <div className='col-span-2 mt-4'>
+          <FormDateRangePicker
+            label='ticketSaleTime'
+            name='saleTime'
+            control={form.control}
+            className='w-full'
+          />
+        </div>
+
+        <div className='col-span-2 mt-4'>
           <FormTextarea
             id='ticketDescription'
             name='description'
@@ -190,7 +214,7 @@ function UpdateTicketForm({ ticketId, onUpdate }: UpdateTicketFormProps) {
           radius='sm'
           className='mt-8 float-end'
           form='update-ticket-form'
-          isDisabled={!form.formState.isValid}
+          isDisabled={Object.keys(form.formState.errors).length > 0}
           type='submit'
         >
           Update Ticket

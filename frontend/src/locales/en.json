@@ -70,7 +70,8 @@
       "timeline": "timeline",
       "cancelReason": "cancellation reason",
       "prompt": "prompt",
-      "slug": "organization homepage"
+      "slug": "organization homepage",
+      "ticketSaleTime": "ticket sale time"
     },
     "message": {
       "error": {

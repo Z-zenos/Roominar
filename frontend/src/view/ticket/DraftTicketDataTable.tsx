@@ -196,7 +196,7 @@ export default function DraftTicketDataTable({
         loadingContent={<Spinner />}
       >
         {(item) => (
-          <TableRow key={item.price}>
+          <TableRow key={item.id}>
             {(columnKey) => (
               <TableCell>{renderCell(item, columnKey as string)}</TableCell>
             )}

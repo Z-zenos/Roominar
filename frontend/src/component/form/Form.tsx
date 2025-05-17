@@ -992,7 +992,7 @@ const FormDateRangePicker = ({
       render={({ field }) => (
         <FormItem
           className={clsx(
-            'flex flex-row items-center justify-start space-x-1',
+            'flex flex-col items-start justify-start space-x-1',
             props.classNames?.wrapper,
           )}
         >

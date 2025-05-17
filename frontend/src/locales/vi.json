@@ -70,7 +70,8 @@
       "timeline": "lịch trình",
       "cancelReason": "lý do hủy",
       "prompt": "prompt",
-      "slug": "homepage tổ chức"
+      "slug": "homepage tổ chức",
+      "ticketSaleTime": "thời gian bán vé"
     },
     "message": {
       "error": {
