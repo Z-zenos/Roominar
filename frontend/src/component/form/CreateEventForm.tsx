@@ -114,7 +114,7 @@ export default function CreateEventForm() {
 
   const { data: draftEvent } = useGetDraftEventQuery(true);
   const { data: surveyOptions } = useListingSurveyOptionsQuery();
-  const { data: targetOptions, refetch: refetchTargetOptions } =
+  const { data: targetOptions, refetch: refetchListingTargetOptions } =
     useListingTargetOptionsQuery();
   const { data: eventsTimeline } = useListingOrganizationEventsTimelineQuery();
   const {
@@ -127,7 +127,7 @@ export default function CreateEventForm() {
   );
 
   const [rightSidebarContent, setRightSidebarContent] = useState<
-    'CREATE_TICKET' | 'UPDATE_TICKET' | 'TARGET' | null
+    'CREATE_TICKET' | 'UPDATE_TICKET' | 'CREATE_TARGET' | null
   >();
   const [selectedTicketId, setSelectedTicketId] = useState<number | null>(null);
 
@@ -454,10 +454,10 @@ export default function CreateEventForm() {
           footer: null,
         };
 
-      case 'TARGET':
+      case 'CREATE_TARGET':
         return {
-          title: 'TARGET',
-          body: <CreateTargetForm />,
+          title: 'CREATE TARGET',
+          body: <CreateTargetForm onCreate={refetchListingTargetOptions} />,
           footer: null,
         };
 
@@ -760,6 +760,8 @@ export default function CreateEventForm() {
                         form.setValue('organizeAddress', 'Loading...');
                         const address = await getAddressFromLatLng(latlng);
                         form.setValue('organizeAddress', address);
+                        form.setValue('lat', latlng[0]);
+                        form.setValue('lng', latlng[1]);
                       }}
                     />
                   )}
@@ -814,7 +816,7 @@ export default function CreateEventForm() {
             </div>
 
             <div className='col-span-1'>
-              <div onClick={() => refetchTargetOptions({})}>
+              <div onClick={() => refetchListingTargetOptions({})}>
                 <FormSelect
                   name='targetId'
                   control={form.control}
@@ -833,7 +835,7 @@ export default function CreateEventForm() {
 
               <SheetTrigger
                 className='hover:text-primary mt-3 hover:bg-white border border-primary py-1 px-4 bg-primary text-white transition-all text-sm'
-                onClick={() => setRightSidebarContent('TARGET')}
+                onClick={() => setRightSidebarContent('CREATE_TARGET')}
               >
                 Add new target +
               </SheetTrigger>
@@ -970,7 +972,7 @@ export default function CreateEventForm() {
       <SheetOverlay>
         <SheetContent
           side='right'
-          className='min-w-[600px]'
+          className='min-w-[600px] overflow-y-scroll'
         >
           <SheetHeader>
             <SheetTitle className='text-primary'>

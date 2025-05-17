@@ -19,7 +19,11 @@ import { IndustryCode, JobTypeCode } from '@/src/lib/api/generated';
 import { optionify } from '@/src/utils/app.util';
 import { useTranslations } from 'next-intl';
 
-function CreateTargetForm() {
+interface CreateTargetFormProps {
+  onCreate?: () => void;
+}
+
+function CreateTargetForm({ onCreate }: CreateTargetFormProps) {
   const t = useTranslations('code');
 
   const form = useForm<CreateTargetFormSchema>({
@@ -35,6 +39,7 @@ function CreateTargetForm() {
   const { trigger, isMutating: isCreating } = useCreateTargetMutation({
     onSuccess() {
       toast.success('Create target successfully!');
+      onCreate?.();
       form.reset();
     },
     onError(error: ApiException<unknown>) {
@@ -160,7 +165,7 @@ function CreateTargetForm() {
           color='primary'
           isLoading={isCreating}
           radius='sm'
-          className='mt-8 float-end'
+          className='my-6 mx-auto block'
           form='create-target-form'
           isDisabled={!form.formState.isValid}
           type='submit'
