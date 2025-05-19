@@ -8,9 +8,12 @@ import type {
   CalendarOptions,
   DateSelectArg,
   EventChangeArg,
+  EventClickArg,
 } from '@fullcalendar/core';
 
 import './Calendar.css';
+import { useRef, useState } from 'react';
+import { Popover, PopoverContent, PopoverTrigger } from '../Popover';
 
 interface CalendarTimelineEventItem {
   title: string;
@@ -40,8 +43,13 @@ export default function CalendarTimeline({
   aspectRatio = 1,
   ...props
 }: CalendarTimelineProps) {
+  const [selectedEvent, setSelectedEvent] = useState<EventClickArg | null>(
+    null,
+  );
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
   return (
-    <div className='calendar-container mt-2'>
+    <div className='calendar-container mt-2 relative'>
       <FullCalendar
         plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
         headerToolbar={{
@@ -55,17 +63,20 @@ export default function CalendarTimeline({
         selectMirror={true}
         height={height}
         aspectRatio={aspectRatio}
-        events={events && events.filter((event) => event.start && event.end)}
-        // initialEvents={[
-        //   {
-        //     title: 'Application start',
-        //     start: new Date('2024-12-30T17:00:00.000Z'),
-        //     end: new Date('2025-01-01T17:00:00.000Z'),
-        //     color: '#FFD700',
-        //   },
-        // ]}
+        events={
+          events &&
+          events
+            .filter((event) => event.start && event.end)
+            .map((event) => ({
+              ...event,
+              allDay: true, // Allow resize to work,
+            }))
+        }
         select={onSelectDate}
         eventChange={onChange}
+        eventClick={(arg) => {
+          setSelectedEvent(arg);
+        }}
         {...props}
       />
       {id && (
@@ -76,6 +87,37 @@ export default function CalendarTimeline({
           className='opacity-0'
         />
       )}
+
+      <Popover
+        open={!!selectedEvent}
+        onOpenChange={(open) => !open && setSelectedEvent(null)}
+      >
+        <PopoverTrigger asChild>
+          <button
+            ref={triggerRef}
+            className='absolute top-0 left-0 opacity-0 pointer-events-none'
+          >
+            Open Popover
+          </button>
+        </PopoverTrigger>
+        <PopoverContent className='w-64'>
+          {selectedEvent && (
+            <div>
+              <h4 className='font-semibold'>{selectedEvent.event.title}</h4>
+              <p className='text-sm text-muted-foreground'>
+                {selectedEvent.event.start?.toLocaleString()} —{' '}
+                {selectedEvent.event.end?.toLocaleString()}
+              </p>
+              <button
+                onClick={() => setSelectedEvent(null)}
+                className='mt-2 text-blue-600 hover:underline text-sm'
+              >
+                Close
+              </button>
+            </div>
+          )}
+        </PopoverContent>
+      </Popover>
     </div>
   );
 }
