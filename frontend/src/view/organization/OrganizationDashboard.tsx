@@ -173,6 +173,8 @@ export default function OrganizationDashboard() {
                 center: 'title',
                 right: 'dayGridMonth,timeGridWeek',
               }}
+              editable={false}
+              selectable={false}
             />
           </div>
           <TicketStatsChart />

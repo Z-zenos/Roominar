@@ -12,7 +12,7 @@ import type {
 } from '@fullcalendar/core';
 
 import './Calendar.css';
-import { useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '../Popover';
 
 interface CalendarTimelineEventItem {
@@ -46,7 +46,24 @@ export default function CalendarTimeline({
   const [selectedEvent, setSelectedEvent] = useState<EventClickArg | null>(
     null,
   );
-  const triggerRef = useRef<HTMLButtonElement>(null);
+  const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        isPopoverOpen &&
+        !(event.target as Element)?.closest('.shadcn-popover-content')
+      ) {
+        setIsPopoverOpen(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isPopoverOpen]);
 
   return (
     <div className='calendar-container mt-2 relative'>
@@ -75,7 +92,17 @@ export default function CalendarTimeline({
         select={onSelectDate}
         eventChange={onChange}
         eventClick={(arg) => {
+          // Get the position of the event element
+          const rect = arg.el.getBoundingClientRect();
+
+          // Position the popover at the bottom of the event
+          setPopoverPosition({
+            top: rect.bottom,
+            left: rect.left + rect.width / 2,
+          });
+
           setSelectedEvent(arg);
+          setIsPopoverOpen(true);
         }}
         {...props}
       />
@@ -87,37 +114,54 @@ export default function CalendarTimeline({
           className='opacity-0'
         />
       )}
-
-      <Popover
-        open={!!selectedEvent}
-        onOpenChange={(open) => !open && setSelectedEvent(null)}
-      >
-        <PopoverTrigger asChild>
-          <button
-            ref={triggerRef}
-            className='absolute top-0 left-0 opacity-0 pointer-events-none'
+      {selectedEvent && (
+        <div
+          style={{
+            position: 'absolute',
+            top: `${popoverPosition.top}px`,
+            left: `${popoverPosition.left}px`,
+            zIndex: 50,
+          }}
+        >
+          <Popover
+            open={isPopoverOpen}
+            onOpenChange={setIsPopoverOpen}
           >
-            Open Popover
-          </button>
-        </PopoverTrigger>
-        <PopoverContent className='w-64'>
-          {selectedEvent && (
-            <div>
-              <h4 className='font-semibold'>{selectedEvent.event.title}</h4>
-              <p className='text-sm text-muted-foreground'>
-                {selectedEvent.event.start?.toLocaleString()} —{' '}
-                {selectedEvent.event.end?.toLocaleString()}
-              </p>
-              <button
-                onClick={() => setSelectedEvent(null)}
-                className='mt-2 text-blue-600 hover:underline text-sm'
-              >
-                Close
-              </button>
-            </div>
-          )}
-        </PopoverContent>
-      </Popover>
+            <PopoverTrigger>
+              <span className='sr-only'>Open popover</span>
+            </PopoverTrigger>
+            <PopoverContent className='w-72 shadcn-popover-content'>
+              <div className='p-2'>
+                <h3 className='font-medium'>{selectedEvent.event.title}</h3>
+                <p className='text-sm text-gray-500'>
+                  {new Date(selectedEvent.event.start!).toLocaleString()} -{' '}
+                  {new Date(selectedEvent.event.end!).toLocaleString()}
+                </p>
+                <div className='flex justify-between mt-2'>
+                  <button
+                    className='text-sm text-blue-500 hover:underline'
+                    onClick={() => {
+                      // Handle edit action
+                      setIsPopoverOpen(false);
+                    }}
+                  >
+                    Ok
+                  </button>
+                  <button
+                    className='text-sm text-red-500 hover:underline'
+                    onClick={() => {
+                      // Handle delete action
+                      setIsPopoverOpen(false);
+                    }}
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
+      )}
     </div>
   );
 }
