@@ -12,8 +12,10 @@ import type {
 } from '@fullcalendar/core';
 
 import './Calendar.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '../Popover';
+import dayjs from '@/src/utils/dayjs';
+import { TimePickerInput } from './TimePicker';
 
 interface CalendarTimelineEventItem {
   title: string;
@@ -31,6 +33,15 @@ interface CalendarTimelineProps extends CalendarOptions {
   name?: string;
   height?: number;
   aspectRatio?: number;
+  onTimeChange?: ({
+    title,
+    from,
+    to,
+  }: {
+    title: string;
+    from: Date;
+    to: Date;
+  }) => void;
 }
 
 export default function CalendarTimeline({
@@ -41,6 +52,7 @@ export default function CalendarTimeline({
   name,
   height = 600,
   aspectRatio = 1,
+  onTimeChange,
   ...props
 }: CalendarTimelineProps) {
   const [selectedEvent, setSelectedEvent] = useState<EventClickArg | null>(
@@ -48,6 +60,12 @@ export default function CalendarTimeline({
   );
   const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const fromHourRef = useRef<HTMLInputElement>(null);
+  const fromMinuteRef = useRef<HTMLInputElement>(null);
+  const toHourRef = useRef<HTMLInputElement>(null);
+  const toMinuteRef = useRef<HTMLInputElement>(null);
+  const [fromTime, setFromTime] = useState<Date | undefined>(undefined);
+  const [toTime, setToTime] = useState<Date | undefined>(undefined);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -92,17 +110,22 @@ export default function CalendarTimeline({
         select={onSelectDate}
         eventChange={onChange}
         eventClick={(arg) => {
-          // Get the position of the event element
-          const rect = arg.el.getBoundingClientRect();
+          if (
+            arg.event.title === 'Application start' ||
+            arg.event.title === 'Event start'
+          ) {
+            // Get the position of the event element
+            const rect = arg.el.getBoundingClientRect();
 
-          // Position the popover at the bottom of the event
-          setPopoverPosition({
-            top: rect.bottom,
-            left: rect.left + rect.width / 2,
-          });
+            // Position the popover at the bottom of the event
+            setPopoverPosition({
+              top: rect.bottom,
+              left: rect.left + rect.width / 2,
+            });
 
-          setSelectedEvent(arg);
-          setIsPopoverOpen(true);
+            setSelectedEvent(arg);
+            setIsPopoverOpen(true);
+          }
         }}
         {...props}
       />
@@ -118,8 +141,8 @@ export default function CalendarTimeline({
         <div
           style={{
             position: 'absolute',
-            top: `${popoverPosition.top}px`,
-            left: `${popoverPosition.left}px`,
+            top: `${popoverPosition.top / 2}px`,
+            left: `${popoverPosition.left / 2}px`,
             zIndex: 50,
           }}
         >
@@ -130,14 +153,97 @@ export default function CalendarTimeline({
             <PopoverTrigger>
               <span className='sr-only'>Open popover</span>
             </PopoverTrigger>
-            <PopoverContent className='w-72 shadcn-popover-content'>
+            <PopoverContent className='w-[320px] shadcn-popover-content rounded-xl shadow-lg'>
               <div className='p-2'>
-                <h3 className='font-medium'>{selectedEvent.event.title}</h3>
-                <p className='text-sm text-gray-500'>
-                  {new Date(selectedEvent.event.start!).toLocaleString()} -{' '}
-                  {new Date(selectedEvent.event.end!).toLocaleString()}
-                </p>
-                <div className='flex justify-between mt-2'>
+                <h3 className='font-medium'>{selectedEvent?.event?.title}</h3>
+                <div className='flex items-center justify-between mt-2 font-light'>
+                  From {dayjs(selectedEvent?.event?.start).format('YYYY-MM-DD')}{' '}
+                  <div className='flex items-center justify-end gap-2'>
+                    <TimePickerInput
+                      picker='hours'
+                      date={fromTime}
+                      setDate={(date) => {
+                        setFromTime(date);
+                        onTimeChange?.({
+                          title: selectedEvent?.event?.title || '',
+                          from: dayjs(selectedEvent?.event?.start)
+                            .hour(dayjs(date).hour())
+                            .minute(dayjs(date).minute())
+                            .second(dayjs(date).second())
+                            .millisecond(dayjs(date).millisecond())
+                            .toDate(),
+                          to: undefined,
+                        });
+                      }}
+                      ref={fromHourRef}
+                      onRightFocus={() => fromMinuteRef.current?.focus()}
+                    />
+                    <TimePickerInput
+                      picker='minutes'
+                      date={fromTime}
+                      setDate={(date) => {
+                        setFromTime(date);
+                        onTimeChange?.({
+                          title: selectedEvent?.event?.title || '',
+                          from: dayjs(selectedEvent?.event?.start)
+                            .hour(dayjs(date).hour())
+                            .minute(dayjs(date).minute())
+                            .second(dayjs(date).second())
+                            .millisecond(dayjs(date).millisecond())
+                            .toDate(),
+                          to: undefined,
+                        });
+                      }}
+                      ref={fromMinuteRef}
+                      onLeftFocus={() => fromHourRef.current?.focus()}
+                      onRightFocus={() => toHourRef.current?.focus()}
+                    />
+                  </div>
+                </div>
+                <div className='flex items-center justify-between mt-2 font-light'>
+                  To {dayjs(selectedEvent?.event?.end).format('YYYY-MM-DD')}{' '}
+                  <div className='flex items-center justify-end gap-2'>
+                    <TimePickerInput
+                      picker='hours'
+                      date={toTime}
+                      setDate={(date) => {
+                        setToTime(date);
+                        onTimeChange?.({
+                          title: selectedEvent?.event?.title || '',
+                          from: undefined,
+                          to: dayjs(selectedEvent?.event?.end)
+                            .hour(dayjs(date).hour())
+                            .minute(dayjs(date).minute())
+                            .second(dayjs(date).second())
+                            .millisecond(dayjs(date).millisecond())
+                            .toDate(),
+                        });
+                      }}
+                      ref={toHourRef}
+                      onRightFocus={() => toMinuteRef.current?.focus()}
+                    />
+                    <TimePickerInput
+                      picker='minutes'
+                      date={toTime}
+                      setDate={(date) => {
+                        setToTime(date);
+                        onTimeChange?.({
+                          title: selectedEvent?.event?.title || '',
+                          from: undefined,
+                          to: dayjs(selectedEvent?.event?.end)
+                            .hour(dayjs(date).hour())
+                            .minute(dayjs(date).minute())
+                            .second(dayjs(date).second())
+                            .millisecond(dayjs(date).millisecond())
+                            .toDate(),
+                        });
+                      }}
+                      ref={toMinuteRef}
+                      onLeftFocus={() => toHourRef.current?.focus()}
+                    />
+                  </div>
+                </div>
+                <div className='flex justify-between mt-4'>
                   <button
                     className='text-sm text-blue-500 hover:underline'
                     onClick={() => {

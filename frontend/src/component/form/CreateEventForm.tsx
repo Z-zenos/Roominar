@@ -552,6 +552,17 @@ export default function CreateEventForm() {
                         onSelectDate={handleSelectDate}
                         onChange={handleDragAndDropDate}
                         name='startAt'
+                        onTimeChange={({ title, from, to }) => {
+                          if (title === 'Application start') {
+                            from && form.setValue('applicationStartAt', from);
+                            to && form.setValue('applicationEndAt', to);
+                            form.trigger('applicationStartAt');
+                          } else if (title === 'Event start') {
+                            from && form.setValue('startAt', from);
+                            to && form.setValue('endAt', to);
+                            form.trigger('startAt');
+                          }
+                        }}
                       />
                     </FormControl>
                     {form.formState.isSubmitted && (
