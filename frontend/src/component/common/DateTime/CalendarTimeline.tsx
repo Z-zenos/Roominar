@@ -2,6 +2,7 @@
 
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import type { EventResizeDoneArg } from '@fullcalendar/interaction';
 import interactionPlugin from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import type {
@@ -9,6 +10,7 @@ import type {
   DateSelectArg,
   EventChangeArg,
   EventClickArg,
+  EventDropArg,
 } from '@fullcalendar/core';
 
 import './Calendar.css';
@@ -83,6 +85,23 @@ export default function CalendarTimeline({
     };
   }, [isPopoverOpen]);
 
+  const showPopoverForEvent = (
+    arg: EventClickArg | EventDropArg | EventResizeDoneArg,
+  ) => {
+    const rect = arg.el.getBoundingClientRect();
+
+    setPopoverPosition({
+      top: rect.bottom,
+      left: rect.left + rect.width / 2,
+    });
+
+    setSelectedEvent(arg);
+    setIsPopoverOpen(true);
+
+    setFromTime(arg.event.start);
+    setToTime(arg.event.end);
+  };
+
   return (
     <div className='calendar-container mt-2 relative'>
       <FullCalendar
@@ -111,20 +130,10 @@ export default function CalendarTimeline({
         eventChange={onChange}
         eventClick={(arg) => {
           if (
-            arg.event.title === 'Application start' ||
-            arg.event.title === 'Event start'
+            arg.event.title === 'Application time' ||
+            arg.event.title === 'Event time'
           ) {
-            // Get the position of the event element
-            const rect = arg.el.getBoundingClientRect();
-
-            // Position the popover at the bottom of the event
-            setPopoverPosition({
-              top: rect.bottom,
-              left: rect.left + rect.width / 2,
-            });
-
-            setSelectedEvent(arg);
-            setIsPopoverOpen(true);
+            showPopoverForEvent(arg);
           }
         }}
         {...props}

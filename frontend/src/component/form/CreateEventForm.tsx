@@ -307,7 +307,7 @@ export default function CreateEventForm() {
   }
 
   function handleDragAndDropDate(info: EventChangeArg) {
-    if (info.event.title === 'Application start') {
+    if (info.event.title === 'Application time') {
       form.setValue(
         'applicationStartAt',
         dayjs(info.event.start).hour() == 0
@@ -316,7 +316,7 @@ export default function CreateEventForm() {
       );
       form.setValue('applicationEndAt', info.event.end);
       form.trigger('applicationStartAt');
-    } else if (info.event.title === 'Event start') {
+    } else if (info.event.title === 'Event time') {
       form.setValue(
         'startAt',
         dayjs(info.event.start).hour() == 0
@@ -520,13 +520,13 @@ export default function CreateEventForm() {
                         height={500}
                         events={[
                           {
-                            title: 'Application start',
+                            title: 'Application time',
                             start: form.getValues('applicationStartAt'),
                             end: form.getValues('applicationEndAt'),
-                            color: '#FFD700',
+                            color: '#50C878',
                           },
                           {
-                            title: 'Event start',
+                            title: 'Event time',
                             start: form.getValues('startAt'),
                             end: form.getValues('endAt'),
                             color: '#FF4500',
@@ -553,11 +553,11 @@ export default function CreateEventForm() {
                         onChange={handleDragAndDropDate}
                         name='startAt'
                         onTimeChange={({ title, from, to }) => {
-                          if (title === 'Application start') {
+                          if (title === 'Application time') {
                             from && form.setValue('applicationStartAt', from);
                             to && form.setValue('applicationEndAt', to);
                             form.trigger('applicationStartAt');
-                          } else if (title === 'Event start') {
+                          } else if (title === 'Event time') {
                             from && form.setValue('startAt', from);
                             to && form.setValue('endAt', to);
                             form.trigger('startAt');
