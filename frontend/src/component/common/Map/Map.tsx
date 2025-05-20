@@ -14,6 +14,7 @@ import {
 } from 'react-leaflet';
 import L from 'leaflet';
 import { useEffect, useState } from 'react';
+import clsx from 'clsx';
 
 const url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 const attribution =
@@ -77,8 +78,7 @@ export default function Map({
     <MapContainer
       center={markerPosition}
       zoom={zoom}
-      className={className}
-      style={{ height: '400px', width: '700px' }}
+      className={clsx('h-[400px] w-[700px] z-10', className)}
     >
       <ChangeView center={markerPosition} />
       <ClickHandler onClick={handleMapClick} />

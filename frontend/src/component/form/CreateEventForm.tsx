@@ -238,7 +238,6 @@ export default function CreateEventForm() {
     usePublishEventMutation({
       onSuccess() {
         toast.success('Publish event successfully!');
-        form.reset();
       },
       onError(error: ApiException<unknown>) {
         toast.error(
@@ -937,12 +936,7 @@ export default function CreateEventForm() {
                       isOnline: form.getValues('isOnline') ?? false,
                       isOffline: form.getValues('isOffline') ?? false,
                       organizeAddress: form.getValues('organizeAddress'),
-                      price:
-                        tickets.reduce((acc, ticket) => acc + ticket.price, 0) /
-                        tickets.reduce(
-                          (acc, ticket) => acc + ticket.quantity,
-                          0,
-                        ),
+                      price: tickets[tickets.length - 1]?.price ?? 0,
                       tags: form.getValues('tags'),
                       prompt: form.getValues('prompt'),
                     },

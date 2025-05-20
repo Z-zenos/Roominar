@@ -20,7 +20,7 @@ import {
 } from '@/src/component/form/Form';
 import Button from '@/src/component/common/Button/Button';
 import { useGetEventDetailQuery } from '@/src/api/event.api';
-import { cn, optionify } from '@/src/utils/app.util';
+import { cn, formatEventDate, optionify } from '@/src/utils/app.util';
 import {
   MdAirplaneTicket,
   MdOutlineOnlinePrediction,
@@ -296,7 +296,11 @@ export default function EventApplicationForm({
                               .getValues('tickets')
                               .filter(Boolean)
                               .find((t) => t.id === ticket.id)) ||
-                            !ticket.purchaseble) &&
+                            !ticket.purchaseble ||
+                            (ticket.salesStartAt &&
+                              ticket.salesStartAt > new Date()) ||
+                            (ticket.salesEndAt &&
+                              ticket.salesEndAt < new Date())) &&
                             'pointer-events-none text-gray-600 bg-gray-100',
                         ),
                         label: 'w-full m-0',
@@ -423,7 +427,7 @@ export default function EventApplicationForm({
                               max={event.maxTicketNumberPerAccount}
                             />
                             <button
-                              className='underline text-xs text-primary translate-y-2 cursor-pointer'
+                              className='underline text-xs text-primary translate-y-2 cursor-pointer !pointer-events-auto'
                               onClick={(e) => {
                                 e.preventDefault();
                                 setSelectedTicket(ticket);
@@ -899,24 +903,43 @@ export default function EventApplicationForm({
                         <p className='text-sm text-gray-700'>
                           {selectedTicket.description}
                         </p>
-
-                        <div
-                          className={clsx('my-3', styles.flexStart, 'gap-2')}
-                        >
-                          <Chip
-                            content={t(
-                              `code.ticket.type.${selectedTicket.type}`,
-                            )}
-                            leftIcon={<MdAirplaneTicket className='text-sm' />}
-                            type='info'
-                            className='text-xs w-fit'
-                          />
-                          <Chip
-                            content={selectedTicket.deliveryMethod}
-                            leftIcon={<MdVideoCall className='text-sm' />}
-                            type='success'
-                            className='text-xs w-fit'
-                          />
+                        <div className={clsx(styles.between, 'w-full')}>
+                          <div
+                            className={clsx('my-3', styles.flexStart, 'gap-2')}
+                          >
+                            <Chip
+                              content={t(
+                                `code.ticket.type.${selectedTicket.type}`,
+                              )}
+                              leftIcon={
+                                <MdAirplaneTicket className='text-sm' />
+                              }
+                              type='info'
+                              className='text-xs w-fit'
+                            />
+                            <Chip
+                              content={selectedTicket.deliveryMethod}
+                              leftIcon={<MdVideoCall className='text-sm' />}
+                              type='success'
+                              className='text-xs w-fit'
+                            />
+                          </div>
+                          {selectedTicket.salesStartAt && (
+                            <div className='flex flex-col gap-1 font-light text-sm'>
+                              <p>
+                                Open sale at:{' '}
+                                <span className='font-semibold'>
+                                  {formatEventDate(selectedTicket.salesStartAt)}
+                                </span>
+                              </p>
+                              <p>
+                                Close sale at:{' '}
+                                <span className='font-semibold'>
+                                  {formatEventDate(selectedTicket.salesEndAt)}
+                                </span>
+                              </p>
+                            </div>
+                          )}
                         </div>
 
                         <p className='font-medium text-nm'>

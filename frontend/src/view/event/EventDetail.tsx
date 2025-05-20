@@ -58,6 +58,7 @@ import HorizontalTimeline from '@/src/component/common/DateTime/HorizontalTimeli
 import toast from 'react-hot-toast';
 import { TbClockExclamation } from 'react-icons/tb';
 import dynamic from 'next/dynamic';
+import { useTranslations } from 'next-intl';
 
 const LazyMap = dynamic(() => import('../../component/common/Map/Map'), {
   ssr: false,
@@ -69,6 +70,7 @@ interface EventDetailProps {
 }
 
 function EventDetail({ slug }: EventDetailProps) {
+  const t = useTranslations('code');
   const { data: event, isLoading } = useGetEventDetailQuery({ slug });
   const { data: topOrganizationEventsData } =
     useListingTopOrganizationEventsQuery(
@@ -209,7 +211,7 @@ function EventDetail({ slug }: EventDetailProps) {
           <div className={clsx(styles.flexStart, 'gap-2 flex-wrap')}>
             {event?.tags.map((tag: TagItem) => (
               <Badge
-                title={tag.name}
+                title={t(`tag.${tag.name}`)}
                 key={`badge-tag-${tag.id}`}
                 className='cursor-pointer hover:underline'
                 onClick={() => router.push(`/search?tags[]=${tag.id}`)}
@@ -330,6 +332,26 @@ function EventDetail({ slug }: EventDetailProps) {
               Ask about this event
             </Link>
           </div>
+
+          {/* === LOCATION === */}
+          {event?.organizeAddress && (
+            <div>
+              <h3 className='font-semibold 450px:text-xm text-xm mt-4'>
+                Offline address
+              </h3>
+              <div>
+                <p className='font-light mb-2'>{event?.organizeAddress}</p>
+                <div className='border border-gray-400 rounded-md shadow-sm'>
+                  {event.organizeAddress && event.lat && event.lng && (
+                    <LazyMap
+                      defaultCoordinate={[event?.lat, event?.lng]}
+                      className='w-full !h-[200px] rounded-md'
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -356,19 +378,6 @@ function EventDetail({ slug }: EventDetailProps) {
               startAt={event?.startAt}
               endAt={event?.endAt}
             />
-          </div>
-
-          {/* === LOCATION === */}
-          <div>
-            <h3 className='font-semibold 450px:text-lg text-xm'>
-              Offline address
-            </h3>
-            <div className='mt-3'>
-              <p className='font-light'>{event?.organizeAddress}</p>
-              {event?.organizeAddress && (
-                <LazyMap defaultCoordinate={[event?.lat, event?.lng]} />
-              )}
-            </div>
           </div>
 
           {/* === DESCRIPTION === */}
