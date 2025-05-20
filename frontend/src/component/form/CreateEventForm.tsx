@@ -130,6 +130,9 @@ export default function CreateEventForm() {
     'CREATE_TICKET' | 'UPDATE_TICKET' | 'CREATE_TARGET' | null
   >();
   const [selectedTicketId, setSelectedTicketId] = useState<number | null>(null);
+  const [timeSettingType, setTimeSettingType] = useState<
+    'APPLICATION_TIME' | 'EVENT_TIME' | null
+  >(null);
 
   const form = useForm<CreateEventFormSchema>({
     mode: 'all',
@@ -467,8 +470,6 @@ export default function CreateEventForm() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rightSidebarContent, selectedTicketId]);
 
-  // if (isGetDraftEventLoading) return <DotLoader />;
-
   return (
     <Sheet>
       <Form {...form}>
@@ -562,6 +563,19 @@ export default function CreateEventForm() {
                             to && form.setValue('endAt', to);
                             form.trigger('startAt');
                           }
+                        }}
+                        fromTime={
+                          timeSettingType === 'APPLICATION_TIME'
+                            ? form.getValues('applicationStartAt')
+                            : form.getValues('startAt')
+                        }
+                        toTime={
+                          timeSettingType === 'APPLICATION_TIME'
+                            ? form.getValues('applicationEndAt')
+                            : form.getValues('endAt')
+                        }
+                        onTimeSettingTypeChange={(type) => {
+                          setTimeSettingType(type);
                         }}
                       />
                     </FormControl>

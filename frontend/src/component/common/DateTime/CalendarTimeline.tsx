@@ -44,6 +44,9 @@ interface CalendarTimelineProps extends CalendarOptions {
     from: Date;
     to: Date;
   }) => void;
+  fromTime?: Date | undefined;
+  toTime?: Date | undefined;
+  onTimeSettingTypeChange?: (type: 'APPLICATION_TIME' | 'EVENT_TIME') => void;
 }
 
 export default function CalendarTimeline({
@@ -55,6 +58,9 @@ export default function CalendarTimeline({
   height = 600,
   aspectRatio = 1,
   onTimeChange,
+  fromTime: fTime,
+  toTime: tTime,
+  onTimeSettingTypeChange,
   ...props
 }: CalendarTimelineProps) {
   const [selectedEvent, setSelectedEvent] = useState<EventClickArg | null>(
@@ -66,8 +72,13 @@ export default function CalendarTimeline({
   const fromMinuteRef = useRef<HTMLInputElement>(null);
   const toHourRef = useRef<HTMLInputElement>(null);
   const toMinuteRef = useRef<HTMLInputElement>(null);
-  const [fromTime, setFromTime] = useState<Date | undefined>(undefined);
-  const [toTime, setToTime] = useState<Date | undefined>(undefined);
+  const [fromTime, setFromTime] = useState<Date | undefined>(fTime);
+  const [toTime, setToTime] = useState<Date | undefined>(tTime);
+
+  useEffect(() => {
+    if (fTime) setFromTime(fTime);
+    if (tTime) setToTime(tTime);
+  }, [fTime, tTime]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -98,8 +109,8 @@ export default function CalendarTimeline({
     setSelectedEvent(arg);
     setIsPopoverOpen(true);
 
-    setFromTime(arg.event.start);
-    setToTime(arg.event.end);
+    setFromTime(fTime);
+    setToTime(tTime);
   };
 
   return (
@@ -133,6 +144,11 @@ export default function CalendarTimeline({
             arg.event.title === 'Application time' ||
             arg.event.title === 'Event time'
           ) {
+            if (arg.event.title === 'Application time') {
+              onTimeSettingTypeChange?.('APPLICATION_TIME');
+            } else if (arg.event.title === 'Event time') {
+              onTimeSettingTypeChange?.('EVENT_TIME');
+            }
             showPopoverForEvent(arg);
           }
         }}
