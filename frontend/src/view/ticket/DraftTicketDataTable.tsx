@@ -25,6 +25,7 @@ import { PenLineIcon, Trash2Icon } from 'lucide-react';
 import ConfirmDialog from '@/src/component/common/Dialog/ConfirmDialog';
 import { useDeleteTicketMutation } from '@/src/api/ticket.api';
 import toast from 'react-hot-toast';
+import useFormatMoney from '@/src/hooks/useFormatMoney';
 
 const statusColorMap: Record<string, ChipProps['color']> = {
   [TicketStatusCode.Available]: 'success',
@@ -56,6 +57,8 @@ export default function DraftTicketDataTable({
   onOpenUpdateTicketForm,
   onDeleteTicket,
 }: DraftTicketDataTableProps) {
+  const formatMoney = useFormatMoney();
+
   const [selectedTicket, setSelectedTicket] = useState<TicketItem | null>(null);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
@@ -87,7 +90,7 @@ export default function DraftTicketDataTable({
           </div>
         );
       case 'price':
-        return <p>{cellValue ? cellValue : 'Free'}</p>;
+        return <p>{cellValue ? formatMoney(cellValue) : 'Free'}</p>;
 
       case 'quantity':
         return <p>{cellValue}</p>;
@@ -193,7 +196,7 @@ export default function DraftTicketDataTable({
         loadingContent={<Spinner />}
       >
         {(item) => (
-          <TableRow key={item.price}>
+          <TableRow key={item.id}>
             {(columnKey) => (
               <TableCell>{renderCell(item, columnKey as string)}</TableCell>
             )}

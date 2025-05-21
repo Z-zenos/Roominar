@@ -12,7 +12,11 @@ async def listing_tags(db: Session):
         for group in tag_groups
     }
 
-    tags = db.exec(select(Tag.id, Tag.name, Tag.image_url, Tag.tag_group_id)).all()
+    tags = db.exec(
+        select(Tag.id, Tag.name, Tag.image_url, Tag.tag_group_id).order_by(
+            Tag.id.desc()
+        )
+    ).all()
 
     for tag in tags:
         result[tag.tag_group_id]["tags"].append(

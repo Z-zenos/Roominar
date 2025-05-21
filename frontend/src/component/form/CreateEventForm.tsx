@@ -50,7 +50,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '../common/Sheet';
-import { useListingTagsQuery } from '@/src/api/tag.api';
 import { CiStickyNote } from 'react-icons/ci';
 import { useListingSurveyOptionsQuery } from '@/src/api/survey.api';
 import { useListingTargetOptionsQuery } from '@/src/api/target.api';
@@ -69,10 +68,10 @@ import { RiRobot2Line } from 'react-icons/ri';
 import { AiOutlineSend } from 'react-icons/ai';
 import { exportHTML } from '../editor/components/editor/utils/html';
 
-// const LazyMap = dynamic(() => import('../common/Map/Map'), {
-//   ssr: false,
-//   loading: () => <p>Loading...</p>,
-// });
+const LazyMap = dynamic(() => import('../common/Map/Map'), {
+  ssr: false,
+  loading: () => <p>Loading...</p>,
+});
 
 const LexicalEditor = dynamic(() => import('../editor/app/app'), {
   ssr: false,
@@ -114,9 +113,8 @@ export default function CreateEventForm() {
   const t = useTranslations('form');
 
   const { data: draftEvent } = useGetDraftEventQuery(true);
-  const { data: tagData } = useListingTagsQuery();
   const { data: surveyOptions } = useListingSurveyOptionsQuery();
-  const { data: targetOptions, refetch: refetchTargetOptions } =
+  const { data: targetOptions, refetch: refetchListingTargetOptions } =
     useListingTargetOptionsQuery();
   const { data: eventsTimeline } = useListingOrganizationEventsTimelineQuery();
   const {
@@ -129,9 +127,12 @@ export default function CreateEventForm() {
   );
 
   const [rightSidebarContent, setRightSidebarContent] = useState<
-    'CREATE_TICKET' | 'UPDATE_TICKET' | 'TARGET' | null
+    'CREATE_TICKET' | 'UPDATE_TICKET' | 'CREATE_TARGET' | null
   >();
   const [selectedTicketId, setSelectedTicketId] = useState<number | null>(null);
+  const [timeSettingType, setTimeSettingType] = useState<
+    'APPLICATION_TIME' | 'EVENT_TIME' | null
+  >(null);
 
   const form = useForm<CreateEventFormSchema>({
     mode: 'all',
@@ -151,6 +152,9 @@ export default function CreateEventForm() {
       isOnline: undefined,
       isOffline: undefined,
       organizeAddress: '',
+      lat: undefined,
+      lng: undefined,
+
       organizeCityCode: undefined,
       meetingToolCode: undefined,
       meetingUrl: '',
@@ -177,6 +181,9 @@ export default function CreateEventForm() {
       isOnline: draftEvent?.isOnline,
       isOffline: draftEvent?.isOffline,
       organizeAddress: draftEvent?.organizeAddress ?? '',
+      lat: draftEvent?.lat,
+      lng: draftEvent?.lng,
+
       organizeCityCode: draftEvent?.organizeCityCode as CityCode,
       meetingToolCode: draftEvent?.meetingToolCode ?? EventMeetingToolCode.Zoom,
       meetingUrl: draftEvent?.meetingUrl ?? '',
@@ -202,6 +209,7 @@ export default function CreateEventForm() {
 
       const inputOrderNames = [
         'name',
+        'description',
         'startAt',
         'coverImageUrl',
         'isOnline',
@@ -230,7 +238,6 @@ export default function CreateEventForm() {
     usePublishEventMutation({
       onSuccess() {
         toast.success('Publish event successfully!');
-        form.reset();
       },
       onError(error: ApiException<unknown>) {
         toast.error(
@@ -302,7 +309,7 @@ export default function CreateEventForm() {
   }
 
   function handleDragAndDropDate(info: EventChangeArg) {
-    if (info.event.title === 'Application start') {
+    if (info.event.title === 'Application time') {
       form.setValue(
         'applicationStartAt',
         dayjs(info.event.start).hour() == 0
@@ -311,7 +318,7 @@ export default function CreateEventForm() {
       );
       form.setValue('applicationEndAt', info.event.end);
       form.trigger('applicationStartAt');
-    } else if (info.event.title === 'Event start') {
+    } else if (info.event.title === 'Event time') {
       form.setValue(
         'startAt',
         dayjs(info.event.start).hour() == 0
@@ -371,6 +378,8 @@ export default function CreateEventForm() {
         isOnline: data.isOnline ?? false,
         isOffline: data.isOffline ?? false,
         organizeAddress: data.organizeAddress,
+        lat: data.lat,
+        lng: data.lng,
         organizeCityCode: PublishEventRequestOrganizeCityCodeEnum.Hanoi,
         meetingToolCode: data.meetingToolCode,
         meetingUrl: data.meetingUrl,
@@ -395,6 +404,8 @@ export default function CreateEventForm() {
         isOnline: data.isOnline,
         isOffline: data.isOffline,
         organizeAddress: data.organizeAddress ?? null,
+        lat: data.lat,
+        lng: data.lng,
         organizeCityCode: SaveDraftEventRequestOrganizeCityCodeEnum.Hanoi,
         meetingToolCode: data.meetingToolCode,
         meetingUrl: data.meetingUrl,
@@ -402,6 +413,22 @@ export default function CreateEventForm() {
       },
     });
   }
+
+  const getAddressFromLatLng = async ([lat, lng]: [number, number]) => {
+    const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`;
+
+    const response = await fetch(url, {
+      headers: {
+        Accept: 'application/json',
+        'User-Agent': 'your-app-name (your@email.com)', // Nominatim yêu cầu User-Agent
+      },
+    });
+
+    if (!response.ok) throw new Error('Failed to fetch address');
+    const data = await response.json();
+
+    return data.display_name as string;
+  };
 
   const rightSidebar = useMemo(() => {
     switch (rightSidebarContent) {
@@ -429,10 +456,10 @@ export default function CreateEventForm() {
           footer: null,
         };
 
-      case 'TARGET':
+      case 'CREATE_TARGET':
         return {
-          title: 'TARGET',
-          body: <CreateTargetForm />,
+          title: 'CREATE TARGET',
+          body: <CreateTargetForm onCreate={refetchListingTargetOptions} />,
           footer: null,
         };
 
@@ -441,8 +468,6 @@ export default function CreateEventForm() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rightSidebarContent, selectedTicketId]);
-
-  // if (isGetDraftEventLoading) return <DotLoader />;
 
   return (
     <Sheet>
@@ -495,13 +520,13 @@ export default function CreateEventForm() {
                         height={500}
                         events={[
                           {
-                            title: 'Application start',
+                            title: 'Application time',
                             start: form.getValues('applicationStartAt'),
                             end: form.getValues('applicationEndAt'),
-                            color: '#FFD700',
+                            color: '#50C878',
                           },
                           {
-                            title: 'Event start',
+                            title: 'Event time',
                             start: form.getValues('startAt'),
                             end: form.getValues('endAt'),
                             color: '#FF4500',
@@ -527,6 +552,30 @@ export default function CreateEventForm() {
                         onSelectDate={handleSelectDate}
                         onChange={handleDragAndDropDate}
                         name='startAt'
+                        onTimeChange={({ title, from, to }) => {
+                          if (title === 'Application time') {
+                            from && form.setValue('applicationStartAt', from);
+                            to && form.setValue('applicationEndAt', to);
+                            form.trigger('applicationStartAt');
+                          } else if (title === 'Event time') {
+                            from && form.setValue('startAt', from);
+                            to && form.setValue('endAt', to);
+                            form.trigger('startAt');
+                          }
+                        }}
+                        fromTime={
+                          timeSettingType === 'APPLICATION_TIME'
+                            ? form.getValues('applicationStartAt')
+                            : form.getValues('startAt')
+                        }
+                        toTime={
+                          timeSettingType === 'APPLICATION_TIME'
+                            ? form.getValues('applicationEndAt')
+                            : form.getValues('endAt')
+                        }
+                        onTimeSettingTypeChange={(type) => {
+                          setTimeSettingType(type);
+                        }}
                       />
                     </FormControl>
                     {form.formState.isSubmitted && (
@@ -728,6 +777,18 @@ export default function CreateEventForm() {
                       </div>
                     </Checkbox>
                   </FormControl>
+                  {form.getValues('isOffline') && (
+                    <LazyMap
+                      className='mx-auto'
+                      onMarkerChange={async (latlng) => {
+                        form.setValue('organizeAddress', 'Loading...');
+                        const address = await getAddressFromLatLng(latlng);
+                        form.setValue('organizeAddress', address);
+                        form.setValue('lat', latlng[0]);
+                        form.setValue('lng', latlng[1]);
+                      }}
+                    />
+                  )}
                   <FormMessage label='isOffline' />
                 </FormItem>
               )}
@@ -779,7 +840,7 @@ export default function CreateEventForm() {
             </div>
 
             <div className='col-span-1'>
-              <div onClick={() => refetchTargetOptions({})}>
+              <div onClick={() => refetchListingTargetOptions({})}>
                 <FormSelect
                   name='targetId'
                   control={form.control}
@@ -798,7 +859,7 @@ export default function CreateEventForm() {
 
               <SheetTrigger
                 className='hover:text-primary mt-3 hover:bg-white border border-primary py-1 px-4 bg-primary text-white transition-all text-sm'
-                onClick={() => setRightSidebarContent('TARGET')}
+                onClick={() => setRightSidebarContent('CREATE_TARGET')}
               >
                 Add new target +
               </SheetTrigger>
@@ -810,7 +871,6 @@ export default function CreateEventForm() {
                 name='tags'
                 label='tags'
                 control={form.control}
-                data={tagData}
                 classNames={{
                   label: 'text-nm font-medium',
                 }}
@@ -876,18 +936,17 @@ export default function CreateEventForm() {
                       isOnline: form.getValues('isOnline') ?? false,
                       isOffline: form.getValues('isOffline') ?? false,
                       organizeAddress: form.getValues('organizeAddress'),
-                      price:
-                        tickets.reduce((acc, ticket) => acc + ticket.price, 0) /
-                        tickets.reduce(
-                          (acc, ticket) => acc + ticket.quantity,
-                          0,
-                        ),
+                      price: tickets[tickets.length - 1]?.price ?? 0,
                       tags: form.getValues('tags'),
                       prompt: form.getValues('prompt'),
                     },
                   })
                 }
                 isGenerating={isGenerating}
+              />
+              <FormMessage
+                label='description'
+                className='mt-2'
               />
             </main>
 
@@ -923,7 +982,7 @@ export default function CreateEventForm() {
               </div>
 
               <div className='min-h-[500px] max-h-[1000px] overflow-y-auto flex flex-col items-center justify-center mt-4'>
-                AI Response
+                AI Response (Comming soon)
               </div>
             </div>
           </div>
@@ -932,7 +991,7 @@ export default function CreateEventForm() {
       <SheetOverlay>
         <SheetContent
           side='right'
-          className='min-w-[600px]'
+          className='min-w-[600px] overflow-y-scroll'
         >
           <SheetHeader>
             <SheetTitle className='text-primary'>

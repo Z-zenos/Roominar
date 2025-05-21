@@ -25,7 +25,6 @@ import updateMyProfileFormSchema from '@/src/schemas/audience/UpdateMyProfileFor
 import { useUpdateMyProfileMutation } from '@/src/api/user.api';
 import toast from 'react-hot-toast';
 import { styles } from '@/src/constants/styles.constant';
-import { useListingTagsQuery } from '@/src/api/tag.api';
 import ImageUploader from '../common/Upload/ImageUploader';
 import { Button } from '@nextui-org/button';
 import { useRouter } from 'next/navigation';
@@ -34,7 +33,6 @@ export default function UpdateMyProfileForm() {
   useState<boolean>(false);
   const { data: auth, status } = useSession();
   const { width } = useWindowDimensions();
-  const { data: tagData } = useListingTagsQuery();
   const router = useRouter();
 
   const form = useForm<UpdateMyProfileFormSchema>({
@@ -232,7 +230,6 @@ export default function UpdateMyProfileForm() {
                 name='tags'
                 label='tags'
                 control={form.control}
-                data={tagData}
               />
             </div>
           </div>

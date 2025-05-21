@@ -1,38 +1,60 @@
 'use client';
 
-/**
- * You checked "Using the latest stable version of React and ReactDOM v19" but that error says Next.js 14.2.8, which uses react 18 (feel free to correct me if this is wrong).
-
-react-leaflet 5.0.0 is only compatible with react 19. If you are usin react 18, you should probably downgrade react-leaflet to 4.x.x or upgrade your Next.js project to 15.x.x and react 19.x.x
- *
- */
-
-// IMPORTANT: the order matters!
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css';
 import 'leaflet-defaulticon-compatibility';
 
-import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
+import {
+  MapContainer,
+  Marker,
+  Popup,
+  TileLayer,
+  useMap,
+  useMapEvent,
+} from 'react-leaflet';
 import L from 'leaflet';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import clsx from 'clsx';
 
 const url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 const attribution =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
-function ChangeView({ center, zoom }) {
+function ChangeView({ center }: { center: [number, number] }) {
   const map = useMap();
-  map.setView(center, zoom);
+  map.setView(center);
+  return null;
+}
+
+function ClickHandler({
+  onClick,
+}: {
+  onClick: (latlng: [number, number]) => void;
+}) {
+  useMapEvent('click', (e) => {
+    onClick([e.latlng.lat, e.latlng.lng]);
+  });
   return null;
 }
 
 interface MapProps {
   className?: string;
   zoom?: number;
+  onMarkerChange?: (latlng: [number, number]) => void;
+  defaultCoordinate?: [number, number];
 }
 
-export default function Map({ className, zoom = 4 }: MapProps) {
-  const hanoiCoordinate: [number, number] = [21.028511, 105.804817];
+export default function Map({
+  className,
+  zoom = 12,
+  onMarkerChange,
+  defaultCoordinate,
+}: MapProps) {
+  const coordinate: [number, number] = defaultCoordinate ?? [
+    21.028511, 105.804817,
+  ];
+  const [markerPosition, setMarkerPosition] =
+    useState<[number, number]>(coordinate);
 
   useEffect(() => {
     return () => {
@@ -45,26 +67,30 @@ export default function Map({ className, zoom = 4 }: MapProps) {
     };
   }, []);
 
+  const handleMapClick = (latlng: [number, number]) => {
+    setMarkerPosition(latlng);
+    if (onMarkerChange) {
+      onMarkerChange(latlng); // 👈 gọi callback
+    }
+  };
+
   return (
     <MapContainer
-      center={hanoiCoordinate}
-      zoom={4}
-      className={className}
-      // IMPORTANT: the map container needs a defined size, otherwise nothing will be visible
-      style={{ height: '400px', width: '700px' }}
+      center={markerPosition}
+      zoom={zoom}
+      className={clsx('h-[400px] w-[700px] z-10', className)}
     >
-      <ChangeView
-        center={hanoiCoordinate}
-        zoom={zoom}
-      />
+      <ChangeView center={markerPosition} />
+      <ClickHandler onClick={handleMapClick} />
       <TileLayer
         url={url}
         attribution={attribution}
       />
-      <Marker position={hanoiCoordinate}>
+      <Marker position={markerPosition}>
         <Popup>
-          This Marker icon is displayed correctly with{' '}
-          <i>leaflet-defaulticon-compatibility</i>.
+          Marker is at: <br />
+          Lat: {markerPosition[0].toFixed(5)}, Lng:{' '}
+          {markerPosition[1].toFixed(5)}
         </Popup>
       </Marker>
     </MapContainer>

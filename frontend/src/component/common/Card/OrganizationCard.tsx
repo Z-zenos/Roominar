@@ -14,6 +14,7 @@ import {
 } from '@nextui-org/react';
 import clsx from 'clsx';
 import OrganizationFollowButton from '../Button/OrganizationFollowButton';
+import { useTranslations } from 'next-intl';
 
 export interface Organization extends ListingRandomOrganizationsItem {}
 
@@ -23,6 +24,7 @@ interface OrganizationCardProps {
 }
 
 function OrganizationCard({ organization, className }: OrganizationCardProps) {
+  const t = useTranslations('code');
   return (
     <Card className={clsx('', className)}>
       <CardHeader className='justify-between'>
@@ -64,7 +66,7 @@ function OrganizationCard({ organization, className }: OrganizationCardProps) {
                 'text-sm font-light text-gray-700 hover:text-primary',
               )}
             >
-              {i > 0 && ', '}#{tag.name}
+              {i > 0 && ', '}#{t(`tag.${tag.name}`)}
             </Link>
           ))}
         </span>

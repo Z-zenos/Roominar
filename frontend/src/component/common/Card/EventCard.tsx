@@ -28,6 +28,7 @@ import { useState } from 'react';
 import { useCancelEventApplicationMutation } from '@/src/api/application.api';
 import ConfirmDialog from '../Dialog/ConfirmDialog';
 import useWindowDimensions from '@/src/hooks/useWindowDimension';
+import { useTranslations } from 'next-intl';
 
 interface EventCardProps {
   className?: string;
@@ -44,6 +45,7 @@ function EventCard({
   event,
   style,
 }: EventCardProps) {
+  const t = useTranslations('code');
   const router = useRouter();
   const searchParams = useSearchParams();
   const { status } = useSession();
@@ -307,7 +309,7 @@ function EventCard({
                     'text-primary font-semibold',
                 )}
               >
-                #{tag.name}
+                #{t(`tag.${tag.name}`)}
                 {i === event.tags.length - 1 ? '' : ', '}
               </Link>
             ))}

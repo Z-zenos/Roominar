@@ -8,7 +8,6 @@ from backend.core.constants import (
     TicketCancellationPolicyCode,
     TicketDeliveryMethodCode,
     TicketStatusCode,
-    TicketTypeCode,
 )
 from backend.models.base_model import BaseModel
 
@@ -22,7 +21,9 @@ class Ticket(BaseModel, table=True):
     description: Optional[str] = Field(sa_type=String(1024))
     price: Optional[float] = Field(default=0.0)
     expired_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
-    type: Optional[TicketTypeCode] = Field(sa_type=Enum(TicketTypeCode))
+
+    type: Optional[str] = Field(sa_type=String(50))
+
     status: Optional[TicketStatusCode] = Field(
         sa_type=Enum(TicketStatusCode), default=TicketStatusCode.AVAILABLE
     )
