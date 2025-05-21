@@ -6,7 +6,7 @@ from backend.core.constants import QuestionTypeCode
 class SurveyResponseResultItem(BaseModel):
     question_id: int
     answers_ids: list[int] = Field([])
-    answer_text: str | None
+    answer_text: str | None = None
 
 
 class AttendeeSurveyResponseResultItem(BaseModel):
