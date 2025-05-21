@@ -65,7 +65,6 @@ import NumberSpinnerInput from '../common/Input/NumberSpinnerInput';
 import { useMemo, useState } from 'react';
 import ApplicationCheckout from '../common/Payment/ApplicationCheckout';
 import { useCreateFreeApplicationMutation } from '@/src/api/application.api';
-import { useRouter } from 'next/navigation';
 import useFormatMoney from '@/src/hooks/useFormatMoney';
 import { useTranslations } from 'next-intl';
 
@@ -92,7 +91,6 @@ export default function EventApplicationForm({
   } = useDisclosure();
   const [selectedTicket, setSelectedTicket] = useState<TicketItem | null>(null);
   const formatMoney = useFormatMoney();
-  const router = useRouter();
 
   const form = useForm<EventApplicationFormSchema>({
     mode: 'onChange',
@@ -128,7 +126,7 @@ export default function EventApplicationForm({
   const { trigger, isMutating: isCreating } = useCreateFreeApplicationMutation({
     onSuccess(paymentSessionToken) {
       sessionStorage.setItem('paymentSessionToken', paymentSessionToken);
-      router.push(`apply/result`);
+      toast.success('Buy ticket successfully');
     },
     onError(error: ApiException<unknown>) {
       toast.error(
