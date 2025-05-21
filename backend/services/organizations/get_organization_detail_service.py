@@ -1,4 +1,4 @@
-from sqlmodel import Session, and_, distinct, func, literal, select
+from sqlmodel import Session, and_, case, distinct, func, literal, select
 
 import backend.services.events as events_service
 from backend.core.constants import FollowEntityCode, TagAssociationEntityCode
@@ -78,7 +78,10 @@ async def get_organization_detail(db: Session, user: User, organization_slug: st
                 Organization.phone,
                 Organization.contact_url,
                 Organization.facebook_url,
-                OrganizationTag.c.tags,
+                case(
+                    (OrganizationTag.c.tags.is_(None), literal("[]")),
+                    else_=OrganizationTag.c.tags,
+                ).label("tags"),
                 OrganizationEventFollowCount.c.event_number,
                 OrganizationEventFollowCount.c.follower_number,
                 OrganizationEventFollowCount.c.is_followed,

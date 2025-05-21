@@ -20,7 +20,7 @@ import {
 } from '@/src/component/form/Form';
 import Button from '@/src/component/common/Button/Button';
 import { useGetEventDetailQuery } from '@/src/api/event.api';
-import { cn, optionify } from '@/src/utils/app.util';
+import { cn, formatEventDate, optionify } from '@/src/utils/app.util';
 import {
   MdAirplaneTicket,
   MdOutlineOnlinePrediction,
@@ -65,7 +65,6 @@ import NumberSpinnerInput from '../common/Input/NumberSpinnerInput';
 import { useMemo, useState } from 'react';
 import ApplicationCheckout from '../common/Payment/ApplicationCheckout';
 import { useCreateFreeApplicationMutation } from '@/src/api/application.api';
-import { useRouter } from 'next/navigation';
 import useFormatMoney from '@/src/hooks/useFormatMoney';
 import { useTranslations } from 'next-intl';
 
@@ -92,7 +91,6 @@ export default function EventApplicationForm({
   } = useDisclosure();
   const [selectedTicket, setSelectedTicket] = useState<TicketItem | null>(null);
   const formatMoney = useFormatMoney();
-  const router = useRouter();
 
   const form = useForm<EventApplicationFormSchema>({
     mode: 'onChange',
@@ -115,18 +113,20 @@ export default function EventApplicationForm({
     return form.getValues('tickets').reduce((acc, ticket) => {
       return acc + ticket.price * ticket.quantity;
     }, 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(form.getValues('tickets'))]);
 
   const totalTickets = useMemo(() => {
     return form.getValues('tickets').reduce((acc, ticket) => {
       return acc + ticket.quantity;
     }, 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(form.getValues('tickets'))]);
 
   const { trigger, isMutating: isCreating } = useCreateFreeApplicationMutation({
     onSuccess(paymentSessionToken) {
       sessionStorage.setItem('paymentSessionToken', paymentSessionToken);
-      router.push(`apply/result`);
+      toast.success('Buy ticket successfully');
     },
     onError(error: ApiException<unknown>) {
       toast.error(
@@ -294,7 +294,11 @@ export default function EventApplicationForm({
                               .getValues('tickets')
                               .filter(Boolean)
                               .find((t) => t.id === ticket.id)) ||
-                            !ticket.purchaseble) &&
+                            !ticket.purchaseble ||
+                            (ticket.salesStartAt &&
+                              ticket.salesStartAt > new Date()) ||
+                            (ticket.salesEndAt &&
+                              ticket.salesEndAt < new Date())) &&
                             'pointer-events-none text-gray-600 bg-gray-100',
                         ),
                         label: 'w-full m-0',
@@ -338,7 +342,7 @@ export default function EventApplicationForm({
                               <div className='text-sm w-full'>
                                 <span>Price: </span>
                                 <span className='text-primary font-semibold ml-2'>
-                                  {ticket.price}
+                                  {formatMoney(ticket.price)}
                                 </span>
                               </div>
                             ) : (
@@ -421,7 +425,7 @@ export default function EventApplicationForm({
                               max={event.maxTicketNumberPerAccount}
                             />
                             <button
-                              className='underline text-xs text-primary translate-y-2 cursor-pointer'
+                              className='underline text-xs text-primary translate-y-2 cursor-pointer !pointer-events-auto'
                               onClick={(e) => {
                                 e.preventDefault();
                                 setSelectedTicket(ticket);
@@ -897,24 +901,43 @@ export default function EventApplicationForm({
                         <p className='text-sm text-gray-700'>
                           {selectedTicket.description}
                         </p>
-
-                        <div
-                          className={clsx('my-3', styles.flexStart, 'gap-2')}
-                        >
-                          <Chip
-                            content={t(
-                              `code.ticket.type.${selectedTicket.type}`,
-                            )}
-                            leftIcon={<MdAirplaneTicket className='text-sm' />}
-                            type='info'
-                            className='text-xs w-fit'
-                          />
-                          <Chip
-                            content={selectedTicket.deliveryMethod}
-                            leftIcon={<MdVideoCall className='text-sm' />}
-                            type='success'
-                            className='text-xs w-fit'
-                          />
+                        <div className={clsx(styles.between, 'w-full')}>
+                          <div
+                            className={clsx('my-3', styles.flexStart, 'gap-2')}
+                          >
+                            <Chip
+                              content={t(
+                                `code.ticket.type.${selectedTicket.type}`,
+                              )}
+                              leftIcon={
+                                <MdAirplaneTicket className='text-sm' />
+                              }
+                              type='info'
+                              className='text-xs w-fit'
+                            />
+                            <Chip
+                              content={selectedTicket.deliveryMethod}
+                              leftIcon={<MdVideoCall className='text-sm' />}
+                              type='success'
+                              className='text-xs w-fit'
+                            />
+                          </div>
+                          {selectedTicket.salesStartAt && (
+                            <div className='flex flex-col gap-1 font-light text-sm'>
+                              <p>
+                                Open sale at:{' '}
+                                <span className='font-semibold'>
+                                  {formatEventDate(selectedTicket.salesStartAt)}
+                                </span>
+                              </p>
+                              <p>
+                                Close sale at:{' '}
+                                <span className='font-semibold'>
+                                  {formatEventDate(selectedTicket.salesEndAt)}
+                                </span>
+                              </p>
+                            </div>
+                          )}
                         </div>
 
                         <p className='font-medium text-nm'>

@@ -25,12 +25,14 @@ import EventCard from '@/src/component/common/Card/EventCard';
 import { FaPhone } from 'react-icons/fa6';
 import { GrLocationPin } from 'react-icons/gr';
 import { CiMail } from 'react-icons/ci';
+import { useTranslations } from 'next-intl';
 
 interface OrganizationProfileProps {
   slug: string;
 }
 
 function OrganizationProfile({ slug }: OrganizationProfileProps) {
+  const t = useTranslations('code');
   const { data: organization, isLoading: isGetOrganizationDetailLoading } =
     useGetOrganizationDetailQuery({ organizationSlug: slug });
   const { width } = useWindowDimensions();
@@ -43,7 +45,9 @@ function OrganizationProfile({ slug }: OrganizationProfileProps) {
     <div className='w-full'>
       <Head
         description='Detail information about specific organization'
-        keywords={organization?.tags.map((tag) => tag.name).join(', ')}
+        keywords={organization?.tags
+          .map((tag) => t(`tag.${tag.name}`))
+          .join(', ')}
         title={organization?.name}
       />
       <div className='bg-transparent h-[200px] w-full flex items-center justify-center absolute top-0 left-0'>
@@ -129,7 +133,7 @@ function OrganizationProfile({ slug }: OrganizationProfileProps) {
                   className='cursor-pointer hover:underline text-gray-500 text-sm mr-2 hover:text-primary'
                   onClick={() => router.push(`/search?tags[]=${tag.id}`)}
                 >
-                  #{tag.name}
+                  #{t(`tag.${tag.name}`)}
                   {i === organization.tags.length - 1 ? '' : ', '}
                 </Link>
               ))}

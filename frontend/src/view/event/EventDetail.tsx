@@ -7,18 +7,10 @@ import {
   BreadcrumbItem,
   Breadcrumbs,
   Button,
-  getKeyValue,
   Image,
   Link,
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
 } from '@nextui-org/react';
 import {
-  FaChevronDown,
   FaFacebookSquare,
   FaInstagram,
   FaLinkedin,
@@ -65,50 +57,20 @@ import OrganizationFollowButton from '@/src/component/common/Button/Organization
 import HorizontalTimeline from '@/src/component/common/DateTime/HorizontalTimeline';
 import toast from 'react-hot-toast';
 import { TbClockExclamation } from 'react-icons/tb';
+import dynamic from 'next/dynamic';
+import { useTranslations } from 'next-intl';
 
-const rows = [
-  {
-    key: '1',
-    time: '12:30 ~ 13:00',
-    title: 'Title',
-    content: 'Active',
-  },
-  {
-    key: '2',
-    time: '12:30 ~ 13:00',
-    title: 'Title',
-    content: 'Active',
-  },
-  {
-    key: '3',
-    time: '12:30 ~ 13:00',
-    title: 'Title',
-    content: 'Active',
-  },
-  {
-    key: '4',
-    time: '12:30 ~ 13:00',
-    title: 'Title',
-    content: 'Active',
-  },
-];
-
-const columns = [
-  {
-    key: 'time',
-    label: 'TIME',
-  },
-  {
-    key: 'content',
-    label: 'CONTENT',
-  },
-];
+const LazyMap = dynamic(() => import('../../component/common/Map/Map'), {
+  ssr: false,
+  loading: () => <p>Loading...</p>,
+});
 
 interface EventDetailProps {
   slug: string;
 }
 
 function EventDetail({ slug }: EventDetailProps) {
+  const t = useTranslations('code');
   const { data: event, isLoading } = useGetEventDetailQuery({ slug });
   const { data: topOrganizationEventsData } =
     useListingTopOrganizationEventsQuery(
@@ -234,12 +196,14 @@ function EventDetail({ slug }: EventDetailProps) {
           </div>
           <Image
             src={event?.coverImageUrl}
+            alt='Event banner image'
+            width={1024}
             className={clsx(
-              width > 1200 ? 'w-[90%]' : 'w-full',
-              'aspect-video',
+              'w-full max-w-screen-xl aspect-video object-cover rounded-xl max-h-[576px]',
+              width > 1200 ? 'mx-auto' : '',
             )}
             classNames={{ wrapper: '!max-w-full' }}
-            alt='Event banner image'
+            loading='lazy'
           />
           <h2 className='text-primary font-bold 450px:text-xl text-xm'>
             {event?.name}
@@ -247,7 +211,7 @@ function EventDetail({ slug }: EventDetailProps) {
           <div className={clsx(styles.flexStart, 'gap-2 flex-wrap')}>
             {event?.tags.map((tag: TagItem) => (
               <Badge
-                title={tag.name}
+                title={t(`tag.${tag.name}`)}
                 key={`badge-tag-${tag.id}`}
                 className='cursor-pointer hover:underline'
                 onClick={() => router.push(`/search?tags[]=${tag.id}`)}
@@ -368,6 +332,26 @@ function EventDetail({ slug }: EventDetailProps) {
               Ask about this event
             </Link>
           </div>
+
+          {/* === LOCATION === */}
+          {event?.organizeAddress && (
+            <div>
+              <h3 className='font-semibold 450px:text-xm text-xm mt-4'>
+                Offline address
+              </h3>
+              <div>
+                <p className='font-light mb-2'>{event?.organizeAddress}</p>
+                <div className='border border-gray-400 rounded-md shadow-sm'>
+                  {event.organizeAddress && event.lat && event.lng && (
+                    <LazyMap
+                      defaultCoordinate={[event?.lat, event?.lng]}
+                      className='w-full !h-[200px] rounded-md'
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -396,25 +380,6 @@ function EventDetail({ slug }: EventDetailProps) {
             />
           </div>
 
-          {/* === LOCATION === */}
-          <div>
-            <h3 className='font-semibold 450px:text-lg text-xm'>
-              Offline address
-            </h3>
-            <div className='mt-3'>
-              {/* https://maps.google.com/?saddr=Current+Location&daddr=${lat},${lng} */}
-              <p className='font-light'>{event?.organizationAddress}</p>
-              <Link
-                className={styles.flexStart}
-                href='#'
-                underline='hover'
-                onClick={() => {}}
-              >
-                Show map <FaChevronDown />
-              </Link>
-            </div>
-          </div>
-
           {/* === DESCRIPTION === */}
           <div>
             <h3 className='font-semibold 450px:text-lg text-xm border-b border-b-gray-400'>
@@ -424,38 +389,6 @@ function EventDetail({ slug }: EventDetailProps) {
               <div
                 dangerouslySetInnerHTML={{ __html: event?.description }}
               ></div>
-            </div>
-          </div>
-
-          {/* === Detail Schedule === */}
-          <div>
-            <h3 className='font-semibold 450px:text-lg text-xm border-b border-b-gray-400'>
-              Detail Schedule
-            </h3>
-            <div className='mt-3'>
-              <Table aria-label='Example table with dynamic content'>
-                <TableHeader columns={columns}>
-                  {(column) => (
-                    <TableColumn
-                      key={column.key}
-                      className={clsx(column.key === 'content' && 'w-2/3')}
-                    >
-                      {column.label}
-                    </TableColumn>
-                  )}
-                </TableHeader>
-                <TableBody items={rows}>
-                  {(item) => (
-                    <TableRow key={item.key}>
-                      {(columnKey) => (
-                        <TableCell>
-                          <p>{getKeyValue(item, columnKey)}</p>
-                        </TableCell>
-                      )}
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
             </div>
           </div>
 

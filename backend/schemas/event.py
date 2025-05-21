@@ -128,12 +128,16 @@ class GetEventDetailResponse(BaseModel):
     organization_name: str
     meeting_url: str | None = None
     meeting_tool_code: EventMeetingToolCode | None = None
+    lat: float | None = None
+    lng: float | None = None
+    organize_address: str | None = None
+
     organization_id: int | None = None
     organization_url: str | None = None
     organization_address: str | None = None
     organization_avatar_url: str | None = None
     organization_description: str | None = None
-    tickets: list[TicketItem]
+    tickets: list[TicketItem] = Field([])
     organization_contact_url: str | None = None
     total_ticket_number: int
     sold_tickets_number: int | None = None
@@ -241,6 +245,9 @@ class PublishEventRequest(BaseModel):
     organize_city_code: CityCode | None = Field(max_length=50)
     organize_address: str | None = Field(max_length=255)
 
+    lat: float | None
+    lng: float | None
+
     meeting_tool_code: EventMeetingToolCode | None
     meeting_url: str | None = Field(max_length=2048)
     survey_id: int | None
@@ -347,6 +354,8 @@ class GetDraftEventResponse(BaseModel):
     is_online: bool | None = None
     is_offline: bool | None = None
     organize_address: str | None = None
+    lat: float | None = None
+    lng: float | None = None
     organize_city_code: str | None = None
     description: str | None = None
     meeting_url: str | None = None
@@ -379,6 +388,9 @@ class SaveDraftEventRequest(BaseModel):
     is_offline: bool | None
     organize_city_code: CityCode | None = Field(max_length=50)
     organize_address: str | None = Field(max_length=255)
+
+    lat: float | None
+    lng: float | None
 
     is_online: bool | None
     meeting_tool_code: EventMeetingToolCode | None

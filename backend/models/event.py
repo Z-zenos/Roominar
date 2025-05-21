@@ -1,9 +1,19 @@
 from datetime import datetime
 from typing import Optional
 
+from geoalchemy2 import Geography
 from pydantic import model_validator
 from slugify import slugify
-from sqlmodel import ARRAY, DateTime, Enum, Field, String, Text
+from sqlmodel import (
+    ARRAY,
+    DOUBLE_PRECISION,
+    Column,
+    DateTime,
+    Enum,
+    Field,
+    String,
+    Text,
+)
 
 from backend.core.constants import EventMeetingToolCode, EventStatusCode
 from backend.models.base_model import BaseModel
@@ -42,7 +52,16 @@ class Event(BaseModel, table=True):
 
     organize_city_code: Optional[str] = Field(sa_type=String(50))
     organize_address: Optional[str] = Field(sa_type=String(255))
-    # organize_coordinates
+
+    coordinate: Optional[str] = Field(
+        sa_column=Column(
+            Geography(geometry_type="POINT", srid=4326),
+            nullable=True,
+        )
+    )
+
+    lat: Optional[float] = Field(sa_type=DOUBLE_PRECISION)
+    lng: Optional[float] = Field(sa_type=DOUBLE_PRECISION)
 
     meeting_tool_code: Optional[EventMeetingToolCode] = Field(
         sa_type=Enum(EventMeetingToolCode)

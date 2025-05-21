@@ -68,6 +68,8 @@ const eventAddressSchema = z
     organizeCityCode: z.nativeEnum(CityCode).optional(),
     meetingToolCode: z.nativeEnum(EventMeetingToolCode).optional(),
     meetingUrl: z.string().url().or(z.literal('')),
+    lat: z.number().nullable(),
+    lng: z.number().nullable(),
   })
   .superRefine(
     (

@@ -2,6 +2,7 @@
 import { Button } from '@nextui-org/react';
 import {
   Form,
+  FormDateRangePicker,
   FormInput,
   FormInstructions,
   FormRadioBoxList,
@@ -22,6 +23,7 @@ import {
 import { useCreateTicketMutation } from '@/src/api/ticket.api';
 import toast from 'react-hot-toast';
 import { optionify } from '@/src/utils/app.util';
+import type { DateRange } from 'react-day-picker';
 
 interface CreateTicketFormProps {
   eventId?: number;
@@ -29,7 +31,7 @@ interface CreateTicketFormProps {
 }
 
 function CreateTicketForm({ eventId, onCreate }: CreateTicketFormProps) {
-  const form = useForm<CreateTicketFormSchema>({
+  const form = useForm<CreateTicketFormSchema & { saleTime?: DateRange }>({
     mode: 'onChange',
     defaultValues: {
       name: '',
@@ -43,6 +45,7 @@ function CreateTicketForm({ eventId, onCreate }: CreateTicketFormProps) {
       // status: TicketStatusCode.Available,
       salesStartAt: new Date(),
       salesEndAt: new Date(),
+      saleTime: undefined,
     },
     resolver: zodResolver(createTicketFormSchema),
   });
@@ -73,8 +76,8 @@ function CreateTicketForm({ eventId, onCreate }: CreateTicketFormProps) {
         deliveryMethod: data.deliveryMethod,
         eventId: eventId ?? null,
         expiredAt: null,
-        salesStartAt: null,
-        salesEndAt: null,
+        salesStartAt: form.getValues('saleTime')?.from,
+        salesEndAt: form.getValues('saleTime')?.to,
         accessLinkUrl: null,
       },
     });
@@ -134,6 +137,15 @@ function CreateTicketForm({ eventId, onCreate }: CreateTicketFormProps) {
             control={form.control}
             showError={true}
             type='number'
+          />
+        </div>
+
+        <div className='col-span-2 mt-4'>
+          <FormDateRangePicker
+            label='ticketSaleTime'
+            name='saleTime'
+            control={form.control}
+            className='w-full'
           />
         </div>
 
