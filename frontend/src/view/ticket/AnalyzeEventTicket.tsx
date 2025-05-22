@@ -193,7 +193,7 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
             <Nodata />
           )}
         </div>
-        <div className='col-span-2 shadow-md p-5 pb-0 rounded-md bg-white'>
+        <div className='col-span-2 shadow-md p-5 pb-1 rounded-md bg-white'>
           <div className='grid grid-cols-2 gap-4 mb-4'>
             <div>
               <p className='text-lg font-semibold'>Best Selling</p>
