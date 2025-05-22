@@ -1,3 +1,4 @@
+from .analyze_event_ticket_service import analyze_event_tickets
 from .download_attendees_csv_service import download_attendees_csv
 from .follow_organization_service import follow_organization
 from .get_attendee_detail_service import get_attendee_detail
@@ -24,4 +25,5 @@ all = (
     track_user_actions,
     get_ticket_stats,
     listing_attendees_ranking,
+    analyze_event_tickets,
 )
