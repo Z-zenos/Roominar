@@ -1,7 +1,7 @@
 'use client';
 
 import type { Key } from 'react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
   Table,
   TableHeader,
@@ -50,16 +50,6 @@ import { CiLocationOn } from 'react-icons/ci';
 import { FcVideoCall } from 'react-icons/fc';
 import { useTranslations } from 'next-intl';
 import { FaChevronDown } from 'react-icons/fa6';
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetOverlay,
-  SheetTitle,
-  SheetTrigger,
-} from '@/src/component/common/Sheet';
 import type { DateRange } from 'react-day-picker';
 
 const columns = [
@@ -84,9 +74,6 @@ export default function EventDataTable() {
   const [selectedKeys, setSelectedKeys] = useState<any>(null);
   const [page, setPage] = useState<number>(data?.page || 1);
   const pageCount = Math.ceil(data?.total / data?.perPage);
-  const [rightSidebarContent, setRightSidebarContent] = useState<
-    'EVENT_DETAIL' | null
-  >();
 
   const form = useForm<
     OrganizationsApiListingOrganizationEventsRequest & {
@@ -125,25 +112,6 @@ export default function EventDataTable() {
     },
   });
 
-  const rightSidebar = useMemo(() => {
-    switch (rightSidebarContent) {
-      case 'EVENT_DETAIL':
-        return {
-          title: 'EVENT DETAIL',
-          body: <p>test</p>,
-          footer: null,
-        };
-
-      // case 'TARGET':
-      //   return {
-      //     title: 'TARGET',
-      //     body: <CreateTargetForm />,
-      //     footer: null,
-      //   };
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rightSidebarContent]);
-
   function handleSearch(data: any = {}) {
     if (form.getValues('startAtRange')) {
       const startAtRange = form.getValues('startAtRange');
@@ -173,29 +141,17 @@ export default function EventDataTable() {
                 alt={event.name}
                 width={100}
                 height={80}
-                className='rounded-md'
+                className='rounded-md min-w-[100px]'
               />
               <Link
                 className='font-semibold text-nm capitalize text-primary hover:underline'
                 href={
                   event.status === EventStatusCode.Draft
                     ? `/organization/events/create/${event.slug}`
-                    : '#'
+                    : `/organization/events/${event.slug}/overview`
                 }
               >
-                {event.status === EventStatusCode.Draft ? (
-                  event.name
-                ) : (
-                  <SheetTrigger
-                    onClick={() => {
-                      setRightSidebarContent('EVENT_DETAIL');
-                      // setSelectedAttendeeId(attendee.id);
-                    }}
-                    className={clsx(styles.between, 'gap-2')}
-                  >
-                    {event.name}
-                  </SheetTrigger>
-                )}
+                {event.name}
               </Link>
             </div>
           );
@@ -328,7 +284,7 @@ export default function EventDataTable() {
   );
 
   return (
-    <Sheet>
+    <>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSearch)}>
           <div className='flex justify-between items-center flex-wrap gap-1'>
@@ -485,22 +441,6 @@ export default function EventDataTable() {
           />
         )}
       </div>
-
-      <SheetOverlay>
-        <SheetContent
-          side='right'
-          className='min-w-[800px]'
-        >
-          <SheetHeader>
-            <SheetTitle className='text-primary'>
-              {rightSidebar?.title}
-            </SheetTitle>
-            <SheetDescription />
-          </SheetHeader>
-          {rightSidebar?.body}
-          <SheetFooter>{rightSidebar?.footer}</SheetFooter>
-        </SheetContent>
-      </SheetOverlay>
-    </Sheet>
+    </>
   );
 }

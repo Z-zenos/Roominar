@@ -14,17 +14,9 @@ import {
   RightSidebarProvider,
   useRightSidebar,
 } from '@/src/contexts/RightSidebarContext';
+import OrganizationDynamicBar from '@/src/view/organization/OrganizationDynamicBar';
 import { useSession } from 'next-auth/react';
 import dynamic from 'next/dynamic';
-import { usePathname } from 'next/navigation';
-
-const PAGE_METADATA = [
-  {
-    title: 'Create an event with AI',
-    description: 'Create an event with AI',
-    url: '/organization/events/create/auto',
-  },
-];
 
 const LazyRightSidebar = dynamic(
   () => import('@/src/view/organization/OrganizationRightSidebar'),
@@ -35,7 +27,6 @@ const LazyRightSidebar = dynamic(
 
 // This is the inner component that will use the context
 function LayoutContent({ children }) {
-  const pathname = usePathname();
   const { status } = useSession();
   const {
     data: totalUnreadNotifications,
@@ -61,11 +52,7 @@ function LayoutContent({ children }) {
                   orientation='vertical'
                   className='mr-2 h-4'
                 />
-                <div className='col-span-2'>
-                  <h3 className='text-md font-semibold'>
-                    {PAGE_METADATA.find((item) => item.url === pathname)?.title}
-                  </h3>
-                </div>
+                <OrganizationDynamicBar />
               </div>
               {status === 'authenticated' && (
                 <SheetTrigger

@@ -16,11 +16,13 @@ import { IoMdLogIn } from 'react-icons/io';
 interface OrganizationFollowButtonProps {
   organizationId: number;
   isFollowed: boolean;
+  isDisabled?: boolean;
 }
 
 export default function OrganizationFollowButton({
   organizationId,
   isFollowed,
+  isDisabled = false,
 }: OrganizationFollowButtonProps) {
   const { status } = useSession();
   const [follow, setFollow] = useState<boolean>(isFollowed);
@@ -84,6 +86,7 @@ export default function OrganizationFollowButton({
             : createOrganizationFollow({ organizationId });
         }
       }}
+      isDisabled={isDisabled}
     >
       {follow ? 'Unfollow' : 'Follow'}
     </Button>

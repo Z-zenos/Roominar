@@ -24,7 +24,9 @@ from backend.schemas.event import (
     ListingTopOrganizationEventsResponse,
 )
 from backend.schemas.organization import (
+    AnalyzeEventTicketsResponse,
     DownloadAttendeesRequest,
+    FilterAnalyzeEventTicketsQueryParams,
     GetAttendeeDetailResponse,
     GetOrganizationDashboardResponse,
     GetOrganizationDetailResponse,
@@ -91,6 +93,24 @@ async def listing_organization_events_timeline(
 ):
     events = await events_service.listing_events_timeline(db, organizer)
     return events
+
+
+@router.get(
+    "/events/{slug}/analyze/tickets",
+    response_model=AnalyzeEventTicketsResponse,
+    responses=authenticated_api_responses,
+)
+async def analyze_event_tickets(
+    db: Session = Depends(get_read_db),
+    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+    slug: str = None,
+    query_params: FilterAnalyzeEventTicketsQueryParams = Depends(
+        FilterAnalyzeEventTicketsQueryParams
+    ),
+):
+    return await organizations_service.analyze_event_tickets(
+        db, organizer, slug, query_params
+    )
 
 
 @router.get(

@@ -236,3 +236,83 @@ class ListingAttendeesRankingQueryParams(BaseModel):
 class RegisterOrganizationResponse(BaseModel):
     email: str
     expire_at: datetime
+
+
+class FilterAnalyzeEventTicketsQueryParams(BaseModel):
+    granularity: Literal["daily", "weekly", "monthly"] = Field(
+        Query(default="daily", description="The granularity of the data.")
+    )
+
+
+class AnalyzeEventTicketsOverview(BaseModel):
+    total_tickets: int
+    total_sold_tickets: int
+    total_canceled_tickets: int
+    total_available_tickets: int
+    total_gross_revenue: float
+    total_net_revenue: float
+    total_checkins: int
+    checkin_rate: float
+    cancel_rate: float
+    tickets: list[dict] = Field([])
+
+
+class TicketStatByTime(BaseModel):
+    time: str
+    tickets_sold: int
+    revenue_gross: float
+    revenue_net: float
+
+
+class CheckinStatByTime(BaseModel):
+    time: str
+    checkins: int
+
+
+class TicketGranularity(BaseModel):
+    ticket_stats_by_time: list[TicketStatByTime] = Field([])
+    checkin_stats_by_time: list[CheckinStatByTime] = Field([])
+    revenue_trend_percent: float | None = None
+    ticket_trend_percent: float | None = None
+
+
+class RevenueByTicketType(BaseModel):
+    ticket_id: int
+    ticket_name: str
+    ticket_type: str
+    tickets_sold: int
+    revenue_gross: float
+    revenue_net: float
+
+
+class TopHourStat(BaseModel):
+    hour: str  # e.g. "14"
+    count: int
+
+
+class SalesSpeedStat(BaseModel):
+    ticket_id: int
+    in_1h: int
+    in_1d: int
+    in_1w: int
+    total: int
+
+
+class TimeToSoldOutStat(BaseModel):
+    ticket_id: int
+    time_to_sold_out_in_hours: float
+
+
+class AnalyzeAdvanced(BaseModel):
+    revenue_by_ticket_type: list[RevenueByTicketType] = Field([])
+    top_ticket_purchase_hours: list[TopHourStat] = Field([])
+    top_checkin_hours: list[TopHourStat] = Field([])
+    sales_speed: list[SalesSpeedStat] = Field([])
+    time_to_sold_out: list[TimeToSoldOutStat] = Field([])
+    no_checkin_rate: float | None = None
+
+
+class AnalyzeEventTicketsResponse(BaseModel):
+    overview: AnalyzeEventTicketsOverview
+    ticket_granularity: TicketGranularity
+    analyze_advanced: AnalyzeAdvanced
