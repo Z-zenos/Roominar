@@ -65,12 +65,12 @@ const LazyMap = dynamic(() => import('../../component/common/Map/Map'), {
   loading: () => <p>Loading...</p>,
 });
 
-interface EventDetailProps {
+interface OrganizationEventHomeProps {
   slug: string;
 }
 
-function EventDetail({ slug }: EventDetailProps) {
-  const t = useTranslations('code');
+function OrganizationEventHome({ slug }: OrganizationEventHomeProps) {
+  const t = useTranslations();
   const { data: event, isLoading } = useGetEventDetailQuery({ slug });
   const { data: topOrganizationEventsData } =
     useListingTopOrganizationEventsQuery(
@@ -145,7 +145,7 @@ function EventDetail({ slug }: EventDetailProps) {
       />
       <div
         className={clsx(
-          'dark:bg-dark-sub w-full 450px:py-14 py-8 450px:px-[15%] px-[5%] relative flex-wrap',
+          'dark:bg-dark-sub w-full 450px:py-14 py-8 450px:px-[10%] px-[5%] relative flex-wrap',
           styles.between,
         )}
       >
@@ -209,14 +209,14 @@ function EventDetail({ slug }: EventDetailProps) {
             {event?.name}
           </h2>
           <div className={clsx(styles.flexStart, 'gap-2 flex-wrap')}>
-            {event?.tags.map((tag: TagItem) => (
-              <Badge
-                title={t(`tag.${tag.name}`)}
-                key={`badge-tag-${tag.id}`}
-                className='cursor-pointer hover:underline'
-                onClick={() => router.push(`/search?tags[]=${tag.id}`)}
-              />
-            ))}
+            {event &&
+              event.tags.map((tag: TagItem) => (
+                <Badge
+                  title={t(`code.tag.${tag.name}`)}
+                  key={`badge-tag-${tag.id}`}
+                  className='cursor-pointer hover:underline'
+                />
+              ))}
           </div>
         </div>
         <div className={clsx(width > 1200 ? 'w-[25%]' : 'w-full')}>
@@ -265,6 +265,7 @@ function EventDetail({ slug }: EventDetailProps) {
                 <EventBookmark
                   isBookmarked={event?.isBookmarked}
                   eventId={event?.id}
+                  isDisabled={true}
                 />
               </div>
             </div>
@@ -318,6 +319,7 @@ function EventDetail({ slug }: EventDetailProps) {
                     router.push(auth?.user ? `${pathname}/apply` : '/login');
                   }
                 }}
+                isDisabled={true}
               >
                 Apply Now
               </Button>
@@ -357,7 +359,7 @@ function EventDetail({ slug }: EventDetailProps) {
 
       <div
         className={clsx(
-          'dark:bg-dark-sub w-full 450px:py-14 py-6 450px:px-[15%] px-[5%] relative flex-wrap flex justify-between items-start',
+          'dark:bg-dark-sub w-full 450px:py-14 py-6 450px:px-[10%] px-[5%] relative flex-wrap flex justify-between items-start',
         )}
       >
         <div
@@ -409,13 +411,13 @@ function EventDetail({ slug }: EventDetailProps) {
             </h3>
 
             {/* <div className='flex gap-5 items-center justify-start mt-6 flex-wrap'>
-              {[10, 11, 12, 15].map((speaker, i) => (
-                <SpeakerCard
-                  key={`speaker-${i}`}
-                  className='max-w-[250px]'
-                />
-              ))}
-            </div> */}
+                {[10, 11, 12, 15].map((speaker, i) => (
+                  <SpeakerCard
+                    key={`speaker-${i}`}
+                    className='max-w-[250px]'
+                  />
+                ))}
+              </div> */}
           </div>
         </div>
         <div
@@ -442,18 +444,14 @@ function EventDetail({ slug }: EventDetailProps) {
                 </div>
               )}
               <div className={clsx(styles.between, 'px-5')}>
-                <h3
-                  className='font-semibold text-primary text-xm cursor-pointer'
-                  onClick={() =>
-                    router.push(`/organization/${event?.organizationSlug}`)
-                  }
-                >
+                <h3 className='font-semibold text-primary text-xm cursor-pointer'>
                   {event?.organizationName}
                 </h3>
                 <div className='text-right mt-3'>
                   <OrganizationFollowButton
                     organizationId={event.organizationId}
                     isFollowed={event.isOrganizationFollowed}
+                    isDisabled={true}
                   />
                   <p className='mt-2'>
                     <span className='underline font-medium text-sm text-red-500 mr-2'>
@@ -508,6 +506,7 @@ function EventDetail({ slug }: EventDetailProps) {
                   //     `/organizations/?keyword=${event.organizationName}`,
                   //   )
                   // }
+                  disabled={true}
                 >
                   More event +
                 </button>
@@ -601,4 +600,4 @@ function EventDetail({ slug }: EventDetailProps) {
   );
 }
 
-export default EventDetail;
+export default OrganizationEventHome;

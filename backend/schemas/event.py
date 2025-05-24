@@ -139,6 +139,7 @@ class GetEventDetailResponse(BaseModel):
     organization_description: str | None = None
     tickets: list[TicketItem] = Field([])
     organization_contact_url: str | None = None
+    organization_slug: str | None = None
     total_ticket_number: int
     sold_tickets_number: int | None = None
     status: EventStatusCode

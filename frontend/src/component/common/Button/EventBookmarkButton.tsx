@@ -17,11 +17,13 @@ import { IoBookmarkOutline, IoBookmark } from 'react-icons/io5';
 interface EventBookmarkButtonProps {
   eventId: number;
   isBookmarked: boolean;
+  isDisabled?: boolean;
 }
 
 function EventBookmarkButton({
   eventId,
   isBookmarked,
+  isDisabled = false,
 }: EventBookmarkButtonProps) {
   const { status } = useSession();
   const [bookmark, setBookmark] = useState<boolean>(isBookmarked);
@@ -79,6 +81,7 @@ function EventBookmarkButton({
             : createEventBookmark({ eventId });
         }
       }}
+      isDisabled={isDisabled}
     >
       {bookmark ? <IoBookmark size={16} /> : <IoBookmarkOutline size={16} />}
     </Button>
