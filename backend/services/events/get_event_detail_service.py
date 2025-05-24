@@ -1,6 +1,6 @@
 from sqlmodel import Session, and_, case, exists, func, select, update
 
-from backend.core.constants import FollowEntityCode, TransactionStatusCode
+from backend.core.constants import FollowEntityCode, RoleCode, TransactionStatusCode
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.models import Bookmark, Event, Organization, Ticket, User
@@ -12,123 +12,124 @@ from backend.services.tags.get_event_tags_service import get_event_tags
 from backend.utils.database import fetch_one
 
 
-async def get_event_detail(db: Session, current_user: User, slug: str):
-    event = fetch_one(db, select(Event).where(Event.slug == slug))
-
-    if not event:
-        raise BadRequestException(
-            ErrorCode.ERR_EVENT_NOT_FOUND, ErrorMessage.ERR_EVENT_NOT_FOUND
-        )
-
-    OrganizationEventFollowCount = (
-        select(
-            Organization.id,
-            func.count(Event.id.distinct()).label("organization_event_number"),
-            func.count(Follow.follower_id.distinct()).label(
-                "organization_follower_number"
-            ),
-        )
-        .outerjoin(Event, Event.organization_id == Organization.id)
-        .outerjoin(
-            Follow,
-            and_(
-                Follow.following_id == Organization.id,
-                Follow.entity_code == FollowEntityCode.ORGANIZATION,
-            ),
-        )
-        .where(Event.published_at.isnot(None))
-        .group_by(Organization.id)
-        .subquery()
-    )
-
-    SoldTicketsNumber = (
-        select(
-            Event.id,
-            func.sum(TicketInventory.sold_quantity).label("sold_tickets_number"),
-        )
-        .join(TicketInventory, TicketInventory.event_id == Event.id)
-        .group_by(Event.id)
-        .subquery()
-    )
-
-    query = (
-        select(
-            *Event.__table__.columns,
-            Organization.name.label("organization_name"),
-            Organization.address.label("organization_address"),
-            Organization.hp_url.label("organization_url"),
-            Organization.contact_email.label("organization_contact_email"),
-            Organization.contact_url.label("organization_contact_url"),
-            Organization.avatar_url.label("organization_avatar_url"),
-            Organization.description.label("organization_description"),
-            OrganizationEventFollowCount.c.organization_event_number,
-            OrganizationEventFollowCount.c.organization_follower_number,
-            SoldTicketsNumber.c.sold_tickets_number,
-        )
-        .where(
-            Event.slug == slug,
-            Event.published_at.isnot(None),
-        )
-        .join(Organization, Event.organization_id == Organization.id)
-        .join(
-            OrganizationEventFollowCount,
-            OrganizationEventFollowCount.c.id == Organization.id,
-        )
-        .outerjoin(SoldTicketsNumber, SoldTicketsNumber.c.id == Event.id)
-    )
-
-    if current_user:
-        query = query.add_columns(
-            case(
-                (
-                    current_user and Follow.follower_id == current_user.id,
-                    True,
-                ),
-                else_=False,
-            ).label("is_organization_followed"),
-        ).outerjoin(
-            Follow,
-            and_(
-                Follow.following_id == Organization.id,
-                Follow.follower_id == (current_user.id if current_user else None),
-            ),
-        )
-
-    event = db.exec(query).mappings().one_or_none()
-    event = dict(event)
-
-    event.update(
-        {
-            "survey": (
-                get_survey_detail(db, event["survey_id"])
-                if event["survey_id"]
-                else None
-            ),
-            "tickets": _get_tickets(db, current_user, event["id"]),
-            "organization_contact_url": event["organization_contact_url"],
-            "tags": get_event_tags(db, event["id"]),
-        }
-    )
-
-    if current_user:
-        is_bookmarked = db.exec(
-            select(
-                exists().where(
-                    Bookmark.user_id == current_user.id,
-                    Bookmark.event_id == event["id"],
-                )
-            )
-        ).one_or_none()
-        event["is_bookmarked"] = is_bookmarked
-
+async def get_event_detail(db: Session, user: User, slug: str):
     try:
-        db.exec(
-            update(Event)
-            .where(Event.id == event["id"])
-            .values(view_number=event["view_number"] + 1)
+        event = fetch_one(db, select(Event).where(Event.slug == slug))
+
+        if not event:
+            raise BadRequestException(
+                ErrorCode.ERR_EVENT_NOT_FOUND, ErrorMessage.ERR_EVENT_NOT_FOUND
+            )
+
+        OrganizationEventFollowCount = (
+            select(
+                Organization.id,
+                func.count(Event.id.distinct()).label("organization_event_number"),
+                func.count(Follow.follower_id.distinct()).label(
+                    "organization_follower_number"
+                ),
+            )
+            .outerjoin(Event, Event.organization_id == Organization.id)
+            .outerjoin(
+                Follow,
+                and_(
+                    Follow.following_id == Organization.id,
+                    Follow.entity_code == FollowEntityCode.ORGANIZATION,
+                ),
+            )
+            .where(Event.published_at.isnot(None))
+            .group_by(Organization.id)
+            .subquery()
         )
-        db.commit()
-        event["view_number"] += 1
+
+        SoldTicketsNumber = (
+            select(
+                Event.id,
+                func.sum(TicketInventory.sold_quantity).label("sold_tickets_number"),
+            )
+            .join(TicketInventory, TicketInventory.event_id == Event.id)
+            .group_by(Event.id)
+            .subquery()
+        )
+
+        query = (
+            select(
+                *Event.__table__.columns,
+                Organization.name.label("organization_name"),
+                Organization.address.label("organization_address"),
+                Organization.hp_url.label("organization_url"),
+                Organization.contact_email.label("organization_contact_email"),
+                Organization.contact_url.label("organization_contact_url"),
+                Organization.avatar_url.label("organization_avatar_url"),
+                Organization.description.label("organization_description"),
+                Organization.slug.label("organization_slug"),
+                OrganizationEventFollowCount.c.organization_event_number,
+                OrganizationEventFollowCount.c.organization_follower_number,
+                SoldTicketsNumber.c.sold_tickets_number,
+            )
+            .where(
+                Event.slug == slug,
+                Event.published_at.isnot(None),
+            )
+            .join(Organization, Event.organization_id == Organization.id)
+            .join(
+                OrganizationEventFollowCount,
+                OrganizationEventFollowCount.c.id == Organization.id,
+            )
+            .outerjoin(SoldTicketsNumber, SoldTicketsNumber.c.id == Event.id)
+        )
+
+        if user:
+            query = query.add_columns(
+                case(
+                    (
+                        user and Follow.follower_id == user.id,
+                        True,
+                    ),
+                    else_=False,
+                ).label("is_organization_followed"),
+            ).outerjoin(
+                Follow,
+                and_(
+                    Follow.following_id == Organization.id,
+                    Follow.follower_id == (user.id if user else None),
+                ),
+            )
+
+        event = db.exec(query).mappings().one_or_none()
+        event = dict(event)
+
+        event.update(
+            {
+                "survey": (
+                    get_survey_detail(db, event["survey_id"])
+                    if event["survey_id"]
+                    else None
+                ),
+                "tickets": _get_tickets(db, user, event["id"]),
+                "organization_contact_url": event["organization_contact_url"],
+                "tags": get_event_tags(db, event["id"]),
+            }
+        )
+
+        if user and user.role_code == RoleCode.AUDIENCE:
+            is_bookmarked = db.exec(
+                select(
+                    exists().where(
+                        Bookmark.user_id == user.id,
+                        Bookmark.event_id == event["id"],
+                    )
+                )
+            ).one_or_none()
+            event["is_bookmarked"] = is_bookmarked
+
+            db.exec(
+                update(Event)
+                .where(Event.id == event["id"])
+                .values(view_number=event["view_number"] + 1)
+            )
+            db.commit()
+            event["view_number"] += 1
         return event
 
     except Exception as e:

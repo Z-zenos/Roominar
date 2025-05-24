@@ -133,11 +133,11 @@ async def get_draft_event(
     "/{slug}", response_model=GetEventDetailResponse, responses=public_api_responses
 )
 async def get_event_detail(
-    slug: str,
     db: Session = Depends(get_read_db),
-    current_user: User | None = Depends(get_user_if_logged_in),
+    user: User | None = Depends(get_user_if_logged_in),
+    slug: str = None,
 ):
-    return await events_service.get_event_detail(db, current_user, slug)
+    return await events_service.get_event_detail(db, user, slug)
 
 
 @router.get(

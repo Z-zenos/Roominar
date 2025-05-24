@@ -196,7 +196,7 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
         <div className='col-span-2 shadow-md p-5 pb-1 rounded-md bg-white'>
           <div className='grid grid-cols-2 gap-4 mb-4'>
             <div>
-              <p className='text-lg font-semibold'>Best Selling</p>
+              <p className='text-md font-semibold'>Best Selling</p>
 
               {data.overview ? (
                 <div>

@@ -67,6 +67,7 @@ import ElementLoader from '../common/Loader/ElementLoader';
 import { RiRobot2Line } from 'react-icons/ri';
 import { AiOutlineSend } from 'react-icons/ai';
 import { exportHTML } from '../editor/components/editor/utils/html';
+import { useRouter } from 'next/navigation';
 
 const LazyMap = dynamic(() => import('../common/Map/Map'), {
   ssr: false,
@@ -111,6 +112,7 @@ const UpdateTicketForm = dynamic(() => import('./UpdateTicketForm'), {
 
 export default function CreateEventForm() {
   const t = useTranslations('form');
+  const router = useRouter();
 
   const { data: draftEvent } = useGetDraftEventQuery(true);
   const { data: surveyOptions } = useListingSurveyOptionsQuery();
@@ -238,6 +240,7 @@ export default function CreateEventForm() {
     usePublishEventMutation({
       onSuccess() {
         toast.success('Publish event successfully!');
+        router.push(`/events/${draftEvent?.slug}/detail`);
       },
       onError(error: ApiException<unknown>) {
         toast.error(

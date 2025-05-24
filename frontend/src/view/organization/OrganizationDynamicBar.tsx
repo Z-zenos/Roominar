@@ -3,7 +3,7 @@
 import { styles } from '@/src/constants/styles.constant';
 import { matchRoute } from '@/src/utils/app.util';
 import clsx from 'clsx';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 const ORGANIZATION_ROUTE = [
@@ -18,10 +18,17 @@ const ORGANIZATION_ROUTE = [
     description: '',
     url: '/organization/events/[slug]/overview',
   },
+  {
+    key: 'EVENT_HOME',
+    title: '',
+    description: '',
+    url: '/organization/events/[slug]/home',
+  },
 ];
 
 export default function OrganizationDynamicBar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [currentRoute, setCurrentRoute] = useState(ORGANIZATION_ROUTE[0]);
 
   useEffect(() => {
@@ -33,9 +40,20 @@ export default function OrganizationDynamicBar() {
     }
   }, [pathname]);
 
+  const goToSubPage = (subPage: string) => {
+    const parts = pathname.split('/');
+    // parts = ['', 'organization', 'events', '{eventId}', '{subPage}']
+    if (parts.length < 5) return;
+
+    parts[4] = subPage; // thay thế phần {subPage}
+    const newPath = parts.join('/');
+
+    router.push(newPath);
+  };
+
   return (
     <div>
-      {currentRoute?.key === 'EVENT_OVERVIEW' && (
+      {['EVENT_OVERVIEW', 'EVENT_HOME'].includes(currentRoute?.key) && (
         <div
           className={clsx(styles.flexStart, 'gap-4 font-light cursor-pointer')}
         >
@@ -45,10 +63,19 @@ export default function OrganizationDynamicBar() {
               currentRoute.url.includes('overview') &&
                 'text-primary font-semibold',
             )}
+            onClick={() => goToSubPage('overview')}
           >
             Dashboard
           </div>
-          <div className='hover:underline'>Detail View</div>
+          <div
+            className={clsx(
+              'hover:underline',
+              currentRoute.url.includes('home') && 'text-primary font-semibold',
+            )}
+            onClick={() => goToSubPage('home')}
+          >
+            Detail View
+          </div>
         </div>
       )}
     </div>
