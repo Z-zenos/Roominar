@@ -67,6 +67,7 @@ import ApplicationCheckout from '../common/Payment/ApplicationCheckout';
 import { useCreateFreeApplicationMutation } from '@/src/api/application.api';
 import useFormatMoney from '@/src/hooks/useFormatMoney';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 
 interface EventApplicationFormProps {
   slug: string;
@@ -76,6 +77,7 @@ export default function EventApplicationForm({
   slug,
 }: EventApplicationFormProps) {
   const t = useTranslations();
+  const router = useRouter();
   const { data: event } = useGetEventDetailQuery({ slug });
   const { data: auth, status } = useSession();
   const { width } = useWindowDimensions();
@@ -124,9 +126,9 @@ export default function EventApplicationForm({
   }, [JSON.stringify(form.getValues('tickets'))]);
 
   const { trigger, isMutating: isCreating } = useCreateFreeApplicationMutation({
-    onSuccess(paymentSessionToken) {
-      sessionStorage.setItem('paymentSessionToken', paymentSessionToken);
+    onSuccess() {
       toast.success('Buy ticket successfully');
+      router.push('/tickets-n-payments');
     },
     onError(error: ApiException<unknown>) {
       toast.error(
@@ -257,7 +259,7 @@ export default function EventApplicationForm({
                 Ticket 🎟
               </h3>
               <p className='font-light text-sm my-3 opacity-80 px-5'>
-                Check description to see which ticket type is right for you.
+                Check detail to see which ticket type is right for you.
               </p>
               {event.maxTicketNumberPerAccount && (
                 <div

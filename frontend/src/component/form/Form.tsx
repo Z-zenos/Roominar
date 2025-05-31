@@ -18,7 +18,14 @@ import type {
   ComponentPropsWithoutRef,
   ReactNode,
 } from 'react';
-import { createContext, useContext, forwardRef, useId, useMemo } from 'react';
+import {
+  createContext,
+  useContext,
+  forwardRef,
+  useId,
+  useState,
+  useEffect,
+} from 'react';
 import type { DateRange } from 'react-day-picker';
 import clsx from 'clsx';
 import { Label } from '../common/Label';
@@ -613,20 +620,22 @@ const FormTagsInput = ({
   const { data } = useListingTagsQuery();
   const t = useTranslations('code');
   const { width } = useWindowDimensions();
-  const tags = useMemo(
-    () =>
-      data && data.data?.length
-        ? (data.data.flatMap((group: TagGroup) =>
-            group.tags
-              .map((tag: TagItem) => ({
-                id: tag.id,
-                name: tag.name,
-              }))
-              .map((tag) => ({ value: tag.id, label: tag.name })),
-          ) as { value: number; label: string }[])
-        : [],
-    [data],
-  );
+  const [tags, setTags] = useState<{ value: number; label: string }[]>([]);
+
+  useEffect(() => {
+    if (data && data.data?.length)
+      setTags(
+        data.data.flatMap((group: TagGroup) =>
+          group.tags
+            .map((tag: TagItem) => ({
+              id: tag.id,
+              name: tag.name,
+            }))
+            .map((tag) => ({ value: tag.id, label: tag.name })),
+        ) as { value: number; label: string }[],
+      );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(data)]);
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 

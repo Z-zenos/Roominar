@@ -85,7 +85,12 @@ async def _get_my_tickets(
             ticket["refundable_amount"] = 0.0
             continue
 
-        cancelable_before = ticket["cancelable_before_at"] or ticket["event_start_at"]
+        ticket["cancelable_before_at"] = (
+            ticket["cancelable_before_at"]
+            if ticket["cancelable_before_at"]
+            else ticket["event_start_at"]
+        )
+        cancelable_before = ticket["cancelable_before_at"]
 
         if ticket["cancellation_policy_code"] == "NON_TRANSFERABLE":
             ticket["cancelable"] = False

@@ -14,7 +14,6 @@ from backend.models.ticket import Ticket
 from backend.models.ticket_inventory import TicketInventory
 from backend.models.transaction import Transaction
 from backend.models.transaction_item import TransactionItem
-from backend.models.user import User
 from backend.models.user_action import UserAction
 from backend.utils.database import save
 from backend.utils.logger import logger
@@ -32,11 +31,8 @@ def process_free_application(
     db = SessionLocal()
 
     try:
-        user = db.get(User, user_id)
         organizer_id = db.exec(
-            select(User.id)
-            .join(Event, Event.organization_id == User.organization_id)
-            .where(Event.id == event_id)
+            select(Event.organization_id).where(Event.id == event_id)
         ).one_or_none()
 
         tickets = tickets = (
@@ -92,7 +88,7 @@ def process_free_application(
                         ticket_id=ticket["id"],
                         amount=0,
                         status=TransactionStatusCode.SUCCESS,
-                        user_id=user.id,
+                        user_id=user_id,
                     )
                 )
 
@@ -113,14 +109,14 @@ def process_free_application(
 
         push_apply_event_notification.delay(
             event_id=event_id,
-            sender_id=user.id,
+            sender_id=user_id,
             receiver_id=organizer_id,
             ticket_id=tickets[0].id,
         )
 
         return {
             "transaction_id": transaction.id,
-            "user_id": user.id,
+            "user_id": user_id,
             "status": TransactionStatusCode.SUCCESS,
         }
 

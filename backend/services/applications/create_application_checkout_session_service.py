@@ -24,7 +24,7 @@ async def create_application_checkout_session(
         result = applications_service.validate_application_tickets(
             db, current_user.id, create_application_request, False
         )
-        event = result["event"]
+        result["event"]
         tickets = result["tickets"]
 
         total_amount = 0
@@ -84,7 +84,7 @@ async def create_application_checkout_session(
             client_reference_id=transaction_reference,
             mode="payment",
             ui_mode="embedded",
-            return_url=f"{settings.WEB_URL}/events/{event.slug}/apply/result",
+            return_url=f"{settings.WEB_URL}/tickets-n-payments",
         )
 
         return session.client_secret
