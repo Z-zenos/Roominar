@@ -102,6 +102,7 @@ export function toCamelCase(obj: { [key: string]: any }) {
 }
 
 export function formatEventDate(datetime: Date) {
+  if (!datetime) return '';
   return dayjs(datetime).format(
     datetime.getFullYear() === new Date().getFullYear()
       ? 'MM/DD - HH:mm'

@@ -21,7 +21,7 @@ def get_firebase_app():
                 base_dir,
                 "backend",
                 "credentials",
-                "firebase-adminsdk-vievent-327c1.json",
+                "vievent-327c1-firebase-adminsdk-fbsvc-c81d71a6c8.json",
             )
 
             if not os.path.exists(creds_path):

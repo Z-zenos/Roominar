@@ -284,7 +284,7 @@ function EventDetail({ slug }: EventDetailProps) {
               </div>
               <Button
                 color='primary'
-                className='450px:my-3 mt-3 mx-auto w-[160px] font-semibold'
+                className='450px:my-3 mt-3 mx-auto w-[160px] font-semibold block'
                 radius='none'
                 onClick={() => {
                   if (
@@ -318,9 +318,15 @@ function EventDetail({ slug }: EventDetailProps) {
                     router.push(auth?.user ? `${pathname}/apply` : '/login');
                   }
                 }}
+                isDisabled={event?.applicationEndAt < new Date()}
               >
                 Apply Now
               </Button>
+              {event?.applicationEndAt < new Date() && (
+                <p className='opacity-60 text-ss'>
+                  Registration period has ended.
+                </p>
+              )}
             </div>
 
             <Link
