@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import Optional
+from uuid import uuid4
 
 from sqlmodel import DateTime, Enum, Field, String
 
@@ -31,3 +32,7 @@ class TransactionItem(BaseModel, table=True):
     )
     canceled_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
     user_id: Optional[int] = Field(foreign_key="users.id")
+    qr_code_id: Optional[str] = Field(
+        sa_type=String(64), default_factory=lambda: str(uuid4()), index=True
+    )
+    qr_code_url: Optional[str] = Field(sa_type=String(1024))

@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 from sqlmodel import select
 
 from backend.background_tasks.notification_tasks import push_apply_event_notification
@@ -8,6 +10,7 @@ from backend.core.constants import (
     TransactionStatusCode,
     UserActionTypeCode,
 )
+from backend.core.firebase import get_firebase_app
 from backend.db.database import SessionLocal
 from backend.models.event import Event
 from backend.models.ticket import Ticket
@@ -15,6 +18,7 @@ from backend.models.ticket_inventory import TicketInventory
 from backend.models.transaction import Transaction
 from backend.models.transaction_item import TransactionItem
 from backend.models.user_action import UserAction
+from backend.services.qrcode.qrcode_service import QrcodeService
 from backend.utils.database import save
 from backend.utils.logger import logger
 
@@ -29,6 +33,8 @@ def process_free_application(
     total_requested_quantity: int,
 ):
     db = SessionLocal()
+    get_firebase_app()
+    qr_service = QrcodeService()
 
     try:
         organizer_id = db.exec(
@@ -82,15 +88,26 @@ def process_free_application(
             )
 
             for _ in range(total_requested_quantity):
-                new_transaction_items.append(
-                    TransactionItem(
-                        transaction_id=transaction.id,
-                        ticket_id=ticket["id"],
-                        amount=0,
-                        status=TransactionStatusCode.SUCCESS,
-                        user_id=user_id,
-                    )
+                qr_code_id = str(uuid4())
+                qr_data = qr_service.generate_qr_data(
+                    qr_code_id=qr_code_id,
+                    user_id=user_id,
+                    event_id=event_id,
                 )
+                qr_img = qr_service.generate_qr_image(qr_data)
+                filename = f"qr_{qr_code_id}"
+                qr_url = qr_service.upload_qr_to_cloudinary(qr_img, filename)
+
+                item = TransactionItem(
+                    transaction_id=transaction.id,
+                    ticket_id=ticket["id"],
+                    amount=0,
+                    status=TransactionStatusCode.SUCCESS,
+                    user_id=user_id,
+                    qr_code_id=qr_code_id,
+                    qr_code_url=qr_url,
+                )
+                new_transaction_items.append(item)
 
         user_action = UserAction(
             user_id=user_id,

@@ -128,7 +128,9 @@ export default function EventApplicationForm({
   const { trigger, isMutating: isCreating } = useCreateFreeApplicationMutation({
     onSuccess() {
       toast.success('Buy ticket successfully');
-      router.push('/tickets-n-payments');
+      setTimeout(() => {
+        router.push('/tickets-n-payments');
+      }, 2000);
     },
     onError(error: ApiException<unknown>) {
       toast.error(

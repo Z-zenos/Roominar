@@ -132,6 +132,7 @@ class ListingMyTicketsItem(BaseModel):
     cancelable: bool
     refunded_amount: float | None = None
     refund_percentage: float | None = None
+    qr_code_url: str | None = None
 
 
 class ListingMyTicketsResponse(PaginationResponse[ListingMyTicketsItem]):
