@@ -82,6 +82,7 @@
     "firebase": "^11.6.0",
     "framer-motion": "~11.1.9",
     "html-dom-parser": "^5.0.13",
+    "html5-qrcode": "^2.3.8",
     "intl-messageformat": "^10.5.14",
     "jsdom": "^23.2.0",
     "jwt-decode": "^4.0.0",

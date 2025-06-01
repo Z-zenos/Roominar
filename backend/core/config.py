@@ -85,6 +85,8 @@ class Settings(BaseSettings):
     CLOUDINARY_API_KEY: Optional[str]
     CLOUDINARY_API_SECRET: Optional[str]
 
+    QR_CHECK_IN_SECRET_KEY: Optional[str]
+
     ENVIRONMENT: Literal["dev", "staging", "production"] = "dev"
 
     @field_validator("MASTER_DATABASE_URI", mode="before")

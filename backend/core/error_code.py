@@ -49,6 +49,10 @@ class ErrorCode:
     ERR_ATTENDEE_NOT_FOUND = "ERR_ATTENDEE_NOT_FOUND"
     ERR_INVALID_CANCEL_TICKET_DATETIME = "ERR_INVALID_CANCEL_TICKET_DATETIME"
     ERR_TICKET_NOT_FOUND = "ERR_TICKET_NOT_FOUND"
+    ERR_INVALID_CHECK_IN_QR_CODE = "ERR_INVALID_CHECK_IN_QR_CODE"
+    ERR_INVALID_QR_CODE_WITH_USER = "ERR_INVALID_QR_CODE_WITH_USER"
+    ERR_TICKET_CANCELED = "ERR_TICKET_CANCELED"
+    ERR_TICKET_REFUNDED = "ERR_TICKET_REFUNDED"
 
 
 class ErrorMessage:
@@ -104,3 +108,7 @@ class ErrorMessage:
     ERR_ATTENDEE_NOT_FOUND = "The attendee doesn't exist."
     ERR_INVALID_CANCEL_TICKET_DATETIME = "Invalid cancel ticket datetime."
     ERR_TICKET_NOT_FOUND = "The ticket doesn't exist."
+    ERR_INVALID_CHECK_IN_QR_CODE = "Invalid check-in QR code."
+    ERR_INVALID_QR_CODE_WITH_USER = "This QR code is not valid with this user."
+    ERR_TICKET_CANCELED = "Ticket was canceled."
+    ERR_TICKET_REFUNDED = "Ticket was refunded."

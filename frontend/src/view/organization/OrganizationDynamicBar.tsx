@@ -24,6 +24,12 @@ const ORGANIZATION_ROUTE = [
     description: '',
     url: '/organization/events/[slug]/home',
   },
+  {
+    key: 'EVENT_CHECKIN',
+    title: '',
+    description: '',
+    url: '/organization/events/[slug]/checkin',
+  },
 ];
 
 export default function OrganizationDynamicBar() {
@@ -75,6 +81,17 @@ export default function OrganizationDynamicBar() {
             onClick={() => goToSubPage('home')}
           >
             Detail View
+          </div>
+
+          <div
+            className={clsx(
+              'hover:underline',
+              currentRoute.url.includes('check-in') &&
+                'text-primary font-semibold',
+            )}
+            onClick={() => goToSubPage('check-in')}
+          >
+            Check-in
           </div>
         </div>
       )}

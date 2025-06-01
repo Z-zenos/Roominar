@@ -1,16 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
 import type {
-  EventsApiCreateCheckInRequest,
   EventsApiCreateEventBookmarkRequest,
-  EventsApiDeleteCheckInRequest,
   EventsApiDeleteEventBookmarkRequest,
+  EventsApiDeleteManualCheckInRequest,
   EventsApiGenerateEventAiRequest,
   EventsApiGetEventDetailRequest,
   EventsApiListingMyEventsRequest,
   EventsApiListingRecommendationEventsRequest,
   EventsApiListingRelatedEventsRequest,
   EventsApiListingTicketsOfEventRequest,
+  EventsApiManualCheckInRequest,
   EventsApiPublishEventRequest,
+  EventsApiQrCheckInRequest,
   EventsApiSaveDraftEventRequest,
   EventsApiSearchEventsRequest,
   GenerateEventAIResponse,
@@ -153,26 +154,43 @@ export const useListingMyEventsQuery = (
   });
 };
 
-export const useCreateCheckInMutation = <T>(
+export const useManualCheckInMutation = <T>(
   options?: SWRMutationConfiguration<number, T>,
 ) => {
   const api = useApi();
-  const key = 'create-event-check-in';
-  return useSWRMutation<number, T, typeof key, EventsApiCreateCheckInRequest>(
+  const key = 'manual-check-in';
+  return useSWRMutation<number, T, typeof key, EventsApiManualCheckInRequest>(
     key,
-    async (_: string, { arg }) => await api.events.createCheckIn(arg),
+    async (_: string, { arg }) => await api.events.manualCheckIn(arg),
     options,
   );
 };
 
-export const useDeleteCheckInMutation = <T>(
+export const useQRChecInMutation = <T>(
+  options?: SWRMutationConfiguration<number, T>,
+) => {
+  const api = useApi();
+  const key = 'qr-check-in';
+  return useSWRMutation<number, T, typeof key, EventsApiQrCheckInRequest>(
+    key,
+    async (_: string, { arg }) => await api.events.qrCheckIn(arg),
+    options,
+  );
+};
+
+export const useDeleteManualCheckInMutation = <T>(
   options?: SWRMutationConfiguration<void, T>,
 ) => {
   const api = useApi();
-  const key = 'delete-event-check-in';
-  return useSWRMutation<void, T, typeof key, EventsApiDeleteCheckInRequest>(
+  const key = 'delete-manual-check-in';
+  return useSWRMutation<
+    void,
+    T,
+    typeof key,
+    EventsApiDeleteManualCheckInRequest
+  >(
     key,
-    async (_: string, { arg }) => await api.events.deleteCheckIn(arg),
+    async (_: string, { arg }) => await api.events.deleteManualCheckIn(arg),
     options,
   );
 };
