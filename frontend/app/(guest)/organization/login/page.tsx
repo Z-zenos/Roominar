@@ -5,7 +5,7 @@ import clsx from 'clsx';
 
 export default async function Page() {
   return (
-    <div className='mx-auto w-[500px] py-[5%]'>
+    <div className='mx-auto 450px:w-[700px] w-full py-[5%] 450px:px-auto px-[5%] overflow-x-hidden'>
       <h2 className='text-primary text-lg font-semibold'>Welcome back 👋🏻</h2>
       <p className='mt-2 mb-8 font-light text-gray-700 text-nm'>
         Jump into your organization 🏢 and host awesome events for every one

@@ -42,7 +42,7 @@ const overviewChartConfig = {
   },
   available: {
     label: 'Available',
-    color: '#3498db',
+    color: 'rgb(0, 111, 238)',
   },
   canceled: {
     label: 'Canceled',
@@ -98,6 +98,7 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
                   margin={{
                     left: 12,
                     right: 12,
+                    top: 10,
                   }}
                 >
                   <CartesianGrid vertical={false} />
@@ -106,16 +107,16 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
                     tickLine={false}
                     axisLine={false}
                     tickMargin={8}
-                    tickFormatter={(value) => value.slice(0, 3)}
+                    tickFormatter={(value) => value}
                   />
                   <ChartTooltip
                     cursor={false}
                     content={<ChartTooltipContent hideLabel />}
                   />
                   <Line
-                    dataKey='ticketSolds'
+                    dataKey='ticketsSold'
                     type='natural'
-                    stroke='var(--color-desktop)'
+                    stroke='rgb(0, 111, 238)'
                     strokeWidth={2}
                     dot={false}
                   />
@@ -126,6 +127,7 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
             <Nodata />
           )}
         </div>
+
         <div className='col-span-1 shadow-md p-5 rounded-md bg-white'>
           <div className={clsx(styles.between)}>
             <p className='text-lg font-semibold'>
@@ -173,7 +175,7 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
                     tickLine={false}
                     axisLine={false}
                     tickMargin={8}
-                    tickFormatter={(value) => value.slice(0, 3)}
+                    tickFormatter={(value) => value}
                   />
                   <ChartTooltip
                     cursor={false}
@@ -182,7 +184,7 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
                   <Line
                     dataKey='revenueGross'
                     type='natural'
-                    stroke='var(--color-desktop)'
+                    stroke='rgb(0, 238, 36)'
                     strokeWidth={2}
                     dot={false}
                   />
@@ -193,6 +195,7 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
             <Nodata />
           )}
         </div>
+
         <div className='col-span-2 shadow-md p-5 pb-1 rounded-md bg-white'>
           <div className='grid grid-cols-2 gap-4 mb-4'>
             <div>
@@ -214,14 +217,17 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
                           {
                             type: 'sold',
                             total: data.overview.totalSoldTickets,
+                            fill: '#27ae60',
                           },
                           {
                             type: 'available',
                             total: data.overview.totalAvailableTickets,
+                            fill: 'rgb(0, 111, 238)',
                           },
                           {
                             type: 'canceled',
                             total: data.overview.totalCanceledTickets,
+                            fill: '#e74c3c',
                           },
                         ]}
                         dataKey='total'

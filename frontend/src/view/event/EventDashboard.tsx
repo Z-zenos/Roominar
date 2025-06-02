@@ -10,7 +10,7 @@ interface EventDashboardProps {
 function EventDashboard({ slug }: EventDashboardProps) {
   return (
     <div className={clsx('grid grid-cols-4 gap-4 ')}>
-      <div className='col-span-2'>
+      <div className='1000px:col-span-2 col-span-4'>
         <AnalyzeEventTicket slug={slug} />
       </div>
     </div>

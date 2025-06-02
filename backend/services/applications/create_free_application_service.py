@@ -2,8 +2,8 @@ from sqlmodel import Session
 
 import backend.services.applications as applications_service
 import backend.services.auth.token_service as token_service
-from backend.background_tasks.transaction_tasks import process_free_application
-from backend.core.constants import UserActionTypeCode
+from backend.background_tasks.transaction_tasks import process_transaction
+from backend.core.constants import PaymentMethodCode, UserActionTypeCode
 from backend.models.application import Application
 from backend.models.survey_response_result import SurveyResponseResult
 from backend.models.transaction import TransactionStatusCode
@@ -77,12 +77,14 @@ async def create_free_application(
         )
 
         # Use Celery to process the application asynchronously
-        process_free_application.delay(
+        process_transaction.delay(
             event_id=event_id,
             user_id=current_user.id,
             application_id=application.id,
             ticket_ids=[ticket["id"] for ticket in tickets],
             total_requested_quantity=total_requested_quantity,
+            total_amount=0.0,  # Free application, no amount
+            payment_method_code=PaymentMethodCode.FREE,
         )
 
         return session_token

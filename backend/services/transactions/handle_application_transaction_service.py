@@ -6,9 +6,10 @@ from fastapi import HTTPException, Request
 from sqlmodel import Session
 
 import backend.services.applications as applications_service
+import backend.services.auth.token_service as token_service
+from backend.background_tasks.transaction_tasks import process_transaction
 from backend.core.config import settings
 from backend.core.constants import (
-    CurrencyCode,
     IndustryCode,
     JobTypeCode,
     PaymentMethodCode,
@@ -16,9 +17,7 @@ from backend.core.constants import (
 )
 from backend.models.application import Application
 from backend.models.survey_response_result import SurveyResponseResult
-from backend.models.ticket_inventory import TicketInventory
 from backend.models.transaction import Transaction, TransactionStatusCode
-from backend.models.transaction_item import TransactionItem
 from backend.models.user_action import UserAction
 from backend.utils.database import save
 
@@ -114,66 +113,32 @@ async def handle_application_transaction(db: Session, request: Request):
             stripe_event["type"] == "checkout.session.completed"
             or stripe_event["type"] == "payment_intent.succeeded"
         ):
-            # Create Transaction
-            transaction = Transaction(
+            session_token = token_service.gen_payment_session_token(
+                0, user_id, TransactionStatusCode.PENDING
+            )
+
+            # Use Celery to process the application asynchronously
+            print("total_requested_quantity", total_requested_quantity)
+            process_transaction.delay(
                 event_id=event_id,
+                user_id=user_id,
                 application_id=application.id,
-                quantity=total_requested_quantity,
+                ticket_ids=[ticket["id"] for ticket in tickets],
+                total_requested_quantity=total_requested_quantity,
                 total_amount=sum(
                     ticket["price"] * ticket["requested_quantity"] for ticket in tickets
                 ),
-                status=TransactionStatusCode.SUCCESS,
-                stripe_payment_intent_id=session["payment_intent"],
-                stripe_checkout_session_id=session["id"],
-                reference=f"{transaction_reference}-{uuid4()}",
                 payment_method_code=PaymentMethodCode.STRIPE,
-                currency=CurrencyCode.VND,
-                exchange_rate=1.0,
+                payment_extra={
+                    "session_token": session_token,
+                    "session_id": session["id"],
+                    "payment_intent_id": session["payment_intent"],
+                },
             )
 
-            transaction = save(db, transaction)
-            new_transaction_items = []
-            update_ticket_inventories = []
-            for ticket in tickets:
-                update_ticket_inventories.append(
-                    {
-                        "id": ticket["ticket_inventory_id"],
-                        "available_quantity": ticket["available_quantity"]
-                        - ticket["requested_quantity"],
-                        "sold_quantity": ticket["sold_quantity"]
-                        + ticket["requested_quantity"],
-                        "ticket_id": ticket["id"],
-                        "event_id": event_id,
-                    }
-                )
-
-                for _ in range(ticket["requested_quantity"]):
-                    # Create the transaction item
-                    new_transaction_items.append(
-                        TransactionItem(
-                            transaction_id=transaction.id,
-                            ticket_id=ticket["id"],
-                            amount=ticket["price"],
-                            status=TransactionStatusCode.SUCCESS,
-                            user_id=user_id,
-                        )
-                    )
-
-            user_action = UserAction(
-                user_id=user_id,
-                event_id=event_id,
-                action_type=UserActionTypeCode.PURCHASE_TICKET,
-            )
-
-            db.add(user_action)
-            db.bulk_update_mappings(TicketInventory, update_ticket_inventories)
-            db.bulk_save_objects(new_transaction_items)
-            db.commit()
-
-            return {"status": "success"}
+            return session_token
 
         elif stripe_event["type"] == "payment_intent.payment_failed":
-            # Create Transaction
             transaction = Transaction(
                 event_id=event_id,
                 application_id=application.id,

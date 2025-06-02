@@ -24,13 +24,16 @@ from backend.utils.logger import logger
 
 
 @app.task(bind=True, max_retries=3, default_retry_delay=5)
-def process_free_application(
+def process_transaction(
     self,
     event_id: int,
     user_id: int,
     application_id: int,
     ticket_ids: list[int],
     total_requested_quantity: int,
+    total_amount: float,
+    payment_method_code: PaymentMethodCode,
+    payment_extra: dict = None,
 ):
     db = SessionLocal()
     get_firebase_app()
@@ -59,15 +62,17 @@ def process_free_application(
             .mappings()
             .all()
         )
+
         transaction = Transaction(
             event_id=event_id,
             application_id=application_id,
             quantity=total_requested_quantity,
-            total_amount=0,
+            total_amount=total_amount,
             status=TransactionStatusCode.SUCCESS,
-            payment_method_code=PaymentMethodCode.FREE,
+            payment_method_code=payment_method_code,
             currency=CurrencyCode.VND,
             exchange_rate=1.0,
+            **payment_extra,  # type: ignore
         )
         transaction = save(db, transaction)
 
@@ -101,7 +106,7 @@ def process_free_application(
                 item = TransactionItem(
                     transaction_id=transaction.id,
                     ticket_id=ticket["id"],
-                    amount=0,
+                    amount=ticket["price"],
                     status=TransactionStatusCode.SUCCESS,
                     user_id=user_id,
                     qr_code_id=qr_code_id,
