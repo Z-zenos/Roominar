@@ -41,6 +41,7 @@ export const pathPermissionMaster = {
     '/organization/events/[slug]/update',
     '/organization/events/[slug]/overview',
     '/organization/events/[slug]/home',
+    '/organization/events/[slug]/check-in',
     '/organization/surveys',
     '/organization/surveys/create',
     '/organization/attendees',

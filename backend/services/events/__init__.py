@@ -1,7 +1,5 @@
-from .create_check_in_service import create_check_in
 from .create_draft_event_service import create_draft_event
 from .create_event_bookmark_service import create_event_bookmark
-from .delete_check_in_service import delete_check_in
 from .delete_event_bookmark_service import delete_event_bookmark
 from .generate_event_ai_service import generate_event_ai
 from .get_draft_event_service import get_draft_event
@@ -29,8 +27,6 @@ all = (
     listing_my_events,
     publish_event,
     listing_organization_events,
-    create_check_in,
-    delete_check_in,
     create_draft_event,
     get_draft_event,
     save_draft_event,

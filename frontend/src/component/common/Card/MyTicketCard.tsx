@@ -321,10 +321,14 @@ function MyTicketCard({
 
                       <div className='px-3 py-2'>
                         <p className='font-light text-sm'>
-                          Ticket ID:{' '}
-                          <span className='text-primary font-bold text-md'>
-                            {ticket.transactionItemId}
-                          </span>
+                          Ticket QR code:{' '}
+                          <p className='flex items-center justify-center'>
+                            <Image
+                              src={ticket.qrCodeUrl}
+                              alt='Ticket QR Code'
+                              className='w-[200px] h-[200px] rounded-md'
+                            />
+                          </p>
                         </p>
                       </div>
                     </div>

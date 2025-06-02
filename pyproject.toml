@@ -32,6 +32,8 @@ python-slugify = "^8.0.4"
 google-generativeai = "^0.8.5"
 geoalchemy2 = "^0.17.1"
 shapely = "^2.1.0"
+qrcode = {extras = ["pil"], version = "^8.2"}
+cloudinary = "^1.44.0"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.6.0"

@@ -286,7 +286,7 @@ class RevenueByTicketType(BaseModel):
 
 
 class TopHourStat(BaseModel):
-    hour: str  # e.g. "14"
+    hour: int
     count: int
 
 

@@ -22,7 +22,7 @@ NOTIFICATION_MESSAGES = {
     "APPLY_EVENT": {
         "vi": {
             "title": "Đăng ký tham gia sự kiện",
-            "body": "{full_name} đã mua vé {ticket_name} và dự định tham gia sự kiện {event_name}.",
+            "body": "{full_name} đã mua vé {ticket_name} tham gia sự kiện {event_name}.",
         },
         "en": {
             "title": "Apply for Event",
