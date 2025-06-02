@@ -1,10 +1,11 @@
 import hashlib
+import json
 from io import BytesIO
 
-import cloudinary.uploader
 import qrcode
 
 from backend.core.cloudinary_config import cloudinary
+import cloudinary.uploader
 
 
 class QrcodeService:
@@ -14,12 +15,14 @@ class QrcodeService:
     def generate_qr_data(self, qr_code_id: str, user_id: int, event_id: int) -> dict:
         raw_data = f"{qr_code_id}-{user_id}-{event_id}"
         checksum = hashlib.sha256(raw_data.encode()).hexdigest()
-        return {
-            "qr_code_id": qr_code_id,
-            "user_id": user_id,
-            "event_id": event_id,
-            "checksum": checksum,
-        }
+        return json.dumps(
+            {
+                "qrCodeId": qr_code_id,
+                "userId": user_id,
+                "eventId": event_id,
+                "checksum": checksum,
+            }
+        )
 
     def generate_qr_image(self, data: dict) -> BytesIO:
         qr = qrcode.QRCode(

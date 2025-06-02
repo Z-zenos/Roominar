@@ -126,6 +126,7 @@
 
   ```bash
     pnpm run dev -- -H 0.0.0.0 -p 3000
+    pnpm run start -- -H 0.0.0.0 -p 3000
   ```
 
 ### 9. Run Stripe CLI

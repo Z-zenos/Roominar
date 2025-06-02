@@ -3,11 +3,7 @@
 
 import { useQRChecInMutation } from '@/src/api/event.api';
 import QRScanner from '@/src/component/common/QR/QRScanner';
-import type {
-  ApiException,
-  ErrorResponse400,
-  QRCheckInRequest,
-} from '@/src/lib/api/generated';
+import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
@@ -35,7 +31,7 @@ export default function OrganizationEventCheckIn() {
       return;
     }
 
-    const data = JSON.parse(qrCode) as QRCheckInRequest;
+    const data = JSON.parse(qrCode);
 
     qrCheckIn({
       eventId: data.eventId,
