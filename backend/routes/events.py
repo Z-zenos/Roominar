@@ -3,6 +3,7 @@ from http import HTTPStatus
 from fastapi import APIRouter, Depends
 from sqlmodel import Session
 
+import backend.services.check_in as check_in_service
 import backend.services.events as events_service
 import backend.services.tickets as tickets_service
 from backend.core.constants import RoleCode
@@ -14,7 +15,7 @@ from backend.dependencies.authentication import (
     get_user_if_logged_in,
 )
 from backend.models import User
-from backend.schemas.check_in import CreateCheckInRequest
+from backend.schemas.check_in import ManualCheckInRequest, QRCheckInRequest
 from backend.schemas.event import (
     CreateDraftEventRequest,
     GenerateEventAIRequest,
@@ -234,27 +235,44 @@ async def listing_tickets_of_event(
 
 
 @router.post(
-    "/{event_id}/check-in",
+    "/{event_id}/check-in/qr",
     response_model=int,
     responses=authenticated_api_responses,
 )
-async def create_check_in(
+async def qr_check_in(
     db: Session = Depends(get_read_db),
-    request: CreateCheckInRequest = None,
+    _: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+    request: QRCheckInRequest = None,
     event_id: int = None,
 ):
-    return await events_service.create_check_in(db, request, event_id)
+    return await check_in_service.qr_check_in(db, request, event_id)
+
+
+@router.post(
+    "/{event_id}/check-in/manual",
+    response_model=int,
+    responses=authenticated_api_responses,
+)
+async def manual_check_in(
+    db: Session = Depends(get_read_db),
+    _: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+    request: ManualCheckInRequest = None,
+    event_id: int = None,
+):
+    return await check_in_service.manual_check_in(db, request, event_id)
 
 
 @router.delete(
-    "/{event_id}/check-in/{check_in_id}",
+    "/{event_id}/check-in/manual/{check_in_id}",
     status_code=HTTPStatus.NO_CONTENT,
     responses=authenticated_api_responses,
 )
-async def delete_check_in(
+async def delete_manual_check_in(
     db: Session = Depends(get_read_db),
-    user: User = Depends(get_current_user),
+    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
     event_id: int = None,
     check_in_id: int = None,
 ):
-    return await events_service.delete_check_in(db, user, event_id, check_in_id)
+    return await check_in_service.delete_manual_check_in(
+        db, organizer, event_id, check_in_id
+    )

@@ -51,10 +51,7 @@ import { useListingAttendeesQuery } from '@/src/api/organization.api';
 import { useTranslations } from 'next-intl';
 import useHighlightMatchedText from '@/src/hooks/useHighlightMatchedText';
 import { styles } from '@/src/constants/styles.constant';
-import {
-  useCreateCheckInMutation,
-  useDeleteCheckInMutation,
-} from '@/src/api/event.api';
+
 import toast from 'react-hot-toast';
 import { TbFileTypeCsv } from 'react-icons/tb';
 import axios from 'axios';
@@ -64,6 +61,10 @@ import { SheetTrigger } from '@/src/component/common/Sheet';
 import Chip from '@/src/component/common/Chip';
 import { IoIosCheckboxOutline, IoIosRemoveCircleOutline } from 'react-icons/io';
 import { useRightSidebar } from '@/src/contexts/RightSidebarContext';
+import {
+  useDeleteManualCheckInMutation,
+  useManualCheckInMutation,
+} from '@/src/api/event.api';
 
 const columns = [
   { name: 'Apply Time', uid: 'apply_time', sortable: false },
@@ -148,7 +149,7 @@ export default function AttendeeDataTable() {
     searchQuery(router, filters, searchParams, exclude_queries);
   }
 
-  const { trigger: createCheckIn } = useCreateCheckInMutation({
+  const { trigger: createCheckIn } = useManualCheckInMutation({
     onSuccess() {},
     onError(error: ApiException<unknown>) {
       toast.error(
@@ -159,7 +160,7 @@ export default function AttendeeDataTable() {
     },
   });
 
-  const { trigger: deleteCheckIn } = useDeleteCheckInMutation({
+  const { trigger: deleteCheckIn } = useDeleteManualCheckInMutation({
     onSuccess() {},
     onError(error: ApiException<unknown>) {
       toast.error(
@@ -219,7 +220,7 @@ export default function AttendeeDataTable() {
         newCheckedIn.add(attendee.applicationId);
         createCheckIn({
           eventId: attendee.eventId,
-          createCheckInRequest: {
+          manualCheckInRequest: {
             applicationId: attendee.applicationId,
             ticketId: null,
             transactionItemId: null,

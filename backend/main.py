@@ -1,5 +1,7 @@
 import asyncio
 import os
+
+# import ssl
 import time
 
 import uvicorn
@@ -25,6 +27,11 @@ from backend.routes.router import api_router
 
 app = FastAPI(title="Roominar", openapi_url="/api/v1/openapi.json")
 
+# ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+# ssl_context.load_cert_chain(
+#     "backend/certs/server.crt", keyfile="backend/certs/server.key"
+# )
+
 os.environ["TZ"] = "Asia/Ho_Chi_Minh"
 time.tzset()
 
@@ -32,7 +39,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
-        "http://192.168.1.15:3000",
+        "http://192.168.1.10:3000",
         "http://192.168.80.62:3000",
         "http://192.168.88.151:3000",
         "http://192.168.0.111:3000",
@@ -120,8 +127,9 @@ if __name__ == "__main__":
     if os.path.exists(cert_path) and os.path.exists(key_path):
         uvicorn.run(
             "main:app",
-            host="127.0.0.1",
+            host="0.0.0.0",
             port=8000,
+            # ssl=ssl_context,
             ssl_keyfile=key_path,
             ssl_certfile=cert_path,
             reload=True,

@@ -44,6 +44,7 @@ async def _get_my_tickets(
                 TransactionItem.refunded_at,
                 TransactionItem.refunded_amount,
                 TransactionItem.note,
+                TransactionItem.qr_code_url.label("qr_code_url"),
                 Event.name.label("event_name"),
                 Event.cover_image_url.label("event_cover_image_url"),
                 Event.id.label("event_id"),

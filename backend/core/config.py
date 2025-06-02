@@ -62,10 +62,6 @@ class Settings(BaseSettings):
     EMAIL_ADMIN: Optional[str]
 
     TEMPLATE_FOLDER: DirectoryPath = Path(__file__).parent / "../mails/templates"
-    # BUCKET_NAME: Optional[str]
-    # MEDIA_PATH: Optional[str]
-    # MEDIA_PATH_TMP_PREFIX: str = "tmp/"
-    # PUBLIC_CDN_URL: Optional[str]
     SERVER_PORT: Optional[str]
     SERVER_URL: Optional[str]
 
@@ -84,6 +80,12 @@ class Settings(BaseSettings):
 
     CELERY_BROKER_URL: Optional[str]
     CELERY_RESULT_BACKEND: Optional[str]
+
+    CLOUDINARY_CLOUD_NAME: Optional[str]
+    CLOUDINARY_API_KEY: Optional[str]
+    CLOUDINARY_API_SECRET: Optional[str]
+
+    QR_CHECK_IN_SECRET_KEY: Optional[str]
 
     ENVIRONMENT: Literal["dev", "staging", "production"] = "dev"
 
