@@ -70,4 +70,14 @@ NOTIFICATION_MESSAGES = {
             "body": "⏰ Hi {full_name}, your event *{event_name}* starts in 10 minutes – at 🗓️ {event_start_at}. Join now and don’t miss it! 🚪",
         },
     },
+    "CHECK_IN_EVENT": {
+        "vi": {
+            "title": "🎟️ Bạn đã check-in thành công!",
+            "body": "Bạn đã check-in thành công sự kiện *{event_name}* với vé {ticket_name}.",
+        },
+        "en": {
+            "title": "🎟️ You have successfully checked in!",
+            "body": "You have successfully checked in to the event *{event_name}* with ticket {ticket_name}.",
+        },
+    },
 }

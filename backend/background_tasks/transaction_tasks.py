@@ -62,18 +62,29 @@ def process_transaction(
             .mappings()
             .all()
         )
-
-        transaction = Transaction(
-            event_id=event_id,
-            application_id=application_id,
-            quantity=total_requested_quantity,
-            total_amount=total_amount,
-            status=TransactionStatusCode.SUCCESS,
-            payment_method_code=payment_method_code,
-            currency=CurrencyCode.VND,
-            exchange_rate=1.0,
-            **payment_extra,  # type: ignore
-        )
+        if payment_method_code == PaymentMethodCode.FREE:
+            transaction = Transaction(
+                event_id=event_id,
+                application_id=application_id,
+                quantity=total_requested_quantity,
+                total_amount=total_amount,
+                status=TransactionStatusCode.SUCCESS,
+                payment_method_code=payment_method_code,
+                currency=CurrencyCode.VND,
+                exchange_rate=1.0,
+            )
+        else:
+            transaction = Transaction(
+                event_id=event_id,
+                application_id=application_id,
+                quantity=total_requested_quantity,
+                total_amount=total_amount,
+                status=TransactionStatusCode.SUCCESS,
+                payment_method_code=payment_method_code,
+                currency=CurrencyCode.VND,
+                exchange_rate=1.0,
+                **payment_extra,  # type: ignore
+            )
         transaction = save(db, transaction)
 
         new_transaction_items = []
@@ -81,6 +92,16 @@ def process_transaction(
 
         for ticket in tickets:
             ticket = dict(ticket)
+            print(
+                {
+                    "id": ticket["ticket_inventory_id"],
+                    "available_quantity": ticket["available_quantity"]
+                    - total_requested_quantity,
+                    "sold_quantity": ticket["sold_quantity"] + total_requested_quantity,
+                    "ticket_id": ticket["id"],
+                    "event_id": event_id,
+                }
+            )
             update_ticket_inventories.append(
                 {
                     "id": ticket["ticket_inventory_id"],

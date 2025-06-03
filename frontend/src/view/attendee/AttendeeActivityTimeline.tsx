@@ -8,7 +8,6 @@ import { Tabs } from '../../component/common/Tabs';
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -24,7 +23,7 @@ export default function AttendeeActivityTimeline({
   events,
 }: AttendeeActivityTimelineProps) {
   return (
-    <div className='bg-white'>
+    <div className='bg-white max-h-[360px] overflow-y-scroll'>
       <div className='max-w-xl py-8'>
         <div className='flow-root'>
           <ul className='-mb-8'>
@@ -124,9 +123,6 @@ export default function AttendeeActivityTimeline({
                                 content: event.transactionHistories.length >
                                   0 && (
                                   <Table>
-                                    <TableCaption>
-                                      A list of transaction histories.
-                                    </TableCaption>
                                     <TableHeader>
                                       <TableRow>
                                         <TableHead className='w-[100px]'>

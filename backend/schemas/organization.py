@@ -123,6 +123,7 @@ class GetAttendeeDetailResponse(BaseModel):
     workplace_name: str | None = None
     avatar_url: str | None = None
     is_followed: bool | None = None
+    applied_event_number: int | None = None
 
 
 class GetOrganizationDetailResponse(BaseModel):
@@ -244,6 +245,18 @@ class FilterAnalyzeEventTicketsQueryParams(BaseModel):
     )
 
 
+class AnalyzeEventTicketsOverviewTickets(BaseModel):
+    id: int
+    name: str
+    type: TicketTypeCode
+    price: float
+    sold_quantity: int
+    canceled_quantity: int
+    available_quantity: int
+    gross_revenue: float
+    net_revenue: float
+
+
 class AnalyzeEventTicketsOverview(BaseModel):
     total_tickets: int
     total_sold_tickets: int
@@ -254,7 +267,7 @@ class AnalyzeEventTicketsOverview(BaseModel):
     total_checkins: int
     checkin_rate: float
     cancel_rate: float
-    tickets: list[dict] = Field([])
+    tickets: list[AnalyzeEventTicketsOverviewTickets] = Field([])
 
 
 class TicketStatByTime(BaseModel):

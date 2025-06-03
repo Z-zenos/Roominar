@@ -467,6 +467,7 @@ class NotificationTypeCode(str, Enum):
     UPCOMING_EVENT_REMINDER_10_MINUTES_BEFORE = (
         "UPCOMING_EVENT_REMINDER_10_MINUTES_BEFORE"
     )
+    CHECK_IN_EVENT = "CHECK_IN_EVENT"
 
 
 class DeviceTypeCode(str, Enum):

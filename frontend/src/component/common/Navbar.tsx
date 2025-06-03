@@ -20,7 +20,7 @@ import {
 } from '@nextui-org/react';
 import Logo from './Logo';
 import { signOut, useSession } from 'next-auth/react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import useWindowDimensions from '@/src/hooks/useWindowDimension';
 import { maskEmail } from '@/src/utils/app.util';
 import { useTranslations } from 'next-intl';
@@ -85,6 +85,7 @@ interface NavbarProps {
 
 export default function Navbar({ className, hasLogo = true }: NavbarProps) {
   const t = useTranslations('app');
+  const router = useRouter();
 
   const [isEnglish, setIsEnglish] = useState<boolean>(
     getCookie('NEXT_LOCALE') === 'en' || !getCookie('NEXT_LOCALE'),
@@ -117,9 +118,11 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
     // Then logout
     if (process.env.NODE_ENV === 'development') {
       signOut({ redirect: false });
+      router.push('/home');
       location.reload();
     } else {
       signOut({ redirect: false }).then(() => {
+        router.push('/home');
         location.reload();
       });
     }

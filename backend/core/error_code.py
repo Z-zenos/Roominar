@@ -53,6 +53,7 @@ class ErrorCode:
     ERR_INVALID_QR_CODE_WITH_USER = "ERR_INVALID_QR_CODE_WITH_USER"
     ERR_TICKET_CANCELED = "ERR_TICKET_CANCELED"
     ERR_TICKET_REFUNDED = "ERR_TICKET_REFUNDED"
+    ERR_EVENT_NOT_STARTED = "ERR_EVENT_NOT_STARTED"
 
 
 class ErrorMessage:
@@ -112,3 +113,4 @@ class ErrorMessage:
     ERR_INVALID_QR_CODE_WITH_USER = "This QR code is not valid with this user."
     ERR_TICKET_CANCELED = "Ticket was canceled."
     ERR_TICKET_REFUNDED = "Ticket was refunded."
+    ERR_EVENT_NOT_STARTED = "The event has not started yet."

@@ -76,7 +76,7 @@ async def _get_event_ticket_statistics_overview(db: Session, event_id: int) -> d
     available_qty = inventory_agg[0] or 0
     sold_qty = inventory_agg[1] or 0
     canceled_qty = inventory_agg[2] or 0
-    total_qty = available_qty + sold_qty + canceled_qty
+    total_qty = available_qty + sold_qty - canceled_qty
 
     # --- Aggregate TransactionItem by Event ---
     transaction_agg = db.exec(
@@ -112,6 +112,7 @@ async def _get_event_ticket_statistics_overview(db: Session, event_id: int) -> d
             Ticket.id,
             Ticket.name,
             Ticket.price,
+            Ticket.type,
             TicketInventory.sold_quantity,
             TicketInventory.canceled_quantity,
             TicketInventory.available_quantity,
@@ -131,6 +132,7 @@ async def _get_event_ticket_statistics_overview(db: Session, event_id: int) -> d
             Ticket.id,
             Ticket.name,
             Ticket.price,
+            Ticket.type,
             TicketInventory.sold_quantity,
             TicketInventory.canceled_quantity,
             TicketInventory.available_quantity,
@@ -139,14 +141,15 @@ async def _get_event_ticket_statistics_overview(db: Session, event_id: int) -> d
 
     ticket_details = [
         {
-            "ticket_id": t[0],
-            "ticket_name": t[1],
+            "id": t[0],
+            "name": t[1],
             "price": float(t[2] or 0),
-            "sold_quantity": t[3] or 0,
-            "canceled_quantity": t[4] or 0,
-            "available_quantity": t[5] or 0,
-            "gross_revenue": float(t[6] or 0),
-            "net_revenue": float(t[7] or 0),
+            "type": t[3],
+            "sold_quantity": t[4] or 0,
+            "canceled_quantity": t[5] or 0,
+            "available_quantity": t[6] or 0,
+            "gross_revenue": float(t[7] or 0),
+            "net_revenue": float(t[8] or 0),
         }
         for t in ticket_stats
     ]

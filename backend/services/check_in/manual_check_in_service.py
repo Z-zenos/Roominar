@@ -1,5 +1,9 @@
+from datetime import datetime
+
+import pytz
 from sqlmodel import Session, select
 
+from backend.background_tasks.notification_tasks import push_check_in_event_notification
 from backend.core.constants import CheckInMethodCode, UserActionTypeCode
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
@@ -18,6 +22,14 @@ async def manual_check_in(
     event_id: int,
 ):
     try:
+        event = db.get(Event, event_id)
+
+        if event.start_at > datetime.now(pytz.utc):
+            raise BadRequestException(
+                ErrorCode.ERR_EVENT_NOT_STARTED,
+                ErrorMessage.ERR_EVENT_NOT_STARTED,
+            )
+
         transaction_item = db.get(TransactionItem, request.transaction_item_id)
 
         if transaction_item.canceled_at:
@@ -37,6 +49,7 @@ async def manual_check_in(
                 select(
                     CheckIn.id.label("check_in_id"),
                     Organization.id.label("organization_id"),
+                    Event.start_at.label("event_start_at"),
                 )
                 .join(Event, Event.id == CheckIn.event_id)
                 .join(Organization, Organization.id == Event.organization_id)
@@ -68,6 +81,12 @@ async def manual_check_in(
             action_type=UserActionTypeCode.CHECK_IN,
         )
         save(db, user_action)
+
+        push_check_in_event_notification.delay(
+            event_id=event_id,
+            receiver_id=transaction_item.user_id,
+            ticket_id=transaction_item.ticket_id,
+        )
 
         return check_in.id
 

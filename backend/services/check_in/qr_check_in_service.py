@@ -1,6 +1,7 @@
 from fastapi import HTTPException, status
 from sqlmodel import Session, select
 
+from backend.background_tasks.notification_tasks import push_check_in_event_notification
 from backend.core.constants import CheckInMethodCode, UserActionTypeCode
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
@@ -90,6 +91,12 @@ async def qr_check_in(
             action_type=UserActionTypeCode.CHECK_IN,
         )
         save(db, user_action)
+
+        push_check_in_event_notification.delay(
+            event_id=event_id,
+            receiver_id=item.user_id,
+            ticket_id=item.ticket_id,
+        )
 
         return check_in.id
 

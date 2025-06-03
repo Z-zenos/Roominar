@@ -568,7 +568,7 @@ export default function EventApplicationForm({
                       status === 'authenticated' &&
                         'bg-slate-100 text-gray-500',
                     )}
-                    disabled={status === 'authenticated'}
+                    disabled={status === 'authenticated' && !!auth.user.phone}
                     control={form.control}
                     showError={true}
                     rightIcon={

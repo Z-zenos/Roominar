@@ -17,7 +17,7 @@ class NotificationService:
     @staticmethod
     def push_notification(
         db: Session,
-        sender: User,
+        sender: User | None,
         receiver: User,
         type_code: NotificationTypeCode,
         lang: Lang = "vi",

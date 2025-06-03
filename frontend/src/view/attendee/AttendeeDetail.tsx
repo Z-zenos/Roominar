@@ -11,6 +11,7 @@ import Chip from '@/src/component/common/Chip';
 import { RiChatFollowUpLine } from 'react-icons/ri';
 import { GoHistory } from 'react-icons/go';
 import AttendeeActivityTimeline from '@/src/view/attendee/AttendeeActivityTimeline';
+import Badge from '@/src/component/common/Badge';
 
 interface AttendeeDetailProps {
   id: number;
@@ -54,7 +55,7 @@ export default function AttendeeDetail({ id }: AttendeeDetailProps) {
             />
           )}
           <span className='text-ss font-light translate-y-3 text-primary text-right'>
-            Click to Copy
+            Click content to Copy
           </span>
         </div>
         <div className='mt-3'>
@@ -90,6 +91,10 @@ export default function AttendeeDetail({ id }: AttendeeDetailProps) {
         >
           <GoHistory size={24} />
           Activation History
+        </div>
+
+        <div className={clsx(styles.flexStart, 'gap-2 my-2')}>
+          <Badge title={'Joined events: ' + attendee.appliedEventNumber} />
         </div>
 
         <AttendeeActivityTimeline events={attendee.appliedEvents} />
