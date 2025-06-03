@@ -29,8 +29,8 @@ export default function CreateSurveyForm() {
     defaultValues: {
       name: '',
       description: '',
-      startAt: null,
-      endAt: null,
+      startAt: new Date(),
+      endAt: new Date(),
       maxResponseNumber: '',
 
       questionAnswers: [DEFAULT_QUESTION_ANSWER],
