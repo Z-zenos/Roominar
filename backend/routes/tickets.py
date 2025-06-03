@@ -32,6 +32,15 @@ async def create_ticket(
     return await ticket_service.create_ticket(db, organizer, request)
 
 
+@router.patch("/cancel", response_model=int, responses=authenticated_api_responses)
+async def cancel_tickets(
+    db: Session = Depends(get_read_db),
+    user: User = Depends(authorize_role(RoleCode.AUDIENCE)),
+    request: CancelTicketsRequest = None,
+):
+    return await ticket_service.cancel_tickets(db, user, request)
+
+
 @router.patch(
     "/{ticket_id}", response_model=TicketItem, responses=authenticated_api_responses
 )
@@ -65,15 +74,6 @@ async def delete_ticket(
     ticket_id: int = None,
 ):
     return await ticket_service.delete_ticket(db, organizer, ticket_id)
-
-
-@router.patch("/cancel", response_model=int, responses=authenticated_api_responses)
-async def cancel_tickets(
-    db: Session = Depends(get_read_db),
-    user: User = Depends(get_current_user),
-    request: CancelTicketsRequest = None,
-):
-    return await ticket_service.cancel_tickets(db, user, request)
 
 
 @router.get(

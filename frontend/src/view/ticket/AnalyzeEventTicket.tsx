@@ -14,6 +14,8 @@ import clsx from 'clsx';
 import { FaCaretUp } from 'react-icons/fa6';
 import { CartesianGrid, Line, LineChart, Pie, PieChart, XAxis } from 'recharts';
 
+import './Ticket.css';
+
 interface AnalyzeEventTicketProps {
   slug: string;
 }
