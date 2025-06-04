@@ -73,7 +73,7 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
                   {data.ticketGranularity.ticketTrendPercent > 0 && (
                     <>
                       {data.ticketGranularity.ticketTrendPercent} (%)
-                      <FaCaretUp className='w-6 h-6 -mt-1 text-green-500 inline-block' />
+                      <FaCaretUp className='w-6 h-6 text-green-500 inline-block' />
                     </>
                   )}
                 </span>
@@ -149,7 +149,7 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
                     {data.ticketGranularity.revenueTrendPercent > 0 && (
                       <>
                         {data.ticketGranularity.revenueTrendPercent} (%)
-                        <FaCaretUp className='w-6 h-6 inline-block -mt-1 text-green-500' />
+                        <FaCaretUp className='w-6 h-6 inline-block text-green-500' />
                       </>
                     )}
                   </span>

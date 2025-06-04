@@ -97,11 +97,11 @@ async def _listing_events(
             case(
                 (EventTicket.c.tickets.is_(None), "[]"),
                 else_=EventTicket.c.tickets,
-            ),
+            ).label("tickets"),
             case(
                 (EventTag.c.tags.is_(None), "[]"),
                 else_=EventTag.c.tags,
-            ),
+            ).label("tags"),
         )
         .outerjoin(EventTicket, Event.id == EventTicket.c.event_id)
         .outerjoin(EventTag, Event.id == EventTag.c.event_id)
