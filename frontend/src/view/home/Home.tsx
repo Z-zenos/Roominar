@@ -42,6 +42,7 @@ import OrganizationCardSkeleton from '@/src/component/common/Card/OrganizationCa
 import { useSession } from 'next-auth/react';
 import { useListingRandomOrganizationsQuery } from '@/src/api/organization.api';
 import { useListingRandomSpeakersQuery } from '@/src/api/speaker.api';
+import RecommendedEvents from '../event/RecommendedEvents';
 
 interface HeadingGroupProps {
   heading: string | ReactNode;
@@ -77,7 +78,7 @@ export default function Home() {
   const { data: recommendedEvents, isLoading: isRecommendationEventsLoading } =
     useListingRecommendationEventsQuery(
       {
-        perPage: 8,
+        perPage: 10,
       },
       status === 'authenticated',
     );
@@ -148,15 +149,7 @@ export default function Home() {
         <div className='bg-transparent h-[500px] w-full flex items-center justify-center absolute top-0 left-0'>
           <div className='relative w-full '>
             <div className='my-8 relative space-y-4 opacity-30'>
-              {recommendedEvents && (
-                <Image
-                  src={recommendedEvents.data[activeEvent]?.coverImageUrl}
-                  alt='Cover image'
-                  className='w-full blur-xl'
-                  classNames={{ wrapper: '!max-w-full' }}
-                />
-              )}
-              {!recommendedEvents && upcomingEvents && (
+              {upcomingEvents && (
                 <Image
                   src={upcomingEvents.data[activeEvent]?.coverImageUrl}
                   alt='Cover image'
@@ -187,78 +180,11 @@ export default function Home() {
         />
 
         <div className='450px:mb-6'>
-          <Swiper
-            key={width > 1200 ? 5 : 3}
-            autoplay={{
-              delay: 7000,
-              disableOnInteraction: false,
-            }}
-            freeMode={true}
-            modules={[Autoplay, Navigation, FreeMode]}
-            pagination={{
-              clickable: true,
-            }}
-            slidesPerView={width <= 450 ? 1 : width > 1200 ? 5 : 3}
-            wrapperClass='pb-2'
-            onSlideChange={(swipper) => setActiveEvent(swipper.activeIndex)}
-          >
-            {isRecommendationEventsLoading && (
-              <div className='flex justify-between'>
-                <EventCardSkeleton
-                  direction='vertical'
-                  variant='simple'
-                />
-                <EventCardSkeleton
-                  direction='vertical'
-                  variant='simple'
-                />
-                <EventCardSkeleton
-                  direction='vertical'
-                  variant='simple'
-                />
-                <EventCardSkeleton
-                  direction='vertical'
-                  variant='simple'
-                />
-              </div>
+          {!isRecommendationEventsLoading &&
+            recommendedEvents &&
+            recommendedEvents?.data?.length > 0 && (
+              <RecommendedEvents events={recommendedEvents.data} />
             )}
-            {!isRecommendationEventsLoading &&
-              recommendedEvents &&
-              recommendedEvents.data.map((event, i) => (
-                <SwiperSlide
-                  key={event.id}
-                  className={clsx('dark:rounded-lg dark:p-0')}
-                >
-                  <EventCard
-                    direction={
-                      width > 800 || width <= 450 ? 'vertical' : 'horizontal'
-                    }
-                    event={event}
-                    variant='compact'
-                    className={clsx(
-                      '!max-w-[250px] !min-w-[200px] !max-h-[200px]',
-                    )}
-                    style={{
-                      transform: `perspective(1000px) rotateY(${activeEvent === i ? -20 : activeEvent === i - 4 ? 20 : 0}deg) scale(${
-                        activeEvent === i || activeEvent === i - 4
-                          ? 0.9
-                          : activeEvent === i - 2
-                            ? 1.1
-                            : 1
-                      })`,
-                    }}
-                  />
-                </SwiperSlide>
-              ))}
-            {!isRecommendationEventsLoading && recommendedEvents && (
-              <Link
-                href='search/events?sort_by=recommendation'
-                className='my-8 block text-center text-green-500 font-semibold hover:underline'
-              >
-                --- More Recommendation Events ---{' '}
-              </Link>
-            )}
-          </Swiper>
         </div>
 
         <Link

@@ -144,7 +144,7 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
             <div>
               <p className='text-sm font-light text-primary flex justify-start items-start'>
                 Gross: {data.overview.totalGrossRevenue}
-                <span className='ml-2 -mt-1'>
+                <span className='ml-2'>
                   <span className='!text-sm font-light text-green-500'>
                     {data.ticketGranularity.revenueTrendPercent > 0 && (
                       <>
