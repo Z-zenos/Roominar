@@ -18,7 +18,6 @@ import {
   DropdownItem,
   Switch,
 } from '@nextui-org/react';
-import Logo from './Logo';
 import { signOut, useSession } from 'next-auth/react';
 import { usePathname, useRouter } from 'next/navigation';
 import useWindowDimensions from '@/src/hooks/useWindowDimension';
@@ -27,6 +26,10 @@ import { useTranslations } from 'next-intl';
 import { setUserLocale } from '@/src/utils/locale';
 import { getCookie } from 'cookies-next';
 import { useGetTotalUnreadNotificationsQuery } from '@/src/api/user.api';
+
+import { useRemoveNotificationDeviceTokenMutation } from '@/src/api/notification.api';
+import { getStoredFcmToken } from '@/src/hooks/useNotification';
+import Logo from '../Logo';
 import {
   Sheet,
   SheetContent,
@@ -35,10 +38,8 @@ import {
   SheetOverlay,
   SheetTitle,
   SheetTrigger,
-} from './Sheet';
-import { NotificationIcon, NotificationList } from './Notification';
-import { useRemoveNotificationDeviceTokenMutation } from '@/src/api/notification.api';
-import { getStoredFcmToken } from '@/src/hooks/useNotification';
+} from '../Sheet';
+import { NotificationIcon, NotificationList } from '../Notification';
 
 const menuItems = [
   {

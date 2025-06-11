@@ -1,7 +1,7 @@
 'use client';
 
 import Footer from '@/src/component/layout/Footer';
-import Navbar from '@/src/component/common/Navbar';
+import Navbar from '@/src/component/common/Navbar/Navbar';
 
 export default function RootLayout({
   children,

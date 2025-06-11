@@ -2,7 +2,7 @@
 
 import type { FC } from 'react';
 
-import Navbar from '../common/Navbar';
+import Navbar from '../common/Navbar/Navbar';
 
 type HeaderProps = {
   className?: string;
