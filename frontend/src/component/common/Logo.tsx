@@ -15,7 +15,7 @@ function Logo({ className }: LogoProps) {
       className={clsx('rounded-lg', className)}
     >
       <Image
-        className='w-auto translate-y-3'
+        className='w-auto translate-y-2'
         alt='Roominar Footer Logo'
         width={200}
         src={LogoImage.src}

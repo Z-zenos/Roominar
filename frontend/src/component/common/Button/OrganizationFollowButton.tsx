@@ -70,7 +70,7 @@ export default function OrganizationFollowButton({
             () => (
               <span className={clsx(styles.between, 'gap-2')}>
                 <span>
-                  You need to <b>login</b> for follow
+                  Bạn cần <b>đăng nhập</b> để theo dõi.
                 </span>
                 <IoMdLogIn size={16} />
               </span>
@@ -88,7 +88,7 @@ export default function OrganizationFollowButton({
       }}
       isDisabled={isDisabled}
     >
-      {follow ? 'Unfollow' : 'Follow'}
+      {follow ? 'Huỷ theo dõi' : 'Theo dõi'}
     </Button>
   );
 }

@@ -141,6 +141,39 @@
   }
 }
 
+@layer utilities {
+  .text-stroke {
+    -webkit-text-stroke: 1px black;
+  }
+  .text-stroke-white {
+    -webkit-text-stroke: 1px white;
+  }
+  .text-stroke-2 {
+    -webkit-text-stroke-width: 2px;
+  }
+  .text-stroke-red {
+    -webkit-text-stroke-color: red;
+  }
+  .text-stroke-blue {
+    -webkit-text-stroke-color: blue;
+  }
+  .text-stroke-green {
+    -webkit-text-stroke-color: green;
+  }
+  .text-stroke-yellow {
+    -webkit-text-stroke-color: yellow;
+  }
+  .text-stroke-purple {
+    -webkit-text-stroke-color: purple;
+  }
+  .text-stroke-pink {
+    -webkit-text-stroke-color: pink;
+  }
+  .text-stroke-orange {
+    -webkit-text-stroke-color: orange;
+  }
+}
+
 .colorset-default {
   @apply text-default-main bg-default-sub;
 }

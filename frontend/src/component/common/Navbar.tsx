@@ -42,15 +42,15 @@ import { getStoredFcmToken } from '@/src/hooks/useNotification';
 
 const menuItems = [
   {
-    title: 'Home',
+    title: 'Trang chủ',
     url: '/home',
   },
   {
-    title: 'Search',
+    title: 'Tìm kiếm',
     url: '/search',
   },
   {
-    title: 'Host Event',
+    title: 'Tổ chức sự kiện',
     url: '/organization/login',
   },
   {
@@ -58,7 +58,7 @@ const menuItems = [
     url: '/help-center',
   },
   {
-    title: 'Log in',
+    title: 'Đăng nhập',
     url: '/login',
   },
 ];
@@ -84,7 +84,7 @@ interface NavbarProps {
 }
 
 export default function Navbar({ className, hasLogo = true }: NavbarProps) {
-  const t = useTranslations('app');
+  const t = useTranslations('common');
   const router = useRouter();
 
   const [isEnglish, setIsEnglish] = useState<boolean>(
@@ -248,7 +248,7 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
                     key='profile'
                     className='h-14 gap-2'
                   >
-                    <p className='font-semibold'>Signed in as</p>
+                    <p className='font-semibold'>Đăng nhập với</p>
                     <p className='font-semibold'>
                       {maskEmail(auth?.user?.email)}
                     </p>
@@ -264,9 +264,11 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
                     key='my_events'
                     href='/my-events'
                   >
-                    My Events
+                    Sự kiện của tôi
                   </DropdownItem>
-                  <DropdownItem key='host_my_event'>Host Event</DropdownItem>
+                  <DropdownItem key='host_my_event'>
+                    Tổ chức sự kiện
+                  </DropdownItem>
                   <DropdownItem
                     key='account_settings'
                     href='/account-settings'
@@ -279,7 +281,7 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
                     color='danger'
                     onClick={() => handleLogout()}
                   >
-                    Log Out
+                    Đăng xuất
                   </DropdownItem>
                 </DropdownMenu>
               </Dropdown>
@@ -291,7 +293,7 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
                   href='/login'
                   underline='hover'
                 >
-                  Login
+                  Đăng nhập
                 </Link>
               </NavbarItem>
               <NavbarItem>
@@ -302,7 +304,7 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
                   variant='flat'
                   radius='sm'
                 >
-                  Sign Up
+                  Đăng ký
                 </Button>
               </NavbarItem>
             </>
@@ -368,7 +370,7 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
           className='min-w-[400px]'
         >
           <SheetHeader>
-            <SheetTitle className='text-primary'>Notifications</SheetTitle>
+            <SheetTitle className='text-primary'>Thông báo</SheetTitle>
             <SheetDescription />
             <NotificationList
               onRefetch={refetchTotalUnreadNotifications}

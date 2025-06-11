@@ -101,6 +101,7 @@ async def _listing_events(
             Event.is_offline,
             Event.meeting_tool_code,
             Event.published_at,
+            Event.min_ticket_price,
             case(
                 (
                     Bookmark.user_id.cast(Boolean),

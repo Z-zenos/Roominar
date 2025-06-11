@@ -79,6 +79,7 @@ class Event(BaseModel, table=True):
     application_form_url: Optional[str] = Field(sa_type=String(2048))
     view_number: Optional[int] = Field(default=0)
     max_ticket_number_per_account: Optional[int] = Field(default=10)
+    min_ticket_price: Optional[float] = Field(default=0.0)
 
     @model_validator(mode="before")
     @classmethod

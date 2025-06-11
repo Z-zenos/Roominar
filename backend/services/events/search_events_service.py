@@ -71,6 +71,7 @@ async def search_events(
             Event.is_offline,
             Event.meeting_tool_code,
             Event.published_at,
+            Event.min_ticket_price,
             case(
                 (
                     EventTag.c.tags.isnot(None),

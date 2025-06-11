@@ -1,8 +1,19 @@
 {
-  "app": {
+  "common": {
     "home": "Home",
     "search": "Search",
-    "hostMyEvent": "Host My Event"
+    "hostMyEvent": "Host My Event",
+    "button": {
+      "login": "Login"
+    },
+    "text": {
+      "events": "Events",
+      "upcomingEvents": "Upcoming Events",
+      "organization": "Organization"
+    }
+  },
+  "page": {
+    "home": {}
   },
   "form": {
     "label": {

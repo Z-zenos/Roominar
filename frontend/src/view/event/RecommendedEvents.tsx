@@ -1,8 +1,14 @@
 'use client';
 
+import { styles } from '@/src/constants/styles.constant';
+import useFormatMoney from '@/src/hooks/useFormatMoney';
 import type { SearchEventsItem } from '@/src/lib/api/generated';
-import { Image } from '@nextui-org/react';
+import { formatEventDate } from '@/src/utils/app.util';
+import { Image, Link } from '@nextui-org/react';
+import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
+import { IoTicketOutline } from 'react-icons/io5';
+import { MdKeyboardDoubleArrowRight } from 'react-icons/md';
 
 interface RecommendedEventsProps {
   events: SearchEventsItem[]; // Replace 'any' with a more specific type if available
@@ -10,6 +16,8 @@ interface RecommendedEventsProps {
 
 export default function RecommendedEvents({ events }: RecommendedEventsProps) {
   const router = useRouter();
+  const formatMoney = useFormatMoney();
+
   const imageCards = [
     <div
       key='1'
@@ -25,15 +33,25 @@ export default function RecommendedEvents({ events }: RecommendedEventsProps) {
         />
       </div>
       <div className='p-5 pt-1'>
-        <h3 className='font-semibold text-gray-900 text-md mb-2 group-hover:text-blue-600 transition-colors'>
-          {events[0]?.organizationName}
+        <h3 className='font-semibold text-gray-900 text-nm mb-2 group-hover:text-blue-600 transition-colors'>
+          🗓️ {formatEventDate(events[0]?.startAt)}
         </h3>
-        <p className='text-gray-600 text-sm leading-relaxed'>
+        <p className='text-gray-600 text-nm leading-relaxed'>
           {events[0]?.name}
         </p>
         <div className='mt-3 flex items-center text-xs text-gray-400'>
-          <span className='bg-green-100 text-green-700 px-2 py-1 rounded-full'>
-            {events[0]?.tags[0]?.name}
+          <span className='bg-green-100 text-green-700 px-2 py-1 rounded-md'>
+            <span
+              className={clsx(
+                styles.flexStart,
+                'text-sm font-medium text-green-500',
+              )}
+            >
+              <IoTicketOutline className='w-6 h-6' />
+              {events[0]?.minTicketPrice > 0
+                ? `Chỉ từ ${formatMoney(events[0].minTicketPrice)}`
+                : 'Miễn phí'}
+            </span>
           </span>
         </div>
       </div>
@@ -53,15 +71,25 @@ export default function RecommendedEvents({ events }: RecommendedEventsProps) {
         />
       </div>
       <div className='p-5 pt-1'>
-        <h3 className='font-semibold text-gray-900 text-md mb-2 group-hover:text-blue-600 transition-colors'>
-          {events[1]?.organizationName}
+        <h3 className='font-semibold text-gray-900 text-nm mb-2 group-hover:text-blue-600 transition-colors'>
+          🗓️ {formatEventDate(events[1]?.startAt)}
         </h3>
-        <p className='text-gray-600 text-sm leading-relaxed'>
+        <p className='text-gray-600 text-nm leading-relaxed'>
           {events[1]?.name}
         </p>
         <div className='mt-3 flex items-center text-xs text-gray-400'>
-          <span className='bg-blue-100 text-blue-700 px-2 py-1 rounded-full'>
-            {events[1]?.tags[0]?.name}
+          <span className='bg-blue-100 text-blue-700 px-2 py-1 rounded-md'>
+            <span
+              className={clsx(
+                styles.flexStart,
+                'text-sm font-medium text-green-500',
+              )}
+            >
+              <IoTicketOutline className='w-6 h-6' />
+              {events[1]?.minTicketPrice > 0
+                ? `Chỉ từ ${formatMoney(events[1].minTicketPrice)}`
+                : 'Miễn phí'}
+            </span>
           </span>
         </div>
       </div>
@@ -81,15 +109,25 @@ export default function RecommendedEvents({ events }: RecommendedEventsProps) {
         />
       </div>
       <div className='p-5 pt-1'>
-        <h3 className='font-semibold text-gray-900 text-md mb-2 group-hover:text-blue-600 transition-colors'>
-          {events[2]?.organizationName}
+        <h3 className='font-semibold text-gray-900 text-nm mb-2 group-hover:text-blue-600 transition-colors'>
+          🗓️ {formatEventDate(events[2]?.startAt)}
         </h3>
-        <p className='text-gray-600 text-sm leading-relaxed'>
+        <p className='text-gray-600 text-nm leading-relaxed'>
           {events[2]?.name}
         </p>
         <div className='mt-3 flex items-center text-xs text-gray-400'>
-          <span className='bg-purple-100 text-purple-700 px-2 py-1 rounded-full'>
-            {events[2]?.tags[0]?.name}
+          <span className='bg-purple-100 text-purple-700 px-2 py-1 rounded-md'>
+            <span
+              className={clsx(
+                styles.flexStart,
+                'text-sm font-medium text-green-500',
+              )}
+            >
+              <IoTicketOutline className='w-6 h-6' />
+              {events[2]?.minTicketPrice > 0
+                ? `Chỉ từ ${formatMoney(events[2].minTicketPrice)}`
+                : 'Miễn phí'}
+            </span>
           </span>
         </div>
       </div>
@@ -109,15 +147,25 @@ export default function RecommendedEvents({ events }: RecommendedEventsProps) {
         />
       </div>
       <div className='p-5 pt-1'>
-        <h3 className='font-semibold text-gray-900 text-md mb-2 group-hover:text-blue-600 transition-colors'>
-          {events[3]?.organizationName}
+        <h3 className='font-semibold text-gray-900 text-nm mb-2 group-hover:text-blue-600 transition-colors'>
+          🗓️ {formatEventDate(events[3]?.startAt)}
         </h3>
-        <p className='text-gray-600 text-sm leading-relaxed'>
+        <p className='text-gray-600 text-nm leading-relaxed'>
           {events[3]?.name}
         </p>
         <div className='mt-3 flex items-center text-xs text-gray-400'>
-          <span className='bg-orange-100 text-orange-700 px-2 py-1 rounded-full'>
-            {events[3]?.tags[0]?.name}
+          <span className='bg-orange-100 text-orange-700 px-2 py-1 rounded-md'>
+            <span
+              className={clsx(
+                styles.flexStart,
+                'text-sm font-medium text-green-500',
+              )}
+            >
+              <IoTicketOutline className='w-6 h-6' />
+              {events[3]?.minTicketPrice > 0
+                ? `Chỉ từ ${formatMoney(events[3].minTicketPrice)}`
+                : 'Miễn phí'}
+            </span>
           </span>
         </div>
       </div>
@@ -137,15 +185,25 @@ export default function RecommendedEvents({ events }: RecommendedEventsProps) {
         />
       </div>
       <div className='p-5 pt-1'>
-        <h3 className='font-semibold text-gray-900 text-md mb-2 group-hover:text-blue-600 transition-colors'>
-          {events[4]?.organizationName}
+        <h3 className='font-semibold text-gray-900 text-nm mb-2 group-hover:text-blue-600 transition-colors'>
+          🗓️ {formatEventDate(events[4]?.startAt)}
         </h3>
-        <p className='text-gray-600 text-sm leading-relaxed'>
+        <p className='text-gray-600 text-nm leading-relaxed'>
           {events[4]?.name}
         </p>
         <div className='mt-3 flex items-center text-xs text-gray-400'>
-          <span className='bg-cyan-100 text-cyan-700 px-2 py-1 rounded-full'>
-            {events[4]?.tags[0]?.name}
+          <span className='bg-cyan-100 text-cyan-700 px-2 py-1 rounded-md'>
+            <span
+              className={clsx(
+                styles.flexStart,
+                'text-sm font-medium text-green-500',
+              )}
+            >
+              <IoTicketOutline className='w-6 h-6' />
+              {events[4]?.minTicketPrice > 0
+                ? `Chỉ từ ${formatMoney(events[4].minTicketPrice)}`
+                : 'Miễn phí'}
+            </span>
           </span>
         </div>
       </div>
@@ -165,15 +223,25 @@ export default function RecommendedEvents({ events }: RecommendedEventsProps) {
         />
       </div>
       <div className='p-5 pt-1'>
-        <h3 className='font-semibold text-gray-900 text-md mb-2 group-hover:text-blue-600 transition-colors'>
-          {events[5]?.organizationName}
+        <h3 className='font-semibold text-gray-900 text-nm mb-2 group-hover:text-blue-600 transition-colors'>
+          🗓️ {formatEventDate(events[5]?.startAt)}
         </h3>
-        <p className='text-gray-600 text-sm leading-relaxed'>
+        <p className='text-gray-600 text-nm leading-relaxed'>
           {events[5]?.name}
         </p>
         <div className='mt-3 flex items-center text-xs text-gray-400'>
-          <span className='bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full'>
-            {events[5]?.tags[0]?.name}
+          <span className='bg-emerald-100 text-emerald-700 px-2 py-1 rounded-md'>
+            <span
+              className={clsx(
+                styles.flexStart,
+                'text-sm font-medium text-green-500',
+              )}
+            >
+              <IoTicketOutline className='w-6 h-6' />
+              {events[5]?.minTicketPrice > 0
+                ? `Chỉ từ ${formatMoney(events[5].minTicketPrice)}`
+                : 'Miễn phí'}
+            </span>
           </span>
         </div>
       </div>
@@ -193,15 +261,25 @@ export default function RecommendedEvents({ events }: RecommendedEventsProps) {
         />
       </div>
       <div className='p-5 pt-1'>
-        <h3 className='font-semibold text-gray-900 text-md mb-2 group-hover:text-blue-600 transition-colors'>
-          {events[6]?.organizationName}
+        <h3 className='font-semibold text-gray-900 text-nm mb-2 group-hover:text-blue-600 transition-colors'>
+          🗓️ {formatEventDate(events[6]?.startAt)}
         </h3>
-        <p className='text-gray-600 text-sm leading-relaxed'>
+        <p className='text-gray-600 text-nm leading-relaxed'>
           {events[6]?.name}
         </p>
         <div className='mt-3 flex items-center text-xs text-gray-400'>
-          <span className='bg-pink-100 text-pink-700 px-2 py-1 rounded-full'>
-            {events[6]?.tags[0]?.name}
+          <span className='bg-pink-100 text-pink-700 px-2 py-1 rounded-md'>
+            <span
+              className={clsx(
+                styles.flexStart,
+                'text-sm font-medium text-green-500',
+              )}
+            >
+              <IoTicketOutline className='w-6 h-6' />
+              {events[6]?.minTicketPrice > 0
+                ? `Chỉ từ ${formatMoney(events[6].minTicketPrice)}`
+                : 'Miễn phí'}
+            </span>
           </span>
         </div>
       </div>
@@ -221,15 +299,25 @@ export default function RecommendedEvents({ events }: RecommendedEventsProps) {
         />
       </div>
       <div className='p-5 pt-1'>
-        <h3 className='font-semibold text-gray-900 text-md mb-2 group-hover:text-blue-600 transition-colors'>
-          {events[7]?.organizationName}
+        <h3 className='font-semibold text-gray-900 text-nm mb-2 group-hover:text-blue-600 transition-colors'>
+          🗓️ {formatEventDate(events[7]?.startAt)}
         </h3>
-        <p className='text-gray-600 text-sm leading-relaxed'>
+        <p className='text-gray-600 text-nm leading-relaxed'>
           {events[7]?.name}
         </p>
         <div className='mt-3 flex items-center text-xs text-gray-400'>
-          <span className='bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full'>
-            {events[7]?.tags[0]?.name}
+          <span className='bg-yellow-100 text-yellow-700 px-2 py-1 rounded-md'>
+            <span
+              className={clsx(
+                styles.flexStart,
+                'text-sm font-medium text-green-500',
+              )}
+            >
+              <IoTicketOutline className='w-6 h-6' />
+              {events[7]?.minTicketPrice > 0
+                ? `Chỉ từ ${formatMoney(events[7].minTicketPrice)}`
+                : 'Miễn phí'}
+            </span>
           </span>
         </div>
       </div>
@@ -249,15 +337,25 @@ export default function RecommendedEvents({ events }: RecommendedEventsProps) {
         />
       </div>
       <div className='p-5 pt-1'>
-        <h3 className='font-semibold text-gray-900 text-md mb-2 group-hover:text-blue-600 transition-colors'>
-          {events[8]?.organizationName}
+        <h3 className='font-semibold text-gray-900 text-nm mb-2 group-hover:text-blue-600 transition-colors'>
+          🗓️ {formatEventDate(events[8]?.startAt)}
         </h3>
-        <p className='text-gray-600 text-sm leading-relaxed'>
+        <p className='text-gray-600 text-nm leading-relaxed'>
           {events[8]?.name}
         </p>
         <div className='mt-3 flex items-center text-xs text-gray-400'>
-          <span className='bg-slate-100 text-slate-700 px-2 py-1 rounded-full'>
-            {events[8]?.tags[0]?.name}
+          <span className='bg-slate-100 text-slate-700 px-2 py-1 rounded-md'>
+            <span
+              className={clsx(
+                styles.flexStart,
+                'text-sm font-medium text-green-500',
+              )}
+            >
+              <IoTicketOutline className='w-6 h-6' />
+              {events[8]?.minTicketPrice > 0
+                ? `Chỉ từ ${formatMoney(events[8].minTicketPrice)}`
+                : 'Miễn phí'}
+            </span>
           </span>
         </div>
       </div>
@@ -277,15 +375,25 @@ export default function RecommendedEvents({ events }: RecommendedEventsProps) {
         />
       </div>
       <div className='p-5 pt-1'>
-        <h3 className='font-semibold text-gray-900 text-md mb-2 group-hover:text-blue-600 transition-colors'>
-          {events[9]?.organizationName}
+        <h3 className='font-semibold text-gray-900 text-nm mb-2 group-hover:text-blue-600 transition-colors'>
+          🗓️ {formatEventDate(events[9]?.startAt)}
         </h3>
-        <p className='text-gray-600 text-sm leading-relaxed'>
+        <p className='text-gray-600 text-nm leading-relaxed'>
           {events[9]?.name}
         </p>
         <div className='mt-3 flex items-center text-xs text-gray-400'>
-          <span className='bg-gray-100 text-gray-700 px-2 py-1 rounded-full'>
-            {events[9]?.tags[0]?.name}
+          <span className='bg-gray-100 text-gray-700 px-2 py-1 rounded-md'>
+            <span
+              className={clsx(
+                styles.flexStart,
+                'text-sm font-medium text-green-500',
+              )}
+            >
+              <IoTicketOutline className='w-6 h-6' />
+              {events[9]?.minTicketPrice > 0
+                ? `Chỉ từ ${formatMoney(events[9].minTicketPrice)}`
+                : 'Miễn phí'}
+            </span>
           </span>
         </div>
       </div>
@@ -294,8 +402,15 @@ export default function RecommendedEvents({ events }: RecommendedEventsProps) {
 
   return (
     <div
-      className={` min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-4 px-6 mb-6`}
+      className={`min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 rounded-md pt-1 pb-4 mt-12 px-6 mb-6`}
     >
+      <Link
+        className='text-success font-bold flex justify-center gap-2 items-center cursor-pointer border-b border-b-success pb-2 mt-4 mb-4'
+        href='/search?sort_by=APPLICATION_END_AT'
+      >
+        Sự kiện phù hợp với bạn
+        <MdKeyboardDoubleArrowRight size={20} />
+      </Link>
       <div className='max-w-7xl mx-auto space-y-20'>
         {/* Image Gallery Demo */}
         <section>
@@ -313,7 +428,7 @@ export default function RecommendedEvents({ events }: RecommendedEventsProps) {
             {imageCards.map((child, index) => (
               <div
                 key={index}
-                className='break-inside-avoid mb-4'
+                className='break-inside-avoid mb-4 shadow-sm cursor-pointer'
               >
                 {child}
               </div>

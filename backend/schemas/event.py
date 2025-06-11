@@ -44,6 +44,7 @@ class SearchEventsItem(BaseModel):
     sold_tickets_number: int | None = None
     tags: list[TagItem] = Field([])
     published_at: datetime
+    min_ticket_price: float | None = None
 
 
 class SearchEventsQueryParams(BaseModel):
@@ -209,6 +210,7 @@ class MyEventItem(BaseModel):
     published_at: datetime
     tags: list[TagItem] = Field([])
     transaction_histories: list[MyTicketTransaction] = Field([])
+    min_ticket_price: float | None = None
     # canceled_at: datetime | None = None
     # sold_tickets_number: int | None = 0
 

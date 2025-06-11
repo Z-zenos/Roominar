@@ -233,6 +233,7 @@ async def listing_recommendation_events(
                 e.application_end_at,
                 e.cover_image_url,
                 e.published_at,
+                e.min_ticket_price,
                 o.name AS organization_name,
                 COALESCE((
                     SELECT SUM(ts.score)

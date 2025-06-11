@@ -1,8 +1,19 @@
 {
-  "app": {
+  "common": {
     "home": "Trang chủ",
     "search": "Tìm kiếm",
-    "hostMyEvent": "Tổ chức sự kiện"
+    "hostMyEvent": "Tổ chức sự kiện",
+    "button": {
+      "login": "Đăng nhập"
+    },
+    "text": {
+      "events": "Sự kiện",
+      "upcomingEvents": "Sự kiện sắp diễn ra",
+      "organization": "Tổ chức"
+    }
+  },
+  "page": {
+    "home": {}
   },
   "form": {
     "label": {

@@ -2,7 +2,7 @@
 
 import clsx from 'clsx';
 import { MdKeyboardDoubleArrowRight, MdOutlineExplore } from 'react-icons/md';
-import { FaConnectdevelop } from 'react-icons/fa';
+import { FaConnectdevelop, FaFireAlt } from 'react-icons/fa';
 import { Input } from '@nextui-org/input';
 import { CiSearch } from 'react-icons/ci';
 import Link from 'next/link';
@@ -43,6 +43,8 @@ import { useSession } from 'next-auth/react';
 import { useListingRandomOrganizationsQuery } from '@/src/api/organization.api';
 import { useListingRandomSpeakersQuery } from '@/src/api/speaker.api';
 import RecommendedEvents from '../event/RecommendedEvents';
+import { useTranslations } from 'next-intl';
+import { styles } from '@/src/constants/styles.constant';
 
 interface HeadingGroupProps {
   heading: string | ReactNode;
@@ -68,6 +70,7 @@ const HeadingGroup = ({
 };
 
 export default function Home() {
+  const t = useTranslations();
   const { status } = useSession();
   const { data: upcomingEvents, isLoading: isUpcomingEventsLoading } =
     useSearchEventsQuery({
@@ -113,11 +116,11 @@ export default function Home() {
               'flex justify-center items-center 450px:gap-5 gap-3 italic 450px:text-lg text-md',
             )}
           >
-            <span>Explore</span>
+            <span>Khám phá</span>
             <MdOutlineExplore className='text-primary' />
-            <span>Connect</span>
+            <span>Kết nối</span>
             <FaConnectdevelop className='text-primary' />
-            <span>Elevate</span>
+            <span>Trải nghiệm</span>
           </h2>
           <h1 className='450px:text-hg text-xm 450px:my-5 my-3 font-semibold'>
             Web(<span className='text-gradient'>Sem</span>)inar &
@@ -125,15 +128,15 @@ export default function Home() {
             {new Date().getFullYear()} 🎉
           </h1>
           <p className='text-primary font-semibold mb-8'>
-            Search site for all type event focusing on digital and AI
-            utilization
+            Nền tảng kết nối cộng đồng, nơi bạn có thể tìm kiếm, tham gia và tổ
+            chức các sự kiện.
           </p>
           <span className='border-t-1 border-gray-600 border-b-1 py-1 px-4'>
-            🚀 | YOU&apos;VE GOT PLANS?
+            🚀 | BẠN ĐÃ CÓ KẾ HOẠCH NÀO CHƯA?
           </span>
           <Input
             className='450px:max-w-[500px] max-w-[300px] mt-5 mx-auto'
-            placeholder='Search any event you want.'
+            placeholder='Tìm bất kỳ sự kiện nào bạn muốn...'
             startContent={
               <CiSearch className='w-5 h-5 pointer-events-none flex-shrink-0' />
             }
@@ -162,9 +165,7 @@ export default function Home() {
         </div>
 
         <div className='absolute top-[300px] left-0 z-0'>
-          <Marquee className='opacity-5 text-[300px] strokeme'>
-            ROOMINAR
-          </Marquee>
+          <Marquee className='opacity-5 text-[300px] strokeme'>VIEVENT</Marquee>
         </div>
       </section>
 
@@ -173,28 +174,26 @@ export default function Home() {
         <HeadingGroup
           heading={
             <span className='flex justify-center gap-2 items-center font-semibold text-green-500'>
-              Events <GiPartyPopper />
+              {t('common.text.events')} <GiPartyPopper />
             </span>
           }
-          subheading='Elevate your virtual experiences with our all-in-one webinar and event management solutions.'
+          subheading='Sự kiện là nơi bắt đầu của những cơ hội mới – Tham gia ngay để không bỏ lỡ điều gì!'
         />
 
-        <div className='450px:mb-6'>
-          {!isRecommendationEventsLoading &&
-            recommendedEvents &&
-            recommendedEvents?.data?.length > 0 && (
-              <RecommendedEvents events={recommendedEvents.data} />
-            )}
-        </div>
-
         <Link
-          className='text-primary font-bold inline-flex justify-start gap-2 items-center cursor-pointer border-b border-b-primary pb-2'
+          className='text-orange-500 font-bold inline-flex justify-start gap-2 items-center cursor-pointer border-b border-b-orange-500 pb-2'
           href='/search?sort_by=START_AT'
         >
-          Upcoming Event <MdKeyboardDoubleArrowRight size={20} />
+          <span className={styles.flexStart}>
+            <FaFireAlt className='text-red-500' />
+            <span className='bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent'>
+              Trending
+            </span>
+          </span>
+          <MdKeyboardDoubleArrowRight size={20} />
         </Link>
 
-        <div className='450px:border-l 450px:border-l-primary'>
+        <div>
           <Swiper
             key={width > 1200 ? 4 : 2}
             autoplay={{
@@ -211,7 +210,7 @@ export default function Home() {
             wrapperClass='pb-2'
             onSlideChange={(swipper) => setActiveEvent(swipper.activeIndex)}
           >
-            {isUpcomingEventsLoading && (
+            {isApplicationClosingSoonEventsLoading && (
               <div className='flex justify-between 450px:gap-0 gap-10'>
                 <EventCardSkeleton
                   direction='vertical'
@@ -231,9 +230,9 @@ export default function Home() {
                 />
               </div>
             )}
-            {!isUpcomingEventsLoading &&
-              upcomingEvents &&
-              upcomingEvents.data.map((event) => (
+            {!isApplicationClosingSoonEventsLoading &&
+              applicationClosingSoonEvents &&
+              applicationClosingSoonEvents.data.map((event, i) => (
                 <SwiperSlide
                   key={event.id}
                   className={clsx('dark:rounded-lg dark:p-0 mt-2')}
@@ -244,19 +243,29 @@ export default function Home() {
                     }
                     event={event}
                     variant='standard'
+                    trendingOrderNumber={i + 1}
                   />
                 </SwiperSlide>
               ))}
           </Swiper>
         </div>
+
+        <div className='450px:mb-6'>
+          {!isRecommendationEventsLoading &&
+            recommendedEvents &&
+            recommendedEvents?.data?.length > 0 && (
+              <RecommendedEvents events={recommendedEvents.data} />
+            )}
+        </div>
+
         <Link
           className='text-warning font-bold inline-flex justify-start gap-2 items-center cursor-pointer border-b border-b-warning pb-2 mt-8'
           href='/search?sort_by=APPLICATION_END_AT'
         >
-          Application Closing Soon Event
+          Sự kiện sắp diễn ra
           <MdKeyboardDoubleArrowRight size={20} />
         </Link>
-        <div className='450px:border-l 450px:border-l-warning'>
+        <div>
           <Swiper
             key={width > 1200 ? 2 : 1}
             autoplay={{
@@ -272,7 +281,7 @@ export default function Home() {
             spaceBetween={30}
             wrapperClass='pb-2'
           >
-            {isApplicationClosingSoonEventsLoading && (
+            {isUpcomingEventsLoading && (
               <div className='450px:flex 450px:justify-between gap-8'>
                 <EventCardSkeleton
                   direction='horizontal'
@@ -285,9 +294,9 @@ export default function Home() {
                 />
               </div>
             )}
-            {!isApplicationClosingSoonEventsLoading &&
-              applicationClosingSoonEvents &&
-              applicationClosingSoonEvents.data.map((event) => (
+            {!isUpcomingEventsLoading &&
+              upcomingEvents &&
+              upcomingEvents.data.map((event) => (
                 <SwiperSlide
                   key={event.id}
                   className={clsx('dark:rounded-lg dark:p-0')}
@@ -309,10 +318,11 @@ export default function Home() {
         <div className='flex flex-wrap justify-between items-start gap-10 1200px:flex-row flex-col'>
           <div className='1200px:w-[70%] w-full'>
             <h2 className='450px:text-xl text-lg text-primary font-semibold flex justify-start items-center gap-2'>
-              Organization <GoOrganization />
+              {t('common.text.organization')} <GoOrganization />
             </h2>
             <h3 className='450px:text-xm text-md text-gray-600 font-light'>
-              Follow us to receive the latest news from the organization.
+              Follow các tổ chức để cập nhật thông tin mới nhất về các sự kiện,
+              hội thảo và hoạt động thú vị từ các tổ chức hàng đầu.
             </h3>
             <div className='grid items-center gap-4 mt-6 1200px:grid-cols-3 450px:grid-cols-2 grid-cols-1'>
               {randomOrganizations &&
@@ -335,12 +345,17 @@ export default function Home() {
             <div className='flex 450px:flex-row flex-col justify-between gap-2 items-center bg-info-sub 450px:mt-8 mt-4 rounded-md 450px:px-10 p-4 450px:py-8'>
               <div>
                 <h3 className='font-semibold 450px:text-xm text-md text-info-main'>
-                  Start an event with Roominar
+                  Bắt đầu một sự kiện với Vievent
                 </h3>
                 <p className='font-light opacity-75'>
-                  Anyone can create an event page for free by creating a group.
-                  Why not publish an event for sharing information and
-                  interacting with others on Roominar?
+                  Bất kỳ ai cũng có thể tạo trang sự kiện miễn phí bằng cách tạo
+                  một tổ chức. Bạn có thể tạo một trang sự kiện để quảng bá sự
+                  kiện của mình, thu hút người tham gia và quản lý đăng ký.
+                  <br />
+                  <span className='font-semibold'>
+                    Vievent sẽ giúp bạn quản lý sự kiện một cách dễ dàng và hiệu
+                    quả.
+                  </span>
                 </p>
               </div>
               <Button
@@ -352,7 +367,7 @@ export default function Home() {
                   router.push('/organization/login')
                 }
               >
-                Create a free event
+                Tạo sự kiện mới
               </Button>
             </div>
           </div>
@@ -364,12 +379,13 @@ export default function Home() {
               <RankingList
                 data={tagRankData?.tags}
                 title='Tags'
+                isTranslation
               />
             </div>
             <div className='flex gap-5 items-center justify-between w-full pt-8'>
               <RankingList
                 data={eventRankData?.events}
-                title='Events'
+                title={t('common.text.events')}
                 onClick={(item) =>
                   item.slug && router.push(`events/${item.slug}`)
                 }
@@ -383,7 +399,7 @@ export default function Home() {
       <section className='pb-[40px] 450px:px-[15%] px-[5%]'>
         <div>
           <h2 className='450px:text-xl text-lg text-purple-main font-semibold flex justify-start items-center gap-2'>
-            Speaker <GiMicrophone />
+            Diễn giả <GiMicrophone />
           </h2>
           <h3 className='450px:text-xm text-md text-gray-600 font-light'>
             Inspiring insights from visionary Speaker.
