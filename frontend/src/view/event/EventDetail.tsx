@@ -12,7 +12,6 @@ import {
   FaRegEye,
 } from 'react-icons/fa';
 import { FaArrowRight, FaXTwitter } from 'react-icons/fa6';
-import { BsFillPeopleFill } from 'react-icons/bs';
 import { MdOutlineMail } from 'react-icons/md';
 import { GoOrganization } from 'react-icons/go';
 import { GiMicrophone, GiPartyPopper } from 'react-icons/gi';

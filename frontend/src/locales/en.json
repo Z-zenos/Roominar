@@ -975,6 +975,23 @@
       "PRODUCT_LAUNCHES": "product launches",
       "FAMILY_AND_PARENTING": "family and parenting",
       "KIDS_AND_TEENS_ACTIVITIES": "kids and teens activities"
+    },
+    "transactionStatus": {
+      "PENDING": "pending",
+      "SUCCESS": "success",
+      "CANCELED": "canceled",
+      "FAILED": "failed",
+      "REFUNDED": "refunded"
+    },
+    "paymentMethod": {
+      "CREDIT_CARD": "Credit Card",
+      "PAYPAL": "PayPal",
+      "MOMO": "MoMo",
+      "ZALOPAY": "ZaloPay",
+      "STRIPE": "Stripe",
+      "VNPAY": "VNPay",
+      "OTHER": "Other",
+      "FREE": "Free"
     }
   }
 }

@@ -227,7 +227,9 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
           {status === 'authenticated' ? (
             <div className='flex justify-end items-center gap-x-4'>
               {width > 800 && (
-                <span className='text-primary'>Hi, {auth.user.firstName}</span>
+                <span className='text-primary'>
+                  Chào, {auth.user.firstName}
+                </span>
               )}
               <Dropdown placement='bottom-end'>
                 <DropdownTrigger>
@@ -262,10 +264,10 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
                     My Profile
                   </DropdownItem>
                   <DropdownItem
-                    key='my_events'
-                    href='/my-events'
+                    key='tickets_n_payments'
+                    href='/tickets-n-payments'
                   >
-                    Sự kiện của tôi
+                    Vé của tôi
                   </DropdownItem>
                   <DropdownItem key='host_my_event'>
                     Tổ chức sự kiện
