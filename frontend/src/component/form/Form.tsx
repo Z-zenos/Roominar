@@ -720,7 +720,7 @@ const FormTagsInput = ({
                     )}
                   >
                     <span className='text-gray-500 font-medium line-clamp-1'>
-                      Select {title}
+                      Chọn {title}
                     </span>
                     <ChevronsUpDown className='h-4 w-4 shrink-0 opacity-50' />
                   </Button>
@@ -730,10 +730,10 @@ const FormTagsInput = ({
                 <Command>
                   <CommandInput
                     id={name}
-                    placeholder={`Search ${title}...`}
+                    placeholder={`Tìm kiếm ${title}...`}
                   />
                   <CommandList>
-                    <CommandEmpty>No {title} found.</CommandEmpty>
+                    <CommandEmpty>Không tìm thấy {title}.</CommandEmpty>
                     <CommandGroup>
                       {tags.map((item: { value: number; label: string }) => (
                         <CommandItem
@@ -761,10 +761,10 @@ const FormTagsInput = ({
 
             <button
               type='button'
-              className='w-full px-3 py-2 transition-all text-dark-main font-light hover:bg-green-sub border-t border-t-green-sub hover:text-green-main'
+              className='w-full px-3 py-2 transition-all text-dark-main font-light hover:bg-green-sub border-t border-t-green-sub hover:text-green-main text-sm'
               onClick={onOpen}
             >
-              More tags +
+              Chọn nhiều tag hơn +
             </button>
 
             <Modal
@@ -821,7 +821,7 @@ const FormTagsInput = ({
                         variant='flat'
                         onPress={onClose}
                       >
-                        Close
+                        Đóng
                       </UIButton>
                     </ModalFooter>
                   </>

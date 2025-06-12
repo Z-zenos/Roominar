@@ -69,7 +69,7 @@ export function DateRangePicker({
                 dayjs(daterange.from).format('HH:mm DD/MM/YYYY')
               )
             ) : (
-              <span>Pick a date</span>
+              <span>Chọn ngày</span>
             )}
           </Button>
         </PopoverTrigger>

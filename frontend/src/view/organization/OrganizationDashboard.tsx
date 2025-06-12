@@ -11,12 +11,12 @@ import clsx from 'clsx';
 import { styles } from '@/src/constants/styles.constant';
 import { Image } from '@nextui-org/react';
 import { GoDotFill } from 'react-icons/go';
-import { useState } from 'react';
-import { getCookie } from 'cookies-next';
 import { TagStatsChart } from '@/src/component/common/Chart/TagStatsChart';
 import { TrackUserActionsChart } from '@/src/component/common/Chart/TrackUserActionsChart';
 import { TicketStatsChart } from '@/src/component/common/Chart/TicketStatsChart';
 import AttendeesRanking from '../attendee/AttendeesRanking';
+import { useRouter } from 'next/navigation';
+import useFormatMoney from '@/src/hooks/useFormatMoney';
 
 const LazyCalendarTimeline = dynamic(
   () => import('@/src/component/common/DateTime/CalendarTimeline'),
@@ -28,9 +28,8 @@ const LazyCalendarTimeline = dynamic(
 
 export default function OrganizationDashboard() {
   const { data: eventsTimeline } = useListingOrganizationEventsTimelineQuery();
-  const [isEnglish] = useState<boolean>(
-    getCookie('NEXT_LOCALE') === 'en' || !getCookie('NEXT_LOCALE'),
-  );
+  const formatMoney = useFormatMoney();
+  const router = useRouter();
 
   const { data: dashboardData, isLoading: isLoadingDashboardData } =
     useGetOrganizationDashboardQuery();
@@ -43,8 +42,8 @@ export default function OrganizationDashboard() {
         <div className='col-span-3 grid grid-cols-3 gap-2'>
           <div
             className={clsx(
-              styles.between,
-              'bg-white rounded-lg shadow-md p-6 1200px:col-span-3 col-span-1 h-fit flex-wrap 1200px:gap-2 gap-5',
+              styles.flexStart,
+              'bg-white rounded-lg shadow-md p-6 col-span-3 h-fit flex-wrap 1200px:gap-x-20 gap-5',
             )}
           >
             {dashboardData && (
@@ -56,10 +55,19 @@ export default function OrganizationDashboard() {
                     width={50}
                   />
                   <div>
-                    <p className='text-sm font-light'>Total Events</p>
-                    <span className='text-md font-semibold text-primary'>
+                    <p className='text-sm font-light'>Tổng sự kiện</p>
+                    <span className='text-md font-semibold text-orange-500'>
                       {dashboardData.totalEvents}
                     </span>
+                    <p
+                      className={clsx(
+                        styles.center,
+                        'gap-1 text-xs font-bold text-orange-500',
+                      )}
+                    >
+                      <GoDotFill />
+                      {dashboardData.ongoingEvents.length} sự kiện đang diễn ra{' '}
+                    </p>
                   </div>
                 </div>
                 <div className={clsx(styles.center, 'gap-2')}>
@@ -70,8 +78,8 @@ export default function OrganizationDashboard() {
                   />
 
                   <div>
-                    <p className='text-sm font-light'>Total Tickets Sold</p>
-                    <span className='text-md font-semibold text-primary'>
+                    <p className='text-sm font-light'>Tổng vé đã bán</p>
+                    <span className='text-md font-semibold text-green-500'>
                       {dashboardData.totalTicketsSold}
                     </span>
                     <p
@@ -80,23 +88,8 @@ export default function OrganizationDashboard() {
                         'gap-1 text-xs font-bold text-green-500',
                       )}
                     >
-                      <GoDotFill />
-                      {dashboardData.totalActualAttendees} actual participants{' '}
+                      {dashboardData.todayTicketCount} vé đã bán hôm nay
                     </p>
-                  </div>
-                </div>
-                <div className={clsx(styles.center, 'gap-2')}>
-                  <Image
-                    src='/images/team.png'
-                    alt='total event'
-                    width={50}
-                  />
-
-                  <div>
-                    <p className='text-sm font-light'>Member</p>
-                    <span className='text-md font-semibold text-primary'>
-                      {dashboardData.totalMembers}
-                    </span>
                   </div>
                 </div>
 
@@ -108,16 +101,18 @@ export default function OrganizationDashboard() {
                   />
 
                   <div>
-                    <p className='text-sm font-light'>Revenue</p>
-                    <span className='text-md font-semibold text-primary'>
-                      {new Number(dashboardData.totalRevenue).toLocaleString(
-                        isEnglish ? 'en-US' : 'vi-VN',
-                        {
-                          style: 'currency',
-                          currency: isEnglish ? 'USD' : 'VND',
-                        },
-                      )}
+                    <p className='text-sm font-light'>Doanh thu</p>
+                    <span className='text-md font-semibold text-pink-500'>
+                      {formatMoney(dashboardData.todayRevenueCount)}
                     </span>
+                    <p
+                      className={clsx(
+                        styles.center,
+                        'gap-1 text-xs font-bold text-pink-500',
+                      )}
+                    >
+                      Doanh thu hôm nay: {dashboardData.todayRevenueCount}
+                    </p>
                   </div>
                 </div>
               </>
@@ -126,6 +121,42 @@ export default function OrganizationDashboard() {
             {isLoadingDashboardData && (
               <div className='flex w-full items-center justify-center'>
                 <ElementLoading title='Loading dashboard data...' />
+              </div>
+            )}
+            {dashboardData && (
+              <div
+                className={clsx(
+                  styles.flexStart,
+                  'col-span-3 gap-2 overflow-x-auto',
+                )}
+              >
+                {dashboardData.ongoingEvents.length > 0 &&
+                  dashboardData.ongoingEvents.map((event) => (
+                    <div
+                      key={event.id}
+                      className='bg-white rounded-lg border border-gray-200 shadow-sm px-4 py-2 mb-2 flex items-center gap-4 min-w-[360px] cursor-pointer'
+                      onClick={() =>
+                        router.push(
+                          `/organization/events/${event.slug}/overview`,
+                        )
+                      }
+                    >
+                      <Image
+                        src={
+                          event.coverImageUrl || '/images/event-placeholder.png'
+                        }
+                        alt={event.name}
+                        width={50}
+                        height={50}
+                        className='rounded-md aspect-square object-cover'
+                      />
+                      <div>
+                        <h3 className='text-sm font-semibold text-primary'>
+                          {event.name}
+                        </h3>
+                      </div>
+                    </div>
+                  ))}
               </div>
             )}
           </div>
@@ -167,7 +198,7 @@ export default function OrganizationDashboard() {
               ]}
               dayCellClassNames={['text-[14px]']}
               eventClassNames={['text-xs font-semibold']}
-              titleFormat={() => 'Event Schedule'}
+              titleFormat={() => 'Lịch sự kiện'}
               headerToolbar={{
                 left: 'prev,next',
                 center: 'title',

@@ -126,7 +126,7 @@ function UpdateTicketForm({ ticketId, onUpdate }: UpdateTicketFormProps) {
         className='my-6 pt-6 grid grid-cols-2 gap-4 border-t border-t-primary'
       >
         <FormInstructions className='col-span-2'>
-          <li>If you want to make free tickets, please set the price to 0.</li>
+          <li>Nếu bạn muốn tạo vé miễn phí, hãy đặt giá vé là 0.</li>
         </FormInstructions>
         <div className='col-span-2'>
           <FormRadioBoxList
@@ -189,7 +189,7 @@ function UpdateTicketForm({ ticketId, onUpdate }: UpdateTicketFormProps) {
             id='ticketDescription'
             name='description'
             label='ticketDescription'
-            placeholder='Describe details about the ticket (optional)'
+            placeholder='Mô tả thêm thông tin về vé (ví dụ: điều kiện sử dụng, cách sử dụng, ...)'
             control={form.control}
             showError={true}
           />
@@ -217,7 +217,7 @@ function UpdateTicketForm({ ticketId, onUpdate }: UpdateTicketFormProps) {
           isDisabled={Object.keys(form.formState.errors).length > 0}
           type='submit'
         >
-          Update Ticket
+          Cập nhật vé
         </Button>
       </form>
     </Form>

@@ -146,14 +146,23 @@ class GetOrganizationDetailResponse(BaseModel):
     events: list[SearchEventsItem] = Field([])
 
 
+class GetOrganizationOngoingEventsItem(BaseModel):
+    id: int
+    name: str
+    slug: str
+    cover_image_url: str | None = None
+
+
 class GetOrganizationDashboardResponse(BaseModel):
     total_events: int | None = None
-    total_ongoing_events: int | None = None
+    ongoing_events: list[GetOrganizationOngoingEventsItem] = Field([])
     total_visitors: int | None = None
     total_revenue: int | None = None
     total_members: int | None = None
     total_tickets_sold: int | None = None
     total_actual_attendees: int | None = None
+    today_revenue_count: int | None = None
+    today_ticket_count: int | None = None
 
 
 class TagStatsItem(BaseModel):

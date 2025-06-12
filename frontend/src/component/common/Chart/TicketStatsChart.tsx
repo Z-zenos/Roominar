@@ -14,7 +14,6 @@ import {
   TicketTypeCode,
   type OrganizationsApiGetTicketStatsRequest,
 } from '@/src/lib/api/generated';
-import { getCookie } from 'cookies-next';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useGetTicketStatsQuery } from '@/src/api/organization.api';
@@ -24,13 +23,12 @@ import { optionify } from '@/src/utils/app.util';
 import { useListingEventOptionsQuery } from '@/src/api/event.api';
 import Nodata from '../Nodata';
 import ElementLoader from '../Loader/ElementLoader';
+import useFormatMoney from '@/src/hooks/useFormatMoney';
 
 const TICKET_STATS_STORAGE_KEY = 'ticketStats';
 
 export function TicketStatsChart() {
-  const [isEnglish] = useState<boolean>(
-    getCookie('NEXT_LOCALE') === 'en' || !getCookie('NEXT_LOCALE'),
-  );
+  const formatMoney = useFormatMoney();
 
   const [filters, setFilters] = useState<OrganizationsApiGetTicketStatsRequest>(
     {},
@@ -62,12 +60,14 @@ export function TicketStatsChart() {
       total: ticketStats?.totalSoldTickets,
       percentage: ticketStats?.soldPercentage,
       fill: '#ff5c00',
+      label: 'Đã bán',
     },
     {
       type: 'remain',
       total: ticketStats?.totalRemainingTickets,
       percentage: ticketStats?.remainingPercentage,
       fill: '#fcb400',
+      label: 'Còn lại',
     },
     // {
     //   type: 'reserved',
@@ -78,18 +78,18 @@ export function TicketStatsChart() {
   ];
   const chartConfig = {
     percentage: {
-      label: 'Total',
+      label: 'Tổng cộng',
     },
     sold: {
-      label: 'Sold',
+      label: 'Đã bán',
       color: '#FFC107',
     },
     remaining: {
-      label: 'Remaining',
+      label: 'Còn lại',
       color: '#fcb400',
     },
     reserved: {
-      label: 'Reserved',
+      label: 'Đặt trước',
       color: '#ff5c00',
     },
   } as ChartConfig;
@@ -121,14 +121,8 @@ export function TicketStatsChart() {
           <CardHeader className='items-center pb-0'>
             {ticketStats && (
               <CardTitle className='font-medium'>
-                Ticket Stats ({ticketStats.totalTickets}) - Revenue:{' '}
-                {new Number(ticketStats.totalRevenue).toLocaleString(
-                  isEnglish ? 'en-US' : 'vi-VN',
-                  {
-                    style: 'currency',
-                    currency: isEnglish ? 'USD' : 'VND',
-                  },
-                )}
+                Thống kê vé ({ticketStats.totalTickets}) - Doanh thu:{' '}
+                {formatMoney(ticketStats.totalRevenue)}
               </CardTitle>
             )}
           </CardHeader>
@@ -174,7 +168,7 @@ export function TicketStatsChart() {
                       payload={chartData.map((item) => ({
                         id: item.type,
                         type: 'circle',
-                        value: `${item.type} (${item.percentage}%)`,
+                        value: `${item.label} (${item.percentage}%)`,
                         color: item.fill,
                       }))}
                       content={(props) => (
@@ -203,7 +197,7 @@ export function TicketStatsChart() {
                   htmlFor='ticketType'
                   custom={
                     <div>
-                      <h3 className='text-sm mt-4 mb-2'>Ticket type: </h3>
+                      <h3 className='text-sm mt-4 mb-2'>Loại vé: </h3>
                     </div>
                   }
                 />
@@ -220,7 +214,7 @@ export function TicketStatsChart() {
                   htmlFor='eventId'
                   custom={
                     <div>
-                      <h3 className='text-sm mt-4 mb-2'>Event name: </h3>
+                      <h3 className='text-sm mt-4 mb-2'>Tên sự kiện: </h3>
                     </div>
                   }
                 />
@@ -238,7 +232,7 @@ export function TicketStatsChart() {
               </div>
             </div>
           )}
-          {isLoading && <ElementLoader title='Calculating tickets...' />}
+          {isLoading && <ElementLoader title='Đang phân tích vé...' />}
           {!isLoading && ticketStats?.totalTickets === 0 && <Nodata />}
         </form>
       </Form>
