@@ -8,35 +8,38 @@ import clsx from 'clsx';
 async function Page() {
   return (
     <div className='mx-auto 450px:w-[700px] w-full py-[5%] 450px:px-auto px-[5%] overflow-hidden'>
-      <h2 className='text-primary text-lg font-semibold'>Welcome back 👋🏻</h2>
+      <h2 className='text-primary text-lg font-semibold'>
+        Ngày mới tốt lành 👋🏻
+      </h2>
       <p className='mt-2 mb-8 font-light text-gray-700 text-nm'>
-        Enter to get interesting event & webinar & seminar you like.
+        Hãy đăng nhập để nhận những sự kiện, hội thảo, buổi nói chuyện thú vị mà
+        bạn thích.
       </p>
       <LoginForm roleCode='AUDIENCE' />
 
       <div>
         <h5 className='text-center pt-4 font-Poppins text-[14px] text-black dark:text-white'>
-          Or join with
+          Hoặc đăng nhập bằng
         </h5>
         <SocialLogin />
         <h5 className='text-center pt-4 font-Poppins text-nm font-light'>
-          Not have any account?
+          Bạn chưa có tài khoản?
           <Link
             href='/register'
             className='text-primary font-semibold pl-1 cursor-pointer'
           >
-            Sign up
+            Đăng ký ngay
           </Link>
         </h5>
 
         <div className={clsx('mt-4 gap-2 font-light', styles.center)}>
-          Want to host your own event?
+          Bạn muốn tự tổ chức một sự kiện của riêng mình?
           <Button className='outline-none group'>
             <Link
               href='/organization/login'
               className='text-white group-hover:text-primary'
             >
-              Navigate to organization
+              Đi đến trang tổ chức
             </Link>
           </Button>
         </div>

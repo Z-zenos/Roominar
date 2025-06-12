@@ -7,12 +7,14 @@ import { Form, FormInput } from '@/src/component/form/Form';
 import useWindowDimensions from '@/src/hooks/useWindowDimension';
 import type {
   ApiException,
+  CancelTicketReasonCode,
   ErrorResponse400,
   ListingMyTransactionsItem,
+  ListingMyTransactionTicketItem,
   TransactionsApiListingMyTransactionsRequest,
 } from '@/src/lib/api/generated';
 import { TransactionStatusCode } from '@/src/lib/api/generated';
-import { formatEventDate, searchQuery } from '@/src/utils/app.util';
+import { cn, formatEventDate, searchQuery } from '@/src/utils/app.util';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -36,18 +38,19 @@ import Chip from '@/src/component/common/Chip';
 import {
   MdAirplaneTicket,
   MdKeyboardReturn,
+  MdLockClock,
   MdOutlineAccessTime,
 } from 'react-icons/md';
-import { Image } from '@nextui-org/react';
+import { Checkbox, Image, Button } from '@nextui-org/react';
 import { FaCheck } from 'react-icons/fa6';
-// import {
-//   Alert,
-//   AlertDescription,
-//   AlertTitle,
-// } from '@/src/component/common/Alert';
-// import Badge from '@/src/component/common/Badge';
-// import { Label } from '@/src/component/common/Label';
-// import { RadioGroup, RadioGroupItem } from '@/src/component/common/RadioGroup';
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from '@/src/component/common/Alert';
+import Badge from '@/src/component/common/Badge';
+import { Label } from '@/src/component/common/Label';
+import { RadioGroup, RadioGroupItem } from '@/src/component/common/RadioGroup';
 import {
   useGetTransactionStatusCountsQuery,
   useListingMyTransactionsQuery,
@@ -88,6 +91,9 @@ function TicketsNPayment() {
     useState<AudienceCancelTicketReasonCode>(
       AudienceCancelTicketReasonCode.ChangePlan,
     );
+  const [selectedTickets, setSelectedTickets] = useState<
+    ListingMyTransactionTicketItem[]
+  >([]);
 
   const {
     data: myTransactionsData,
@@ -143,18 +149,18 @@ function TicketsNPayment() {
     searchQuery(router, filters, searchParams, []);
   }
 
-  // function handleCancelTickets() {
-  //   if (!selectedReason) {
-  //     toast.error('Vui lòng chọn lí do huỷ vé');
-  //     return;
-  //   }
-  //   cancelTickets({
-  //     cancelTicketsRequest: {
-  //       transactionItemId: selectedTransaction.transactionItemId,
-  //       reason: selectedReason as unknown as CancelTicketReasonCode,
-  //     },
-  //   });
-  // }
+  function handleCancelTickets() {
+    if (!selectedReason) {
+      toast.error('Vui lòng chọn lí do huỷ vé');
+      return;
+    }
+    cancelTickets({
+      cancelTicketsRequest: {
+        transactionItemId: selectedTickets[0].transactionItemId,
+        reason: selectedReason as unknown as CancelTicketReasonCode,
+      },
+    });
+  }
 
   return (
     <Form {...form}>
@@ -167,7 +173,7 @@ function TicketsNPayment() {
             <FormInput
               name='keyword'
               leftIcon={<IoSearchOutline size={20} />}
-              placeholder='Find ticket name...'
+              placeholder='Tìm tên vé...'
               className='w-full 600px:min-w-[320px] min-w-full'
               control={form.control}
               onKeyDown={debounce(
@@ -517,65 +523,139 @@ function TicketsNPayment() {
                   {
                     value: 'Huỷ vé',
                     content: (
-                      <div className='mb-4 p-4 bg-gray-50 rounded-md grid grid-cols-2'>
-                        {/* <Alert className='col-span-2'>
-                          <MdLockClock className='h-5 w-5' />
-                          <AlertTitle>
-                            Có thể huỷ trước:{' '}
-                            <span className='opacity-60 text-sm'>
-                              {formatEventDate(
-                                selectedTransaction.cancelableBeforeAt,
-                              )}
-                            </span>
-                          </AlertTitle>
-                          <AlertDescription className='font-light opacity-60 text-nm'></AlertDescription>
-                        </Alert>
+                      <div className='mb-4 p-4 bg-gray-50 rounded-md'>
+                        <div className='grid 450px:grid-cols-2 grid-cols-1 gap-4'>
+                          {selectedTransaction.tickets.map(
+                            (
+                              ticket: ListingMyTransactionTicketItem,
+                              index: number,
+                            ) => (
+                              <Checkbox
+                                aria-label='tickets'
+                                name='tickets'
+                                classNames={{
+                                  base: cn(
+                                    'flex max-w-full mx-0 my-1 w-full bg-content1',
+                                    'hover:bg-content2 items-center justify-start',
+                                    'cursor-pointer rounded-lg gap-2 p-4 border-2 border-transparent',
+                                    'data-[selected=true]:border-primary',
+                                    !ticket.cancelable &&
+                                      'pointer-events-none text-gray-600 bg-gray-100',
+                                  ),
+                                  label: 'w-full m-0',
+                                }}
+                                onValueChange={(selected: boolean) => {
+                                  if (selected) {
+                                    setSelectedTickets((prev) => [
+                                      ...prev,
+                                      ticket,
+                                    ]);
+                                  } else {
+                                    setSelectedTickets((prev) =>
+                                      prev.filter((t) => t.id !== ticket.id),
+                                    );
+                                  }
+                                }}
+                                key={`t-${ticket.id}-${index}`}
+                                isSelected={selectedTickets.some(
+                                  (t) => t.id === ticket.id,
+                                )}
+                              >
+                                <div className='w-full flex justify-between items-center gap-2'>
+                                  <div className='font-normal w-full'>
+                                    <h4 className='text-sm font-medium leading-5'>
+                                      {t(`ticket.type.${ticket.type}`)}
+                                    </h4>
+                                    <div className='font-light opacity-80 leading-5 text-ss mt-1'>
+                                      <Alert className='col-span-2'>
+                                        <MdLockClock className='h-5 w-5' />
+                                        <AlertTitle>
+                                          Có thể huỷ trước:{' '}
+                                          <span className='opacity-60 text-sm'>
+                                            {formatEventDate(
+                                              ticket.cancelableBeforeAt,
+                                            )}
+                                          </span>
+                                        </AlertTitle>
+                                        <AlertDescription className='font-light opacity-60 text-nm'></AlertDescription>
+                                      </Alert>
+                                    </div>
+
+                                    <div
+                                      className={clsx(
+                                        styles.between,
+                                        'w-full my-3',
+                                      )}
+                                    >
+                                      <div
+                                        className={clsx(
+                                          styles.flexStart,
+                                          'gap-2',
+                                        )}
+                                      >
+                                        <Badge
+                                          title='Policy'
+                                          className='w-fit'
+                                        />
+                                        {t(
+                                          `ticket.cancellationPolicy.${ticket.cancellationPolicyCode}`,
+                                        )}
+                                      </div>
+                                      {ticket.cancellationPolicyExtraDescription && (
+                                        <span className='text-sm block'>
+                                          ℹ️{' '}
+                                          {
+                                            ticket.cancellationPolicyExtraDescription
+                                          }
+                                        </span>
+                                      )}
+                                    </div>
+
+                                    <p className='col-span-2 h-[1px] border-dashed border border-gray-300 my-2'></p>
+                                    <div className={clsx(styles.between)}>
+                                      <p className='col-span-1 text-sm'>
+                                        Số tiền bạn đã mua vé:{' '}
+                                      </p>
+                                      <p className='text-md font-semibold text-right'>
+                                        {formatMoney(ticket.price)}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+                              </Checkbox>
+                            ),
+                          )}
+                        </div>
+
+                        <p className='col-span-2 h-[4px] border-double border border-gray-300 my-2'></p>
+
+                        <div className={clsx(styles.center, 'px-4 py-3 gap-2')}>
+                          <p>Tổng số tiền hoàn trả</p>
+                          <p className='text-md font-semibold text-green-500'>
+                            {formatMoney(
+                              selectedTickets.reduce(
+                                (acc, ticket) => acc + ticket.price,
+                                0,
+                              ),
+                            )}
+                          </p>
+                        </div>
 
                         <div className='col-span-2 text-md my-3'>
-                          <div className={clsx(styles.flexStart, 'gap-2')}>
-                            <Badge
-                              title='Policy'
-                              className='w-fit'
-                            />
-                            {t(
-                              `ticket.cancellationPolicy.${selectedTransaction.cancellationPolicyCode}`,
-                            )}
-                          </div>
-                          {selectedTransaction.cancellationPolicyExtraDescription && (
-                            <span className='text-sm block'>
-                              ℹ️{' '}
-                              {
-                                selectedTransaction.cancellationPolicyExtraDescription
-                              }
-                            </span>
-                          )}
-
-                          <p className='text-sm text-gray-500 mt-2'>
+                          <p className='text-sm text-gray-500 mt-2 text-center'>
                             *Vui lòng lưu ý rằng số tiền hoàn lại có thể thay
                             đổi tuỳ theo chính sách huỷ vé.
                           </p>
                         </div>
 
-                        <p className='col-span-2 h-[1px] border-dashed border border-gray-300 my-2'></p>
-                        <p className='col-span-1 text-nm'>
-                          Số tiền bạn đã mua vé:{' '}
-                        </p>
-                        <p className='text-md font-semibold text-right'>
-                          {formatMoney(selectedTransaction.price)}
-                        </p>
-
-                        <p className='col-span-1 text-nm'>
-                          Số tiền sẽ hoàn trả cho bạn:{' '}
-                        </p>
-                        <p className='text-md font-semibold text-right'>
-                          {formatMoney(selectedTransaction.refundedAmount)}
-                        </p>
-
                         <p className='col-span-2 h-[1px] border-dotted border border-gray-300 my-2'></p>
 
                         <div className='col-span-2'>
                           <p className='text-nm mb-2'>Lí do huỷ:</p>
-                          <RadioGroup defaultValue='comfortable'>
+                          <RadioGroup
+                            defaultValue='comfortable'
+                            className='grid 450px:grid-cols-2 grid-cols-1 450px:gap-4 gap-2'
+                          >
                             {Object.keys(AudienceCancelTicketReasonCode).map(
                               (reason) => (
                                 <div
@@ -614,11 +694,11 @@ function TicketsNPayment() {
                           variant='flat'
                           onPress={handleCancelTickets}
                           isLoading={isCanceling}
-                          hidden={!selectedTransaction.cancelable}
-                          className='mt-3'
+                          isDisabled={!selectedTickets.length}
+                          className='mt-6 mx-auto block w-[200px]'
                         >
                           Huỷ
-                        </Button> */}
+                        </Button>
                       </div>
                     ),
                   },
