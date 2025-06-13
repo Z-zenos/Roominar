@@ -68,6 +68,7 @@ export const EventDetailMenuBar = React.forwardRef<
   const isDarkTheme = theme === 'dark';
 
   return (
+    // @ts-expect-error: Framer Motion ref forwarding
     <motion.nav
       ref={ref}
       className={cn(
@@ -75,7 +76,7 @@ export const EventDetailMenuBar = React.forwardRef<
         className,
       )}
       initial='initial'
-      whileHover='hover'
+      whileHover={{ scale: 1.05 }}
       {...props}
     >
       <motion.div

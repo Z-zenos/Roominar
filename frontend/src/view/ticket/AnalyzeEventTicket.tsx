@@ -39,18 +39,18 @@ const revenueChartConfig = {
 
 const overviewChartConfig = {
   total: {
-    label: 'Total',
+    label: 'Tổng cộng',
   },
   sold: {
-    label: 'Sold',
+    label: 'Đã bán',
     color: '#27ae60',
   },
   available: {
-    label: 'Available',
+    label: 'Còn lại',
     color: 'rgb(0, 111, 238)',
   },
   canceled: {
-    label: 'Canceled',
+    label: 'Đã huỷ',
     color: '#e74c3c',
   },
 } as ChartConfig;
@@ -90,7 +90,7 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
                 </span>
               </span>
             </p>
-            <p className='text-nm font-light'>Tickets</p>
+            <p className='text-sm font-light'>Thống kê vé đã bán</p>
           </div>
           {data.ticketGranularity &&
           data.ticketGranularity.ticketStatsByTime.map(
@@ -170,7 +170,9 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
                 Net: {data.overview.totalGrossRevenue}
               </p>
             </div>
-            <p className='text-nm font-light'>Revenue</p>
+            <p className='text-sm font-light max-w-[70px] text-wrap'>
+              Doanh thu từng ngày
+            </p>
           </div>
           {data.ticketGranularity &&
           data.ticketGranularity.ticketStatsByTime.map(
@@ -189,6 +191,7 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
                   margin={{
                     left: 24,
                     right: 12,
+                    top: 10,
                   }}
                 >
                   <CartesianGrid vertical={false} />
@@ -224,7 +227,7 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
               <p className='text-md font-semibold'>
                 Best Selling{' '}
                 <span className='text-sm font-light opacity-80'>
-                  (Total {data?.overview?.totalTickets} tickets)
+                  (Tổng cộng {data?.overview?.totalTickets} vé)
                 </span>
               </p>
 
@@ -286,7 +289,7 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
                   <p className='text-md font-bold my-1'>
                     {data.overview.totalSoldTickets}
                   </p>
-                  <p className='text-sm opacity-70 font-light'>Ticket Sold</p>
+                  <p className='text-sm opacity-70 font-light'>Vé đã bán</p>
                   <p className='opacity-70 text-sm'>&nbsp;</p>
                 </div>
 
@@ -295,9 +298,7 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
                   <p className='text-md font-bold my-1'>
                     {data.overview.totalAvailableTickets}
                   </p>
-                  <p className='text-sm opacity-70 font-light'>
-                    Ticket Available
-                  </p>
+                  <p className='text-sm opacity-70 font-light'>Vé còn lại</p>
                   <p className='opacity-70 text-sm'>&nbsp;</p>
                 </div>
 
@@ -306,11 +307,9 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
                   <p className='text-md font-bold my-1'>
                     {data.overview.totalCanceledTickets}
                   </p>
-                  <p className='text-sm opacity-70 font-light'>
-                    Ticket Canceled
-                  </p>
+                  <p className='text-sm opacity-70 font-light'>Vé đã huỷ</p>
                   <p className='opacity-70 text-sm'>
-                    (Cancel Rate: {data.overview.cancelRate + ' %'})
+                    (Tỉ lệ huỷ: {data.overview.cancelRate + ' %'})
                   </p>
                 </div>
               </div>

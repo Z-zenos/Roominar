@@ -17,15 +17,15 @@ function EventTicketsTable({ tickets }: EventTicketsTableProps) {
   return (
     <div>
       <Table>
-        <TableCaption>An analyzing list of event tickets.</TableCaption>
+        <TableCaption>Thống kê các loại vé trong sự kiện</TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead className='w-[250px]'>Ticket Name</TableHead>
-            <TableHead>Price</TableHead>
-            <TableHead>Sold</TableHead>
-            <TableHead className='text-right'>Canceled</TableHead>
-            <TableHead>Available</TableHead>
-            <TableHead>Net Revenue</TableHead>
+            <TableHead className='w-[250px]'>Loại</TableHead>
+            <TableHead>Giá</TableHead>
+            <TableHead>Đã bán</TableHead>
+            <TableHead className='text-right'>Đã huỷ</TableHead>
+            <TableHead>Còn lại</TableHead>
+            <TableHead>Doanh thu thực tế</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -46,16 +46,6 @@ function EventTicketsTable({ tickets }: EventTicketsTableProps) {
             </TableRow>
           ))}
         </TableBody>
-        {/* <TableFooter>
-            <TableRow>
-              <TableCell colSpan={3}>
-                Total
-              </TableCell>
-              <TableCell className='text-right'>
-                $2,500.00
-              </TableCell>
-            </TableRow>
-          </TableFooter> */}
       </Table>
     </div>
   );
