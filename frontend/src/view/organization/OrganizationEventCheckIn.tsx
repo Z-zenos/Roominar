@@ -8,8 +8,10 @@ import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import AttendeeCheckInTable from '../attendee/AttendeeCheckInTable';
+import { useRouter } from 'next/navigation';
 
 export default function OrganizationEventCheckIn() {
+  const router = useRouter();
   const [message, setMessage] = useState('');
   const { data: auth } = useSession();
   const { trigger: qrCheckIn } = useQRChecInMutation({
@@ -27,7 +29,7 @@ export default function OrganizationEventCheckIn() {
 
   function handleScanQR(qrCode: string) {
     if (!qrCode) {
-      setMessage('QR not found. Please try again.');
+      setMessage('Không tìm thấy mã QR. Vui lòng thử  lại.');
       return;
     }
 
@@ -42,6 +44,7 @@ export default function OrganizationEventCheckIn() {
         checksum: data.checksum,
       },
     });
+    router.refresh();
   }
 
   return (

@@ -1,4 +1,3 @@
-from fastapi import HTTPException, status
 from sqlmodel import Session, select
 
 from backend.background_tasks.notification_tasks import push_check_in_event_notification
@@ -17,8 +16,8 @@ from backend.utils.database import save
 
 async def qr_check_in(
     db: Session,
-    event_id: int,
     request: QRCheckInRequest,
+    event_id: int,
 ) -> CheckIn:
     try:
         # 1. Xác thực checksum
@@ -102,7 +101,4 @@ async def qr_check_in(
 
     except Exception as e:
         db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e),
-        ) from e
+        raise e

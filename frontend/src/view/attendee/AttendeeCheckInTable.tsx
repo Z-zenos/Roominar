@@ -48,8 +48,7 @@ import {
 } from '@/src/api/event.api';
 
 const columns = [
-  { name: 'Id', uid: 'id', sortable: false },
-  { name: 'Người tham gia', uid: 'name', sortable: false },
+  { name: 'Mã vé', uid: 'id', sortable: false },
   { name: 'Trạng thái', uid: 'checkin', sortable: false },
   { name: 'Hành động', uid: 'actions' },
 ];
@@ -163,24 +162,13 @@ export default function AttendeeCheckInTable() {
 
       switch (columnKey) {
         case 'id':
-          return <p>{attendee.id}</p>;
-
-        case 'name':
           return (
-            <div className='ml-2'>
-              <p>
-                {highlightMatchedText(
-                  attendee.userName,
-                  form.getValues('keyword'),
-                )}
-              </p>
-              <p className='font-semibold'>
-                {highlightMatchedText(
-                  attendee.phone,
-                  form.getValues('keyword'),
-                )}
-              </p>
-            </div>
+            <p>
+              {highlightMatchedText(
+                attendee.id + '',
+                form.getValues('keyword'),
+              )}
+            </p>
           );
 
         case 'checkin':
@@ -283,12 +271,14 @@ export default function AttendeeCheckInTable() {
                 <Radio
                   className='mr-4'
                   value='checked-in'
+                  onClick={() => form.setValue('isCheckedIn', false)}
                 >
                   Đã check-in
                 </Radio>
                 <Radio
                   className='mr-4'
                   value='un-check-in'
+                  onClick={() => form.setValue('isCheckedIn', true)}
                 >
                   Chưa check-in
                 </Radio>

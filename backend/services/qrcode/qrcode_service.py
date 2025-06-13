@@ -1,20 +1,22 @@
-import hashlib
 import json
 from io import BytesIO
 
+import cloudinary.uploader
 import qrcode
 
 from backend.core.cloudinary_config import cloudinary
-import cloudinary.uploader
+from backend.core.config import settings
+from backend.core.security import generate_checksum
 
 
 class QrcodeService:
     def __init__(self, upload_folder: str = "qr_codes/"):
         self.upload_folder = upload_folder
 
-    def generate_qr_data(self, qr_code_id: str, user_id: int, event_id: int) -> dict:
-        raw_data = f"{qr_code_id}-{user_id}-{event_id}"
-        checksum = hashlib.sha256(raw_data.encode()).hexdigest()
+    def generate_qr_data(self, qr_code_id: str, user_id: int, event_id: int) -> str:
+        checksum = generate_checksum(
+            qr_code_id, user_id, event_id, settings.QR_CHECK_IN_SECRET_KEY.encode()
+        )
         return json.dumps(
             {
                 "qrCodeId": qr_code_id,
