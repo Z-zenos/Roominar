@@ -3,7 +3,6 @@
 
 import { useQRChecInMutation } from '@/src/api/event.api';
 import QRScanner from '@/src/component/common/QR/QRScanner';
-import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import AttendeeCheckInTable from '../attendee/AttendeeCheckInTable';
@@ -19,7 +18,6 @@ export default function OrganizationEventCheckIn({
 }: OrganizationEventCheckInProps) {
   const router = useRouter();
   const [message, setMessage] = useState('');
-  const { data: auth } = useSession();
   const { trigger: qrCheckIn } = useQRChecInMutation({
     onSuccess: () => {
       toast.success('✅ Check-in successfully!');
@@ -40,7 +38,7 @@ export default function OrganizationEventCheckIn({
       qRCheckInRequest: {
         qrCodeId: data.qrCodeId,
         eventId: data.eventId,
-        userId: auth.user.id,
+        userId: data.userId,
         checksum: data.checksum,
       },
     });

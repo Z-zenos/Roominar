@@ -5,7 +5,6 @@ import cloudinary.uploader
 import qrcode
 
 from backend.core.cloudinary_config import cloudinary
-from backend.core.config import settings
 from backend.core.security import generate_checksum
 
 
@@ -14,9 +13,8 @@ class QrcodeService:
         self.upload_folder = upload_folder
 
     def generate_qr_data(self, qr_code_id: str, user_id: int, event_id: int) -> str:
-        checksum = generate_checksum(
-            qr_code_id, user_id, event_id, settings.QR_CHECK_IN_SECRET_KEY.encode()
-        )
+        checksum = generate_checksum(qr_code_id, user_id, event_id)
+
         return json.dumps(
             {
                 "qrCodeId": qr_code_id,

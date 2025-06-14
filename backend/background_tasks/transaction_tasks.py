@@ -92,16 +92,6 @@ def process_transaction(
 
         for ticket in tickets:
             ticket = dict(ticket)
-            print(
-                {
-                    "id": ticket["ticket_inventory_id"],
-                    "available_quantity": ticket["available_quantity"]
-                    - total_requested_quantity,
-                    "sold_quantity": ticket["sold_quantity"] + total_requested_quantity,
-                    "ticket_id": ticket["id"],
-                    "event_id": event_id,
-                }
-            )
             update_ticket_inventories.append(
                 {
                     "id": ticket["ticket_inventory_id"],

@@ -36,6 +36,7 @@ async def qr_check_in(
             TransactionItem.qr_code_id == request.qr_code_id,
             TransactionItem.user_id == request.user_id,
         )
+
         result = db.exec(statement)
         item = result.first()
 

@@ -118,7 +118,6 @@ async def handle_application_transaction(db: Session, request: Request):
             )
 
             # Use Celery to process the application asynchronously
-            print("total_requested_quantity", total_requested_quantity)
             process_transaction.delay(
                 event_id=event_id,
                 user_id=user_id,
