@@ -3,14 +3,20 @@
 
 import { useQRChecInMutation } from '@/src/api/event.api';
 import QRScanner from '@/src/component/common/QR/QRScanner';
-import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import AttendeeCheckInTable from '../attendee/AttendeeCheckInTable';
 import { useRouter } from 'next/navigation';
+import { handleApiError } from '@/src/utils/app.util';
 
-export default function OrganizationEventCheckIn() {
+interface OrganizationEventCheckInProps {
+  slug: string;
+}
+
+export default function OrganizationEventCheckIn({
+  slug,
+}: OrganizationEventCheckInProps) {
   const router = useRouter();
   const [message, setMessage] = useState('');
   const { data: auth } = useSession();
@@ -18,13 +24,7 @@ export default function OrganizationEventCheckIn() {
     onSuccess: () => {
       toast.success('✅ Check-in successfully!');
     },
-    onError(error: ApiException<unknown>) {
-      toast.error(
-        (error.body as ErrorResponse400)?.message ??
-          (error.body as ErrorResponse400)?.errorCode ??
-          'Unknown Error 😵',
-      );
-    },
+    onError: handleApiError,
   });
 
   function handleScanQR(qrCode: string) {
@@ -58,7 +58,7 @@ export default function OrganizationEventCheckIn() {
       <div className='1200px:mt-0 mt-7'>
         <h1 className='text-lg font-bold mb-4'>Check-in thủ công</h1>
 
-        <AttendeeCheckInTable />
+        <AttendeeCheckInTable slug={slug} />
       </div>
     </div>
   );

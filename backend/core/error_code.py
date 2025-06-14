@@ -54,6 +54,7 @@ class ErrorCode:
     ERR_TICKET_CANCELED = "ERR_TICKET_CANCELED"
     ERR_TICKET_REFUNDED = "ERR_TICKET_REFUNDED"
     ERR_EVENT_NOT_STARTED = "ERR_EVENT_NOT_STARTED"
+    ERR_TRANSACTION_ITEM_NOT_FOUND = "ERR_TRANSACTION_ITEM_NOT_FOUND"
 
 
 class ErrorMessage:
@@ -114,3 +115,4 @@ class ErrorMessage:
     ERR_TICKET_CANCELED = "Ticket was canceled."
     ERR_TICKET_REFUNDED = "Ticket was refunded."
     ERR_EVENT_NOT_STARTED = "The event has not started yet."
+    ERR_TRANSACTION_ITEM_NOT_FOUND = "The transaction item doesn't exist."

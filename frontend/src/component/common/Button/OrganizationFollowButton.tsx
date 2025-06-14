@@ -5,7 +5,8 @@ import {
   useDeleteOrganizationFollowMutation,
 } from '@/src/api/organization.api';
 import { styles } from '@/src/constants/styles.constant';
-import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
+import { handleApiError } from '@/src/utils/app.util';
+
 import { Button } from '@nextui-org/react';
 import clsx from 'clsx';
 import { useSession } from 'next-auth/react';
@@ -32,13 +33,7 @@ export default function OrganizationFollowButton({
       onSuccess() {
         setFollow(true);
       },
-      onError(error: ApiException<unknown>) {
-        toast.error(
-          (error.body as ErrorResponse400)?.message ??
-            (error.body as ErrorResponse400)?.errorCode ??
-            'Unknown Error 😵',
-        );
-      },
+      onError: handleApiError,
     });
 
   const { trigger: deleteOrganizationFollow } =
@@ -46,13 +41,7 @@ export default function OrganizationFollowButton({
       onSuccess() {
         setFollow(false);
       },
-      onError(error: ApiException<unknown>) {
-        toast.error(
-          (error.body as ErrorResponse400)?.message ??
-            (error.body as ErrorResponse400)?.errorCode ??
-            'Unknown Error 😵',
-        );
-      },
+      onError: handleApiError,
     });
 
   return (

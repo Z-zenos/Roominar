@@ -1,7 +1,7 @@
 'use client';
 
 import type { Key } from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
   Table,
   TableHeader,
@@ -17,9 +17,7 @@ import {
 
 import { useForm } from 'react-hook-form';
 import type {
-  ApiException,
   AttendeeSortByCode,
-  ErrorResponse400,
   ListingAttendeesItem,
   OrganizationsApiDownloadAttendeesCsvRequest,
   OrganizationsApiListingAttendeesRequest,
@@ -41,7 +39,7 @@ import {
   FormDateRangePicker,
   FormInput,
 } from '@/src/component/form/Form';
-import { IoCheckmarkDoneOutline, IoSearchOutline } from 'react-icons/io5';
+import { IoSearchOutline } from 'react-icons/io5';
 import debounce from 'lodash.debounce';
 import clsx from 'clsx';
 import { GrPowerReset } from 'react-icons/gr';
@@ -52,19 +50,12 @@ import { useTranslations } from 'next-intl';
 import useHighlightMatchedText from '@/src/hooks/useHighlightMatchedText';
 import { styles } from '@/src/constants/styles.constant';
 
-import toast from 'react-hot-toast';
 import { TbFileTypeCsv } from 'react-icons/tb';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { AiOutlineEye } from 'react-icons/ai';
 import { SheetTrigger } from '@/src/component/common/Sheet';
-import Chip from '@/src/component/common/Chip';
-import { IoIosCheckboxOutline, IoIosRemoveCircleOutline } from 'react-icons/io';
 import { useRightSidebar } from '@/src/contexts/RightSidebarContext';
-import {
-  useDeleteManualCheckInMutation,
-  useManualCheckInMutation,
-} from '@/src/api/event.api';
 
 const columns = [
   { name: 'Apply Time', uid: 'apply_time', sortable: false },
@@ -85,9 +76,6 @@ export default function AttendeeDataTable() {
   const { width } = useWindowDimensions();
   const t = useTranslations();
   const highlightMatchedText = useHighlightMatchedText();
-  const [checkedInAttendees, setCheckedInAttendees] = useState<Set<number>>(
-    new Set(),
-  );
 
   const [selectedKeys, setSelectedKeys] = useState<any>(new Set());
 
@@ -120,19 +108,6 @@ export default function AttendeeDataTable() {
     },
   });
 
-  useEffect(() => {
-    if (data) {
-      setCheckedInAttendees(
-        () =>
-          new Set(
-            data?.data
-              ?.filter((item) => item.checkInId)
-              ?.map((item) => item.applicationId),
-          ),
-      );
-    }
-  }, [data]);
-
   function handleSearch(data: any = {}) {
     if (form.getValues()['apply_at_range']) {
       const apply_at_range = form.getValues()['apply_at_range'];
@@ -148,28 +123,6 @@ export default function AttendeeDataTable() {
 
     searchQuery(router, filters, searchParams, exclude_queries);
   }
-
-  const { trigger: createCheckIn } = useManualCheckInMutation({
-    onSuccess() {},
-    onError(error: ApiException<unknown>) {
-      toast.error(
-        (error.body as ErrorResponse400)?.message ??
-          (error.body as ErrorResponse400)?.errorCode ??
-          'Unknown Error 😵',
-      );
-    },
-  });
-
-  const { trigger: deleteCheckIn } = useDeleteManualCheckInMutation({
-    onSuccess() {},
-    onError(error: ApiException<unknown>) {
-      toast.error(
-        (error.body as ErrorResponse400)?.message ??
-          (error.body as ErrorResponse400)?.errorCode ??
-          'Unknown Error 😵',
-      );
-    },
-  });
 
   function handleDownloadAttendeesCSV() {
     setIsDownloadAttendeesCSVLoading(true);
@@ -206,30 +159,6 @@ export default function AttendeeDataTable() {
         setIsDownloadAttendeesCSVLoading(false);
       });
   }
-
-  const handleCheckIn = (attendee: ListingAttendeesItem) => {
-    setCheckedInAttendees((prev) => {
-      const newCheckedIn = new Set(prev);
-      if (newCheckedIn.has(attendee.applicationId)) {
-        newCheckedIn.delete(attendee.applicationId);
-        deleteCheckIn({
-          eventId: attendee.eventId,
-          checkInId: attendee.checkInId,
-        });
-      } else {
-        newCheckedIn.add(attendee.applicationId);
-        createCheckIn({
-          eventId: attendee.eventId,
-          manualCheckInRequest: {
-            applicationId: attendee.applicationId,
-            ticketId: null,
-            transactionItemId: null,
-          },
-        });
-      }
-      return newCheckedIn;
-    });
-  };
 
   const renderCell = useCallback(
     (attendee: ListingAttendeesItem, columnKey: Key) => {
@@ -297,28 +226,6 @@ export default function AttendeeDataTable() {
             </p>
           );
 
-        case 'checkin':
-          return (
-            <Chip
-              content={
-                checkedInAttendees.has(attendee.checkInId)
-                  ? 'Checked In'
-                  : 'Uncheck'
-              }
-              leftIcon={
-                checkedInAttendees.has(attendee.checkInId) ? (
-                  <IoCheckmarkDoneOutline className='text-sm' />
-                ) : null
-              }
-              type={
-                checkedInAttendees.has(attendee.checkInId)
-                  ? 'success'
-                  : 'default'
-              }
-              className='w-fit ml-2'
-            />
-          );
-
         case 'actions':
           return (
             <div
@@ -334,16 +241,6 @@ export default function AttendeeDataTable() {
               >
                 <AiOutlineEye className='w-5 h-5' />
               </SheetTrigger>
-              <div
-                onClick={() => handleCheckIn(attendee)}
-                className={clsx(styles.between, 'gap-2 cursor-pointer')}
-              >
-                {checkedInAttendees.has(attendee.checkInId) ? (
-                  <IoIosRemoveCircleOutline className='w-5 h-5' />
-                ) : (
-                  <IoIosCheckboxOutline className='w-5 h-5' />
-                )}
-              </div>
             </div>
           );
         default:

@@ -14,12 +14,12 @@ import type { ForgotPasswordFormSchema } from '@/src/schemas/auth/ForgotPassword
 import { forgotPasswordFormSchema } from '@/src/schemas/auth/ForgotPasswordFormSchema';
 import { signIn } from 'next-auth/react';
 import { useForgotPasswordMutation } from '@/src/api/auth.api';
-import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
-import toast from 'react-hot-toast';
+
 import { RoleCode } from '@/src/constants/role_code.constant';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { useState } from 'react';
 import { Image } from '@nextui-org/react';
+import { handleApiError } from '@/src/utils/app.util';
 
 export default function ForgotPasswordForm() {
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
@@ -36,13 +36,7 @@ export default function ForgotPasswordForm() {
     onSuccess() {
       setIsSuccess(true);
     },
-    onError(error: ApiException<unknown>) {
-      toast.error(
-        (error.body as ErrorResponse400)?.message ??
-          (error.body as ErrorResponse400)?.errorCode ??
-          'Unknown Error 😵',
-      );
-    },
+    onError: handleApiError,
   });
 
   const handleForgotPassword = form.handleSubmit(

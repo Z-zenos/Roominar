@@ -10,8 +10,8 @@ import {
   FormInput,
   FormTagsInput,
 } from '@/src/component/form/Form';
-import { optionify } from '@/src/utils/app.util';
-import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
+import { handleApiError, optionify } from '@/src/utils/app.util';
+
 import { JobTypeCode } from '@/src/lib/api/generated';
 import { IndustryCode } from '@/src/lib/api/generated';
 
@@ -57,13 +57,7 @@ export default function UpdateMyProfileForm() {
       form.reset();
       router.refresh();
     },
-    onError(error: ApiException<unknown>) {
-      toast.error(
-        (error.body as ErrorResponse400)?.message ??
-          (error.body as ErrorResponse400)?.errorCode ??
-          'Unknown Error 😵',
-      );
-    },
+    onError: handleApiError,
   });
 
   function handleUpdateMyProfile(data: UpdateMyProfileFormSchema) {

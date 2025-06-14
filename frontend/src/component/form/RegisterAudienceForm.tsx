@@ -17,12 +17,13 @@ import { Form, FormInput } from './Form';
 import { Link } from '@nextui-org/link';
 import { styles } from '@/src/constants/styles.constant';
 import Button from '../common/Button/Button';
-import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
+
 import type { RegisterAudienceFormSchema } from '@/src/schemas/auth/RegisterAudienceFormSchema';
 import { registerAudienceFormSchema } from '@/src/schemas/auth/RegisterAudienceFormSchema';
 import { useRegisterAudienceMutation } from '@/src/api/auth.api';
 import RegisterSuccess from '@/src/view/audience/RegisterSuccess';
 import { useRouter } from 'next/navigation';
+import { handleApiError } from '@/src/utils/app.util';
 
 function RegisterAudienceForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -52,13 +53,7 @@ function RegisterAudienceForm() {
       toast.success('Successfully Account Registration!');
       setIsRegisterSuccess(true);
     },
-    onError(error: ApiException<unknown>) {
-      toast.error(
-        (error.body as ErrorResponse400)?.message ??
-          (error.body as ErrorResponse400)?.errorCode ??
-          'Unknown Error 😵',
-      );
-    },
+    onError: handleApiError,
   });
 
   const handleRegister = (value: RegisterAudienceFormSchema) => {

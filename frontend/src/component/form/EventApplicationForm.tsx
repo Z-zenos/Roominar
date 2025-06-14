@@ -20,7 +20,12 @@ import {
 } from '@/src/component/form/Form';
 import Button from '@/src/component/common/Button/Button';
 import { useGetEventDetailQuery } from '@/src/api/event.api';
-import { cn, formatEventDate, optionify } from '@/src/utils/app.util';
+import {
+  cn,
+  formatEventDate,
+  handleApiError,
+  optionify,
+} from '@/src/utils/app.util';
 import {
   MdAirplaneTicket,
   MdOutlineOnlinePrediction,
@@ -42,8 +47,6 @@ import {
 } from '@nextui-org/react';
 import type {
   AnswerItem,
-  ApiException,
-  ErrorResponse400,
   QuestionAnswerItem,
   SurveyResponseResultItem,
   TicketItem,
@@ -132,13 +135,7 @@ export default function EventApplicationForm({
         router.push('/tickets-n-payments');
       }, 2000);
     },
-    onError(error: ApiException<unknown>) {
-      toast.error(
-        (error.body as ErrorResponse400)?.message ??
-          (error.body as ErrorResponse400)?.errorCode ??
-          'Unknown Error 😵',
-      );
-    },
+    onError: handleApiError,
   });
 
   const checkOnlySelectFreeTicket = () => {

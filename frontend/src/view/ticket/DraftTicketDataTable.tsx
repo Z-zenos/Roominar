@@ -11,11 +11,7 @@ import {
   TableRow,
   useDisclosure,
 } from '@nextui-org/react';
-import type {
-  ApiException,
-  ErrorResponse400,
-  TicketItem,
-} from '@/src/lib/api/generated';
+import type { TicketItem } from '@/src/lib/api/generated';
 import { TicketStatusCode } from '@/src/lib/api/generated';
 import type { ChipProps } from '@nextui-org/react';
 import { SheetTrigger } from '@/src/component/common/Sheet';
@@ -24,9 +20,9 @@ import { useCallback, useState } from 'react';
 import { PenLineIcon, Trash2Icon } from 'lucide-react';
 import ConfirmDialog from '@/src/component/common/Dialog/ConfirmDialog';
 import { useDeleteTicketMutation } from '@/src/api/ticket.api';
-import toast from 'react-hot-toast';
 import useFormatMoney from '@/src/hooks/useFormatMoney';
 import { useTranslations } from 'next-intl';
+import { handleApiError } from '@/src/utils/app.util';
 
 const statusColorMap: Record<string, ChipProps['color']> = {
   [TicketStatusCode.Available]: 'success',
@@ -69,13 +65,7 @@ export default function DraftTicketDataTable({
       onSuccess() {
         onDeleteTicket?.();
       },
-      onError(error: ApiException<unknown>) {
-        toast.error(
-          (error.body as ErrorResponse400)?.message ??
-            (error.body as ErrorResponse400)?.errorCode ??
-            'Unknown Error 😵',
-        );
-      },
+      onError: handleApiError,
     });
 
   const renderCell = useCallback((ticket: TicketItem, columnKey: string) => {

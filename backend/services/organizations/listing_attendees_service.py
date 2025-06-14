@@ -1,4 +1,4 @@
-from sqlmodel import Date, Session, String, and_, func, or_, select
+from sqlmodel import Date, Session, String, func, or_, select
 
 from backend.core.constants import AttendeeSortByCode
 from backend.models.application import Application
@@ -41,7 +41,9 @@ async def _get_attendees(
     query = (
         select(
             User.id,
-            func.concat(User.first_name, " ", User.last_name).label("user_name"),
+            func.concat(Application.first_name, " ", Application.last_name).label(
+                "user_name"
+            ),
             Application.email,
             Event.id.label("event_id"),
             Event.name.label("event_name"),
@@ -61,10 +63,7 @@ async def _get_attendees(
         .join(Event, Event.id == Application.event_id)
         .outerjoin(
             Transaction,
-            and_(
-                Transaction.application_id == Application.id,
-                Event.max_ticket_number_per_account == 1,
-            ),
+            Transaction.application_id == Application.id,
         )
         .where(*filters)
         .order_by(sort_by)
@@ -80,10 +79,7 @@ async def _get_attendees(
 
 
 def _build_filters_sort(organizer: User, query_params: ListingAttendeesQueryParams):
-    filters = [
-        Event.organization_id == organizer.organization_id,
-        User.deleted_at.is_(None),
-    ]
+    filters = [Event.organization_id == organizer.organization_id]
     sort_by = Application.created_at.desc()
     if query_params.keyword:
         filters.append(
@@ -109,7 +105,7 @@ def _build_filters_sort(organizer: User, query_params: ListingAttendeesQueryPara
         )
 
     if query_params.is_checked_in:
-        filters.append(Application.check_in_at.isnot(None))
+        filters.append(CheckIn.created_at.isnot(None))
 
     if query_params.job_type_code:
         filters.append(Application.job_type_code == query_params.job_type_code)

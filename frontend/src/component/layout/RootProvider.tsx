@@ -13,7 +13,6 @@ import type { Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
 import { useMemo } from 'react';
 import toast from 'react-hot-toast';
-import { RecoilRoot } from 'recoil';
 
 export interface IRootProviderProps {
   session?: Session | null;
@@ -61,13 +60,11 @@ export default function RootProvider({
   return (
     <ErrorBoundary>
       <SessionProvider session={session}>
-        <RecoilRoot>
-          <NotificationProvider>
-            <QueryClientProvider client={queryClient}>
-              {children}
-            </QueryClientProvider>
-          </NotificationProvider>
-        </RecoilRoot>
+        <NotificationProvider>
+          <QueryClientProvider client={queryClient}>
+            {children}
+          </QueryClientProvider>
+        </NotificationProvider>
       </SessionProvider>
     </ErrorBoundary>
   );

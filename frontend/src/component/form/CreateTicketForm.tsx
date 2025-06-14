@@ -15,14 +15,14 @@ import {
   type CreateTicketFormSchema,
 } from '@/src/schemas/ticket/CreateTicketFormSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
-import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
+
 import {
   TicketDeliveryMethodCode,
   TicketTypeCode,
 } from '@/src/lib/api/generated';
 import { useCreateTicketMutation } from '@/src/api/ticket.api';
 import toast from 'react-hot-toast';
-import { optionify } from '@/src/utils/app.util';
+import { handleApiError, optionify } from '@/src/utils/app.util';
 import type { DateRange } from 'react-day-picker';
 
 interface CreateTicketFormProps {
@@ -56,13 +56,7 @@ function CreateTicketForm({ eventId, onCreate }: CreateTicketFormProps) {
       onCreate?.();
       form.reset();
     },
-    onError(error: ApiException<unknown>) {
-      toast.error(
-        (error.body as ErrorResponse400)?.message ??
-          (error.body as ErrorResponse400)?.errorCode ??
-          'Unknown Error 😵',
-      );
-    },
+    onError: handleApiError,
   });
 
   function handleCreateTicket(data: CreateTicketFormSchema) {

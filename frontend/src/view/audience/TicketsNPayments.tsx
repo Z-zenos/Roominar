@@ -6,15 +6,18 @@ import DotLoader from '@/src/component/common/Loader/DotLoader';
 import { Form, FormInput } from '@/src/component/form/Form';
 import useWindowDimensions from '@/src/hooks/useWindowDimension';
 import type {
-  ApiException,
   CancelTicketReasonCode,
-  ErrorResponse400,
   ListingMyTransactionsItem,
   ListingMyTransactionTicketItem,
   TransactionsApiListingMyTransactionsRequest,
 } from '@/src/lib/api/generated';
 import { TransactionStatusCode } from '@/src/lib/api/generated';
-import { cn, formatEventDate, searchQuery } from '@/src/utils/app.util';
+import {
+  cn,
+  formatEventDate,
+  handleApiError,
+  searchQuery,
+} from '@/src/utils/app.util';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -115,13 +118,7 @@ function TicketsNPayment() {
         refetchListingMyTransactions();
         refetchStatusCounts();
       },
-      onError(error: ApiException<unknown>) {
-        toast.error(
-          (error.body as ErrorResponse400)?.message ??
-            (error.body as ErrorResponse400)?.errorCode ??
-            'Unknown Error 😵',
-        );
-      },
+      onError: handleApiError,
     });
 
   const [page, setPage] = useState<number>(myTransactionsData?.page || 1);

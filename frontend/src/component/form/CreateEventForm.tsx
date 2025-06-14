@@ -15,7 +15,7 @@ import {
   FormTagsInput,
   FormTextarea,
 } from '@/src/component/form/Form';
-import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
+
 import {
   CityCode,
   EventMeetingToolCode,
@@ -53,7 +53,7 @@ import {
 import { CiStickyNote } from 'react-icons/ci';
 import { useListingSurveyOptionsQuery } from '@/src/api/survey.api';
 import { useListingTargetOptionsQuery } from '@/src/api/target.api';
-import { cn, optionify } from '@/src/utils/app.util';
+import { cn, handleApiError, optionify } from '@/src/utils/app.util';
 import createEventFormSchema, {
   eventDateSchema,
 } from '@/src/schemas/event/CreateEventFormSchema';
@@ -242,13 +242,7 @@ export default function CreateEventForm() {
         toast.success('Đã công bố sự kiện ra cộng đồng!');
         router.push(`/events/${draftEvent?.slug}/detail`);
       },
-      onError(error: ApiException<unknown>) {
-        toast.error(
-          (error.body as ErrorResponse400)?.message ??
-            (error.body as ErrorResponse400)?.errorCode ??
-            'Unknown Error 😵',
-        );
-      },
+      onError: handleApiError,
     });
 
   const { trigger: saveDraftEvent, isMutating: isDraftSaving } =
@@ -256,13 +250,7 @@ export default function CreateEventForm() {
       onSuccess() {
         toast.success('Lưu nháp thành công!');
       },
-      onError(error: ApiException<unknown>) {
-        toast.error(
-          (error.body as ErrorResponse400)?.message ??
-            (error.body as ErrorResponse400)?.errorCode ??
-            'Unknown Error 😵',
-        );
-      },
+      onError: handleApiError,
     });
 
   const { trigger: generateEventAI, isMutating: isGenerating } =
@@ -272,13 +260,7 @@ export default function CreateEventForm() {
         form.trigger('description');
         form.setValue('name', data?.title ?? '');
       },
-      onError(error: ApiException<unknown>) {
-        toast.error(
-          (error.body as ErrorResponse400)?.message ??
-            (error.body as ErrorResponse400)?.errorCode ??
-            'Unknown Error 😵',
-        );
-      },
+      onError: handleApiError,
     });
 
   function handleSelectDate(timeline: DateSelectArg) {

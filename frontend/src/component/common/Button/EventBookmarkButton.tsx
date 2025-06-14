@@ -5,7 +5,8 @@ import {
   useDeleteEventBookmarkMutation,
 } from '@/src/api/event.api';
 import { styles } from '@/src/constants/styles.constant';
-import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
+import { handleApiError } from '@/src/utils/app.util';
+
 import { Button } from '@nextui-org/button';
 import clsx from 'clsx';
 import { useSession } from 'next-auth/react';
@@ -32,26 +33,14 @@ function EventBookmarkButton({
     onSuccess() {
       setBookmark(true);
     },
-    onError(error: ApiException<unknown>) {
-      toast.error(
-        (error.body as ErrorResponse400)?.message ??
-          (error.body as ErrorResponse400)?.errorCode ??
-          'Unknown Error 😵',
-      );
-    },
+    onError: handleApiError,
   });
 
   const { trigger: deleteEventBookmark } = useDeleteEventBookmarkMutation({
     onSuccess() {
       setBookmark(false);
     },
-    onError(error: ApiException<unknown>) {
-      toast.error(
-        (error.body as ErrorResponse400)?.message ??
-          (error.body as ErrorResponse400)?.errorCode ??
-          'Unknown Error 😵',
-      );
-    },
+    onError: handleApiError,
   });
 
   return (

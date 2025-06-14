@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from fastapi import Query
 from pydantic import BaseModel, ConfigDict, Field
 
 from backend.core.constants import (
@@ -9,6 +10,7 @@ from backend.core.constants import (
     TicketStatusCode,
     TicketTypeCode,
 )
+from backend.schemas.common import PaginationResponse
 
 
 class TicketItem(BaseModel):
@@ -82,3 +84,24 @@ class DraftEventTicketItem(BaseModel):
 class CancelTicketsRequest(BaseModel):
     transaction_item_id: int
     reason: CancelTicketReasonCode | None
+
+
+class ListingEventPurchasedTicketsQueryParams(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    keyword: str | None = Field(Query(None))
+    is_checked_in: bool | None = Field(Query(None))
+    per_page: int | None = Field(Query(default=10, le=100, ge=1))
+    page: int | None = Field(Query(default=1, ge=1))
+
+
+class ListingEventPurchasedTicketsItem(BaseModel):
+    transaction_item_id: int
+    checked_in_at: datetime | None = None
+    check_in_id: int | None = None
+
+
+class ListingEventPurchasedTicketsResponse(
+    PaginationResponse[ListingEventPurchasedTicketsItem]
+):
+    pass

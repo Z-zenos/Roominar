@@ -9,6 +9,7 @@ from backend.models.check_in import CheckIn
 from backend.models.event import Event
 from backend.models.organization import Organization
 from backend.models.transaction_item import TransactionItem
+from backend.models.user import User
 from backend.models.user_action import UserAction
 from backend.schemas.check_in import QRCheckInRequest
 from backend.utils.database import save
@@ -16,6 +17,7 @@ from backend.utils.database import save
 
 async def qr_check_in(
     db: Session,
+    organizer: User,
     request: QRCheckInRequest,
     event_id: int,
 ) -> CheckIn:
@@ -86,7 +88,7 @@ async def qr_check_in(
         user_action = UserAction(
             user_id=item.user_id,
             event_id=event_id,
-            organization_id=check_in.organization_id,
+            organization_id=organizer.organization_id,
             action_type=UserActionTypeCode.CHECK_IN,
         )
         save(db, user_action)

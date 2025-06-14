@@ -2,6 +2,7 @@ import type { SWRMutationConfiguration } from 'swr/mutation';
 import useSWRMutation from 'swr/mutation';
 import useApi from '../lib/api/useApi';
 import type {
+  EventsApiListingEventPurchasedTicketsRequest,
   TicketItem,
   TicketsApiCancelTicketsRequest,
   TicketsApiCreateTicketRequest,
@@ -10,6 +11,7 @@ import type {
   TicketsApiUpdateTicketRequest,
 } from '../lib/api/generated';
 import { useQuery } from '@tanstack/react-query';
+import { toCamelCase } from '../utils/app.util';
 
 export const useCreateTicketMutation = <T>(
   options?: SWRMutationConfiguration<number, T>,
@@ -72,4 +74,15 @@ export const useDeleteTicketMutation = <T>(
     async (_: string, { arg }) => await api.tickets.deleteTicket(arg),
     options,
   );
+};
+
+export const useListingEventPurchasedTicketsQuery = (
+  params?: EventsApiListingEventPurchasedTicketsRequest,
+) => {
+  params = toCamelCase(params);
+  const api = useApi();
+  return useQuery({
+    queryKey: ['listing-event-purchased-tickets', params],
+    queryFn: async () => await api.events.listingEventPurchasedTickets(params),
+  });
 };

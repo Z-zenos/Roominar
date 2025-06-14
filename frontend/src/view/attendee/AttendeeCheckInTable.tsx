@@ -16,15 +16,14 @@ import {
 
 import { useForm } from 'react-hook-form';
 import type {
-  ApiException,
-  ErrorResponse400,
-  ListingAttendeesItem,
+  EventsApiListingEventPurchasedTicketsRequest,
+  ListingEventPurchasedTicketsItem,
   OrganizationsApiListingAttendeesRequest,
 } from '@/src/lib/api/generated';
 import { useRouter, useSearchParams } from 'next/navigation';
 import queryString from 'query-string';
 import dayjs from 'dayjs';
-import { searchQuery } from '@/src/utils/app.util';
+import { handleApiError, searchQuery } from '@/src/utils/app.util';
 import { Form, FormInput } from '@/src/component/form/Form';
 import { IoCheckmarkDoneOutline } from 'react-icons/io5';
 import debounce from 'lodash.debounce';
@@ -32,20 +31,16 @@ import clsx from 'clsx';
 import { GrPowerReset } from 'react-icons/gr';
 import ReactPaginate from 'react-paginate';
 import useWindowDimensions from '@/src/hooks/useWindowDimension';
-import { useListingAttendeesQuery } from '@/src/api/organization.api';
 import useHighlightMatchedText from '@/src/hooks/useHighlightMatchedText';
 import { styles } from '@/src/constants/styles.constant';
 
-import toast from 'react-hot-toast';
-import { AiOutlineEye } from 'react-icons/ai';
-import { SheetTrigger } from '@/src/component/common/Sheet';
 import Chip from '@/src/component/common/Chip';
 import { IoIosCheckboxOutline, IoIosRemoveCircleOutline } from 'react-icons/io';
-import { useRightSidebar } from '@/src/contexts/RightSidebarContext';
 import {
   useDeleteManualCheckInMutation,
   useManualCheckInMutation,
 } from '@/src/api/event.api';
+import { useListingEventPurchasedTicketsQuery } from '@/src/api/ticket.api';
 
 const columns = [
   { name: 'Mã vé', uid: 'id', sortable: false },
@@ -53,25 +48,31 @@ const columns = [
   { name: 'Hành động', uid: 'actions' },
 ];
 
-export default function AttendeeCheckInTable() {
+interface AttendeeCheckInTableProps {
+  slug: string;
+}
+
+export default function AttendeeCheckInTable({
+  slug,
+}: AttendeeCheckInTableProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { width } = useWindowDimensions();
   const highlightMatchedText = useHighlightMatchedText();
-  const [checkedInAttendees, setCheckedInAttendees] = useState<Set<number>>(
-    new Set(),
-  );
+  const [checkedIns, setCheckedIns] = useState<number[]>([]);
 
   const [selectedKeys, setSelectedKeys] = useState<any>(new Set());
 
-  const { data, isFetching } = useListingAttendeesQuery({
-    ...queryString.parse(searchParams.toString(), { arrayFormat: 'bracket' }),
+  const { data, isFetching } = useListingEventPurchasedTicketsQuery({
+    slug: slug,
+    ...(queryString.parse(
+      searchParams.toString(),
+    ) as unknown as EventsApiListingEventPurchasedTicketsRequest),
   });
   const [page, setPage] = useState<number>(data?.page || 1);
   const pageCount = Math.ceil(data?.total / data?.perPage);
-  const { open } = useRightSidebar();
 
-  const form = useForm<OrganizationsApiListingAttendeesRequest>({
+  const form = useForm<EventsApiListingEventPurchasedTicketsRequest>({
     mode: 'all',
     defaultValues: {
       keyword: searchParams.get('keyword') || '',
@@ -83,13 +84,8 @@ export default function AttendeeCheckInTable() {
 
   useEffect(() => {
     if (data) {
-      setCheckedInAttendees(
-        () =>
-          new Set(
-            data?.data
-              ?.filter((item) => item.checkInId)
-              ?.map((item) => item.applicationId),
-          ),
+      setCheckedIns(
+        data.data.filter((ept) => ept.checkInId).map((ept) => ept.checkInId),
       );
     }
   }, [data]);
@@ -110,45 +106,29 @@ export default function AttendeeCheckInTable() {
     searchQuery(router, filters, searchParams, exclude_queries);
   }
 
-  const { trigger: createCheckIn } = useManualCheckInMutation({
+  const { trigger: manualCheckIn } = useManualCheckInMutation({
     onSuccess() {},
-    onError(error: ApiException<unknown>) {
-      toast.error(
-        (error.body as ErrorResponse400)?.message ??
-          (error.body as ErrorResponse400)?.errorCode ??
-          'Unknown Error 😵',
-      );
-    },
+    onError: handleApiError,
   });
 
-  const { trigger: deleteCheckIn } = useDeleteManualCheckInMutation({
+  const { trigger: deleteManualCheckIn } = useDeleteManualCheckInMutation({
     onSuccess() {},
-    onError(error: ApiException<unknown>) {
-      toast.error(
-        (error.body as ErrorResponse400)?.message ??
-          (error.body as ErrorResponse400)?.errorCode ??
-          'Unknown Error 😵',
-      );
-    },
+    onError: handleApiError,
   });
 
-  const handleCheckIn = (attendee: ListingAttendeesItem) => {
-    setCheckedInAttendees((prev) => {
-      const newCheckedIn = new Set(prev);
-      if (newCheckedIn.has(attendee.applicationId)) {
-        newCheckedIn.delete(attendee.applicationId);
-        deleteCheckIn({
-          eventId: attendee.eventId,
-          checkInId: attendee.checkInId,
+  const handleCheckIn = (ept: ListingEventPurchasedTicketsItem) => {
+    setCheckedIns((prev) => {
+      const newCheckedIn = prev;
+      if (newCheckedIn.includes(ept.checkInId)) {
+        newCheckedIn.filter((checkInId) => checkInId !== ept.checkInId);
+        deleteManualCheckIn({
+          checkInId: ept.checkInId,
         });
       } else {
-        newCheckedIn.add(attendee.applicationId);
-        createCheckIn({
-          eventId: attendee.eventId,
+        newCheckedIn.push(ept.checkInId);
+        manualCheckIn({
           manualCheckInRequest: {
-            applicationId: attendee.applicationId,
-            ticketId: null,
-            transactionItemId: null,
+            transactionItemId: ept.transactionItemId,
           },
         });
       }
@@ -157,15 +137,15 @@ export default function AttendeeCheckInTable() {
   };
 
   const renderCell = useCallback(
-    (attendee: ListingAttendeesItem, columnKey: Key) => {
-      const cellValue = attendee[columnKey as string];
+    (ept: ListingEventPurchasedTicketsItem, columnKey: Key) => {
+      const cellValue = ept[columnKey as string];
 
       switch (columnKey) {
         case 'id':
           return (
             <p>
               {highlightMatchedText(
-                attendee.id + '',
+                ept.transactionItemId + '',
                 form.getValues('keyword'),
               )}
             </p>
@@ -175,20 +155,16 @@ export default function AttendeeCheckInTable() {
           return (
             <Chip
               content={
-                checkedInAttendees.has(attendee.checkInId)
+                checkedIns.includes(ept.checkInId)
                   ? 'Đã check-in'
                   : 'Chưa check-in'
               }
               leftIcon={
-                checkedInAttendees.has(attendee.checkInId) ? (
+                checkedIns.includes(ept.checkInId) ? (
                   <IoCheckmarkDoneOutline className='text-sm' />
                 ) : null
               }
-              type={
-                checkedInAttendees.has(attendee.checkInId)
-                  ? 'success'
-                  : 'default'
-              }
+              type={checkedIns.includes(ept.checkInId) ? 'success' : 'default'}
               className='w-fit ml-2'
             />
           );
@@ -202,17 +178,11 @@ export default function AttendeeCheckInTable() {
                 e.stopPropagation();
               }}
             >
-              <SheetTrigger
-                onClick={() => open('ATTENDEE_DETAIL', attendee.id)}
-                className={clsx(styles.between, 'gap-2')}
-              >
-                <AiOutlineEye className='w-5 h-5' />
-              </SheetTrigger>
               <div
-                onClick={() => handleCheckIn(attendee)}
+                onClick={() => handleCheckIn(ept)}
                 className={clsx(styles.between, 'gap-2 cursor-pointer')}
               >
-                {checkedInAttendees.has(attendee.checkInId) ? (
+                {checkedIns.includes(ept.checkInId) ? (
                   <IoIosRemoveCircleOutline className='w-5 h-5' />
                 ) : (
                   <IoIosCheckboxOutline className='w-5 h-5' />
@@ -315,7 +285,7 @@ export default function AttendeeCheckInTable() {
           items={data?.data ?? []}
         >
           {(item) => (
-            <TableRow key={item.id}>
+            <TableRow key={item.transactionItemId}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
               )}

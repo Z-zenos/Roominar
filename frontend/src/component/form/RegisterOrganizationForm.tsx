@@ -10,11 +10,7 @@ import clsx from 'clsx';
 import { Form, FormCustomLabel, FormInput, FormInstructions } from './Form';
 import { Link } from '@nextui-org/link';
 import Button from '../common/Button/Button';
-import {
-  OrganizationTypeCode,
-  type ApiException,
-  type ErrorResponse400,
-} from '@/src/lib/api/generated';
+import { OrganizationTypeCode } from '@/src/lib/api/generated';
 import type { RegisterOrganizationFormSchema } from '@/src/schemas/auth/RegisterOrganizationFormSchema';
 import { registerOrganizationFormSchema } from '@/src/schemas/auth/RegisterOrganizationFormSchema';
 import { useRegisterOrganizationMutation } from '@/src/api/organization.api';
@@ -22,6 +18,7 @@ import { BaseTabs, TabsList, TabsTrigger } from '../common/Tabs';
 import { useTranslations } from 'next-intl';
 import { MdPhone } from 'react-icons/md';
 import RegisterSuccess from '@/src/view/audience/RegisterSuccess';
+import { handleApiError } from '@/src/utils/app.util';
 
 function RegisterOrganizationForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -57,13 +54,7 @@ function RegisterOrganizationForm() {
       toast.success('Successfully Account Registration!');
       setIsRegisterSuccess(true);
     },
-    onError(error: ApiException<unknown>) {
-      toast.error(
-        (error.body as ErrorResponse400)?.message ??
-          (error.body as ErrorResponse400)?.errorCode ??
-          'Unknown Error 😵',
-      );
-    },
+    onError: handleApiError,
   });
 
   const handleRegister = (value: RegisterOrganizationFormSchema) => {

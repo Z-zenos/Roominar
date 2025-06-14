@@ -13,7 +13,7 @@ import { Link } from '@nextui-org/link';
 import { Form, FormInput } from './Form';
 import Button from '../common/Button/Button';
 import { signIn } from 'next-auth/react';
-import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
+
 import toast from 'react-hot-toast';
 import { useState } from 'react';
 import type { ResetPasswordFormSchema } from '@/src/schemas/auth/ResetPasswordFormSchema';
@@ -22,6 +22,7 @@ import { useResetPasswordMutation } from '@/src/api/auth.api';
 import { useRouter } from 'next/navigation';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { styles } from '@/src/constants/styles.constant';
+import { handleApiError } from '@/src/utils/app.util';
 
 interface ResetPasswordFormProps {
   token: string;
@@ -46,13 +47,7 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
       toast.success('Reset password successfully');
       setTimeout(() => router.push('/login'), 1500);
     },
-    onError(error: ApiException<unknown>) {
-      toast.error(
-        (error.body as ErrorResponse400)?.message ??
-          (error.body as ErrorResponse400)?.errorCode ??
-          'Unknown Error 😵',
-      );
-    },
+    onError: handleApiError,
   });
 
   const handleResetPassword = form.handleSubmit(

@@ -6,6 +6,13 @@ import queryString from 'query-string';
 import { twMerge } from 'tailwind-merge';
 import dayjs from 'dayjs';
 import type Option from '../types/Option';
+import type {
+  ApiException,
+  ErrorResponse400,
+  ErrorResponse401,
+  ErrorResponse403,
+} from '../lib/api/generated';
+import toast from 'react-hot-toast';
 
 export const parseErrorMessage = (errorMessage?: string) => {
   const parts = errorMessage?.split('\n');
@@ -171,3 +178,10 @@ export const randomHexColor = () =>
   `#${Math.floor(Math.random() * 16777215)
     .toString(16)
     .padStart(6, '0')}`;
+
+export function handleApiError(error: ApiException<unknown>) {
+  const errorMessage =
+    (error.body as ErrorResponse400 | ErrorResponse401 | ErrorResponse403)
+      ?.message ?? 'Lỗi không xác định 😵';
+  toast.error(errorMessage);
+}

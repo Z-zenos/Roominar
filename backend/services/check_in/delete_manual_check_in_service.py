@@ -7,15 +7,12 @@ from backend.models.event import Event
 from backend.models.user import User
 
 
-async def delete_manual_check_in(
-    db: Session, organizer: User, event_id: int, check_in_id: int
-):
+async def delete_manual_check_in(db: Session, organizer: User, check_in_id: int):
     check_in = db.exec(
         select(CheckIn)
         .join(Event, CheckIn.event_id == Event.id)
         .where(
             CheckIn.id == check_in_id,
-            CheckIn.event_id == event_id,
             Event.organization_id == organizer.organization_id,
         )
     ).one_or_none()

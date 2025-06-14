@@ -10,13 +10,12 @@ import {
 } from './Form';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
 import {
   TicketDeliveryMethodCode,
   TicketTypeCode,
 } from '@/src/lib/api/generated';
 import toast from 'react-hot-toast';
-import { optionify } from '@/src/utils/app.util';
+import { handleApiError, optionify } from '@/src/utils/app.util';
 import {
   updateTicketFormSchema,
   type UpdateTicketFormSchema,
@@ -91,13 +90,7 @@ function UpdateTicketForm({ ticketId, onUpdate }: UpdateTicketFormProps) {
         },
       });
     },
-    onError(error: ApiException<unknown>) {
-      toast.error(
-        (error.body as ErrorResponse400)?.message ??
-          (error.body as ErrorResponse400)?.errorCode ??
-          'Unknown Error 😵',
-      );
-    },
+    onError: handleApiError,
   });
 
   function handleUpdateTicket(data: UpdateTicketFormSchema) {
