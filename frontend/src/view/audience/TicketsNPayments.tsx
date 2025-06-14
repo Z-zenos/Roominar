@@ -361,16 +361,25 @@ function TicketsNPayment() {
                                 </div>
 
                                 <div className='px-3 py-2'>
-                                  <div className='text-nm underline font-semibold'>
-                                    Mã QR:{' '}
-                                    <p className='flex items-center justify-center'>
-                                      <Image
-                                        src={ticket.qrCodeUrl}
-                                        alt='Ticket QR Code'
-                                        className='w-[200px] h-[200px] rounded-md'
-                                      />
-                                    </p>
-                                  </div>
+                                  {!ticket.checkInAt ? (
+                                    <div className='text-nm underline font-semibold'>
+                                      Mã QR:{' '}
+                                      <p className='flex items-center justify-center'>
+                                        <Image
+                                          src={ticket.qrCodeUrl}
+                                          alt='Ticket QR Code'
+                                          className='w-[200px] h-[200px] rounded-md'
+                                        />
+                                      </p>
+                                    </div>
+                                  ) : (
+                                    <Chip
+                                      content='Đã check-in'
+                                      type='success'
+                                      leftIcon={<FaCheck className='text-sm' />}
+                                      className='font-semibold text-xs'
+                                    />
+                                  )}
                                 </div>
                               </SwiperSlide>
                             ))}

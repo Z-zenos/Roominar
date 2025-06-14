@@ -4,6 +4,7 @@ from sqlmodel import Session, func, or_, select
 
 from backend.core.constants import TicketCancellationPolicyCode, TransactionStatusCode
 from backend.models.application import Application
+from backend.models.check_in import CheckIn
 from backend.models.event import Event
 from backend.models.ticket import Ticket
 from backend.models.transaction import Transaction
@@ -87,6 +88,8 @@ async def _get_my_transactions(
                     TransactionItem.note,
                     "qr_code_url",
                     TransactionItem.qr_code_url,
+                    "check_in_at",
+                    CheckIn.created_at.label("check_in_at"),
                 )
             ).label("tickets"),
         )
@@ -95,6 +98,7 @@ async def _get_my_transactions(
         .join(TransactionItem, TransactionItem.transaction_id == Transaction.id)
         .join(Ticket, Ticket.id == TransactionItem.ticket_id)
         .join(Event, Event.id == Ticket.event_id)
+        .outerjoin(CheckIn, CheckIn.transaction_item_id == TransactionItem.id)
         .where(*filters)
         .group_by(Transaction.id, Event.id, Application.id)
         .having(func.count(TransactionItem.id) > 0)

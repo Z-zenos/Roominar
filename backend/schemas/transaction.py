@@ -85,6 +85,7 @@ class ListingMyTransactionTicketItem(BaseModel):
     cancelable: bool
     refunded_amount: float | None = None
     qr_code_url: str | None = None
+    check_in_at: datetime | None = None
 
 
 class ListingMyTransactionsItem(BaseModel):
