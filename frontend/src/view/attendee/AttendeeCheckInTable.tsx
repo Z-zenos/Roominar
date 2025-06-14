@@ -21,8 +21,6 @@ import type {
   OrganizationsApiListingAttendeesRequest,
 } from '@/src/lib/api/generated';
 import { useRouter, useSearchParams } from 'next/navigation';
-import queryString from 'query-string';
-import dayjs from 'dayjs';
 import { handleApiError, searchQuery } from '@/src/utils/app.util';
 import { Form, FormInput } from '@/src/component/form/Form';
 import { IoCheckmarkDoneOutline } from 'react-icons/io5';
@@ -41,6 +39,7 @@ import {
   useManualCheckInMutation,
 } from '@/src/api/event.api';
 import { useListingEventPurchasedTicketsQuery } from '@/src/api/ticket.api';
+import toast from 'react-hot-toast';
 
 const columns = [
   { name: 'Mã vé', uid: 'id', sortable: false },
@@ -63,11 +62,19 @@ export default function AttendeeCheckInTable({
 
   const [selectedKeys, setSelectedKeys] = useState<any>(new Set());
 
-  const { data, isFetching } = useListingEventPurchasedTicketsQuery({
+  const {
+    data,
+    isFetching,
+    refetch: refetchListingEventPurchasedTickets,
+  } = useListingEventPurchasedTicketsQuery({
     slug: slug,
-    ...(queryString.parse(
-      searchParams.toString(),
-    ) as unknown as EventsApiListingEventPurchasedTicketsRequest),
+    keyword: searchParams.get('keyword') || '',
+    isCheckedIn:
+      searchParams.get('is_checked_in') === 'true' ? true : undefined,
+    page: searchParams.get('page')
+      ? parseInt(searchParams.get('page') as string, 10)
+      : 1,
+    perPage: 10,
   });
   const [page, setPage] = useState<number>(data?.page || 1);
   const pageCount = Math.ceil(data?.total / data?.perPage);
@@ -91,28 +98,27 @@ export default function AttendeeCheckInTable({
   }, [data]);
 
   function handleSearch(data: any = {}) {
-    if (form.getValues()['apply_at_range']) {
-      const apply_at_range = form.getValues()['apply_at_range'];
-      data.apply_at_from = dayjs(apply_at_range.from).format('YYYY-MM-DD');
-      data.apply_at_to = dayjs(apply_at_range.to).format('YYYY-MM-DD');
-    }
     const filters: OrganizationsApiListingAttendeesRequest = {
       ...form.getValues(),
       ...data,
     };
 
-    const exclude_queries = ['apply_at_range'];
-
-    searchQuery(router, filters, searchParams, exclude_queries);
+    searchQuery(router, filters, searchParams, []);
   }
 
   const { trigger: manualCheckIn } = useManualCheckInMutation({
-    onSuccess() {},
+    onSuccess() {
+      toast.success('Check-in thành công');
+      refetchListingEventPurchasedTickets();
+    },
     onError: handleApiError,
   });
 
   const { trigger: deleteManualCheckIn } = useDeleteManualCheckInMutation({
-    onSuccess() {},
+    onSuccess() {
+      toast.success('Xoá check-in thành công');
+      refetchListingEventPurchasedTickets();
+    },
     onError: handleApiError,
   });
 
@@ -121,19 +127,23 @@ export default function AttendeeCheckInTable({
       const newCheckedIn = prev;
       if (newCheckedIn.includes(ept.checkInId)) {
         newCheckedIn.filter((checkInId) => checkInId !== ept.checkInId);
-        deleteManualCheckIn({
-          checkInId: ept.checkInId,
-        });
       } else {
         newCheckedIn.push(ept.checkInId);
-        manualCheckIn({
-          manualCheckInRequest: {
-            transactionItemId: ept.transactionItemId,
-          },
-        });
       }
       return newCheckedIn;
     });
+
+    if (ept.checkInId) {
+      deleteManualCheckIn({
+        checkInId: ept.checkInId,
+      });
+    } else {
+      manualCheckIn({
+        manualCheckInRequest: {
+          transactionItemId: ept.transactionItemId,
+        },
+      });
+    }
   };
 
   const renderCell = useCallback(
@@ -183,9 +193,9 @@ export default function AttendeeCheckInTable({
                 className={clsx(styles.between, 'gap-2 cursor-pointer')}
               >
                 {checkedIns.includes(ept.checkInId) ? (
-                  <IoIosRemoveCircleOutline className='w-5 h-5' />
+                  <IoIosRemoveCircleOutline className='w-6 h-6' />
                 ) : (
-                  <IoIosCheckboxOutline className='w-5 h-5' />
+                  <IoIosCheckboxOutline className='w-6 h-6' />
                 )}
               </div>
             </div>
@@ -210,9 +220,16 @@ export default function AttendeeCheckInTable({
                 )}
                 radius='sm'
                 size='md'
-                onClick={() => {
-                  form.reset();
-                  router.refresh();
+                onPress={() => {
+                  form.reset({
+                    keyword: '',
+                    isCheckedIn: undefined,
+                  });
+                  handleSearch({
+                    keyword: '',
+                    isCheckedIn: undefined,
+                    page: 1,
+                  });
                 }}
                 startContent={<GrPowerReset />}
               >
@@ -235,20 +252,42 @@ export default function AttendeeCheckInTable({
                 <Radio
                   className='mr-4'
                   value='all'
+                  onClick={() => {
+                    form.setValue('isCheckedIn', undefined);
+                    handleSearch({
+                      isCheckedIn: undefined,
+                      page: 1,
+                      keyword: form.getValues('keyword'),
+                    });
+                  }}
                 >
                   Tất cả
                 </Radio>
                 <Radio
                   className='mr-4'
                   value='checked-in'
-                  onClick={() => form.setValue('isCheckedIn', false)}
+                  onClick={() => {
+                    form.setValue('isCheckedIn', false);
+                    handleSearch({
+                      isCheckedIn: true,
+                      page: 1,
+                      keyword: form.getValues('keyword'),
+                    });
+                  }}
                 >
                   Đã check-in
                 </Radio>
                 <Radio
                   className='mr-4'
                   value='un-check-in'
-                  onClick={() => form.setValue('isCheckedIn', true)}
+                  onClick={() => {
+                    form.setValue('isCheckedIn', true);
+                    handleSearch({
+                      isCheckedIn: false,
+                      page: 1,
+                      keyword: form.getValues('keyword'),
+                    });
+                  }}
                 >
                   Chưa check-in
                 </Radio>
@@ -298,7 +337,7 @@ export default function AttendeeCheckInTable({
         <span className='w-[30%] text-small text-default-400'>
           {selectedKeys === 'all'
             ? 'Đã chọn tất cả'
-            : `Đã chọn ${selectedKeys?.size ?? 0} / ${data?.data?.length}`}
+            : `Đã chọn ${selectedKeys?.size ?? 0} / ${data?.data?.length ?? 0}`}
         </span>
         {pageCount > 1 && (
           <ReactPaginate
