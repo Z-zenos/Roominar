@@ -338,3 +338,21 @@ class AnalyzeEventTicketsResponse(BaseModel):
     overview: AnalyzeEventTicketsOverview
     ticket_granularity: TicketGranularity
     analyze_advanced: AnalyzeAdvanced
+
+
+class AnalyzeEventCheckInsByTicketTypeItem(BaseModel):
+    type: TicketTypeCode
+    count: int
+
+
+class AnalyzeEventCheckInsByMinuteItem(BaseModel):
+    minute: str
+    count: int
+
+
+class AnalyzeEventCheckInsResponse(BaseModel):
+    total_sold_tickets: int
+    total_check_ins: int
+    check_in_rate: float
+    check_in_by_ticket_type: list[AnalyzeEventCheckInsByTicketTypeItem] = Field([])
+    check_in_by_minute: list[AnalyzeEventCheckInsByMinuteItem] = Field([])

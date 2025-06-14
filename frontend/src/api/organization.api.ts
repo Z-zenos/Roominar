@@ -1,6 +1,7 @@
 import useApi from '../lib/api/useApi';
 import useSWRMutation, { type SWRMutationConfiguration } from 'swr/mutation';
 import type {
+  OrganizationsApiAnalyzeEventCheckInsRequest,
   OrganizationsApiAnalyzeEventTicketsRequest,
   OrganizationsApiCreateOrganizationFollowRequest,
   OrganizationsApiDeleteOrganizationFollowRequest,
@@ -179,7 +180,6 @@ export const useListingAttendeesRankingQuery = (
     queryKey: ['listing-attendees-ranking', JSON.stringify(params)],
     queryFn: async () =>
       await api.organizations.listingAttendeesRanking(params),
-    staleTime: 1000 * 60,
   });
 };
 
@@ -191,6 +191,16 @@ export const useAnalyzeEventTicketsQuery = (
   return useQuery({
     queryKey: ['analyze-event-tickets', JSON.stringify(params)],
     queryFn: async () => await api.organizations.analyzeEventTickets(params),
-    staleTime: 1000 * 60,
+  });
+};
+
+export const useAnalyzeEventCheckInsQuery = (
+  params?: OrganizationsApiAnalyzeEventCheckInsRequest,
+) => {
+  params = toCamelCase(params);
+  const api = useApi();
+  return useQuery({
+    queryKey: ['analyze-event-check_ins', JSON.stringify(params)],
+    queryFn: async () => await api.organizations.analyzeEventCheckIns(params),
   });
 };
