@@ -11,6 +11,7 @@ from backend.core.constants import (
 from backend.db.database import SessionLocal
 from backend.models.check_in import CheckIn
 from backend.models.event import Event
+from backend.models.ticket import Ticket
 from backend.models.transaction_item import TransactionItem
 from backend.models.user import User
 from backend.services.notifications.notification_service import NotificationService
@@ -172,7 +173,8 @@ def _remind_upcoming_events(time_window: timedelta, type_code: NotificationTypeC
             select(User, Event)
             .select_from(TransactionItem)
             .join(User, User.id == TransactionItem.user_id)
-            .join(Event, Event.id == TransactionItem.event_id)
+            .join(Ticket, Ticket.id == TransactionItem.ticket_id)
+            .join(Event, Event.id == Ticket.event_id)
             .where(
                 TransactionItem.status == TransactionStatusCode.SUCCESS,
                 Event.start_at >= target_time_start,
