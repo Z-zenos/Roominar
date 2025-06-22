@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from sqlmodel import select
+from sqlmodel import select, update
 
 from backend.background_tasks.notification_tasks import push_apply_event_notification
 from backend.celery import app
@@ -135,6 +135,13 @@ def process_transaction(
         db.add(user_action)
         db.bulk_update_mappings(TicketInventory, update_ticket_inventories)
         db.bulk_save_objects(new_transaction_items)
+        db.exec(
+            update(Event)
+            .where(Event.id == event_id)
+            .values(
+                sold_ticket_count=Event.sold_ticket_count + total_requested_quantity
+            )
+        )
         db.commit()
 
         logger.info(

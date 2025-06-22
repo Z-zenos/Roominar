@@ -28,6 +28,7 @@ from backend.schemas.event import (
     ListingMyEventsResponse,
     ListingRecommendationEventsResponse,
     ListingRelatedEventsResponse,
+    ListingTrendingEventsResponse,
     PublishEventRequest,
     SaveDraftEventRequest,
     SearchEventsQueryParams,
@@ -55,6 +56,22 @@ async def search_events(
     events, total = await events_service.search_events(db, user, query_params)
 
     return SearchEventsResponse(
+        page=query_params.page, per_page=query_params.per_page, total=total, data=events
+    )
+
+
+@router.get(
+    "/trending",
+    response_model=ListingTrendingEventsResponse,
+    responses=public_api_responses,
+)
+async def listing_trending_events(
+    db: Session = Depends(get_read_db),
+    user: User | None = Depends(get_user_if_logged_in),
+    query_params: SearchEventsQueryParams = Depends(SearchEventsQueryParams),
+):
+    events, total = await events_service.listing_trending_events(db, user, query_params)
+    return ListingTrendingEventsResponse(
         page=query_params.page, per_page=query_params.per_page, total=total, data=events
     )
 

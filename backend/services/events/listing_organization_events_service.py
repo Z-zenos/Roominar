@@ -91,7 +91,7 @@ async def _listing_events(
             Event.organize_address,
             Event.total_ticket_number,
             Event.status,
-            Event.view_number,
+            Event.view_count,
             Event.meeting_tool_code,
             Event.meeting_url,
             case(
@@ -193,6 +193,6 @@ def _build_filters_sort(
         sort_by = Event.name
 
     if query_params.sort_by == ManageEventSortByCode.VIEW_NUMBER:
-        sort_by = Event.view_number
+        sort_by = Event.view_count
 
     return filters, sort_by

@@ -4,16 +4,7 @@ from typing import Optional
 from geoalchemy2 import Geography
 from pydantic import model_validator
 from slugify import slugify
-from sqlmodel import (
-    ARRAY,
-    DOUBLE_PRECISION,
-    Column,
-    DateTime,
-    Enum,
-    Field,
-    String,
-    Text,
-)
+from sqlmodel import ARRAY, DOUBLE_PRECISION, Column, DateTime, Field, String, Text
 
 from backend.core.constants import EventMeetingToolCode, EventStatusCode
 from backend.models.base_model import BaseModel
@@ -40,7 +31,7 @@ class Event(BaseModel, table=True):
         index=True,
     )
 
-    status: Optional[EventStatusCode] = Field(sa_type=Enum(EventStatusCode))
+    status: Optional[EventStatusCode] = Field(sa_type=String(50))
 
     total_ticket_number: Optional[int]
 
@@ -63,9 +54,7 @@ class Event(BaseModel, table=True):
     lat: Optional[float] = Field(sa_type=DOUBLE_PRECISION)
     lng: Optional[float] = Field(sa_type=DOUBLE_PRECISION)
 
-    meeting_tool_code: Optional[EventMeetingToolCode] = Field(
-        sa_type=Enum(EventMeetingToolCode)
-    )
+    meeting_tool_code: Optional[EventMeetingToolCode] = Field(sa_type=String(50))
     meeting_url: Optional[str] = Field(sa_type=String(2048))
 
     survey_id: Optional[int] = Field(
@@ -77,9 +66,28 @@ class Event(BaseModel, table=True):
 
     published_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
     application_form_url: Optional[str] = Field(sa_type=String(2048))
-    view_number: Optional[int] = Field(default=0)
     max_ticket_number_per_account: Optional[int] = Field(default=10)
     min_ticket_price: Optional[float] = Field(default=0.0)
+
+    request_feedback_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
+
+    remind_start_before_10m_at: Optional[datetime] = Field(
+        sa_type=DateTime(timezone=True)
+    )
+    remind_start_before_1d_at: Optional[datetime] = Field(
+        sa_type=DateTime(timezone=True)
+    )
+    remind_start_before_3d_at: Optional[datetime] = Field(
+        sa_type=DateTime(timezone=True)
+    )
+    remind_start_before_7d_at: Optional[datetime] = Field(
+        sa_type=DateTime(timezone=True)
+    )
+
+    view_count: Optional[int] = Field(default=0)
+    bookmark_count: Optional[int] = Field(default=0)
+    sold_ticket_count: Optional[int] = Field(default=0)
+    share_count: Optional[int] = Field(default=0)
 
     @model_validator(mode="before")
     @classmethod

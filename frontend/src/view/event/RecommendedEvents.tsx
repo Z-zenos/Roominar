@@ -406,7 +406,7 @@ export default function RecommendedEvents({ events }: RecommendedEventsProps) {
     >
       <Link
         className='text-success font-bold flex justify-center gap-2 items-center cursor-pointer border-b border-b-success pb-2 mt-4 mb-4'
-        href='/search?sort_by=APPLICATION_END_AT'
+        href='/search?sort_by=RECOMMENDATION'
       >
         Sự kiện phù hợp với bạn
         <MdKeyboardDoubleArrowRight size={20} />
@@ -427,7 +427,7 @@ export default function RecommendedEvents({ events }: RecommendedEventsProps) {
           >
             {imageCards.map((child, index) => (
               <div
-                key={index}
+                key={`recommended-${index}`}
                 className='break-inside-avoid mb-4 shadow-sm cursor-pointer'
               >
                 {child}

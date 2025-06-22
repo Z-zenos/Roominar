@@ -22,7 +22,7 @@ async def listing_top_organization_events(db: Session, organization_id: int):
                 (
                     5000 * func.count(Application.id)
                     + 500 * func.count(Bookmark.id)
-                    + Event.view_number
+                    + Event.view_count
                 ).label("rank"),
             )
             .outerjoin(Application, Event.id == Application.event_id)

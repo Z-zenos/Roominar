@@ -220,7 +220,7 @@ function EventDetail({ slug }: EventDetailProps) {
               }}
             />
             <Chip
-              content={event?.viewNumber + ''}
+              content={event?.viewCount + ''}
               leftIcon={<FaRegEye className='text-sm' />}
               type='info'
               className='border border-primary-500 !max-h-[40px]'

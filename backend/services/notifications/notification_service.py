@@ -1,3 +1,5 @@
+from datetime import date, datetime
+
 from firebase_admin import messaging
 from sqlmodel import Session, func, select
 
@@ -116,10 +118,12 @@ class NotificationService:
         result = []
         for n in notifications:
             type_code = n.type_code
+            # Parse date fields to strings before injecting to notification message
+            parsed_content = NotificationService._parse_dates_to_strings(n.content)
             content = NotificationService.get_notification_message(
                 key=type_code,
                 lang=lang,
-                **n.content,  # reuse stored params
+                **parsed_content,  # reuse stored params with parsed dates
             )
             result.append(
                 {
@@ -265,6 +269,31 @@ class NotificationService:
                     logger.info(f"Removed invalid FCM token: {token[:10]}...")
         except Exception as e:
             logger.error(f"Error removing invalid token: {str(e)}")
+
+    @staticmethod
+    def _parse_dates_to_strings(content: dict) -> dict:
+        """Parse all date/datetime fields in content dict to strings for message formatting"""
+        if not content:
+            return {}
+
+        parsed_content = {}
+        for key, value in content.items():
+            try:
+                # Check if value is datetime or date object
+                if isinstance(value, (datetime, date)):
+                    # Format datetime objects with time, date objects without
+                    parsed_content[key] = (
+                        value.strftime("%Y-%m-%d %H:%M:%S")
+                        if isinstance(value, datetime)
+                        else value.strftime("%Y-%m-%d")
+                    )
+                else:
+                    parsed_content[key] = value
+            except Exception:
+                # If parsing fails, keep original value
+                parsed_content[key] = value
+
+        return parsed_content
 
     @staticmethod
     def get_notification_message(

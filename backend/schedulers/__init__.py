@@ -1,13 +1,15 @@
 from .event_scheduler import (
-    remind_upcoming_events_1_day_before,
-    remind_upcoming_events_3_days_before,
-    remind_upcoming_events_7_days_before,
-    remind_upcoming_events_10_minutes_before,
+    handle_ended_events,
+    remind_start_time_before_1d,
+    remind_start_time_before_3d,
+    remind_start_time_before_7d,
+    remind_start_time_before_10m,
 )
 
 all = (
-    remind_upcoming_events_7_days_before,
-    remind_upcoming_events_3_days_before,
-    remind_upcoming_events_1_day_before,
-    remind_upcoming_events_10_minutes_before,
+    remind_start_time_before_1d,
+    remind_start_time_before_3d,
+    remind_start_time_before_7d,
+    remind_start_time_before_10m,
+    handle_ended_events,
 )

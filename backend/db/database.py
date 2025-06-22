@@ -41,6 +41,9 @@ def get_read_db() -> Generator[Session, None, None]:
     db = ReadSessionFactory()
     try:
         yield db
+    except Exception as e:
+        db.rollback()
+        raise e
     finally:
         db.close()
 

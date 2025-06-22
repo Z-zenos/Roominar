@@ -16,7 +16,7 @@ async def listing_event_rank(db: Session):
                 (
                     5000 * func.count(Application.id)
                     + 500 * func.count(Bookmark.id)
-                    + Event.view_number
+                    + Event.view_count
                 ).label("rank"),
             )
             .outerjoin(Application, Event.id == Application.event_id)

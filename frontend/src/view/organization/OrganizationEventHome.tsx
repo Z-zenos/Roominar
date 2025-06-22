@@ -147,7 +147,7 @@ function OrganizationEventHome({ slug }: OrganizationEventHomeProps) {
               </BreadcrumbItem>
             </Breadcrumbs>
             <Chip
-              content={event?.viewNumber + ''}
+              content={event?.viewCount + ''}
               leftIcon={<FaRegEye className='text-sm' />}
               type='info'
               className='border border-primary-500'

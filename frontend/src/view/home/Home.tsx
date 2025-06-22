@@ -8,7 +8,7 @@ import { CiSearch } from 'react-icons/ci';
 import Link from 'next/link';
 import { PiRankingFill } from 'react-icons/pi';
 import { GoOrganization } from 'react-icons/go';
-import { GiMicrophone, GiPartyPopper } from 'react-icons/gi';
+import { GiMicrophone } from 'react-icons/gi';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 
@@ -20,8 +20,7 @@ import 'swiper/css/navigation';
 
 import { Autoplay, FreeMode, Navigation } from 'swiper/modules';
 import { Button } from '@nextui-org/button';
-import { Image, Kbd } from '@nextui-org/react';
-import type { ReactNode } from 'react';
+import { Image } from '@nextui-org/react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import useWindowDimensions from '@/src/hooks/useWindowDimension';
@@ -31,6 +30,7 @@ import SpeakerCard from '@/src/component/common/Card/SpeakerCard';
 import {
   useListingEventRankQuery,
   useListingRecommendationEventsQuery,
+  useListingTrendingEventsQuery,
   useSearchEventsQuery,
 } from '@/src/api/event.api';
 import { EventSortByCode } from '@/src/lib/api/generated';
@@ -45,29 +45,6 @@ import { useListingRandomSpeakersQuery } from '@/src/api/speaker.api';
 import RecommendedEvents from '../event/RecommendedEvents';
 import { useTranslations } from 'next-intl';
 import { styles } from '@/src/constants/styles.constant';
-
-interface HeadingGroupProps {
-  heading: string | ReactNode;
-  subheading: string;
-  className?: string;
-}
-
-const HeadingGroup = ({
-  heading,
-  subheading,
-  className,
-}: HeadingGroupProps) => {
-  return (
-    <div className={clsx('mb-12 text-center ', className)}>
-      <h2 className='450px:text-xl text-lg text-primary font-semibold'>
-        {heading}
-      </h2>
-      <h3 className='450px:text-xm text-nm text-gray-600 font-light'>
-        {subheading}
-      </h3>
-    </div>
-  );
-};
 
 export default function Home() {
   const t = useTranslations();
@@ -85,6 +62,11 @@ export default function Home() {
       },
       status === 'authenticated',
     );
+
+  const { data: trendingEvents, isLoading: isTrendingEventsLoading } =
+    useListingTrendingEventsQuery({
+      perPage: 8,
+    });
 
   const {
     data: applicationClosingSoonEvents,
@@ -127,13 +109,12 @@ export default function Home() {
             <span className='text-gradient'> E</span>vent{' '}
             {new Date().getFullYear()} 🎉
           </h1>
-          <p className='text-primary font-semibold mb-8'>
-            Nền tảng kết nối cộng đồng, nơi bạn có thể tìm kiếm, tham gia và tổ
-            chức các sự kiện.
-          </p>
-          <span className='border-t-1 border-gray-600 border-b-1 py-1 px-4'>
-            🚀 | BẠN ĐÃ CÓ KẾ HOẠCH NÀO CHƯA?
-          </span>
+          {status == 'unauthenticated' && (
+            <p className='text-primary font-semibold mb-8'>
+              Đăng ký một tài khoản miễn phí để nâng cao trải nghiệm của chính
+              bạn.
+            </p>
+          )}
           <Input
             className='450px:max-w-[500px] max-w-[300px] mt-5 mx-auto'
             placeholder='Tìm bất kỳ sự kiện nào bạn muốn...'
@@ -145,7 +126,6 @@ export default function Home() {
             }
             value={value}
             onValueChange={setValue}
-            endContent={<Kbd keys={['enter']}>Enter</Kbd>}
           />
         </div>
 
@@ -171,18 +151,9 @@ export default function Home() {
 
       {/* === EVENT SECTION === */}
       <section className='450px:py-10 450px:px-[15%] px-[5%]'>
-        <HeadingGroup
-          heading={
-            <span className='flex justify-center gap-2 items-center font-semibold text-green-500'>
-              {t('common.text.events')} <GiPartyPopper />
-            </span>
-          }
-          subheading='Sự kiện là nơi bắt đầu của những cơ hội mới – Tham gia ngay để không bỏ lỡ điều gì!'
-        />
-
         <Link
           className='text-orange-500 font-bold inline-flex justify-start gap-2 items-center cursor-pointer border-b border-b-orange-500 pb-2'
-          href='/search?sort_by=START_AT'
+          href='/search?sort_by=TRENDING'
         >
           <span className={styles.flexStart}>
             <FaFireAlt className='text-red-500' />
@@ -193,6 +164,134 @@ export default function Home() {
           <MdKeyboardDoubleArrowRight size={20} />
         </Link>
 
+        <div>
+          <Swiper
+            key={width > 1200 ? 4 : 2}
+            autoplay={{
+              delay: 7000,
+              disableOnInteraction: false,
+            }}
+            freeMode={true}
+            modules={[Autoplay, Navigation, FreeMode]}
+            pagination={{
+              clickable: true,
+            }}
+            slidesPerView={width <= 450 ? 1 : width > 1200 ? 4 : 2}
+            spaceBetween={30}
+            wrapperClass='pb-2'
+            onSlideChange={(swipper) => setActiveEvent(swipper.activeIndex)}
+          >
+            {isTrendingEventsLoading && (
+              <div className='flex justify-between 450px:gap-0 gap-10'>
+                <EventCardSkeleton
+                  direction='vertical'
+                  variant='simple'
+                />
+                <EventCardSkeleton
+                  direction='vertical'
+                  variant='simple'
+                />
+                <EventCardSkeleton
+                  direction='vertical'
+                  variant='simple'
+                />
+                <EventCardSkeleton
+                  direction='vertical'
+                  variant='simple'
+                />
+              </div>
+            )}
+            {!isTrendingEventsLoading &&
+              trendingEvents &&
+              trendingEvents.data.map((event, i) => (
+                <SwiperSlide
+                  key={`trending-${event.id}`}
+                  className={clsx('dark:rounded-lg dark:p-0 mt-2')}
+                >
+                  <EventCard
+                    direction={
+                      width > 800 || width <= 450 ? 'vertical' : 'horizontal'
+                    }
+                    event={event}
+                    variant='standard'
+                    trendingOrderNumber={i + 1}
+                    hasOrganizationInfo={false}
+                  />
+                </SwiperSlide>
+              ))}
+          </Swiper>
+        </div>
+
+        <div className='450px:mb-6'>
+          {!isRecommendationEventsLoading &&
+            recommendedEvents &&
+            recommendedEvents?.data?.length > 0 && (
+              <RecommendedEvents events={recommendedEvents.data} />
+            )}
+        </div>
+
+        <Link
+          className='text-warning font-bold inline-flex justify-start gap-2 items-center cursor-pointer border-b border-b-warning pb-2 mt-8'
+          href='/search?sort_by=START_AT'
+        >
+          Sự kiện sắp diễn ra
+          <MdKeyboardDoubleArrowRight size={20} />
+        </Link>
+        <div>
+          <Swiper
+            key={width > 1200 ? 2 : 1}
+            autoplay={{
+              delay: 4000,
+              disableOnInteraction: false,
+            }}
+            freeMode={true}
+            modules={[Autoplay, Navigation, FreeMode]}
+            pagination={{
+              clickable: true,
+            }}
+            slidesPerView={width > 1200 ? 2 : 1}
+            spaceBetween={30}
+            wrapperClass='pb-2'
+          >
+            {isUpcomingEventsLoading && (
+              <div className='450px:flex 450px:justify-between gap-8'>
+                <EventCardSkeleton
+                  direction='horizontal'
+                  variant='simple'
+                />
+                <EventCardSkeleton
+                  direction='horizontal'
+                  variant='simple'
+                  className='450px:block hidden'
+                />
+              </div>
+            )}
+            {!isUpcomingEventsLoading &&
+              upcomingEvents &&
+              upcomingEvents.data.map((event) => (
+                <SwiperSlide
+                  key={`upcoming-${event.id}`}
+                  className={clsx('dark:rounded-lg dark:p-0')}
+                >
+                  <EventCard
+                    direction={width <= 450 ? 'vertical' : 'horizontal'}
+                    event={event}
+                    variant='standard'
+                    className='mt-2'
+                    hasOrganizationInfo={false}
+                  />
+                </SwiperSlide>
+              ))}
+          </Swiper>
+        </div>
+
+        <Link
+          className='text-warning font-bold inline-flex justify-start gap-2 items-center cursor-pointer border-b border-b-warning pb-2 mt-8'
+          href='/search?sort_by=APPLICATION_END_AT'
+        >
+          Sự kiện sắp kết thúc đăng ký
+          <MdKeyboardDoubleArrowRight size={20} />
+        </Link>
         <div>
           <Swiper
             key={width > 1200 ? 4 : 2}
@@ -232,9 +331,9 @@ export default function Home() {
             )}
             {!isApplicationClosingSoonEventsLoading &&
               applicationClosingSoonEvents &&
-              applicationClosingSoonEvents.data.map((event, i) => (
+              applicationClosingSoonEvents.data.map((event) => (
                 <SwiperSlide
-                  key={event.id}
+                  key={`acs-${event.id}`}
                   className={clsx('dark:rounded-lg dark:p-0 mt-2')}
                 >
                   <EventCard
@@ -243,69 +342,6 @@ export default function Home() {
                     }
                     event={event}
                     variant='standard'
-                    trendingOrderNumber={i + 1}
-                  />
-                </SwiperSlide>
-              ))}
-          </Swiper>
-        </div>
-
-        <div className='450px:mb-6'>
-          {!isRecommendationEventsLoading &&
-            recommendedEvents &&
-            recommendedEvents?.data?.length > 0 && (
-              <RecommendedEvents events={recommendedEvents.data} />
-            )}
-        </div>
-
-        <Link
-          className='text-warning font-bold inline-flex justify-start gap-2 items-center cursor-pointer border-b border-b-warning pb-2 mt-8'
-          href='/search?sort_by=APPLICATION_END_AT'
-        >
-          Sự kiện sắp diễn ra
-          <MdKeyboardDoubleArrowRight size={20} />
-        </Link>
-        <div>
-          <Swiper
-            key={width > 1200 ? 2 : 1}
-            autoplay={{
-              delay: 4000,
-              disableOnInteraction: false,
-            }}
-            freeMode={true}
-            modules={[Autoplay, Navigation, FreeMode]}
-            pagination={{
-              clickable: true,
-            }}
-            slidesPerView={width > 1200 ? 2 : 1}
-            spaceBetween={30}
-            wrapperClass='pb-2'
-          >
-            {isUpcomingEventsLoading && (
-              <div className='450px:flex 450px:justify-between gap-8'>
-                <EventCardSkeleton
-                  direction='horizontal'
-                  variant='simple'
-                />
-                <EventCardSkeleton
-                  direction='horizontal'
-                  variant='simple'
-                  className='450px:block hidden'
-                />
-              </div>
-            )}
-            {!isUpcomingEventsLoading &&
-              upcomingEvents &&
-              upcomingEvents.data.map((event) => (
-                <SwiperSlide
-                  key={event.id}
-                  className={clsx('dark:rounded-lg dark:p-0')}
-                >
-                  <EventCard
-                    direction={width <= 450 ? 'vertical' : 'horizontal'}
-                    event={event}
-                    variant='standard'
-                    className='mt-2'
                   />
                 </SwiperSlide>
               ))}
@@ -402,7 +438,7 @@ export default function Home() {
             Diễn giả <GiMicrophone />
           </h2>
           <h3 className='450px:text-xm text-md text-gray-600 font-light'>
-            Inspiring insights from visionary Speaker.
+            Tham gia cùng các diễn giả hàng đầu trong lĩnh vực của bạn.
           </h3>
           <div className='grid gap-5 items-center justify-between mt-6 1200px:grid-cols-4 grid-cols-2'>
             {randomSpeakers &&

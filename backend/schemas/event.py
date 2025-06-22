@@ -45,6 +45,7 @@ class SearchEventsItem(BaseModel):
     tags: list[TagItem] = Field([])
     published_at: datetime
     min_ticket_price: float | None = None
+    bookmark_count: int | None = None
 
 
 class SearchEventsQueryParams(BaseModel):
@@ -147,7 +148,7 @@ class GetEventDetailResponse(BaseModel):
     application_form_url: str | None = None
     tags: list[TagItem] = Field([])
     survey: SurveyDetail | None
-    view_number: int | None = None
+    view_count: int | None = None
     is_organization_followed: bool | None = None
     organization_event_number: int | None = None
     organization_follower_number: int | None = None
@@ -330,7 +331,7 @@ class ListingOrganizationEventsItem(BaseModel):
     total_ticket_number: int | None
     status: EventStatusCode
     # survey: SurveyDetail | None = None
-    view_number: int | None = None
+    view_count: int | None = None
     tags: list[TagItem] = Field([])
 
 
@@ -453,3 +454,7 @@ class ListingEventOptionsItem(BaseModel):
 
 class ListingEventOptionsResponse(BaseModel):
     data: list[ListingEventOptionsItem] = Field([])
+
+
+class ListingTrendingEventsResponse(PaginationResponse[SearchEventsItem]):
+    pass

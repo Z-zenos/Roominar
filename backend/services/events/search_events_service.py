@@ -53,6 +53,16 @@ async def search_events(
         .cte()
     )
 
+    BookmarkCount = (
+        select(
+            Bookmark.event_id,
+            func.count(Bookmark.id).label("bookmark_count"),
+        )
+        .select_from(Bookmark)
+        .group_by(Bookmark.event_id)
+        .cte()
+    )
+
     query = (
         select(
             Event.id,
@@ -80,11 +90,13 @@ async def search_events(
                 else_=func.json_build_array(),
             ).label("tags"),
             SoldTicketsNumber.c.sold_tickets_number,
+            BookmarkCount.c.bookmark_count,
         )
         .join(Organization, Event.organization_id == Organization.id)
         .outerjoin(Target, Event.target_id == Target.id)
         .outerjoin(EventTag, Event.id == EventTag.c.event_id)
         .outerjoin(SoldTicketsNumber, Event.id == SoldTicketsNumber.c.event_id)
+        .outerjoin(BookmarkCount, Event.id == BookmarkCount.c.event_id)
     )
 
     if user:

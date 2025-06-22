@@ -1,12 +1,18 @@
 from sqlmodel import Session, and_, case, exists, func, select, update
 
-from backend.core.constants import FollowEntityCode, RoleCode, TransactionStatusCode
+from backend.core.constants import (
+    FollowEntityCode,
+    RoleCode,
+    TransactionStatusCode,
+    UserActionTypeCode,
+)
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.models import Bookmark, Event, Organization, Ticket, User
 from backend.models.follow import Follow
 from backend.models.ticket_inventory import TicketInventory
 from backend.models.transaction_item import TransactionItem
+from backend.models.user_action import UserAction
 from backend.services.surveys.get_survey_detail_service import get_survey_detail
 from backend.services.tags.get_event_tags_service import get_event_tags
 from backend.utils.database import fetch_one
@@ -126,10 +132,18 @@ async def get_event_detail(db: Session, user: User, slug: str):
             db.exec(
                 update(Event)
                 .where(Event.id == event["id"])
-                .values(view_number=event["view_number"] + 1)
+                .values(view_count=event["view_count"] + 1)
+            )
+            db.add(
+                UserAction(
+                    user_id=user.id,
+                    event_id=event["id"],
+                    organization_id=event["organization_id"],
+                    action_type=UserActionTypeCode.VIEW,
+                )
             )
             db.commit()
-            event["view_number"] += 1
+            event["view_count"] += 1
         return event
 
     except Exception as e:

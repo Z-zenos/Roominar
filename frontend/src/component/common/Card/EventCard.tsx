@@ -17,7 +17,7 @@ import { useSession } from 'next-auth/react';
 import Ticket from './Ticket';
 import useWindowDimensions from '@/src/hooks/useWindowDimension';
 import { useTranslations } from 'next-intl';
-import { FaBookmark, FaRegEye } from 'react-icons/fa6';
+import { FaBookmark, FaTicket } from 'react-icons/fa6';
 import { IoTicketOutline } from 'react-icons/io5';
 import useFormatMoney from '@/src/hooks/useFormatMoney';
 
@@ -28,6 +28,7 @@ interface EventCardProps {
   event: SearchEventsItem | MyEventItem;
   style?: React.CSSProperties;
   trendingOrderNumber?: number;
+  hasOrganizationInfo?: boolean;
 }
 
 function EventCard({
@@ -37,6 +38,7 @@ function EventCard({
   event,
   style,
   trendingOrderNumber,
+  hasOrganizationInfo = true,
 }: EventCardProps) {
   const t = useTranslations('code');
   const formatMoney = useFormatMoney();
@@ -74,7 +76,7 @@ function EventCard({
             'flex gap-2 flex-col',
           )}
         >
-          {variant != 'compact' && (
+          {variant != 'compact' && hasOrganizationInfo && (
             <div className='flex gap-3 items-center px-3'>
               <Image
                 src={
@@ -122,15 +124,19 @@ function EventCard({
                     leftIcon={<FaUserFriends className='text-sm' />}
                     type='info'
                   />
-                  {event.meetingToolCode && (
-                    <Chip
-                      content={event.meetingToolCode}
-                      leftIcon={
-                        <MdOutlineOnlinePrediction className='text-sm' />
-                      }
-                      type='success'
-                    />
-                  )}
+                  {event.applicationStartAt < new Date() &&
+                    new Date() < event.applicationEndAt && (
+                      <Chip
+                        content='Đăng ký ngay'
+                        leftIcon={
+                          <MdOutlineOnlinePrediction className='text-sm' />
+                        }
+                        type='success'
+                        onClick={() =>
+                          router.push(`/events/${event.slug}/apply`)
+                        }
+                      />
+                    )}
                 </div>
               )}
               {direction === 'horizontal' && (
@@ -142,29 +148,27 @@ function EventCard({
                       variant === 'standard' && 'h-16',
                     )}
                   >
-                    <Chip
-                      content={
-                        event.applicationStartAt > new Date(Date.now())
-                          ? 'Not open application'
-                          : 'Opening application'
-                      }
-                      className='w-fit font-semibold'
-                      type={
-                        event.applicationStartAt > new Date(Date.now())
-                          ? 'error'
-                          : 'warning'
-                      }
-                    />
-                    {event.meetingToolCode && (
-                      <Chip
-                        content={event.meetingToolCode}
-                        leftIcon={
-                          <MdOutlineOnlinePrediction className='text-sm' />
-                        }
-                        className=''
-                        type='success'
-                      />
-                    )}
+                    {event.applicationStartAt > new Date(Date.now()) ||
+                      (event.applicationEndAt < new Date(Date.now()) && (
+                        <Chip
+                          content='Không mở đăng ký'
+                          className='w-fit font-semibold'
+                          type='warning'
+                        />
+                      ))}
+                    {event.applicationStartAt < new Date() &&
+                      new Date() < event.applicationEndAt && (
+                        <Chip
+                          content='Đăng ký ngay'
+                          leftIcon={
+                            <MdOutlineOnlinePrediction className='text-sm' />
+                          }
+                          onClick={() =>
+                            router.push(`/events/${event.slug}/apply`)
+                          }
+                          type='success'
+                        />
+                      )}
                     <Chip
                       content={`${event['soldTicketsNumber'] || 0} / ${event?.totalTicketNumber}`}
                       leftIcon={<FaUserFriends className='text-sm' />}
@@ -219,14 +223,14 @@ function EventCard({
                 <span
                   className={clsx(styles.flexStart, 'text-sm text-green-500')}
                 >
-                  <FaRegEye />
-                  20
+                  <FaTicket />
+                  {event['soldTicketsNumber'] ?? 0}
                 </span>
                 <span
                   className={clsx(styles.flexStart, 'text-sm text-primary')}
                 >
                   <FaBookmark />
-                  300
+                  {event['bookmarkCount'] ?? 0}
                 </span>
               </div>
               {trendingOrderNumber && (
