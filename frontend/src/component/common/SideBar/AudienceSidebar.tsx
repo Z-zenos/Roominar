@@ -20,31 +20,31 @@ import PaymentIcon from '@/public/icons/payment.svg';
 
 const sidebarMenu = [
   {
-    title: 'Personal Info',
+    title: 'Thông tin cá nhân',
     url: '/my-profile',
     icon: <ProfileIcon />,
     isActive: false,
   },
   {
-    title: 'Account Settings',
+    title: 'Cài đặt tài khoản',
     url: '/account-settings',
     icon: <AccountSettingIcon />,
     isActive: false,
   },
   {
-    title: 'My Events',
+    title: 'Sự kiện của tôi',
     url: '/my-events',
     icon: <EventIcon />,
     isActive: false,
   },
   {
-    title: 'Ticket & payments',
+    title: 'Vé của tôi',
     url: '/tickets-n-payments',
     icon: <PaymentIcon />,
     isActive: false,
   },
   {
-    title: 'Notifications',
+    title: 'Thông báo',
     url: '/notifications',
     icon: <NotificationIcon />,
     isActive: false,

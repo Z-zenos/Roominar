@@ -76,6 +76,7 @@ async def publish_event(
         )
 
         ticket_inventories = []
+        min_ticket_price = 0
         for ticket in tickets:
             ticket = dict(ticket)
             ticket_inventory = TicketInventory(
@@ -86,6 +87,11 @@ async def publish_event(
             ticket_inventories.append(ticket_inventory)
             event.total_ticket_number = 0
             event.total_ticket_number += ticket["quantity"]
+            if ticket["price"] > 0:
+                if min_ticket_price == 0 or ticket["price"] < min_ticket_price:
+                    min_ticket_price = ticket["price"]
+
+        event.min_ticket_price = min_ticket_price
         db.add_all(ticket_inventories)
 
         db.flush()

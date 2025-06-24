@@ -2,7 +2,7 @@
 
 import clsx from 'clsx';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   BreadcrumbItem,
   Breadcrumbs,
@@ -85,50 +85,9 @@ function OrganizationEventHome({ slug }: OrganizationEventHomeProps) {
   const { width } = useWindowDimensions();
 
   const [isCopied, setIsCopied] = useState<boolean>(false);
-
-  const sectionNavigationMenuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const pathname = usePathname();
   const { data: auth } = useSession();
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(({ target, isIntersecting }) => {
-          if (target === sectionNavigationMenuRef.current) {
-            return isIntersecting;
-
-            // dispatch(
-            // 	displaySubHeader({
-            // 		open: !isIntersecting,
-            // 		data: isIntersecting
-            // 			? undefined
-            // 			: {
-            // 					menu: [
-            // 						{ name: 'Description', id: 'description-section' },
-            // 						{ name: 'Reviews', id: 'reviews-section' },
-            // 						{ name: 'FAQ', id: 'faq-section' },
-            // 					],
-            // 				},
-            // 		addons: ['menu'],
-            // 	}),
-            // );
-          }
-        });
-      },
-      {
-        threshold: 0.5,
-      },
-    );
-
-    if (sectionNavigationMenuRef.current) {
-      observer.observe(sectionNavigationMenuRef.current);
-    }
-
-    return () => {
-      observer.disconnect();
-    };
-  });
 
   useEffect(() => {
     setTimeout(() => setIsCopied(false), 30000);
@@ -188,7 +147,7 @@ function OrganizationEventHome({ slug }: OrganizationEventHomeProps) {
               </BreadcrumbItem>
             </Breadcrumbs>
             <Chip
-              content={event?.viewNumber + ''}
+              content={event?.viewCount + ''}
               leftIcon={<FaRegEye className='text-sm' />}
               type='info'
               className='border border-primary-500'

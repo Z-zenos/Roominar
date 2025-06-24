@@ -3,13 +3,7 @@
 import clsx from 'clsx';
 
 import { useEffect, useRef, useState } from 'react';
-import {
-  BreadcrumbItem,
-  Breadcrumbs,
-  Button,
-  Image,
-  Link,
-} from '@nextui-org/react';
+import { Button, Checkbox, Image, Link } from '@nextui-org/react';
 import {
   FaFacebookSquare,
   FaInstagram,
@@ -17,11 +11,10 @@ import {
   FaRegCopy,
   FaRegEye,
 } from 'react-icons/fa';
-import { FaXTwitter } from 'react-icons/fa6';
-import { BsFillPeopleFill } from 'react-icons/bs';
+import { FaArrowRight, FaXTwitter } from 'react-icons/fa6';
 import { MdOutlineMail } from 'react-icons/md';
 import { GoOrganization } from 'react-icons/go';
-import { GiPartyPopper } from 'react-icons/gi';
+import { GiMicrophone, GiPartyPopper } from 'react-icons/gi';
 
 // Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -46,10 +39,10 @@ import {
   useListingRelatedEventsQuery,
   useListingTopOrganizationEventsQuery,
 } from '@/src/api/event.api';
-import type { TagItem } from '@/src/lib/api/generated';
+import type { TagItem, TicketItem } from '@/src/lib/api/generated';
 import { usePathname, useRouter } from 'next/navigation';
 import Head from '@/src/component/common/Head';
-import { formatEventDate, groupIntoPairs } from '@/src/utils/app.util';
+import { cn, formatEventDate, groupIntoPairs } from '@/src/utils/app.util';
 import Chip from '@/src/component/common/Chip';
 import { useSession } from 'next-auth/react';
 import EventBookmark from '../../component/common/Button/EventBookmarkButton';
@@ -59,11 +52,52 @@ import toast from 'react-hot-toast';
 import { TbClockExclamation } from 'react-icons/tb';
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
+import useFormatMoney from '@/src/hooks/useFormatMoney';
+import { HiOutlineTicket } from 'react-icons/hi2';
+import { ArrowRight } from 'lucide-react';
+import { EventDetailMenuBar } from '@/src/component/common/Navbar/EventDetailNavbar';
+import { CiViewTimeline } from 'react-icons/ci';
+import { PiNote } from 'react-icons/pi';
 
 const LazyMap = dynamic(() => import('../../component/common/Map/Map'), {
   ssr: false,
   loading: () => <p>Loading...</p>,
 });
+
+const menuItems = [
+  {
+    icon: CiViewTimeline,
+    label: 'Lịch trình',
+    href: 'timeline',
+    gradient:
+      'radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(37,99,235,0.06) 50%, rgba(29,78,216,0) 100%)',
+    iconColor: 'text-blue-500',
+  },
+  {
+    icon: PiNote,
+    label: 'Mô tả',
+    href: 'descriptions',
+    gradient:
+      'radial-gradient(circle, rgba(249,115,22,0.15) 0%, rgba(234,88,12,0.06) 50%, rgba(194,65,12,0) 100%)',
+    iconColor: 'text-orange-500',
+  },
+  {
+    icon: HiOutlineTicket,
+    label: 'Vé',
+    href: 'tickets',
+    gradient:
+      'radial-gradient(circle, rgba(34,197,94,0.15) 0%, rgba(22,163,74,0.06) 50%, rgba(21,128,61,0) 100%)',
+    iconColor: 'text-green-500',
+  },
+  {
+    icon: GiMicrophone,
+    label: 'Diễn giả',
+    href: 'speakers',
+    gradient:
+      'radial-gradient(circle, rgba(239,68,68,0.15) 0%, rgba(220,38,38,0.06) 50%, rgba(185,28,28,0) 100%)',
+    iconColor: 'text-red-500',
+  },
+];
 
 interface EventDetailProps {
   slug: string;
@@ -71,6 +105,7 @@ interface EventDetailProps {
 
 function EventDetail({ slug }: EventDetailProps) {
   const t = useTranslations('code');
+  const formatMoney = useFormatMoney();
   const { data: event, isLoading } = useGetEventDetailQuery({ slug });
   const { data: topOrganizationEventsData } =
     useListingTopOrganizationEventsQuery(
@@ -90,6 +125,7 @@ function EventDetail({ slug }: EventDetailProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { data: auth } = useSession();
+  const [activeItem, setActiveItem] = useState<string>('timeline');
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -134,6 +170,13 @@ function EventDetail({ slug }: EventDetailProps) {
     setTimeout(() => setIsCopied(false), 30000);
   }, [isCopied]);
 
+  const handleScroll = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return isLoading && !event ? (
     <DotLoader />
   ) : (
@@ -145,7 +188,7 @@ function EventDetail({ slug }: EventDetailProps) {
       />
       <div
         className={clsx(
-          'dark:bg-dark-sub w-full 450px:py-14 py-8 450px:px-[15%] px-[5%] relative flex-wrap',
+          'dark:bg-dark-sub w-full 450px:py-8 py-8 450px:px-[15%] px-[5%] relative flex-wrap',
           styles.between,
         )}
       >
@@ -167,31 +210,20 @@ function EventDetail({ slug }: EventDetailProps) {
             width > 1200 ? 'w-[70%]' : 'w-full 450px:mb-8 mb-4',
           )}
         >
-          <div className='flex justify-between flex-wrap gap-4 450px:w-[90%] w-full'>
-            <Breadcrumbs color='primary'>
-              <BreadcrumbItem
-                className='hover:underline'
-                href='/home'
-              >
-                🏠 Home
-              </BreadcrumbItem>
-              <BreadcrumbItem
-                className='hover:underline'
-                href='/search'
-              >
-                Events
-              </BreadcrumbItem>
-              <BreadcrumbItem>
-                <span className='break-words whitespace-normal'>
-                  {event?.name}
-                </span>
-              </BreadcrumbItem>
-            </Breadcrumbs>
+          <div className='flex justify-between flex-wrap gap-4 450px:w-[95%] w-full items-end'>
+            <EventDetailMenuBar
+              items={menuItems}
+              activeItem={activeItem}
+              onItemClick={(item) => {
+                setActiveItem(item);
+                handleScroll(item.toLowerCase());
+              }}
+            />
             <Chip
-              content={event?.viewNumber + ''}
+              content={event?.viewCount + ''}
               leftIcon={<FaRegEye className='text-sm' />}
               type='info'
-              className='border border-primary-500'
+              className='border border-primary-500 !max-h-[40px]'
             />
           </div>
           <Image
@@ -236,10 +268,7 @@ function EventDetail({ slug }: EventDetailProps) {
                   size={24}
                   className='text-[#0862f6]'
                 />
-                <FaXTwitter
-                  size={24}
-                  className='text-[]'
-                />
+                <FaXTwitter size={24} />
                 <FaInstagram
                   size={24}
                   className='text-orange-400'
@@ -276,9 +305,9 @@ function EventDetail({ slug }: EventDetailProps) {
                   'border-y border-y-gray-500 py-4',
                 )}
               >
-                <BsFillPeopleFill className='text-primary w-6 h-6' />
+                <HiOutlineTicket className='text-primary w-6 h-6 rotate-45' />
                 <span className='font-light'>
-                  {event?.soldTicketsNumber ?? 0} sold /{' '}
+                  {event?.soldTicketsNumber ?? 0} vé đã bán /{' '}
                   {event?.totalTicketNumber}
                 </span>
               </div>
@@ -304,11 +333,9 @@ function EventDetail({ slug }: EventDetailProps) {
                             <TbClockExclamation className='text-white' />
                           </div>
                           <div>
-                            <h3 className='text-red-500 font-semibold'>
-                              Application is not available
-                            </h3>
                             <p className='text-sm'>
-                              The application is not available at this time
+                              Không thể đăng ký sự kiện trong khoảng thời gian
+                              này.
                             </p>
                           </div>
                         </div>
@@ -320,11 +347,11 @@ function EventDetail({ slug }: EventDetailProps) {
                 }}
                 isDisabled={event?.applicationEndAt < new Date()}
               >
-                Apply Now
+                Đăng ký ngay
               </Button>
               {event?.applicationEndAt < new Date() && (
                 <p className='opacity-60 text-ss'>
-                  Registration period has ended.
+                  Thời gian đăng ký sự kiện đã kết thúc.
                 </p>
               )}
             </div>
@@ -335,7 +362,7 @@ function EventDetail({ slug }: EventDetailProps) {
               underline='hover'
             >
               <MdOutlineMail size={20} />
-              Ask about this event
+              Hỏi vể sự kiện này.
             </Link>
           </div>
 
@@ -343,7 +370,7 @@ function EventDetail({ slug }: EventDetailProps) {
           {event?.organizeAddress && (
             <div>
               <h3 className='font-semibold 450px:text-xm text-xm mt-4'>
-                Offline address
+                Địa điểm tổ chức offline
               </h3>
               <div>
                 <p className='font-light mb-2'>{event?.organizeAddress}</p>
@@ -363,7 +390,7 @@ function EventDetail({ slug }: EventDetailProps) {
 
       <div
         className={clsx(
-          'dark:bg-dark-sub w-full 450px:py-14 py-6 450px:px-[15%] px-[5%] relative flex-wrap flex justify-between items-start',
+          'dark:bg-dark-sub w-full 450px:py-4 py-6 450px:px-[15%] px-[5%] relative flex-wrap flex justify-between items-start',
         )}
       >
         <div
@@ -373,9 +400,9 @@ function EventDetail({ slug }: EventDetailProps) {
           )}
         >
           {/* === Timeline === */}
-          <div>
+          <div id='timeline'>
             <h3 className='font-semibold 450px:text-lg text-xm border-b border-b-gray-400'>
-              General Timeline
+              Lịch trình chung
             </h3>
 
             <HorizontalTimeline
@@ -387,9 +414,9 @@ function EventDetail({ slug }: EventDetailProps) {
           </div>
 
           {/* === DESCRIPTION === */}
-          <div>
+          <div id='descriptions'>
             <h3 className='font-semibold 450px:text-lg text-xm border-b border-b-gray-400'>
-              About this event
+              Về sự kiện này
             </h3>
             <div className='mt-3'>
               <div
@@ -398,20 +425,122 @@ function EventDetail({ slug }: EventDetailProps) {
             </div>
           </div>
 
+          {/* === Tickets === */}
+          <div id='tickets'>
+            <h3 className='font-semibold 450px:text-lg text-xm'>
+              Thông tin vé
+            </h3>
+            <div className='mt-3'>
+              <div className='grid 1200px:grid-cols-1 450px:grid-cols-2 grid-cols-1'>
+                {event &&
+                  event.tickets.map((ticket: TicketItem) => (
+                    <Checkbox
+                      aria-label='tickets'
+                      name='tickets'
+                      classNames={{
+                        base: cn(
+                          'flex max-w-full mx-0 my-1 w-full bg-content1',
+                          'hover:bg-content2 items-center justify-start',
+                          'cursor-pointer rounded-lg gap-2 p-4 border-2 border-transparent',
+                          'data-[selected=true]:border-gray-100',
+                          'pointer-events-none',
+                        ),
+                        label: 'w-full m-0',
+                        icon: 'w-6 h-6 rotate-45',
+                      }}
+                      key={`t-${ticket.id}`}
+                      icon={(props) => {
+                        delete props.isIndeterminate;
+                        delete props.isSelected;
+                        delete props.disableAnimation;
+                        return <HiOutlineTicket {...props} />;
+                      }}
+                      isSelected={true}
+                      color='default'
+                    >
+                      <div className='w-full flex justify-between items-center gap-2'>
+                        <div className='font-normal w-full'>
+                          <h4
+                            className={clsx(
+                              styles.between,
+                              'text-nm font-medium leading-5',
+                            )}
+                          >
+                            <span>
+                              {ticket.name}{' '}
+                              {ticket.salesStartAt && (
+                                <>
+                                  ({formatEventDate(ticket.salesStartAt)}{' '}
+                                  <FaArrowRight className='inline-flex' />{' '}
+                                  {formatEventDate(ticket.salesEndAt)})
+                                </>
+                              )}
+                            </span>
+                            <button
+                              className='group relative flex items-center gap-1 overflow-hidden rounded-md border-[1.5px] border-[#333333]/40 bg-transparent px-8 py-2 text-sm font-semibold text-[#111111] cursor-pointer transition-all duration-[600ms] ease-[cubic-bezier(0.23,1,0.32,1)] hover:border-transparent hover:text-white hover:rounded-[12px] active:scale-[0.95] !pointer-events-auto'
+                              onClick={(e) => {
+                                e.preventDefault();
+                                router.push(`/events/${event.slug}/apply`);
+                              }}
+                            >
+                              {/* Left arrow (arr-2) */}
+                              <ArrowRight className='absolute w-4 h-4 left-[-25%] stroke-[#111111] fill-none z-[9] group-hover:left-4 group-hover:stroke-white transition-all duration-[800ms] ease-[cubic-bezier(0.34,1.56,0.64,1)]' />
+
+                              {/* Text */}
+                              <span className='relative z-[1] -translate-x-3 group-hover:translate-x-3 transition-all duration-[800ms] ease-out'>
+                                Mua vé ngay
+                              </span>
+
+                              {/* Circle */}
+                              <span className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-[#111111] rounded-[50%] opacity-0 group-hover:w-[220px] group-hover:h-[220px] group-hover:opacity-100 transition-all duration-[800ms] ease-[cubic-bezier(0.19,1,0.22,1)]'></span>
+
+                              {/* Right arrow (arr-1) */}
+                              <ArrowRight className='absolute w-4 h-4 right-4 stroke-[#111111] fill-none z-[9] group-hover:right-[-25%] group-hover:stroke-white transition-all duration-[800ms] ease-[cubic-bezier(0.34,1.56,0.64,1)]' />
+                            </button>
+                          </h4>
+                          <p className='font-light opacity-80 leading-5 text-ss mt-1'>
+                            {ticket.description}
+                          </p>
+                          <div className={clsx(styles.between, 'w-full')}>
+                            {ticket.price ? (
+                              <div className='text-sm w-full'>
+                                <span>Giá: </span>
+                                <span className='text-primary font-semibold ml-2'>
+                                  {formatMoney(ticket.price)}
+                                </span>
+                              </div>
+                            ) : (
+                              <span>Miễn phí</span>
+                            )}
+                            <p className='text-nm'>
+                              <span className='text-orange-500 font-bold mr-1'>
+                                {ticket.quantity}
+                              </span>
+                              vé
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </Checkbox>
+                  ))}
+              </div>
+            </div>
+          </div>
+
           {/* === Refund Policy === */}
           <div>
             <h3 className='font-semibold 450px:text-lg text-xm'>
-              Refund Policy
+              Chính sách hoàn tiền
             </h3>
             <div className='mt-3'>
-              <p className='font-light'>No refund policy</p>
+              <p className='font-light'>Không có chính sách hoàn tiền nào.</p>
             </div>
           </div>
 
           {/* === Speaker === */}
-          <div>
+          <div id='speakers'>
             <h3 className='font-semibold 450px:text-lg text-xm border-b border-b-gray-400'>
-              Speaker
+              Diễn giả
             </h3>
 
             {/* <div className='flex gap-5 items-center justify-start mt-6 flex-wrap'>
@@ -435,7 +564,7 @@ function EventDetail({ slug }: EventDetailProps) {
               )}
             >
               <GoOrganization />
-              Organization
+              Tổ chức
             </h3>
             <div className='mt-3 border border-gray-200 shadow-sm'>
               {event?.organizationAvatarUrl && (
@@ -466,7 +595,7 @@ function EventDetail({ slug }: EventDetailProps) {
                       {event.organizationFollowerNumber ?? 0}
                     </span>
                     <span className='font-light opacity-80 text-sm'>
-                      Follower
+                      người theo dõi
                     </span>
                   </p>
                 </div>
@@ -477,7 +606,7 @@ function EventDetail({ slug }: EventDetailProps) {
                 </p>
 
                 <h3 className='font-semibold text-gray-700 text-nm cursor-pointer 450px:my-3 my-2'>
-                  Events ({event?.organizationEventNumber ?? 0})
+                  Sự kiện ({event?.organizationEventNumber ?? 0})
                 </h3>
                 {topOrganizationEventsData &&
                   topOrganizationEventsData.events.map(
@@ -499,7 +628,7 @@ function EventDetail({ slug }: EventDetailProps) {
                             {topOrganizationEvent.name}
                           </h3>
                           <p className='text-ss font-light opacity-65'>
-                            Start at{' '}
+                            Bắt đầu lúc{' '}
                             {formatEventDate(topOrganizationEvent.startAt)}
                           </p>
                         </div>
@@ -515,7 +644,7 @@ function EventDetail({ slug }: EventDetailProps) {
                   //   )
                   // }
                 >
-                  More event +
+                  Nhiều sự kiện hơn +
                 </button>
               </div>
             </div>
@@ -531,7 +660,7 @@ function EventDetail({ slug }: EventDetailProps) {
                   )}
                 >
                   <GiPartyPopper />
-                  Related Events
+                  Các sự kiện liên quan
                 </h3>
               )}
 
@@ -591,7 +720,7 @@ function EventDetail({ slug }: EventDetailProps) {
                             {relatedEventPair[1]?.name}
                           </h3>
                           <p className='text-ss font-light opacity-65'>
-                            Start at{' '}
+                            Bắt đầu lúc{' '}
                             {formatEventDate(relatedEventPair[1]?.startAt)}
                           </p>
                         </div>

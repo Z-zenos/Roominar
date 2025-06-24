@@ -7,13 +7,8 @@ import { Label } from '../common/Label';
 import clsx from 'clsx';
 import { styles } from '@/src/constants/styles.constant';
 
-import {
-  IndustryCode,
-  JobTypeCode,
-  type ApiException,
-  type ErrorResponse400,
-} from '@/src/lib/api/generated';
-import { optionify } from '@/src/utils/app.util';
+import { IndustryCode, JobTypeCode } from '@/src/lib/api/generated';
+import { handleApiError, optionify } from '@/src/utils/app.util';
 import Tag from '../common/Tag/Tag';
 import { useListingTagsQuery } from '@/src/api/tag.api';
 import TagSkeleton from '../common/Tag/TagSkeleton';
@@ -51,13 +46,7 @@ function VerifyAudienceForm({ token }: VerifyAudienceFormProps) {
       form.reset();
       router.push('/login');
     },
-    onError(error: ApiException<unknown>) {
-      toast.error(
-        (error.body as ErrorResponse400)?.message ??
-          (error.body as ErrorResponse400)?.errorCode ??
-          'Unknown Error 😵',
-      );
-    },
+    onError: handleApiError,
   });
 
   const [selectedTags, setSelectedTags] = useState<number[]>([]);

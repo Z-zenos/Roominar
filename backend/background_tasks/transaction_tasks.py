@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from sqlmodel import select
+from sqlmodel import select, update
 
 from backend.background_tasks.notification_tasks import push_apply_event_notification
 from backend.celery import app
@@ -24,20 +24,23 @@ from backend.utils.logger import logger
 
 
 @app.task(bind=True, max_retries=3, default_retry_delay=5)
-def process_free_application(
+def process_transaction(
     self,
     event_id: int,
     user_id: int,
     application_id: int,
     ticket_ids: list[int],
     total_requested_quantity: int,
+    total_amount: float,
+    payment_method_code: PaymentMethodCode,
+    payment_extra: dict = None,
 ):
     db = SessionLocal()
     get_firebase_app()
     qr_service = QrcodeService()
 
     try:
-        organizer_id = db.exec(
+        organization_id = db.exec(
             select(Event.organization_id).where(Event.id == event_id)
         ).one_or_none()
 
@@ -59,16 +62,29 @@ def process_free_application(
             .mappings()
             .all()
         )
-        transaction = Transaction(
-            event_id=event_id,
-            application_id=application_id,
-            quantity=total_requested_quantity,
-            total_amount=0,
-            status=TransactionStatusCode.SUCCESS,
-            payment_method_code=PaymentMethodCode.FREE,
-            currency=CurrencyCode.VND,
-            exchange_rate=1.0,
-        )
+        if payment_method_code == PaymentMethodCode.FREE:
+            transaction = Transaction(
+                event_id=event_id,
+                application_id=application_id,
+                quantity=total_requested_quantity,
+                total_amount=total_amount,
+                status=TransactionStatusCode.SUCCESS,
+                payment_method_code=payment_method_code,
+                currency=CurrencyCode.VND,
+                exchange_rate=1.0,
+            )
+        else:
+            transaction = Transaction(
+                event_id=event_id,
+                application_id=application_id,
+                quantity=total_requested_quantity,
+                total_amount=total_amount,
+                status=TransactionStatusCode.SUCCESS,
+                payment_method_code=payment_method_code,
+                currency=CurrencyCode.VND,
+                exchange_rate=1.0,
+                **payment_extra,  # type: ignore
+            )
         transaction = save(db, transaction)
 
         new_transaction_items = []
@@ -101,7 +117,7 @@ def process_free_application(
                 item = TransactionItem(
                     transaction_id=transaction.id,
                     ticket_id=ticket["id"],
-                    amount=0,
+                    amount=ticket["price"],
                     status=TransactionStatusCode.SUCCESS,
                     user_id=user_id,
                     qr_code_id=qr_code_id,
@@ -112,12 +128,20 @@ def process_free_application(
         user_action = UserAction(
             user_id=user_id,
             event_id=event_id,
+            organization_id=organization_id,
             action_type=UserActionTypeCode.PURCHASE_TICKET,
         )
 
         db.add(user_action)
         db.bulk_update_mappings(TicketInventory, update_ticket_inventories)
         db.bulk_save_objects(new_transaction_items)
+        db.exec(
+            update(Event)
+            .where(Event.id == event_id)
+            .values(
+                sold_ticket_count=Event.sold_ticket_count + total_requested_quantity
+            )
+        )
         db.commit()
 
         logger.info(
@@ -127,7 +151,7 @@ def process_free_application(
         push_apply_event_notification.delay(
             event_id=event_id,
             sender_id=user_id,
-            receiver_id=organizer_id,
+            receiver_id=organization_id,
             ticket_id=tickets[0].id,
         )
 

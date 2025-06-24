@@ -20,7 +20,12 @@ import {
 } from '@/src/component/form/Form';
 import Button from '@/src/component/common/Button/Button';
 import { useGetEventDetailQuery } from '@/src/api/event.api';
-import { cn, formatEventDate, optionify } from '@/src/utils/app.util';
+import {
+  cn,
+  formatEventDate,
+  handleApiError,
+  optionify,
+} from '@/src/utils/app.util';
 import {
   MdAirplaneTicket,
   MdOutlineOnlinePrediction,
@@ -42,8 +47,6 @@ import {
 } from '@nextui-org/react';
 import type {
   AnswerItem,
-  ApiException,
-  ErrorResponse400,
   QuestionAnswerItem,
   SurveyResponseResultItem,
   TicketItem,
@@ -132,13 +135,7 @@ export default function EventApplicationForm({
         router.push('/tickets-n-payments');
       }, 2000);
     },
-    onError(error: ApiException<unknown>) {
-      toast.error(
-        (error.body as ErrorResponse400)?.message ??
-          (error.body as ErrorResponse400)?.errorCode ??
-          'Unknown Error 😵',
-      );
-    },
+    onError: handleApiError,
   });
 
   const checkOnlySelectFreeTicket = () => {
@@ -175,17 +172,17 @@ export default function EventApplicationForm({
     <Form {...form}>
       {event?.applicationEndAt < new Date() && (
         <Alert className='450px:px-[15%] px-[5%] rounded-none fixed bg-white z-20'>
-          <AlertTitle>Event Application Expired!</AlertTitle>
+          <AlertTitle>Thời gian đăng ký kết thúc!</AlertTitle>
           <AlertDescription className='font-light opacity-60 text-sm'>
-            The application period for this event has ended. Please check{' '}
+            Thời gian đăng ký sự kiện này đã kết thúc. Thử khám phá{' '}
             <Link
               href='/search?is_apply_ongoing=true'
               underline='hover'
             >
               {' '}
-              other upcoming events{' '}
+              các sự kiện sắp diễn ra khác.{' '}
             </Link>{' '}
-            or contact the organizer for more details.
+            hoặc liên hệ với nhà tổ chức để biết thêm thông tin chi tiết.
           </AlertDescription>
         </Alert>
       )}
@@ -261,7 +258,7 @@ export default function EventApplicationForm({
                 Ticket 🎟
               </h3>
               <p className='font-light text-sm my-3 opacity-80 px-5'>
-                Check detail to see which ticket type is right for you.
+                Xem thêm chi tiết vé để biết loại vé nào phù hợp với bạn.
               </p>
               {event.maxTicketNumberPerAccount && (
                 <div
@@ -272,11 +269,11 @@ export default function EventApplicationForm({
                 >
                   <span>⚠️</span>
                   <p className='text-sm font-light'>
-                    You can only select max{' '}
+                    Bạn chỉ có thể chọn tối đa{' '}
                     <span className='text-red-500 font-bold text-nm'>
                       {event.maxTicketNumberPerAccount}
                     </span>{' '}
-                    tickets
+                    vé
                   </p>
                 </div>
               )}
@@ -344,19 +341,19 @@ export default function EventApplicationForm({
                           <div className={clsx(styles.between, 'w-full')}>
                             {ticket.price ? (
                               <div className='text-sm w-full'>
-                                <span>Price: </span>
+                                <span>Giá: </span>
                                 <span className='text-primary font-semibold ml-2'>
                                   {formatMoney(ticket.price)}
                                 </span>
                               </div>
                             ) : (
-                              <span>Free</span>
+                              <span>Miễn phí</span>
                             )}
                             <p className='text-sm'>
                               <span className='text-orange-500 font-semibold mr-1'>
                                 {ticket.quantity}
                               </span>
-                              tickets
+                              vé
                             </p>
                           </div>
 
@@ -376,11 +373,11 @@ export default function EventApplicationForm({
                                         )}
                                       >
                                         <span>
-                                          You can only select max{' '}
+                                          Bạn chỉ có thể chọn tối đa{' '}
                                           <b>
                                             {event.maxTicketNumberPerAccount}
                                           </b>{' '}
-                                          ticket(s)
+                                          vé
                                         </span>
                                       </span>
                                     ),
@@ -400,9 +397,9 @@ export default function EventApplicationForm({
                                         )}
                                       >
                                         <span>
-                                          You can only select max{' '}
+                                          Bạn chỉ có thể chọn tối đa{' '}
                                           <b>{ticket.quantity}</b> {ticket.name}{' '}
-                                          tickets
+                                          vé
                                         </span>
                                       </span>
                                     ),
@@ -436,7 +433,7 @@ export default function EventApplicationForm({
                                 onOpenTicketDetail();
                               }}
                             >
-                              Detail
+                              Chi tiết
                             </button>
                           </div>
                         </div>
@@ -446,13 +443,24 @@ export default function EventApplicationForm({
               </div>
               <div className='grid grid-cols-3'>
                 <div className='col-span-2 py-2 px-4 bg-success-sub text-success-main border border-success-main border-r-0'>
-                  <p className='font-semibold'>Amount</p>
+                  <p className='font-semibold'>Tổng cộng</p>
                   <p>{totalAmount}</p>
                 </div>
                 <div className='bg-primary py-2 px-4 text-white'>
-                  <p className='font-semibold'>Tickets</p>
+                  <p className='font-semibold'>vé</p>
                   <p>{totalTickets}</p>
                 </div>
+              </div>
+              <div className='px-5 py-3 border-t border-gray-200'>
+                <h3 className='text-orange-500 font-semibold text-nm'>
+                  Thông tin nhận vé
+                </h3>
+                <p className='text-sm'>
+                  Vé điện tử sẽ được hiển thị trong mục &quot;
+                  <span className='font-bold text-primary'>Vé của tôi</span>
+                  &quot; của tài khoản{' '}
+                  <span className='underline'>{auth?.user?.email}</span>
+                </p>
               </div>
             </div>
           </div>
@@ -460,7 +468,7 @@ export default function EventApplicationForm({
           <div className={clsx(width > 1200 ? 'col-span-5' : 'col-span-7')}>
             <div className='w-full 450px:shadow-[rgba(0,_0,_0,_0.16)_0px_1px_4px] 450px:border border-gray-200 450px:px-10 450px:py-6 rounded-md 450px:bg-white'>
               <h2 className='450px:text-lg text-xm font-semibold text-primary'>
-                Enter your detail information ✍
+                Điền thông tin cá nhân ✍
               </h2>
 
               {event && (
@@ -568,7 +576,7 @@ export default function EventApplicationForm({
                       status === 'authenticated' &&
                         'bg-slate-100 text-gray-500',
                     )}
-                    disabled={status === 'authenticated'}
+                    disabled={status === 'authenticated' && !!auth.user.phone}
                     control={form.control}
                     showError={true}
                     rightIcon={
@@ -618,12 +626,12 @@ export default function EventApplicationForm({
             {event && event.survey && (
               <div className='w-full shadow-[rgba(0,_0,_0,_0.16)_0px_1px_4px] border border-gray-200 px-10 py-6 rounded-md mt-6 bg-white'>
                 <h2 className='text-md font-semibold text-secondary'>
-                  Answer some questions
+                  Chúng tôi muốn xin ý kiến của bạn 📝
                 </h2>
                 <p className='font-light opacity-80 text-sm'>
-                  Your answers will be an extremely useful and valuable source
-                  of information to help us survey, analyze and improve the
-                  quality of future events.
+                  Ý kiến của bạn sẽ là nguồn thông tin vô cùng hữu ích và quý
+                  giá giúp chúng tôi khảo sát, phân tích và cải thiện chất lượng
+                  các sự kiện trong tương lai.
                 </p>
                 <FormField
                   control={form.control}
@@ -777,23 +785,23 @@ export default function EventApplicationForm({
                 name='isAgreed'
               >
                 <p className='text-sm text-gray-600 font-light'>
-                  Please agree to the
+                  Vui lòng đọc kỹ và đồng ý với{' '}
                   <Link
                     href='#'
                     underline='hover'
                     className='text-primary mx-1'
                   >
-                    Terms of Use
+                    Sử dụng Dịch Vụ
                   </Link>
-                  and
+                  và
                   <Link
                     href='#'
                     underline='hover'
                     className='text-primary mx-1'
                   >
-                    Personal Information Handling
+                    Chính Sách Bảo Mật
                   </Link>
-                  before apply.
+                  trước khi đăng ký.
                 </p>
               </FormCheckBox>
             </div>
@@ -801,8 +809,8 @@ export default function EventApplicationForm({
               title={
                 checkOnlySelectFreeTicket() ||
                 form.getValues('tickets').filter(Boolean).length === 0
-                  ? 'Apply'
-                  : 'Go To Payment'
+                  ? 'Đăng ký'
+                  : 'Đi tới thanh toán'
               }
               type='submit'
               className='w-80 mt-5 mx-auto'
@@ -827,7 +835,7 @@ export default function EventApplicationForm({
               {(onClose) => (
                 <>
                   <ModalHeader className='flex flex-col gap-1'>
-                    Payment
+                    Thanh toán
                   </ModalHeader>
                   <ModalBody>
                     <ApplicationCheckout
@@ -858,7 +866,7 @@ export default function EventApplicationForm({
                       variant='flat'
                       onPress={onClose}
                     >
-                      Close
+                      Đóng
                     </UIButton>
                   </ModalFooter>
                 </>
@@ -876,7 +884,7 @@ export default function EventApplicationForm({
               {(onClose) => (
                 <>
                   <ModalHeader className='flex flex-col gap-1'>
-                    Ticket Detail
+                    Chi tiết vé
                   </ModalHeader>
                   <ModalBody>
                     <div className={clsx('flex gap-2 flex-col')}>
@@ -892,12 +900,12 @@ export default function EventApplicationForm({
                           <div className='rounded-md p-4 text-info-main bg-info-sub'>
                             {selectedTicket.price
                               ? formatMoney(selectedTicket.price)
-                              : 'FRee'}
+                              : 'Miễn phí'}
                           </div>
                         </div>
                         <p className='text-sm text-gray-700'>
                           <span className='underline font-semibold'>
-                            Available quantity
+                            Số lượng còn lại
                           </span>
                           : {selectedTicket.soldQuantity} /{' '}
                           {selectedTicket.quantity}
@@ -929,13 +937,13 @@ export default function EventApplicationForm({
                           {selectedTicket.salesStartAt && (
                             <div className='flex flex-col gap-1 font-light text-sm'>
                               <p>
-                                Open sale at:{' '}
+                                Mở bán lúc:{' '}
                                 <span className='font-semibold'>
                                   {formatEventDate(selectedTicket.salesStartAt)}
                                 </span>
                               </p>
                               <p>
-                                Close sale at:{' '}
+                                Đóng mở bán vào:{' '}
                                 <span className='font-semibold'>
                                   {formatEventDate(selectedTicket.salesEndAt)}
                                 </span>
@@ -945,7 +953,7 @@ export default function EventApplicationForm({
                         </div>
 
                         <p className='font-medium text-nm'>
-                          Cancellation Policy:
+                          Chính sách hủy vé:
                         </p>
                         <FormInstructions>
                           <li>
@@ -972,7 +980,7 @@ export default function EventApplicationForm({
                       variant='flat'
                       onPress={onClose}
                     >
-                      Close
+                      Đóng
                     </UIButton>
                   </ModalFooter>
                 </>

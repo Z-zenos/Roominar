@@ -62,3 +62,33 @@ def push_apply_event_notification(
         raise
     finally:
         db.close()
+
+
+@app.task(bind=True, max_retries=3, default_retry_delay=5)
+def push_check_in_event_notification(
+    self, event_id: int, receiver_id: int, ticket_id: int
+):
+    db = SessionLocal()
+    try:
+        event = db.get(Event, event_id)
+        receiver = db.get(User, receiver_id)
+        ticket = db.get(Ticket, ticket_id)
+
+        if not all([event, receiver, ticket]):
+            raise ValueError("Missing event, sender, receiver or ticket")
+
+        NotificationService.push_notification(
+            db=db,
+            sender=None,
+            receiver=receiver,
+            type_code=NotificationTypeCode.CHECK_IN_EVENT,
+            event_name=event.name,
+            ticket_name=ticket.name,
+        )
+
+    except Exception as e:
+        print(e)
+        self.retry(exc=e)
+        raise
+    finally:
+        db.close()

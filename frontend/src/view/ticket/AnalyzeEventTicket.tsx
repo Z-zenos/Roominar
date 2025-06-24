@@ -11,8 +11,13 @@ import Nodata from '@/src/component/common/Nodata';
 import { Tabs } from '@/src/component/common/Tabs';
 import { styles } from '@/src/constants/styles.constant';
 import clsx from 'clsx';
-import { FaCaretUp } from 'react-icons/fa6';
+import { FaCaretDown, FaCaretUp } from 'react-icons/fa6';
 import { CartesianGrid, Line, LineChart, Pie, PieChart, XAxis } from 'recharts';
+
+import './Ticket.css';
+import EventTicketsTable from './EventTicketsTable';
+import TicketSalesSpeedChart from './TicketSalesSpeedChart';
+import dayjs from '@/src/utils/dayjs';
 
 interface AnalyzeEventTicketProps {
   slug: string;
@@ -34,18 +39,18 @@ const revenueChartConfig = {
 
 const overviewChartConfig = {
   total: {
-    label: 'Total',
+    label: 'Tổng cộng',
   },
   sold: {
-    label: 'Sold',
+    label: 'Đã bán',
     color: '#27ae60',
   },
   available: {
-    label: 'Available',
-    color: '#3498db',
+    label: 'Còn lại',
+    color: 'rgb(0, 111, 238)',
   },
   canceled: {
-    label: 'Canceled',
+    label: 'Đã huỷ',
     color: '#e74c3c',
   },
 } as ChartConfig;
@@ -61,17 +66,23 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
       <div className='grid grid-cols-2 gap-4 p-4'>
         <div className='col-span-1 shadow-md p-5 rounded-md bg-white'>
           <div className={clsx(styles.between)}>
-            <p className='text-lg font-semibold'>
+            <p className='text-lg font-semibold flex justify-start items-start text-primary'>
               {data.overview.totalSoldTickets}
-              <span className='ml-2'>
-                <span>
+              <span className='ml-2 -mt-1'>
+                <span className='!text-nm font-light text-green-500'>
                   {data.ticketGranularity.ticketTrendPercent > 0 && (
-                    <FaCaretUp className='w-6 h-6 text-green-500' />
+                    <>
+                      {data.ticketGranularity.ticketTrendPercent} (%)
+                      <FaCaretUp className='w-6 h-6 text-green-500 inline-block' />
+                    </>
                   )}
                 </span>
-                <span>
+                <span className='!text-nm font-light text-red-500'>
                   {data.ticketGranularity.ticketTrendPercent < 0 && (
-                    <FaCaretUp className='w-6 h-6 text-red-500' />
+                    <>
+                      {data.ticketGranularity.ticketTrendPercent} (%)
+                      <FaCaretDown className='w-6 h-6 -mt-1 text-red-500 inline-block' />
+                    </>
                   )}
                 </span>
                 <span>
@@ -79,7 +90,7 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
                 </span>
               </span>
             </p>
-            <p className='text-nm font-light'>Tickets</p>
+            <p className='text-sm font-light'>Thống kê vé đã bán</p>
           </div>
           {data.ticketGranularity &&
           data.ticketGranularity.ticketStatsByTime.map(
@@ -96,8 +107,9 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
                     }),
                   )}
                   margin={{
-                    left: 12,
+                    left: 24,
                     right: 12,
+                    top: 10,
                   }}
                 >
                   <CartesianGrid vertical={false} />
@@ -106,16 +118,16 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
                     tickLine={false}
                     axisLine={false}
                     tickMargin={8}
-                    tickFormatter={(value) => value.slice(0, 3)}
+                    tickFormatter={(value) => dayjs(value).format('MM/DD')}
                   />
                   <ChartTooltip
                     cursor={false}
                     content={<ChartTooltipContent hideLabel />}
                   />
                   <Line
-                    dataKey='ticketSolds'
+                    dataKey='ticketsSold'
                     type='natural'
-                    stroke='var(--color-desktop)'
+                    stroke='rgb(0, 111, 238)'
                     strokeWidth={2}
                     dot={false}
                   />
@@ -126,27 +138,41 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
             <Nodata />
           )}
         </div>
+
         <div className='col-span-1 shadow-md p-5 rounded-md bg-white'>
           <div className={clsx(styles.between)}>
-            <p className='text-lg font-semibold'>
-              {data.overview.totalGrossRevenue}
-              <span className='ml-2'>
-                <span>
-                  {data.ticketGranularity.revenueTrendPercent > 0 && (
-                    <FaCaretUp className='w-6 h-6 text-green-500' />
-                  )}
+            <div>
+              <p className='text-sm font-light text-primary flex justify-start items-start'>
+                Gross: {data.overview.totalGrossRevenue}
+                <span className='ml-2'>
+                  <span className='!text-sm font-light text-green-500'>
+                    {data.ticketGranularity.revenueTrendPercent > 0 && (
+                      <>
+                        {data.ticketGranularity.revenueTrendPercent} (%)
+                        <FaCaretUp className='w-6 h-6 inline-block text-green-500' />
+                      </>
+                    )}
+                  </span>
+                  <span className='!text-sm font-light text-error-main'>
+                    {data.ticketGranularity.revenueTrendPercent < 0 && (
+                      <>
+                        {data.ticketGranularity.revenueTrendPercent} (%)
+                        <FaCaretDown className='w-6 h-6 inline-block -mt-1 text-red-500' />
+                      </>
+                    )}
+                  </span>
+                  <span>
+                    {!data.ticketGranularity.revenueTrendPercent && '--'}
+                  </span>
                 </span>
-                <span>
-                  {data.ticketGranularity.revenueTrendPercent < 0 && (
-                    <FaCaretUp className='w-6 h-6 text-red-500' />
-                  )}
-                </span>
-                <span>
-                  {!data.ticketGranularity.revenueTrendPercent && '--'}
-                </span>
-              </span>
+              </p>
+              <p className='text-sm font-light'>
+                Net: {data.overview.totalGrossRevenue}
+              </p>
+            </div>
+            <p className='text-sm font-light max-w-[70px] text-wrap'>
+              Doanh thu từng ngày
             </p>
-            <p className='text-nm font-light'>Revenue</p>
           </div>
           {data.ticketGranularity &&
           data.ticketGranularity.ticketStatsByTime.map(
@@ -163,8 +189,9 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
                     }),
                   )}
                   margin={{
-                    left: 12,
+                    left: 24,
                     right: 12,
+                    top: 10,
                   }}
                 >
                   <CartesianGrid vertical={false} />
@@ -173,7 +200,7 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
                     tickLine={false}
                     axisLine={false}
                     tickMargin={8}
-                    tickFormatter={(value) => value.slice(0, 3)}
+                    tickFormatter={(value) => dayjs(value).format('MM/DD')}
                   />
                   <ChartTooltip
                     cursor={false}
@@ -182,7 +209,7 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
                   <Line
                     dataKey='revenueGross'
                     type='natural'
-                    stroke='var(--color-desktop)'
+                    stroke='rgb(0, 238, 36)'
                     strokeWidth={2}
                     dot={false}
                   />
@@ -193,10 +220,16 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
             <Nodata />
           )}
         </div>
+
         <div className='col-span-2 shadow-md p-5 pb-1 rounded-md bg-white'>
           <div className='grid grid-cols-2 gap-4 mb-4'>
             <div>
-              <p className='text-md font-semibold'>Best Selling</p>
+              <p className='text-md font-semibold'>
+                Best Selling{' '}
+                <span className='text-sm font-light opacity-80'>
+                  (Tổng cộng {data?.overview?.totalTickets} vé)
+                </span>
+              </p>
 
               {data.overview ? (
                 <div>
@@ -214,14 +247,17 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
                           {
                             type: 'sold',
                             total: data.overview.totalSoldTickets,
+                            fill: '#27ae60',
                           },
                           {
                             type: 'available',
                             total: data.overview.totalAvailableTickets,
+                            fill: 'rgb(0, 111, 238)',
                           },
                           {
                             type: 'canceled',
                             total: data.overview.totalCanceledTickets,
+                            fill: '#e74c3c',
                           },
                         ]}
                         dataKey='total'
@@ -253,7 +289,8 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
                   <p className='text-md font-bold my-1'>
                     {data.overview.totalSoldTickets}
                   </p>
-                  <p className='text-sm opacity-70 font-light'>Ticket Sold</p>
+                  <p className='text-sm opacity-70 font-light'>Vé đã bán</p>
+                  <p className='opacity-70 text-sm'>&nbsp;</p>
                 </div>
 
                 <div>
@@ -261,9 +298,8 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
                   <p className='text-md font-bold my-1'>
                     {data.overview.totalAvailableTickets}
                   </p>
-                  <p className='text-sm opacity-70 font-light'>
-                    Ticket Available
-                  </p>
+                  <p className='text-sm opacity-70 font-light'>Vé còn lại</p>
+                  <p className='opacity-70 text-sm'>&nbsp;</p>
                 </div>
 
                 <div>
@@ -271,13 +307,29 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
                   <p className='text-md font-bold my-1'>
                     {data.overview.totalCanceledTickets}
                   </p>
-                  <p className='text-sm opacity-70 font-light'>
-                    Ticket Canceled
+                  <p className='text-sm opacity-70 font-light'>Vé đã huỷ</p>
+                  <p className='opacity-70 text-sm'>
+                    (Tỉ lệ huỷ: {data.overview.cancelRate + ' %'})
                   </p>
                 </div>
               </div>
             </div>
           </div>
+        </div>
+
+        <div className='col-span-2 shadow-md p-5 pb-1 rounded-md bg-white'>
+          {data.overview.tickets && data.overview.tickets.length && (
+            <EventTicketsTable tickets={data.overview.tickets} />
+          )}
+        </div>
+
+        <div className='col-span-2'>
+          {data.analyzeAdvanced && (
+            <TicketSalesSpeedChart
+              data={data.analyzeAdvanced.salesSpeed}
+              tickets={data.overview.tickets}
+            />
+          )}
         </div>
       </div>
     )

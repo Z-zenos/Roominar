@@ -15,14 +15,14 @@ import {
   type CreateTicketFormSchema,
 } from '@/src/schemas/ticket/CreateTicketFormSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
-import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
+
 import {
   TicketDeliveryMethodCode,
   TicketTypeCode,
 } from '@/src/lib/api/generated';
 import { useCreateTicketMutation } from '@/src/api/ticket.api';
 import toast from 'react-hot-toast';
-import { optionify } from '@/src/utils/app.util';
+import { handleApiError, optionify } from '@/src/utils/app.util';
 import type { DateRange } from 'react-day-picker';
 
 interface CreateTicketFormProps {
@@ -56,13 +56,7 @@ function CreateTicketForm({ eventId, onCreate }: CreateTicketFormProps) {
       onCreate?.();
       form.reset();
     },
-    onError(error: ApiException<unknown>) {
-      toast.error(
-        (error.body as ErrorResponse400)?.message ??
-          (error.body as ErrorResponse400)?.errorCode ??
-          'Unknown Error 😵',
-      );
-    },
+    onError: handleApiError,
   });
 
   function handleCreateTicket(data: CreateTicketFormSchema) {
@@ -91,7 +85,7 @@ function CreateTicketForm({ eventId, onCreate }: CreateTicketFormProps) {
         className='my-6 pt-6 grid grid-cols-2 gap-4 border-t border-t-primary'
       >
         <FormInstructions className='col-span-2'>
-          <li>If you want to make free tickets, please set the price to 0.</li>
+          <li>Nếu bạn muốn tạo vé miễn phí, hãy đặt giá vé là 0.</li>
         </FormInstructions>
         <div className='col-span-2'>
           <FormRadioBoxList
@@ -154,7 +148,7 @@ function CreateTicketForm({ eventId, onCreate }: CreateTicketFormProps) {
             id='ticketDescription'
             name='description'
             label='ticketDescription'
-            placeholder='Describe details about the ticket (optional)'
+            placeholder='Mô tả thêm thông tin về vé (ví dụ: điều kiện sử dụng, cách sử dụng, ...)'
             control={form.control}
             showError={true}
           />
@@ -182,7 +176,7 @@ function CreateTicketForm({ eventId, onCreate }: CreateTicketFormProps) {
           isDisabled={!form.formState.isValid}
           type='submit'
         >
-          Create Ticket
+          Tạo vé
         </Button>
       </form>
     </Form>

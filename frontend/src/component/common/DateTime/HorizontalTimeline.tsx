@@ -74,7 +74,7 @@ function HorizontalTimeline({
             </div>
 
             <div className='text-xs text-center md:text-base'>
-              <p>Start apply</p>
+              <p>Thời gian mở đăng ký</p>
               <p className='mt-1 font-semibold 450px:text-sm text-xs'>
                 {formatEventDate(applicationStartAt)}
               </p>
@@ -120,7 +120,7 @@ function HorizontalTimeline({
             </div>
 
             <div className='text-xs text-center md:text-base'>
-              <p>Finish apply</p>
+              <p>Thời gian kết thúc đăng ký</p>
               <p className='mt-1 font-semibold 450px:text-sm text-xs'>
                 {formatEventDate(applicationEndAt)}
               </p>
@@ -166,7 +166,7 @@ function HorizontalTimeline({
             </div>
 
             <div className='text-xs text-center md:text-base'>
-              <p>Start at</p>
+              <p>Sự kiện bắt đầu vào lúc</p>
               <p className='mt-1 font-semibold 450px:text-sm text-xs'>
                 {formatEventDate(startAt)}
               </p>
@@ -212,7 +212,7 @@ function HorizontalTimeline({
             </div>
 
             <div className='text-xs text-center md:text-base'>
-              <p>Finish at</p>
+              <p>Sự kiện sẽ kết thúc lúc</p>
               <p className='mt-1 font-semibold 450px:text-sm text-xs'>
                 {formatEventDate(endAt)}
               </p>

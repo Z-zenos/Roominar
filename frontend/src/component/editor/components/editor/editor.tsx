@@ -81,8 +81,8 @@ export default function Editor({
   } = useSettings();
   const isEditable = useLexicalEditable();
   const text = isRichText
-    ? 'Describe all event content here...'
-    : 'Enter some plain text...';
+    ? 'Mô tả về nội dung sự kiện tại đây...'
+    : 'Nhập nội dung văn bản tại đây...';
   const placeholder = <Placeholder>{text}</Placeholder>;
   const [floatingAnchorElem, setFloatingAnchorElem] =
     useState<HTMLDivElement | null>(null);

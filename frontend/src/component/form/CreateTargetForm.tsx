@@ -10,13 +10,9 @@ import { createTargetFormSchema } from '@/src/schemas/target/CreateTargetFormSch
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCreateTargetMutation } from '@/src/api/target.api';
 import toast from 'react-hot-toast';
-import type {
-  ApiException,
-  CreateTargetRequest,
-  ErrorResponse400,
-} from '@/src/lib/api/generated';
+import type { CreateTargetRequest } from '@/src/lib/api/generated';
 import { IndustryCode, JobTypeCode } from '@/src/lib/api/generated';
-import { optionify } from '@/src/utils/app.util';
+import { handleApiError, optionify } from '@/src/utils/app.util';
 import { useTranslations } from 'next-intl';
 
 interface CreateTargetFormProps {
@@ -42,13 +38,7 @@ function CreateTargetForm({ onCreate }: CreateTargetFormProps) {
       onCreate?.();
       form.reset();
     },
-    onError(error: ApiException<unknown>) {
-      toast.error(
-        (error.body as ErrorResponse400)?.message ??
-          (error.body as ErrorResponse400)?.errorCode ??
-          'Unknown Error 😵',
-      );
-    },
+    onError: handleApiError,
   });
 
   function handleCreateTarget(data: CreateTargetRequest) {

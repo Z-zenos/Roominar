@@ -1,8 +1,0 @@
-
-Requested additions to ticket statistics query:
-- Tổng doanh thu (gồm huỷ) vs thực thu (sau huỷ)
-- Doanh thu theo từng loại vé (group ticket_id)
-- Khung giờ người dùng hay mua vé nhất
-- Tốc độ bán vé sau khi mở bán
-- Thời gian từ lúc mở bán -> hết vé
-- Số lượng mỗi loại vé còn lại

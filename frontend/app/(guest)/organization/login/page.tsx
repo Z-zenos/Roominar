@@ -5,11 +5,13 @@ import clsx from 'clsx';
 
 export default async function Page() {
   return (
-    <div className='mx-auto w-[500px] py-[5%]'>
-      <h2 className='text-primary text-lg font-semibold'>Welcome back 👋🏻</h2>
+    <div className='mx-auto 450px:w-[700px] w-full py-[5%] 450px:px-auto px-[5%] overflow-x-hidden'>
+      <h2 className='text-primary text-lg font-semibold'>
+        Ngày mới tốt lành 👋🏻
+      </h2>
       <p className='mt-2 mb-8 font-light text-gray-700 text-nm'>
-        Jump into your organization 🏢 and host awesome events for every one
-        over the world.
+        Đi đến trang tổ chức của bạn 🏢 và tổ chức những sự kiện tuyệt vời cho
+        mọi người trên toàn thế giới.
       </p>
       <LoginForm roleCode='ORGANIZER' />
 
@@ -18,13 +20,13 @@ export default async function Page() {
           'mt-6 font-light flex justify-center items-center flex-col',
         )}
       >
-        <p>Want to create your own organization?</p>
+        <p>Bạn chưa có tài khoản tổ chức?</p>
         <Button className='outline-none group mt-3'>
           <Link
             href='/organization/register'
             className='text-white group-hover:text-primary'
           >
-            Create new organization
+            Đăng ký ngay
           </Link>
         </Button>
       </div>

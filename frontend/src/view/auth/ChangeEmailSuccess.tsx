@@ -1,6 +1,5 @@
 'use client';
 
-import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { useVerifyChangeEmailMutation } from '@/src/api/auth.api';
@@ -12,6 +11,8 @@ import {
   AlertDescription,
   AlertTitle,
 } from '@/src/component/common/Alert';
+import { handleApiError } from '@/src/utils/app.util';
+import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
 
 interface ChangeEmailSuccessProps {
   token: string;
@@ -30,11 +31,7 @@ function ChangeEmailSuccess({ token }: ChangeEmailSuccessProps) {
       setTimeout(() => router.push('/login'), 1500);
     },
     onError(error: ApiException<unknown>) {
-      toast.error(
-        (error.body as ErrorResponse400)?.message ??
-          (error.body as ErrorResponse400)?.errorCode ??
-          'Unknown Error 😵',
-      );
+      handleApiError(error);
       setIsSuccess(false);
       setText((error.body as ErrorResponse400)?.message);
     },

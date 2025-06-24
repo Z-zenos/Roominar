@@ -18,6 +18,7 @@ def get_user_by_email(db: Session, email: str, role_code: RoleCode) -> User | No
         .where(
             User.email == email,
             User.role_code == role_code,
+            User.deleted_at.is_(None),
         )
     )
 

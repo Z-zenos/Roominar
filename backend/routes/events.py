@@ -28,12 +28,17 @@ from backend.schemas.event import (
     ListingMyEventsResponse,
     ListingRecommendationEventsResponse,
     ListingRelatedEventsResponse,
+    ListingTrendingEventsResponse,
     PublishEventRequest,
     SaveDraftEventRequest,
     SearchEventsQueryParams,
     SearchEventsResponse,
 )
-from backend.schemas.ticket import TicketItem
+from backend.schemas.ticket import (
+    ListingEventPurchasedTicketsQueryParams,
+    ListingEventPurchasedTicketsResponse,
+    TicketItem,
+)
 
 router = APIRouter()
 
@@ -51,6 +56,22 @@ async def search_events(
     events, total = await events_service.search_events(db, user, query_params)
 
     return SearchEventsResponse(
+        page=query_params.page, per_page=query_params.per_page, total=total, data=events
+    )
+
+
+@router.get(
+    "/trending",
+    response_model=ListingTrendingEventsResponse,
+    responses=public_api_responses,
+)
+async def listing_trending_events(
+    db: Session = Depends(get_read_db),
+    user: User | None = Depends(get_user_if_logged_in),
+    query_params: SearchEventsQueryParams = Depends(SearchEventsQueryParams),
+):
+    events, total = await events_service.listing_trending_events(db, user, query_params)
+    return ListingTrendingEventsResponse(
         page=query_params.page, per_page=query_params.per_page, total=total, data=events
     )
 
@@ -139,6 +160,30 @@ async def get_event_detail(
     slug: str = None,
 ):
     return await events_service.get_event_detail(db, user, slug)
+
+
+@router.get(
+    "/{slug}/purchased-tickets",
+    response_model=ListingEventPurchasedTicketsResponse,
+    responses=authenticated_api_responses,
+)
+async def listing_event_purchased_tickets(
+    db: Session = Depends(get_read_db),
+    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+    query_params: ListingEventPurchasedTicketsQueryParams = Depends(
+        ListingEventPurchasedTicketsQueryParams
+    ),
+    slug: str = None,
+):
+    (
+        event_purchased_tickets,
+        total,
+    ) = await tickets_service.listing_event_purchased_tickets(
+        db, organizer, query_params, event_slug=slug
+    )
+    return ListingEventPurchasedTicketsResponse(
+        data=event_purchased_tickets, total=total, page=1, per_page=10
+    )
 
 
 @router.get(
@@ -241,38 +286,34 @@ async def listing_tickets_of_event(
 )
 async def qr_check_in(
     db: Session = Depends(get_read_db),
-    _: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
     request: QRCheckInRequest = None,
     event_id: int = None,
 ):
-    return await check_in_service.qr_check_in(db, request, event_id)
+    return await check_in_service.qr_check_in(db, organizer, request, event_id)
 
 
 @router.post(
-    "/{event_id}/check-in/manual",
+    "/check-in/manual",
     response_model=int,
     responses=authenticated_api_responses,
 )
 async def manual_check_in(
     db: Session = Depends(get_read_db),
-    _: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
     request: ManualCheckInRequest = None,
-    event_id: int = None,
 ):
-    return await check_in_service.manual_check_in(db, request, event_id)
+    return await check_in_service.manual_check_in(db, organizer, request)
 
 
 @router.delete(
-    "/{event_id}/check-in/manual/{check_in_id}",
+    "/check-in/manual/{check_in_id}",
     status_code=HTTPStatus.NO_CONTENT,
     responses=authenticated_api_responses,
 )
 async def delete_manual_check_in(
     db: Session = Depends(get_read_db),
     organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
-    event_id: int = None,
     check_in_id: int = None,
 ):
-    return await check_in_service.delete_manual_check_in(
-        db, organizer, event_id, check_in_id
-    )
+    return await check_in_service.delete_manual_check_in(db, organizer, check_in_id)

@@ -11,11 +11,7 @@ import {
   TableRow,
   useDisclosure,
 } from '@nextui-org/react';
-import type {
-  ApiException,
-  ErrorResponse400,
-  TicketItem,
-} from '@/src/lib/api/generated';
+import type { TicketItem } from '@/src/lib/api/generated';
 import { TicketStatusCode } from '@/src/lib/api/generated';
 import type { ChipProps } from '@nextui-org/react';
 import { SheetTrigger } from '@/src/component/common/Sheet';
@@ -24,8 +20,9 @@ import { useCallback, useState } from 'react';
 import { PenLineIcon, Trash2Icon } from 'lucide-react';
 import ConfirmDialog from '@/src/component/common/Dialog/ConfirmDialog';
 import { useDeleteTicketMutation } from '@/src/api/ticket.api';
-import toast from 'react-hot-toast';
 import useFormatMoney from '@/src/hooks/useFormatMoney';
+import { useTranslations } from 'next-intl';
+import { handleApiError } from '@/src/utils/app.util';
 
 const statusColorMap: Record<string, ChipProps['color']> = {
   [TicketStatusCode.Available]: 'success',
@@ -34,12 +31,12 @@ const statusColorMap: Record<string, ChipProps['color']> = {
 };
 
 const TICKET_TABLE_COLUMNS = [
-  { name: 'NAME', uid: 'name' },
-  { name: 'PRICE', uid: 'price' },
-  { name: 'QUANTITY', uid: 'quantity' },
-  { name: 'STATUS', uid: 'status' },
-  { name: 'TYPE', uid: 'type' },
-  { name: 'ACTIONS', uid: 'actions' },
+  { name: 'Tên', uid: 'name' },
+  { name: 'Giá', uid: 'price' },
+  { name: 'Số lượng', uid: 'quantity' },
+  { name: 'Hình thức', uid: 'status' },
+  { name: 'Loại', uid: 'type' },
+  { name: 'Hành động', uid: 'actions' },
 ];
 
 interface DraftTicketDataTableProps {
@@ -57,6 +54,7 @@ export default function DraftTicketDataTable({
   onOpenUpdateTicketForm,
   onDeleteTicket,
 }: DraftTicketDataTableProps) {
+  const t = useTranslations('code');
   const formatMoney = useFormatMoney();
 
   const [selectedTicket, setSelectedTicket] = useState<TicketItem | null>(null);
@@ -67,13 +65,7 @@ export default function DraftTicketDataTable({
       onSuccess() {
         onDeleteTicket?.();
       },
-      onError(error: ApiException<unknown>) {
-        toast.error(
-          (error.body as ErrorResponse400)?.message ??
-            (error.body as ErrorResponse400)?.errorCode ??
-            'Unknown Error 😵',
-        );
-      },
+      onError: handleApiError,
     });
 
   const renderCell = useCallback((ticket: TicketItem, columnKey: string) => {
@@ -90,7 +82,7 @@ export default function DraftTicketDataTable({
           </div>
         );
       case 'price':
-        return <p>{cellValue ? formatMoney(cellValue) : 'Free'}</p>;
+        return <p>{cellValue ? formatMoney(cellValue) : 0}</p>;
 
       case 'quantity':
         return <p>{cellValue}</p>;
@@ -102,12 +94,12 @@ export default function DraftTicketDataTable({
             size='sm'
             variant='flat'
           >
-            {cellValue}
+            {ticket.deliveryMethod}
           </Chip>
         );
 
       case 'type':
-        return <p>{cellValue}</p>;
+        return <p>{t(`ticket.type.${cellValue}`)}</p>;
 
       case 'actions':
         return (
@@ -150,13 +142,13 @@ export default function DraftTicketDataTable({
               border-primary-300 hover:bg-primary hover:text-white hover:border-primary
               border transition-all text-sm`}
           >
-            Add ticket
+            Tạo vé
             <IoMdAddCircleOutline className='text-inline w-5 h-5' />
           </SheetTrigger>
           <ConfirmDialog
             content={
               <p>
-                Are you sure you want to delete ticket this ticket:
+                Bạn có chắc muốn xóa vé :
                 <span className='text-danger-500 underline ml-1'>
                   {selectedTicket?.name}
                 </span>

@@ -1,4 +1,3 @@
-import LoadingGlobal from '@/src/component/layout/LoadingGlobal';
 import RootProvider from '@/src/component/layout/RootProvider';
 import authOptions from '@/src/utils/authOptions';
 import type { Metadata } from 'next';
@@ -97,7 +96,6 @@ export default async function RootLayout({
             <UIProvider
               themeProps={{ attribute: 'class', defaultTheme: 'white' }}
             >
-              <LoadingGlobal />
               <div>{children}</div>
               <Toaster
                 position='top-right'

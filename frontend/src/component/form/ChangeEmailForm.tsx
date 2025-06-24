@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import clsx from 'clsx';
 import { Form, FormCustomLabel, FormInput } from '@/src/component/form/Form';
-import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
+
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import useWindowDimensions from '@/src/hooks/useWindowDimension';
@@ -16,7 +16,7 @@ import { useRequestChangeEmailMutation } from '@/src/api/auth.api';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import { Button } from '@nextui-org/button';
 import { styles } from '@/src/constants/styles.constant';
-import { maskEmail } from '@/src/utils/app.util';
+import { handleApiError, maskEmail } from '@/src/utils/app.util';
 
 export default function ChangeEmailForm() {
   const { data: auth, status } = useSession();
@@ -40,13 +40,7 @@ export default function ChangeEmailForm() {
       form.reset();
       router.refresh();
     },
-    onError(error: ApiException<unknown>) {
-      toast.error(
-        (error.body as ErrorResponse400)?.message ??
-          (error.body as ErrorResponse400)?.errorCode ??
-          'Unknown Error 😵',
-      );
-    },
+    onError: handleApiError,
   });
 
   function handleChangeEmail(data: ChangeEmailFormSchema) {

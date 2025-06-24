@@ -148,11 +148,11 @@ export default function LoginForm({ roleCode }: LoginFormProps) {
             className='text-primary'
             underline='hover'
           >
-            Forgot password ?
+            Quên mật khẩu ?
           </Link>
         </div>
         <Button
-          title='Login'
+          title='Đăng nhập'
           type='submit'
           className='w-full mt-5'
           disabled={!form.formState.isValid}

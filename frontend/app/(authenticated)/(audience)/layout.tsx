@@ -1,6 +1,6 @@
 'use client';
 
-import Navbar from '@/src/component/common/Navbar';
+import Navbar from '@/src/component/common/Navbar/Navbar';
 import { Separator } from '@/src/component/common/Separator';
 import {
   SidebarInset,

@@ -76,13 +76,13 @@ function OrganizationCard({ organization, className }: OrganizationCardProps) {
           <p className='font-semibold text-default-400 text-small'>
             {organization?.eventNumber ?? 0}
           </p>
-          <p className=' text-default-400 text-small'>Events</p>
+          <p className=' text-default-400 text-small'>sự kiện</p>
         </div>
         <div className='flex gap-1'>
           <p className='font-semibold text-default-400 text-small'>
             {organization?.followerNumber ?? 0}
           </p>
-          <p className='text-default-400 text-small'>Followers</p>
+          <p className='text-default-400 text-small'>người theo dõi</p>
         </div>
       </CardFooter>
     </Card>

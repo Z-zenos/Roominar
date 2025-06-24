@@ -12,26 +12,28 @@ from .listing_organization_events_timeline_service import listing_events_timelin
 from .listing_recommendation_events_service import listing_recommendation_events
 from .listing_related_events_service import listing_related_events
 from .listing_top_organization_events_service import listing_top_organization_events
+from .listing_trending_events_service import listing_trending_events
 from .publish_event_service import publish_event
 from .save_draft_event_service import save_draft_event
 from .search_events_service import search_events
 
-all = (
-    search_events,
-    get_event_detail,
-    listing_related_events,
-    listing_top_organization_events,
-    listing_event_rank,
-    create_event_bookmark,
-    delete_event_bookmark,
-    listing_my_events,
-    publish_event,
-    listing_organization_events,
-    create_draft_event,
-    get_draft_event,
-    save_draft_event,
-    listing_events_timeline,
-    listing_recommendation_events,
-    generate_event_ai,
-    listing_event_options,
-)
+__all__ = [
+    "search_events",
+    "get_event_detail",
+    "listing_related_events",
+    "create_event_bookmark",
+    "delete_event_bookmark",
+    "listing_my_events",
+    "listing_recommendation_events",
+    "create_draft_event",
+    "get_draft_event",
+    "save_draft_event",
+    "publish_event",
+    "listing_organization_events",
+    "listing_events_timeline",
+    "listing_top_organization_events",
+    "listing_event_options",
+    "listing_event_rank",
+    "listing_trending_events",
+    "generate_event_ai",
+]

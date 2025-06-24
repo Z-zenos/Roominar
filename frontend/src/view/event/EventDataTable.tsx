@@ -144,11 +144,11 @@ export default function EventDataTable() {
                 className='rounded-md min-w-[100px]'
               />
               <Link
-                className='font-semibold text-nm capitalize text-primary hover:underline'
-                href={
-                  event.status === EventStatusCode.Draft
-                    ? `/organization/events/create/${event.slug}`
-                    : `/organization/events/${event.slug}/overview`
+                className='font-semibold text-nm capitalize text-primary hover:underline cursor-pointer'
+                onClick={() =>
+                  router.push(
+                    `/organization/events/${event.slug}/${event.status == EventStatusCode.Draft ? 'create' : 'overview'}`,
+                  )
                 }
               >
                 {event.name}
@@ -280,7 +280,7 @@ export default function EventDataTable() {
           return cellValue;
       }
     },
-    [t],
+    [],
   );
 
   return (

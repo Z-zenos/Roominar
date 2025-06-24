@@ -3,32 +3,23 @@
 import clsx from 'clsx';
 import Chip from '../Chip';
 import { MdOutlineAccessTime, MdOutlineOnlinePrediction } from 'react-icons/md';
-import { Button } from '@nextui-org/button';
-import { FaRegShareSquare, FaTags, FaUserFriends } from 'react-icons/fa';
-import { BsThreeDots } from 'react-icons/bs';
-import { Image, Link, useDisclosure } from '@nextui-org/react';
-import { SlNote } from 'react-icons/sl';
+import { FaTags, FaUserFriends } from 'react-icons/fa';
+import { Image, Link } from '@nextui-org/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { styles } from '@/src/constants/styles.constant';
 import type {
-  ApiException,
-  ErrorResponse400,
   MyEventItem,
   SearchEventsItem,
   TagItem,
 } from '@/src/lib/api/generated';
 import { formatEventDate } from '@/src/utils/app.util';
-import dayjs from 'dayjs';
-import EventBookmark from '@/src/component/common/Button/EventBookmarkButton';
 import { useSession } from 'next-auth/react';
-import toast from 'react-hot-toast';
-import { IoMdLogIn } from 'react-icons/io';
 import Ticket from './Ticket';
-import { useState } from 'react';
-import { useCancelEventApplicationMutation } from '@/src/api/application.api';
-import ConfirmDialog from '../Dialog/ConfirmDialog';
 import useWindowDimensions from '@/src/hooks/useWindowDimension';
 import { useTranslations } from 'next-intl';
+import { FaBookmark, FaTicket } from 'react-icons/fa6';
+import { IoTicketOutline } from 'react-icons/io5';
+import useFormatMoney from '@/src/hooks/useFormatMoney';
 
 interface EventCardProps {
   className?: string;
@@ -36,6 +27,8 @@ interface EventCardProps {
   variant?: 'compact' | 'standard' | 'detailed';
   event: SearchEventsItem | MyEventItem;
   style?: React.CSSProperties;
+  trendingOrderNumber?: number;
+  hasOrganizationInfo?: boolean;
 }
 
 function EventCard({
@@ -44,31 +37,15 @@ function EventCard({
   variant = 'detailed',
   event,
   style,
+  trendingOrderNumber,
+  hasOrganizationInfo = true,
 }: EventCardProps) {
   const t = useTranslations('code');
+  const formatMoney = useFormatMoney();
   const router = useRouter();
   const searchParams = useSearchParams();
   const { status } = useSession();
   const { width } = useWindowDimensions();
-
-  const [isCanceled, setIsCanceled] = useState<boolean>(false);
-  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-
-  const { trigger: cancelEventApplication, isMutating: isCanceling } =
-    useCancelEventApplicationMutation({
-      onSuccess() {
-        setIsCanceled(true);
-        toast.success('Canceled your application successfully!');
-        onClose();
-      },
-      onError(error: ApiException<unknown>) {
-        toast.error(
-          (error.body as ErrorResponse400)?.message ??
-            (error.body as ErrorResponse400)?.errorCode ??
-            'Unknown Error 😵',
-        );
-      },
-    });
 
   return (
     <div
@@ -99,7 +76,7 @@ function EventCard({
             'flex gap-2 flex-col',
           )}
         >
-          {variant != 'compact' && (
+          {variant != 'compact' && hasOrganizationInfo && (
             <div className='flex gap-3 items-center px-3'>
               <Image
                 src={
@@ -114,10 +91,6 @@ function EventCard({
                 <p className='font-semibold text-sm'>
                   {event.organizationName}
                 </p>
-                <p className='font-light text-xs text-gray-600'>
-                  Published on{' '}
-                  {dayjs(event?.publishedAt).format('MMM DD, YYYY')}
-                </p>
               </div>
             </div>
           )}
@@ -127,8 +100,16 @@ function EventCard({
               <h3 className='font-medium text-nm text-primary line-clamp-2 h-12'>
                 {event.name}
               </h3>
-              <p className='text-sm font-light line-clamp-1 text-gray-700'>
-                {event.organizeAddress}
+              <p
+                className={clsx(
+                  styles.flexStart,
+                  'text-sm font-medium text-green-500',
+                )}
+              >
+                <IoTicketOutline className='w-6 h-6' />
+                {event.minTicketPrice > 0
+                  ? `Chỉ từ ${formatMoney(event.minTicketPrice)}`
+                  : 'Miễn phí'}
               </p>
               <span className='flex items-center text-ss gap-1 my-2'>
                 <MdOutlineAccessTime className='text-nm' />
@@ -143,15 +124,19 @@ function EventCard({
                     leftIcon={<FaUserFriends className='text-sm' />}
                     type='info'
                   />
-                  {event.meetingToolCode && (
-                    <Chip
-                      content={event.meetingToolCode}
-                      leftIcon={
-                        <MdOutlineOnlinePrediction className='text-sm' />
-                      }
-                      type='success'
-                    />
-                  )}
+                  {event.applicationStartAt < new Date() &&
+                    new Date() < event.applicationEndAt && (
+                      <Chip
+                        content='Đăng ký ngay'
+                        leftIcon={
+                          <MdOutlineOnlinePrediction className='text-sm' />
+                        }
+                        type='success'
+                        onClick={() =>
+                          router.push(`/events/${event.slug}/apply`)
+                        }
+                      />
+                    )}
                 </div>
               )}
               {direction === 'horizontal' && (
@@ -163,29 +148,27 @@ function EventCard({
                       variant === 'standard' && 'h-16',
                     )}
                   >
-                    <Chip
-                      content={
-                        event.applicationStartAt > new Date(Date.now())
-                          ? 'Not open application'
-                          : 'Opening application'
-                      }
-                      className='w-fit font-semibold'
-                      type={
-                        event.applicationStartAt > new Date(Date.now())
-                          ? 'error'
-                          : 'warning'
-                      }
-                    />
-                    {event.meetingToolCode && (
-                      <Chip
-                        content={event.meetingToolCode}
-                        leftIcon={
-                          <MdOutlineOnlinePrediction className='text-sm' />
-                        }
-                        className=''
-                        type='success'
-                      />
-                    )}
+                    {event.applicationStartAt > new Date(Date.now()) ||
+                      (event.applicationEndAt < new Date(Date.now()) && (
+                        <Chip
+                          content='Không mở đăng ký'
+                          className='w-fit font-semibold'
+                          type='warning'
+                        />
+                      ))}
+                    {event.applicationStartAt < new Date() &&
+                      new Date() < event.applicationEndAt && (
+                        <Chip
+                          content='Đăng ký ngay'
+                          leftIcon={
+                            <MdOutlineOnlinePrediction className='text-sm' />
+                          }
+                          onClick={() =>
+                            router.push(`/events/${event.slug}/apply`)
+                          }
+                          type='success'
+                        />
+                      )}
                     <Chip
                       content={`${event['soldTicketsNumber'] || 0} / ${event?.totalTicketNumber}`}
                       leftIcon={<FaUserFriends className='text-sm' />}
@@ -230,56 +213,31 @@ function EventCard({
           {variant != 'compact' && (
             <div
               className={clsx(
-                'flex items-center gap-3 px-3',
+                'gap-2 px-3 relative',
                 direction === 'horizontal'
-                  ? 'justify-center flex-col'
-                  : 'justify-start flex-row mt-3',
+                  ? 'hidden'
+                  : 'flex items-center justify-between flex-row mt-3',
               )}
             >
-              <Button
-                isIconOnly
-                color='success'
-                variant='flat'
-                onClick={() => {
-                  if (status === 'authenticated') {
-                    router.push(`/events/${event.slug}/apply`);
-                  } else {
-                    toast(
-                      () => (
-                        <span className={clsx(styles.between, 'gap-2')}>
-                          <span>
-                            You need to <b>login</b> for apply event
-                          </span>
-                          <IoMdLogIn size={16} />
-                        </span>
-                      ),
-                      {
-                        icon: '⚠️',
-                      },
-                    );
-                  }
-                }}
-              >
-                <SlNote size={16} />
-              </Button>
-              <EventBookmark
-                isBookmarked={event?.isBookmarked}
-                eventId={event?.id}
-              />
-              <Button
-                isIconOnly
-                color='warning'
-                variant='flat'
-              >
-                <FaRegShareSquare size={16} />
-              </Button>
-              <Button
-                isIconOnly
-                color='default'
-                variant='flat'
-              >
-                <BsThreeDots size={16} />
-              </Button>
+              <div className={clsx(styles.flexStart, 'gap-2')}>
+                <span
+                  className={clsx(styles.flexStart, 'text-sm text-green-500')}
+                >
+                  <FaTicket />
+                  {event['soldTicketsNumber'] ?? 0}
+                </span>
+                <span
+                  className={clsx(styles.flexStart, 'text-sm text-primary')}
+                >
+                  <FaBookmark />
+                  {event['bookmarkCount'] ?? 0}
+                </span>
+              </div>
+              {trendingOrderNumber && (
+                <div className='absolute right-4 text-[100px] z-40 -bottom-10 font-bold bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent italic'>
+                  {trendingOrderNumber}
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -339,28 +297,6 @@ function EventCard({
                     Canceled at {formatEventDate(event?.canceledAt)}
                   </p>
                 )} */}
-
-                <ConfirmDialog
-                  content={
-                    <p>
-                      Are you sure you want to cancel your application for event
-                      <span className='text-danger-500 underline'>
-                        {event?.name}
-                      </span>
-                      ?
-                    </p>
-                  }
-                  isOpen={isOpen}
-                  onOpenChange={onOpenChange}
-                  onConfirm={() => {
-                    // cancelEventApplication({
-                    //   applicationId: event?.applicationId,
-                    // });
-                    router.refresh();
-                  }}
-                  confirmLabel='Cancel'
-                  isLoading={isCanceling}
-                />
               </div>
             )}
         </div>

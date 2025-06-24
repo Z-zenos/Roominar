@@ -15,7 +15,7 @@ import {
   FormTagsInput,
   FormTextarea,
 } from '@/src/component/form/Form';
-import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
+
 import {
   CityCode,
   EventMeetingToolCode,
@@ -53,7 +53,7 @@ import {
 import { CiStickyNote } from 'react-icons/ci';
 import { useListingSurveyOptionsQuery } from '@/src/api/survey.api';
 import { useListingTargetOptionsQuery } from '@/src/api/target.api';
-import { cn, optionify } from '@/src/utils/app.util';
+import { cn, handleApiError, optionify } from '@/src/utils/app.util';
 import createEventFormSchema, {
   eventDateSchema,
 } from '@/src/schemas/event/CreateEventFormSchema';
@@ -76,38 +76,38 @@ const LazyMap = dynamic(() => import('../common/Map/Map'), {
 
 const LexicalEditor = dynamic(() => import('../editor/app/app'), {
   ssr: false,
-  loading: () => <ElementLoader title='Setup editor' />,
+  loading: () => <ElementLoader title='Đang thiết lập trình mô tả' />,
 });
 
 const LazyCalendarTimeline = dynamic(
   () => import('../common/DateTime/CalendarTimeline'),
   {
     ssr: false,
-    loading: () => <ElementLoader title='Loading schedule timeline' />,
+    loading: () => <ElementLoader title='Đang tải lịch trình sự kiện' />,
   },
 );
 
 const CreateTicketForm = dynamic(() => import('./CreateTicketForm'), {
   ssr: false,
-  loading: () => <ElementLoader title='Loading ticket form' />,
+  loading: () => <ElementLoader title='Đang tạo form thiết lập vé' />,
 });
 
 const CreateTargetForm = dynamic(() => import('./CreateTargetForm'), {
   ssr: false,
-  loading: () => <ElementLoader title='Loading target form' />,
+  loading: () => <ElementLoader title='Đang tạo form khoanh vùng mục tiêu' />,
 });
 
 const DraftTicketDataTable = dynamic(
   () => import('@/src/view/ticket/DraftTicketDataTable'),
   {
     ssr: false,
-    loading: () => <ElementLoader title='Loading ticket table' />,
+    loading: () => <ElementLoader title='Đang tải vé' />,
   },
 );
 
 const UpdateTicketForm = dynamic(() => import('./UpdateTicketForm'), {
   ssr: false,
-  loading: () => <ElementLoader title='Loading ticket form' />,
+  loading: () => <ElementLoader title='Đang tạo form cập nhật vé' />,
 });
 
 export default function CreateEventForm() {
@@ -239,30 +239,18 @@ export default function CreateEventForm() {
   const { trigger: publishEvent, isMutating: isPublishing } =
     usePublishEventMutation({
       onSuccess() {
-        toast.success('Publish event successfully!');
+        toast.success('Đã công bố sự kiện ra cộng đồng!');
         router.push(`/events/${draftEvent?.slug}/detail`);
       },
-      onError(error: ApiException<unknown>) {
-        toast.error(
-          (error.body as ErrorResponse400)?.message ??
-            (error.body as ErrorResponse400)?.errorCode ??
-            'Unknown Error 😵',
-        );
-      },
+      onError: handleApiError,
     });
 
   const { trigger: saveDraftEvent, isMutating: isDraftSaving } =
     useSaveDraftEventMutation({
       onSuccess() {
-        toast.success('Save draft event successfully!');
+        toast.success('Lưu nháp thành công!');
       },
-      onError(error: ApiException<unknown>) {
-        toast.error(
-          (error.body as ErrorResponse400)?.message ??
-            (error.body as ErrorResponse400)?.errorCode ??
-            'Unknown Error 😵',
-        );
-      },
+      onError: handleApiError,
     });
 
   const { trigger: generateEventAI, isMutating: isGenerating } =
@@ -272,13 +260,7 @@ export default function CreateEventForm() {
         form.trigger('description');
         form.setValue('name', data?.title ?? '');
       },
-      onError(error: ApiException<unknown>) {
-        toast.error(
-          (error.body as ErrorResponse400)?.message ??
-            (error.body as ErrorResponse400)?.errorCode ??
-            'Unknown Error 😵',
-        );
-      },
+      onError: handleApiError,
     });
 
   function handleSelectDate(timeline: DateSelectArg) {
@@ -437,7 +419,7 @@ export default function CreateEventForm() {
     switch (rightSidebarContent) {
       case 'CREATE_TICKET':
         return {
-          title: 'CREATE TICKET',
+          title: 'Tạo vé',
           body: (
             <CreateTicketForm
               eventId={draftEvent?.id}
@@ -449,7 +431,7 @@ export default function CreateEventForm() {
 
       case 'UPDATE_TICKET':
         return {
-          title: 'UPDATE TICKET',
+          title: 'Cập nhật vé',
           body: (
             <UpdateTicketForm
               ticketId={selectedTicketId}
@@ -461,7 +443,7 @@ export default function CreateEventForm() {
 
       case 'CREATE_TARGET':
         return {
-          title: 'CREATE TARGET',
+          title: 'Khoanh vùng đối tượng',
           body: <CreateTargetForm onCreate={refetchListingTargetOptions} />,
           footer: null,
         };
@@ -487,7 +469,7 @@ export default function CreateEventForm() {
                 name='name'
                 label='name'
                 required
-                placeholder='Be clear and descriptive with a title that tells people what your event is about.'
+                placeholder='Hãy đặt tiêu đề rõ ràng và mô tả để cho người xem biết sự kiện của bạn nói về điều gì.'
                 control={form.control}
                 showError={true}
                 autoComplete='on'
@@ -507,12 +489,8 @@ export default function CreateEventForm() {
                       custom={
                         <div>
                           <h3 className='text-nm font-medium'>
-                            When does your event start and end?
+                            Chọn ngày bắt đầu và kết thúc của sự kiện?
                           </h3>
-                          <span className='text-sm font-light inline-block text-gray-600 mb-3'>
-                            Select proper date in calendar. You can drag and
-                            drop event to any place you want.
-                          </span>
                         </div>
                       }
                       required
@@ -592,6 +570,20 @@ export default function CreateEventForm() {
                         type='custom'
                       />
                     )}
+
+                    <FormInstructions className='w-full'>
+                      <li>
+                        Click và kéo lần đầu để chọn ngày bắt đầu và kết thúc mở
+                        bán vé
+                      </li>
+                      <li>
+                        Click và kéo lần thứ hai để chọn ngày diễn ra sự kiện.
+                      </li>
+                      <li>
+                        Bạn có thể thiết lập thời gian bằng cách click vào khung
+                        thời gian bạn vừa tạo.
+                      </li>
+                    </FormInstructions>
                   </FormItem>
                 )}
               />
@@ -624,8 +616,9 @@ export default function CreateEventForm() {
 
               <FormInstructions>
                 <li>
-                  This is the main image for your event. We recommend a 700 x
-                  350px (2:1 ratio) image.
+                  Đây là hình ảnh chính cho sự kiện của bạn. Chúng tôi khuyên
+                  bạn nên sử dụng hình ảnh có kích thước 700 x 350px (tỷ lệ
+                  2:1).
                 </li>
               </FormInstructions>
             </div>
@@ -634,34 +627,34 @@ export default function CreateEventForm() {
               <FormCustomLabel
                 htmlFor='galleryUrls'
                 label='gallery'
-                custom={
-                  <div>
-                    <p className={clsx(styles.flexStart, 'mt-1')}>
-                      <BsStars size={20} />
-                      <span>
-                        <span className='font-semibold mr-2'>Pro tip:</span>
-                        Use photos that set the mood, and avoid distracting text
-                        overlays.
-                      </span>
-                    </p>
-                    <li className='bg-error text-sm ml-2 mb-1'>
-                      You can upload up to{' '}
-                      <span className='font-bold text-nm'>5</span> images to
-                      showcase your event.
-                    </li>
-                  </div>
-                }
+                className='text-nm font-medium'
               />
 
               <MultipleFilesUploader
                 name='galleryUrls'
                 onGetImageUrls={(urls) => form.setValue('galleryUrls', urls)}
               />
+
+              <FormInstructions>
+                <li className={clsx(styles.flexStart, 'mt-1')}>
+                  <BsStars size={20} />
+                  <span>
+                    <span className='font-semibold mr-2'>Tip:</span>
+                    Sử dụng ảnh để tạo không khí cho sự kiện, tránh sử dụng ảnh
+                    có chữ hoặc logo quá lớn.
+                  </span>
+                </li>
+                <li className='bg-error text-sm ml-2 mb-1'>
+                  Bạn có thể tải lên tối đa{' '}
+                  <span className='font-bold text-nm'>5</span> ảnh để tạo bộ sưu
+                  tập ảnh cho sự kiện.
+                </li>
+              </FormInstructions>
             </div>
 
             {/* === EVENT FORMAT & ADDRESS === */}
             <h3 className='col-span-2 text-md p-3 border-l-4 border-l-primary'>
-              Event format & address ⛩️
+              Hình thức sự kiện & địa điểm tổ chức ⛩️
             </h3>
 
             <FormField
@@ -799,7 +792,7 @@ export default function CreateEventForm() {
 
             {/* === EVENT APPLICATION NUMBER & TICKETS === */}
             <h3 className='col-span-2 text-md p-3 border-l-4 border-l-primary'>
-              Tickets 🎟
+              Thiết lập vé 🎟
             </h3>
 
             <div className='col-span-2'>
@@ -822,14 +815,14 @@ export default function CreateEventForm() {
             </div>
             {/* === MORE === */}
             <h3 className='col-span-2 text-md p-3 border-l-4 border-l-primary mt-6'>
-              Advanced Information 🌟
+              Thông tin khác 🌟
             </h3>
 
             <div className='col-span-1'>
               <FormSelect
                 name='surveyId'
                 control={form.control}
-                placeholder='Select survey'
+                placeholder='Chọn khảo sát hiện có'
                 label='survey'
                 options={surveyOptions?.map((so) => ({
                   value: so.id + '',
@@ -848,7 +841,7 @@ export default function CreateEventForm() {
                   name='targetId'
                   control={form.control}
                   label='target'
-                  placeholder='Select target'
+                  placeholder='Chọn đối tượng mục tiêu hiện có'
                   options={targetOptions?.map((to) => ({
                     value: to.id + '',
                     label: to.name,
@@ -864,7 +857,7 @@ export default function CreateEventForm() {
                 className='hover:text-primary mt-3 hover:bg-white border border-primary py-1 px-4 bg-primary text-white transition-all text-sm'
                 onClick={() => setRightSidebarContent('CREATE_TARGET')}
               >
-                Add new target +
+                Thiết lập mục tiêu mới +
               </SheetTrigger>
             </div>
 
@@ -897,7 +890,7 @@ export default function CreateEventForm() {
                   onClick={() => handleSaveDraftEvent(form.getValues())}
                 >
                   {isDraftSaving && <Spinner />}
-                  Draft <CiStickyNote className='inline w-5 h-5 mb-1 ml1' />
+                  Lưu nháp <CiStickyNote className='inline w-5 h-5 mb-1 ml1' />
                 </span>
               </button>
               <button
@@ -906,14 +899,14 @@ export default function CreateEventForm() {
                 type='submit'
               >
                 {isPublishing && <Spinner />}
-                Publish
+                Công bố
                 <FaSquareArrowUpRight className='inline w-5 h-5 mb-1 ml1' />
                 <span className='absolute w-36 h-32 -top-8 -left-2 bg-white rotate-12 transform scale-x-0 group-hover:scale-x-100 transition-transform group-hover:duration-500 duration-1000 origin-left'></span>
                 <span className='absolute w-36 h-32 -top-8 -left-2 bg-indigo-400 rotate-12 transform scale-x-0 group-hover:scale-x-100 transition-transform group-hover:duration-700 duration-700 origin-left'></span>
                 <span className='absolute w-36 h-32 -top-8 -left-2 bg-indigo-600 rotate-12 transform scale-x-0 group-hover:scale-x-50 transition-transform group-hover:duration-1000 duration-500 origin-left'></span>
                 <span className='group-hover:opacity-100 group-hover:duration-1000 duration-100 opacity-0 absolute top-2.5 left-4 z-10'>
                   {isPublishing && <Spinner />}
-                  Publish
+                  Công bố
                   <FaSquareArrowUpRight className='inline-block w-5 h-5 mb-1' />
                 </span>
               </button>

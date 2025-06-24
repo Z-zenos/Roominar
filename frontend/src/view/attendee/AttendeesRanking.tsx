@@ -35,12 +35,12 @@ ForwardedIoIcon.displayName = 'ForwardedIoIcon';
 const columns = [
   { name: 'Rank', uid: 'no', sortable: false },
   { name: 'Trend', uid: 'trend', sortable: false }, // up/down icon
-  { name: 'User', uid: 'user_info', sortable: false }, // avatar + full name + email
-  { name: 'Tickets Purchased', uid: 'purchase_number', sortable: true },
-  { name: 'Check-ins', uid: 'checkin_number', sortable: true },
-  { name: 'Surveys Completed', uid: 'survey_number', sortable: true },
-  { name: 'Ranking Score', uid: 'ranking_score', sortable: true },
-  { name: 'Actions', uid: 'actions', sortable: false },
+  { name: 'Người tham gia', uid: 'user_info', sortable: false }, // avatar + full name + email
+  { name: 'Đã mua vé', uid: 'purchase_number', sortable: false },
+  { name: 'Đã check-in', uid: 'checkin_number', sortable: false },
+  { name: 'Khảo sát đã hoàn thành', uid: 'survey_number', sortable: false },
+  { name: 'Ranking Score', uid: 'ranking_score', sortable: false },
+  { name: 'Hành động', uid: 'actions', sortable: false },
 ];
 
 export default function AttendeesRanking() {
@@ -144,54 +144,53 @@ export default function AttendeesRanking() {
       className='bg-white rounded-lg shadow-md p-4 mt-2'
     >
       <h3 className='text-md text-orange-500 mb-2 font-semibold flex justify-start items-center gap-2'>
-        Attendees Ranking{' '}
+        Ranking người tham gia sự kiện{' '}
         <Tooltip
           className='inline-block'
           content={
             <div className='absolute z-20 mt-2 w-80 p-4 rounded-xl shadow-xl bg-white border border-gray-200 text-sm text-gray-700'>
-              <p className='font-semibold mb-2'>
-                🏆 How is the ranking score calculated?
-              </p>
+              <p className='font-semibold mb-2'>🏆 Cách tính điểm ranking</p>
               <table className='w-full text-left text-sm'>
                 <thead>
                   <tr>
-                    <th className='py-1 font-medium'>Action</th>
-                    <th className='py-1 font-medium text-right'>Points</th>
+                    <th className='py-1 font-medium'>Hành động</th>
+                    <th className='py-1 font-medium text-right'>Điểm</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td>🎟️ Purchase a ticket</td>
-                    <td className='text-right'>+20 pts</td>
+                    <td>🎟️ Mua 1 vé</td>
+                    <td className='text-right'>+20 điểm</td>
                   </tr>
                   <tr>
-                    <td>✅ Check-in to an event</td>
-                    <td className='text-right'>+15 pts</td>
+                    <td>✅ Check-in sự kiện</td>
+                    <td className='text-right'>+15 điểm</td>
                   </tr>
                   <tr>
-                    <td>📋 Complete application survey</td>
-                    <td className='text-right'>+10 pts</td>
+                    <td>📋 Hoàn thành khảo sát</td>
+                    <td className='text-right'>+10 điểm</td>
                   </tr>
                   <tr>
-                    <td>🌟 Rate an event</td>
-                    <td className='text-right'>+5 pts</td>
+                    <td>🌟 Đánh giá sự kiện</td>
+                    <td className='text-right'>+5 điểm</td>
                   </tr>
                   <tr>
-                    <td>🔗 Share the event</td>
-                    <td className='text-right'>+2 pts</td>
+                    <td>🔗 Chia sẻ sự kiện</td>
+                    <td className='text-right'>+2 điểm</td>
                   </tr>
                   <tr>
-                    <td>📌 Bookmark an event</td>
-                    <td className='text-right'>+1 pt</td>
+                    <td>📌 Bookmark sự kiện</td>
+                    <td className='text-right'>+1 điểm</td>
                   </tr>
                   <tr>
-                    <td>❌ Cancel a ticket</td>
-                    <td className='text-right'>-10 pts</td>
+                    <td>❌ Huỷ vé</td>
+                    <td className='text-right'>-10 điểm</td>
                   </tr>
                 </tbody>
               </table>
               <p className='mt-3 text-xs text-gray-500 italic'>
-                🚨 Only users with more than 10 points appear in the ranking.
+                🚨 Chỉ những người dùng với nhiều hơn 10 điểm sẽ xuất hiện trong
+                ranking
               </p>
             </div>
           }
@@ -223,7 +222,9 @@ export default function AttendeesRanking() {
         </TableHeader>
         <TableBody
           emptyContent={
-            isLoadingAttendeesRanking ? 'Loading...' : 'No data found'
+            isLoadingAttendeesRanking
+              ? 'Đang tải...'
+              : 'Không tìm thấy người tham gia nào'
           }
           items={attendeesRanking ?? []}
         >

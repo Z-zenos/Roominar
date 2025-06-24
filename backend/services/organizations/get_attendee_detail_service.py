@@ -158,7 +158,13 @@ async def _get_applied_events(db: Session, attendee_id: int):
             Event.cover_image_url,
             CheckIn.id.label("check_in_id"),
             CheckIn.created_at.label("checked_in_at"),
-            Bookmark.id.label("is_bookmarked"),
+            case(
+                (
+                    Bookmark.id.isnot(None),
+                    True,
+                ),
+                else_=False,
+            ).label("is_bookmarked"),
             case(
                 (
                     AttendeeSurveyResponseResult.c.survey_response_results.is_(None),

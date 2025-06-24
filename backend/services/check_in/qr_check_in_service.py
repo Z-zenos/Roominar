@@ -1,6 +1,6 @@
-from fastapi import HTTPException, status
 from sqlmodel import Session, select
 
+from backend.background_tasks.notification_tasks import push_check_in_event_notification
 from backend.core.constants import CheckInMethodCode, UserActionTypeCode
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
@@ -9,6 +9,7 @@ from backend.models.check_in import CheckIn
 from backend.models.event import Event
 from backend.models.organization import Organization
 from backend.models.transaction_item import TransactionItem
+from backend.models.user import User
 from backend.models.user_action import UserAction
 from backend.schemas.check_in import QRCheckInRequest
 from backend.utils.database import save
@@ -16,8 +17,9 @@ from backend.utils.database import save
 
 async def qr_check_in(
     db: Session,
-    event_id: int,
+    organizer: User,
     request: QRCheckInRequest,
+    event_id: int,
 ) -> CheckIn:
     try:
         # 1. Xác thực checksum
@@ -34,6 +36,7 @@ async def qr_check_in(
             TransactionItem.qr_code_id == request.qr_code_id,
             TransactionItem.user_id == request.user_id,
         )
+
         result = db.exec(statement)
         item = result.first()
 
@@ -86,16 +89,19 @@ async def qr_check_in(
         user_action = UserAction(
             user_id=item.user_id,
             event_id=event_id,
-            organization_id=check_in.organization_id,
+            organization_id=organizer.organization_id,
             action_type=UserActionTypeCode.CHECK_IN,
         )
         save(db, user_action)
+
+        push_check_in_event_notification.delay(
+            event_id=event_id,
+            receiver_id=item.user_id,
+            ticket_id=item.ticket_id,
+        )
 
         return check_in.id
 
     except Exception as e:
         db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e),
-        ) from e
+        raise e

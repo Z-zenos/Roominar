@@ -123,6 +123,7 @@ class GetAttendeeDetailResponse(BaseModel):
     workplace_name: str | None = None
     avatar_url: str | None = None
     is_followed: bool | None = None
+    applied_event_number: int | None = None
 
 
 class GetOrganizationDetailResponse(BaseModel):
@@ -145,14 +146,23 @@ class GetOrganizationDetailResponse(BaseModel):
     events: list[SearchEventsItem] = Field([])
 
 
+class GetOrganizationOngoingEventsItem(BaseModel):
+    id: int
+    name: str
+    slug: str
+    cover_image_url: str | None = None
+
+
 class GetOrganizationDashboardResponse(BaseModel):
     total_events: int | None = None
-    total_ongoing_events: int | None = None
+    ongoing_events: list[GetOrganizationOngoingEventsItem] = Field([])
     total_visitors: int | None = None
     total_revenue: int | None = None
     total_members: int | None = None
     total_tickets_sold: int | None = None
     total_actual_attendees: int | None = None
+    today_revenue_count: int | None = None
+    today_ticket_count: int | None = None
 
 
 class TagStatsItem(BaseModel):
@@ -244,6 +254,18 @@ class FilterAnalyzeEventTicketsQueryParams(BaseModel):
     )
 
 
+class AnalyzeEventTicketsOverviewTickets(BaseModel):
+    id: int
+    name: str
+    type: TicketTypeCode
+    price: float
+    sold_quantity: int
+    canceled_quantity: int
+    available_quantity: int
+    gross_revenue: float
+    net_revenue: float
+
+
 class AnalyzeEventTicketsOverview(BaseModel):
     total_tickets: int
     total_sold_tickets: int
@@ -254,7 +276,7 @@ class AnalyzeEventTicketsOverview(BaseModel):
     total_checkins: int
     checkin_rate: float
     cancel_rate: float
-    tickets: list[dict] = Field([])
+    tickets: list[AnalyzeEventTicketsOverviewTickets] = Field([])
 
 
 class TicketStatByTime(BaseModel):
@@ -316,3 +338,21 @@ class AnalyzeEventTicketsResponse(BaseModel):
     overview: AnalyzeEventTicketsOverview
     ticket_granularity: TicketGranularity
     analyze_advanced: AnalyzeAdvanced
+
+
+class AnalyzeEventCheckInsByTicketTypeItem(BaseModel):
+    type: TicketTypeCode
+    count: int
+
+
+class AnalyzeEventCheckInsByMinuteItem(BaseModel):
+    minute: str
+    count: int
+
+
+class AnalyzeEventCheckInsResponse(BaseModel):
+    total_sold_tickets: int
+    total_check_ins: int
+    check_in_rate: float
+    check_in_by_ticket_type: list[AnalyzeEventCheckInsByTicketTypeItem] = Field([])
+    check_in_by_minute: list[AnalyzeEventCheckInsByMinuteItem] = Field([])

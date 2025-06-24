@@ -2,13 +2,12 @@ import type { SWRMutationConfiguration } from 'swr/mutation';
 import useSWRMutation from 'swr/mutation';
 import useApi from '../lib/api/useApi';
 import type {
+  EventsApiListingEventPurchasedTicketsRequest,
   TicketItem,
   TicketsApiCancelTicketsRequest,
   TicketsApiCreateTicketRequest,
   TicketsApiDeleteTicketRequest,
   TicketsApiGetDraftTicketRequest,
-  TicketsApiGetTicketStatusCountsRequest,
-  TicketsApiListingMyTicketsRequest,
   TicketsApiUpdateTicketRequest,
 } from '../lib/api/generated';
 import { useQuery } from '@tanstack/react-query';
@@ -43,18 +42,6 @@ export const useUpdateTicketMutation = <T>(
   );
 };
 
-export const useListingMyTicketsQuery = (
-  params?: TicketsApiListingMyTicketsRequest,
-) => {
-  params = toCamelCase(params);
-  const api = useApi();
-  return useQuery({
-    queryKey: ['listing-my-tickets', params],
-    queryFn: async () => await api.tickets.listingMyTickets(params),
-    staleTime: 1000 * 60 * 5,
-  });
-};
-
 export const useCancelTicketsMutation = <T>(
   options?: SWRMutationConfiguration<number, T>,
 ) => {
@@ -65,16 +52,6 @@ export const useCancelTicketsMutation = <T>(
     async (_: string, { arg }) => await api.tickets.cancelTickets(arg),
     options,
   );
-};
-
-export const useGetTicketStatusCountsQuery = (
-  params?: TicketsApiGetTicketStatusCountsRequest,
-) => {
-  const api = useApi();
-  return useQuery({
-    queryKey: ['get-ticket-status-counts'],
-    queryFn: async () => await api.tickets.getTicketStatusCounts(params),
-  });
 };
 
 export const useGetDraftTicketQuery = (
@@ -97,4 +74,15 @@ export const useDeleteTicketMutation = <T>(
     async (_: string, { arg }) => await api.tickets.deleteTicket(arg),
     options,
   );
+};
+
+export const useListingEventPurchasedTicketsQuery = (
+  params?: EventsApiListingEventPurchasedTicketsRequest,
+) => {
+  params = toCamelCase(params);
+  const api = useApi();
+  return useQuery({
+    queryKey: ['listing-event-purchased-tickets', params],
+    queryFn: async () => await api.events.listingEventPurchasedTickets(params),
+  });
 };

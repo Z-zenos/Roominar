@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import clsx from 'clsx';
 import { Form, FormInput } from '@/src/component/form/Form';
-import type { ApiException, ErrorResponse400 } from '@/src/lib/api/generated';
+
 import { useState } from 'react';
 import useWindowDimensions from '@/src/hooks/useWindowDimension';
 import toast from 'react-hot-toast';
@@ -16,6 +16,7 @@ import type { ChangePasswordFormSchema } from '@/src/schemas/auth/ChangePassword
 import { changePasswordFormSchema } from '@/src/schemas/auth/ChangePasswordFormSchema';
 import { useChangePasswordMutation } from '@/src/api/auth.api';
 import { Link } from '@nextui-org/link';
+import { handleApiError } from '@/src/utils/app.util';
 
 export default function ChangePasswordForm() {
   useState<boolean>(false);
@@ -42,13 +43,7 @@ export default function ChangePasswordForm() {
       form.reset();
       router.refresh();
     },
-    onError(error: ApiException<unknown>) {
-      toast.error(
-        (error.body as ErrorResponse400)?.message ??
-          (error.body as ErrorResponse400)?.errorCode ??
-          'Unknown Error 😵',
-      );
-    },
+    onError: handleApiError,
   });
 
   function handleChangePassword(data: ChangePasswordFormSchema) {

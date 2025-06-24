@@ -1,8 +1,19 @@
 {
-  "app": {
+  "common": {
     "home": "Trang chủ",
     "search": "Tìm kiếm",
-    "hostMyEvent": "Tổ chức sự kiện"
+    "hostMyEvent": "Tổ chức sự kiện",
+    "button": {
+      "login": "Đăng nhập"
+    },
+    "text": {
+      "events": "Sự kiện",
+      "upcomingEvents": "Sự kiện sắp diễn ra",
+      "organization": "Tổ chức"
+    }
+  },
+  "page": {
+    "home": {}
   },
   "form": {
     "label": {
@@ -965,6 +976,23 @@
       "PRODUCT_LAUNCHES": "ra mắt sản phẩm",
       "FAMILY_AND_PARENTING": "gia đình và nuôi dạy con",
       "KIDS_AND_TEENS_ACTIVITIES": "hoạt động cho trẻ em và thanh thiếu niên"
+    },
+    "transactionStatus": {
+      "PENDING": "đang chờ xử lý",
+      "SUCCESS": "thành công",
+      "CANCELED": "đã hủy",
+      "FAILED": "thất bại",
+      "REFUNDED": "đã hoàn tiền"
+    },
+    "paymentMethod": {
+      "CREDIT_CARD": "Thẻ tín dụng",
+      "PAYPAL": "PayPal",
+      "MOMO": "Momo",
+      "ZALOPAY": "ZaloPay",
+      "STRIPE": "Stripe",
+      "VNPAY": "VNPay",
+      "OTHER": "Khác",
+      "FREE": "Miễn phí"
     }
   }
 }

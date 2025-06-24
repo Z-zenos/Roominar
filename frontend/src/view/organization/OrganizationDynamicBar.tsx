@@ -71,7 +71,7 @@ export default function OrganizationDynamicBar() {
             )}
             onClick={() => goToSubPage('overview')}
           >
-            Dashboard
+            Thống kê
           </div>
           <div
             className={clsx(
@@ -80,7 +80,7 @@ export default function OrganizationDynamicBar() {
             )}
             onClick={() => goToSubPage('home')}
           >
-            Detail View
+            Chi tiết
           </div>
 
           <div

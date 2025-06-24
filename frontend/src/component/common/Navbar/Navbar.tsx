@@ -18,15 +18,18 @@ import {
   DropdownItem,
   Switch,
 } from '@nextui-org/react';
-import Logo from './Logo';
 import { signOut, useSession } from 'next-auth/react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import useWindowDimensions from '@/src/hooks/useWindowDimension';
 import { maskEmail } from '@/src/utils/app.util';
 import { useTranslations } from 'next-intl';
 import { setUserLocale } from '@/src/utils/locale';
 import { getCookie } from 'cookies-next';
 import { useGetTotalUnreadNotificationsQuery } from '@/src/api/user.api';
+
+import { useRemoveNotificationDeviceTokenMutation } from '@/src/api/notification.api';
+import { getStoredFcmToken } from '@/src/hooks/useNotification';
+import Logo from '../Logo';
 import {
   Sheet,
   SheetContent,
@@ -35,22 +38,20 @@ import {
   SheetOverlay,
   SheetTitle,
   SheetTrigger,
-} from './Sheet';
-import { NotificationIcon, NotificationList } from './Notification';
-import { useRemoveNotificationDeviceTokenMutation } from '@/src/api/notification.api';
-import { getStoredFcmToken } from '@/src/hooks/useNotification';
+} from '../Sheet';
+import { NotificationIcon, NotificationList } from '../Notification';
 
 const menuItems = [
   {
-    title: 'Home',
+    title: 'Trang chủ',
     url: '/home',
   },
   {
-    title: 'Search',
+    title: 'Tìm kiếm',
     url: '/search',
   },
   {
-    title: 'Host Event',
+    title: 'Tổ chức sự kiện',
     url: '/organization/login',
   },
   {
@@ -58,7 +59,7 @@ const menuItems = [
     url: '/help-center',
   },
   {
-    title: 'Log in',
+    title: 'Đăng nhập',
     url: '/login',
   },
 ];
@@ -84,7 +85,8 @@ interface NavbarProps {
 }
 
 export default function Navbar({ className, hasLogo = true }: NavbarProps) {
-  const t = useTranslations('app');
+  const t = useTranslations('common');
+  const router = useRouter();
 
   const [isEnglish, setIsEnglish] = useState<boolean>(
     getCookie('NEXT_LOCALE') === 'en' || !getCookie('NEXT_LOCALE'),
@@ -117,9 +119,11 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
     // Then logout
     if (process.env.NODE_ENV === 'development') {
       signOut({ redirect: false });
+      router.push('/home');
       location.reload();
     } else {
       signOut({ redirect: false }).then(() => {
+        router.push('/home');
         location.reload();
       });
     }
@@ -223,7 +227,9 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
           {status === 'authenticated' ? (
             <div className='flex justify-end items-center gap-x-4'>
               {width > 800 && (
-                <span className='text-primary'>Hi, {auth.user.firstName}</span>
+                <span className='text-primary'>
+                  Chào, {auth.user.firstName}
+                </span>
               )}
               <Dropdown placement='bottom-end'>
                 <DropdownTrigger>
@@ -245,7 +251,7 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
                     key='profile'
                     className='h-14 gap-2'
                   >
-                    <p className='font-semibold'>Signed in as</p>
+                    <p className='font-semibold'>Đăng nhập với</p>
                     <p className='font-semibold'>
                       {maskEmail(auth?.user?.email)}
                     </p>
@@ -258,12 +264,14 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
                     My Profile
                   </DropdownItem>
                   <DropdownItem
-                    key='my_events'
-                    href='/my-events'
+                    key='tickets_n_payments'
+                    href='/tickets-n-payments'
                   >
-                    My Events
+                    Vé của tôi
                   </DropdownItem>
-                  <DropdownItem key='host_my_event'>Host Event</DropdownItem>
+                  <DropdownItem key='host_my_event'>
+                    Tổ chức sự kiện
+                  </DropdownItem>
                   <DropdownItem
                     key='account_settings'
                     href='/account-settings'
@@ -276,7 +284,7 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
                     color='danger'
                     onClick={() => handleLogout()}
                   >
-                    Log Out
+                    Đăng xuất
                   </DropdownItem>
                 </DropdownMenu>
               </Dropdown>
@@ -288,7 +296,7 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
                   href='/login'
                   underline='hover'
                 >
-                  Login
+                  Đăng nhập
                 </Link>
               </NavbarItem>
               <NavbarItem>
@@ -299,7 +307,7 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
                   variant='flat'
                   radius='sm'
                 >
-                  Sign Up
+                  Đăng ký
                 </Button>
               </NavbarItem>
             </>
@@ -365,7 +373,7 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
           className='min-w-[400px]'
         >
           <SheetHeader>
-            <SheetTitle className='text-primary'>Notifications</SheetTitle>
+            <SheetTitle className='text-primary'>Thông báo</SheetTitle>
             <SheetDescription />
             <NotificationList
               onRefetch={refetchTotalUnreadNotifications}

@@ -26,14 +26,14 @@ export default function OrganizationRightSidebar({
     switch (state.contentType) {
       case 'ATTENDEE_DETAIL':
         return {
-          title: 'ATTENDEE DETAIL',
+          title: 'Thông tin người tham gia',
           body: <AttendeeDetail id={state.selectedAttendeeId} />,
           footer: null,
           className: 'min-w-[600px]',
         };
       case 'NOTIFICATION_LIST':
         return {
-          title: 'Notifications',
+          title: 'Thông báo',
           body: (
             <NotificationList
               onRefetch={refetch}

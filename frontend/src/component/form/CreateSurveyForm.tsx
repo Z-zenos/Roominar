@@ -8,11 +8,7 @@ import {
   FormInput,
   FormTextarea,
 } from '@/src/component/form/Form';
-import {
-  QuestionTypeCode,
-  type ApiException,
-  type ErrorResponse400,
-} from '@/src/lib/api/generated';
+import { QuestionTypeCode } from '@/src/lib/api/generated';
 import toast from 'react-hot-toast';
 import type { CreateSurveyFormSchema } from '@/src/schemas/survey/CreateSurveyFormSchema';
 import createSurveyFormSchema from '@/src/schemas/survey/CreateSurveyFormSchema';
@@ -22,6 +18,7 @@ import CreateQuestion, {
 } from '../common/QuestionAnswer/CreateQuestion';
 import { Button } from '@nextui-org/button';
 import { FaSquareArrowUpRight } from 'react-icons/fa6';
+import { handleApiError } from '@/src/utils/app.util';
 
 export default function CreateSurveyForm() {
   const form = useForm<CreateSurveyFormSchema>({
@@ -29,8 +26,8 @@ export default function CreateSurveyForm() {
     defaultValues: {
       name: '',
       description: '',
-      startAt: null,
-      endAt: null,
+      startAt: new Date(),
+      endAt: new Date(),
       maxResponseNumber: '',
 
       questionAnswers: [DEFAULT_QUESTION_ANSWER],
@@ -43,13 +40,7 @@ export default function CreateSurveyForm() {
       toast.success('Create survey successfully!');
       form.reset();
     },
-    onError(error: ApiException<unknown>) {
-      toast.error(
-        (error.body as ErrorResponse400)?.message ??
-          (error.body as ErrorResponse400)?.errorCode ??
-          'Unknown Error 😵',
-      );
-    },
+    onError: handleApiError,
   });
 
   function handleCreateSurvey(data: CreateSurveyFormSchema) {

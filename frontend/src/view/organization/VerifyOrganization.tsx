@@ -1,11 +1,7 @@
 'use client';
 
-import {
-  type ApiException,
-  type ErrorResponse400,
-} from '@/src/lib/api/generated';
 import { useVerifyAudienceMutation } from '@/src/api/auth.api';
-import toast from 'react-hot-toast';
+import { handleApiError } from '@/src/utils/app.util';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -20,13 +16,7 @@ function VerifyOrganization({ token }: VerifyOrganizationProps) {
     onSuccess() {
       router.push('/organization/login');
     },
-    onError(error: ApiException<unknown>) {
-      toast.error(
-        (error.body as ErrorResponse400)?.message ??
-          (error.body as ErrorResponse400)?.errorCode ??
-          'Unknown Error 😵',
-      );
-    },
+    onError: handleApiError,
   });
 
   useEffect(() => {

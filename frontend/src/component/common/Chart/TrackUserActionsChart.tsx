@@ -114,7 +114,9 @@ export function TrackUserActionsChart() {
       <Form {...form}>
         <form>
           <CardHeader className={clsx(styles.between)}>
-            <CardTitle className='mb-3'>Tracking User Actions</CardTitle>
+            <CardTitle className='mb-3'>
+              Theo dõi tương tác người dùng
+            </CardTitle>
             <div className={clsx(styles.center, 'gap-3')}>
               <FormCombobox
                 control={form.control}
@@ -178,7 +180,7 @@ export function TrackUserActionsChart() {
             </CardContent>
           )}
           {isLoading && (
-            <ElementLoader title='Analyzing your events and data...' />
+            <ElementLoader title='Đang phân tích sự kiện và dữ liệu...' />
           )}
 
           {!isLoading && trackUserActions?.data.length === 0 && <Nodata />}

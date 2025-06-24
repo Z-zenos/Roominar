@@ -39,19 +39,19 @@ import { Image } from '@nextui-org/react';
 
 const sidebarMenu = [
   {
-    title: 'Overview',
+    title: 'Tổng quan',
     url: '/organization/overview',
     icon: <OverviewIcon />,
     isActive: false,
   },
   {
-    title: 'Events',
+    title: 'Quản lý sự kiện',
     url: '/organization/events',
     icon: <EventPlanningIcon />,
     isActive: true,
     items: [
       {
-        title: 'Create New',
+        title: 'Tạo mới sự kiện',
         url: '/organization/events/[slug]/create',
         icon: <CreateEventIcon />,
       },
@@ -62,22 +62,22 @@ const sidebarMenu = [
     ],
   },
   {
-    title: 'Attendees',
+    title: 'Quản lý người tham dự',
     icon: <AttendeesIcon />,
     url: '/organization/attendees',
   },
   {
-    title: 'Ticket & payments',
+    title: 'Vé & thanh toán',
     icon: <TicketPaymentIcon />,
     url: '/organization/ticket-payments',
   },
   {
-    title: 'Survey',
+    title: 'Khảo sát',
     icon: <SurveyIcon />,
     url: '/organization/surveys',
   },
   {
-    title: 'Staff',
+    title: 'Nhân viên',
     icon: <StaffIcon />,
     url: '/organization/staff',
   },
@@ -142,7 +142,7 @@ export function OrganizationSidebar({
                   <span className='truncate font-semibold'>
                     {auth?.user?.organizationName}
                   </span>
-                  <span className='truncate text-xs'>Enterprise</span>
+                  <span className='truncate text-xs'>Doanh nghiệp</span>
                 </div>
               </a>
             </SidebarMenuButton>
@@ -228,11 +228,6 @@ export function OrganizationSidebar({
             ))}
           </SidebarMenu>
         </SidebarGroup>
-        {/* <NavProjects projects={data.projects} />
-        <NavSecondary
-          items={data.navSecondary}
-          className='mt-auto'
-        /> */}
       </SidebarContent>
       <SidebarFooter>
         <SidebarSettings

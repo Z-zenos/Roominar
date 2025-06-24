@@ -13,7 +13,6 @@ from backend.models.transaction_item import TransactionItem
 from backend.models.user import User
 from backend.models.user_action import UserAction
 from backend.schemas.ticket import CancelTicketsRequest
-from backend.utils.database import save
 
 
 async def cancel_tickets(db: Session, user: User, request: CancelTicketsRequest):
@@ -80,6 +79,12 @@ async def cancel_tickets(db: Session, user: User, request: CancelTicketsRequest)
             )
         )
 
+        db.exec(
+            update(Event)
+            .where(Event.id == ticket["event_id"])
+            .values(sold_ticket_count=Event.sold_ticket_count - 1)
+        )
+
         user_action = UserAction(
             user_id=user.id,
             event_id=ticket["event_id"],
@@ -90,7 +95,8 @@ async def cancel_tickets(db: Session, user: User, request: CancelTicketsRequest)
                 "reason": request.reason,
             },
         )
-        save(db, user_action)
+        db.add(user_action)
+        db.commit()
 
         return request.transaction_item_id
 

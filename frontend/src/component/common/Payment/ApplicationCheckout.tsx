@@ -10,13 +10,12 @@ import { useCreateApplicationCheckoutSessionMutation } from '@/src/api/applicati
 import type {
   ApiException,
   ApplicationTicket,
-  ErrorResponse400,
   IndustryCode,
   JobTypeCode,
   SurveyResponseResultItem,
 } from '@/src/lib/api/generated';
-import toast from 'react-hot-toast';
 import DotLoader from '../Loader/DotLoader';
+import { handleApiError } from '@/src/utils/app.util';
 
 // Make sure to call 'loadStripe' outside of a component's render to avoid
 // recreating the 'Stripe' object on every render
@@ -53,11 +52,7 @@ export default function ApplicationCheckout({
       setClientSecret(data.clientSecret);
     },
     onError(error: ApiException<unknown>) {
-      toast.error(
-        (error.body as ErrorResponse400)?.message ??
-          (error.body as ErrorResponse400)?.errorCode ??
-          'Unknown Error 😵',
-      );
+      handleApiError(error);
       onClose();
     },
   });

@@ -9,6 +9,7 @@ import type {
   EventsApiListingRecommendationEventsRequest,
   EventsApiListingRelatedEventsRequest,
   EventsApiListingTicketsOfEventRequest,
+  EventsApiListingTrendingEventsRequest,
   EventsApiManualCheckInRequest,
   EventsApiPublishEventRequest,
   EventsApiQrCheckInRequest,
@@ -251,5 +252,18 @@ export const useListingEventOptionsQuery = () => {
   return useQuery({
     queryKey: ['listing-event-options'],
     queryFn: async () => await api.events.listingEventOptions(),
+  });
+};
+
+export const useListingTrendingEventsQuery = (
+  params?: EventsApiListingTrendingEventsRequest,
+  enabled?: boolean,
+) => {
+  params = toCamelCase(params);
+  const api = useApi();
+  return useQuery({
+    queryKey: ['listing-trending-events', params],
+    queryFn: async () => await api.events.listingTrendingEvents(params),
+    enabled,
   });
 };

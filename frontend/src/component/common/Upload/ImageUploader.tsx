@@ -41,7 +41,12 @@ const ImageUploader = ({
 
   return (
     <div className={clsx('bg-white rounded-xl mx-auto', className)}>
-      <div className='relative w-full h-full flex flex-wrap gap-6 py-3 px-1 justify-start items-center'>
+      <div
+        className={clsx(
+          'relative w-full h-full grid  gap-6 py-3 px-1 items-center',
+          variant === 'cover' ? 'grid-cols-1' : 'grid-cols-2',
+        )}
+      >
         {!u.isFetching && u.image && (
           <Avatar
             isBordered
@@ -49,7 +54,7 @@ const ImageUploader = ({
               'transition-transform',
               variant === 'avatar'
                 ? 'w-[100px] h-[100px]'
-                : 'w-[700px] h-[350px]',
+                : 'w-full max-w-[700px] h-[350px]',
             )}
             color='primary'
             name={name}
@@ -67,7 +72,7 @@ const ImageUploader = ({
               defaultImageUrl={defaultImageUrl}
               className={clsx(
                 variant === 'cover' &&
-                  'w-[700px] h-[350px] !border-gray-400 rounded-lg',
+                  'w-full max-w-[700px] h-[350px] !border-gray-400 rounded-lg',
               )}
             />
           </div>
@@ -92,16 +97,16 @@ const ImageUploader = ({
         <div>
           <p className='gap-3 text-sm mb-2 ml-2 text-gray-500 self-start font-light flex justify-start items-center'>
             <MdInfoOutline size={20} />
-            File format: {formats?.join(', ')}
+            Định dạng ảnh: {formats?.join(', ')}
           </p>
           <p className='gap-3 text-sm ml-2 text-gray-500 self-start font-light'>
             <span className={clsx(styles.flexStart, 'inline-flex mr-2')}>
               <RiDragMove2Fill size={20} />
-              Drag & Drop
+              Kéo & Thả
             </span>
             <span className={clsx(styles.flexStart, 'inline-flex ml-2')}>
               <TbHandClick size={20} />
-              Click to Upload
+              Click để upload ảnh
             </span>
           </p>
           <div className={clsx(styles.flexStart, 'gap-2 mt-2')}>
@@ -117,7 +122,7 @@ const ImageUploader = ({
               as={Label}
               htmlFor={name}
             >
-              Change
+              Đổi ảnh
             </Button>
             <Button
               className={clsx('font-light border text-red-500 border-red-500 ')}

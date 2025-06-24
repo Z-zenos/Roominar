@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import { useTranslations } from 'next-intl';
 import { FaCaretRight } from 'react-icons/fa';
 import { MdKeyboardDoubleArrowRight } from 'react-icons/md';
 
@@ -7,9 +8,17 @@ interface RankingListProps {
   className?: string;
   data?: any[];
   onClick?(item: any): void;
+  isTranslation?: boolean;
 }
 
-function RankingList({ title, className, data, onClick }: RankingListProps) {
+function RankingList({
+  title,
+  className,
+  data,
+  onClick,
+  isTranslation = false,
+}: RankingListProps) {
+  const t = useTranslations('code');
   return (
     <div className={clsx('w-full border-b border-b-gray-300 pb-4', className)}>
       {title && (
@@ -34,7 +43,7 @@ function RankingList({ title, className, data, onClick }: RankingListProps) {
                   i === 2 && 'bg-warning-sub text-warning-main',
                 )}
               >
-                {item.name}
+                {isTranslation ? t(`tag.${item.name}`) : item.name}
               </p>
               <p
                 className={clsx(
@@ -52,7 +61,7 @@ function RankingList({ title, className, data, onClick }: RankingListProps) {
       </ul>
       {title && (
         <h4 className=' flex items-center justify-start gap-1 text-sm font-light text-primary hover:underline transition-all cursor-pointer'>
-          <FaCaretRight /> See more
+          <FaCaretRight /> Xem thêm
         </h4>
       )}
     </div>
