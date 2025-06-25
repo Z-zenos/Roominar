@@ -22,8 +22,10 @@ import debounce from 'lodash.debounce';
 import ReactPaginate from 'react-paginate';
 import { useState } from 'react';
 import { useListingMyEventsQuery } from '@/src/api/event.api';
+import { useTranslations } from 'next-intl';
 
 function MyEvents() {
+  const t = useTranslations('code');
   const searchParams = useSearchParams();
   const router = useRouter();
   const { data, isLoading, isFetching } = useListingMyEventsQuery({
@@ -63,7 +65,7 @@ function MyEvents() {
             <FormInput
               name='keyword'
               leftIcon={<IoSearchOutline size={20} />}
-              placeholder='Find web(sem)inar events you like...'
+              placeholder='Tìm kiếm sự kiện của bạn...'
               className='w-full'
               control={form.control}
               onKeyDown={debounce(
@@ -95,7 +97,7 @@ function MyEvents() {
                       '!bg-primary font-bold !text-white',
                   )}
                 >
-                  {tab}
+                  {t(`event.statusWithUser.${MyEventStatusCode[tab]}`)}
                   {data &&
                     form.getValues('status') === MyEventStatusCode[tab] &&
                     ' [' + data.total + '] '}

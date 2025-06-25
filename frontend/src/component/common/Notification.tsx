@@ -169,7 +169,7 @@ export function NotificationList({
 
       {!hasNextPage && notifications?.pages[0].data.length === 0 && (
         <div className='flex items-center justify-center h-full text-gray-500 py-6'>
-          No notifications
+          Không có thông báo nào
         </div>
       )}
     </div>

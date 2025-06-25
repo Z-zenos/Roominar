@@ -7,7 +7,8 @@ async function Page() {
         Welcome 👋🏻
       </h2>
       <p className='mt-2 mb-8 font-light text-gray-700 text-nm'>
-        Enter to get interesting event & webinar & seminar you like.
+        Đăng ký ngay một tài khoản để nhận thông tin về các sự kiện, hội thảo và
+        buổi hội thảo thú vị mà bạn yêu thích.
       </p>
       <RegisterAudienceForm />
     </div>

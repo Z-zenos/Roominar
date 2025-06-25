@@ -40,7 +40,7 @@ const Footer = () => {
                     className='w-full rounded-full border-gray-200 outline-none bg-gray-100 p-4 pe-32 text-nm font-medium'
                     id='newsletter'
                     type='email'
-                    placeholder='user@Roominar.com'
+                    placeholder='user@Vievent.com'
                   />
 
                   <button
@@ -63,7 +63,7 @@ const Footer = () => {
               >
                 <li>
                   <Link
-                    href='https://www.Roominar.com'
+                    href='https://www.Vievent.com'
                     className='transition hover:opacity-75 text-gray-200'
                   >
                     Home
@@ -72,7 +72,7 @@ const Footer = () => {
 
                 <li>
                   <Link
-                    href='https://www.Roominar.com/about-us'
+                    href='https://www.Vievent.com/about-us'
                     className='transition hover:opacity-75 text-gray-200'
                   >
                     Search
@@ -81,7 +81,7 @@ const Footer = () => {
 
                 <li>
                   <Link
-                    href='https://www.Roominar.com/blog'
+                    href='https://www.Vievent.com/blog'
                     className='transition hover:opacity-75 text-gray-200'
                   >
                     Host your event
@@ -90,7 +90,7 @@ const Footer = () => {
 
                 <li>
                   <Link
-                    href='https://www.Roominar.com/contact'
+                    href='https://www.Vievent.com/contact'
                     className='transition hover:opacity-75 text-gray-200'
                   >
                     Contact Us
@@ -108,7 +108,7 @@ const Footer = () => {
               >
                 <li>
                   <Link
-                    href='https://www.Roominar.com/components'
+                    href='https://www.Vievent.com/components'
                     className='transition hover:opacity-75 text-gray-200'
                   >
                     HTML, CSS, and JS
@@ -117,7 +117,7 @@ const Footer = () => {
 
                 <li>
                   <Link
-                    href='https://www.Roominar.com/python-projects'
+                    href='https://www.Vievent.com/python-projects'
                     className='transition hover:opacity-75 text-gray-200'
                   >
                     Basic English
@@ -126,7 +126,7 @@ const Footer = () => {
 
                 <li>
                   <Link
-                    href='https://www.Roominar.com/csharp-projects'
+                    href='https://www.Vievent.com/csharp-projects'
                     className='transition hover:opacity-75 text-gray-200'
                   >
                     Japan Test
@@ -135,7 +135,7 @@ const Footer = () => {
 
                 <li>
                   <Link
-                    href='https://www.Roominar.com/questions'
+                    href='https://www.Vievent.com/questions'
                     className='transition hover:opacity-75 text-gray-200'
                   >
                     Questions
@@ -153,7 +153,7 @@ const Footer = () => {
               >
                 <li>
                   <Link
-                    href='https://www.Roominar.com/tools/case-converter'
+                    href='https://www.Vievent.com/tools/case-converter'
                     className='transition hover:opacity-75 text-gray-200'
                   >
                     Case Converter
@@ -162,7 +162,7 @@ const Footer = () => {
 
                 <li>
                   <Link
-                    href='https://www.Roominar.com/tools/word-counter'
+                    href='https://www.Vievent.com/tools/word-counter'
                     className='transition hover:opacity-75 text-gray-200'
                   >
                     Word Counter
@@ -171,7 +171,7 @@ const Footer = () => {
 
                 <li>
                   <Link
-                    href='https://www.Roominar.com/tools/scrollbar-generator'
+                    href='https://www.Vievent.com/tools/scrollbar-generator'
                     className='transition hover:opacity-75 text-gray-200'
                   >
                     Slug Generator
@@ -180,7 +180,7 @@ const Footer = () => {
 
                 <li>
                   <Link
-                    href='https://www.Roominar.com/tools'
+                    href='https://www.Vievent.com/tools'
                     className='transition hover:opacity-75 text-[#377DFF]'
                   >
                     View More
@@ -198,7 +198,7 @@ const Footer = () => {
               >
                 <li>
                   <Link
-                    href='https://www.Roominar.com/icons/1/300-most-used-free-svg-icons-alarm-direction-devices-and-more'
+                    href='https://www.Vievent.com/icons/1/300-most-used-free-svg-icons-alarm-direction-devices-and-more'
                     className='transition hover:opacity-75 text-gray-200'
                   >
                     SVG
@@ -207,7 +207,7 @@ const Footer = () => {
 
                 <li>
                   <Link
-                    href='https://www.Roominar.com/icons/2/get-high-quality-svg-icons-of-car-brands-logos-for-free'
+                    href='https://www.Vievent.com/icons/2/get-high-quality-svg-icons-of-car-brands-logos-for-free'
                     className='transition hover:opacity-75 text-gray-200'
                   >
                     Car SVG
@@ -216,7 +216,7 @@ const Footer = () => {
 
                 <li>
                   <Link
-                    href='https://www.Roominar.com/icons/3/emoji-copy-and-paste-expressive-emoticons-for-every-mood-copyable-emojis'
+                    href='https://www.Vievent.com/icons/3/emoji-copy-and-paste-expressive-emoticons-for-every-mood-copyable-emojis'
                     className='transition hover:opacity-75 text-gray-200'
                   >
                     Emojis
@@ -225,7 +225,7 @@ const Footer = () => {
 
                 <li>
                   <Link
-                    href='https://www.Roominar.com/icons'
+                    href='https://www.Vievent.com/icons'
                     className='transition hover:opacity-75 text-[#377DFF]'
                   >
                     View More
@@ -243,7 +243,7 @@ const Footer = () => {
               >
                 <li>
                   <Link
-                    href='https://www.Roominar.com/category?tags=App'
+                    href='https://www.Vievent.com/category?tags=App'
                     className='transition hover:opacity-75 text-gray-200'
                   >
                     App
@@ -252,7 +252,7 @@ const Footer = () => {
 
                 <li>
                   <Link
-                    href='https://www.Roominar.com/category?tags=Form'
+                    href='https://www.Vievent.com/category?tags=Form'
                     className='transition hover:opacity-75 text-gray-200'
                   >
                     Form
@@ -261,7 +261,7 @@ const Footer = () => {
 
                 <li>
                   <Link
-                    href='https://www.Roominar.com/category?tags=Navbar'
+                    href='https://www.Vievent.com/category?tags=Navbar'
                     className='transition hover:opacity-75 text-gray-200'
                   >
                     Navbar
@@ -270,7 +270,7 @@ const Footer = () => {
 
                 <li>
                   <Link
-                    href='https://www.Roominar.com/category?tags=Landing%20Page'
+                    href='https://www.Vievent.com/category?tags=Landing%20Page'
                     className='transition hover:opacity-75 text-gray-200'
                   >
                     Landing Page
@@ -279,7 +279,7 @@ const Footer = () => {
 
                 <li>
                   <Link
-                    href='https://www.Roominar.com/category'
+                    href='https://www.Vievent.com/category'
                     className='transition hover:opacity-75 text-[#377DFF]'
                   >
                     View More
@@ -294,7 +294,7 @@ const Footer = () => {
             >
               <li>
                 <Link
-                  href='https://www.facebook.com/Roominar'
+                  href='https://www.facebook.com/Vievent'
                   rel='noreferrer'
                   target='_blank'
                   className='transition hover:text-[#1877F2] text-gray-200'
@@ -318,7 +318,7 @@ const Footer = () => {
 
               <li>
                 <Link
-                  href='https://www.instagram.com/Roominar'
+                  href='https://www.instagram.com/Vievent'
                   rel='noreferrer'
                   target='_blank'
                   className='transition hover:text-[#E4405F] text-gray-200'
@@ -342,7 +342,7 @@ const Footer = () => {
 
               <li>
                 <Link
-                  href='https://twitter.com/Roominar'
+                  href='https://twitter.com/Vievent'
                   rel='noreferrer'
                   target='_blank'
                   className='transition hover:text-[#1DA1F2] text-gray-200'
@@ -386,7 +386,7 @@ const Footer = () => {
 
               <li>
                 <Link
-                  href='https://www.youtube.com/@Roominar'
+                  href='https://www.youtube.com/@Vievent'
                   rel='noreferrer'
                   target='_blank'
                   className='transition hover:text-[#FF0000] text-gray-200'
@@ -414,7 +414,7 @@ const Footer = () => {
         <div className='mt-8 border-t pt-8 border-gray-800'>
           <div className='sm:flex sm:justify-between'>
             <p className='text-nm text-gray-400'>
-              &copy; 2024. Z-zenos, Roominar. All rights reserved.
+              &copy; 2024. Z-zenos, Vievent. All rights reserved.
             </p>
 
             <ul
@@ -423,7 +423,7 @@ const Footer = () => {
             >
               <li>
                 <Link
-                  href='https://www.Roominar.com/terms-and-conditions'
+                  href='https://www.Vievent.com/terms-and-conditions'
                   className='transition hover:opacity-75 text-gray-400'
                 >
                   Terms & Conditions
@@ -432,7 +432,7 @@ const Footer = () => {
 
               <li>
                 <Link
-                  href='https://www.Roominar.com/privacy-policy'
+                  href='https://www.Vievent.com/privacy-policy'
                   className='transition hover:opacity-75 text-gray-400'
                 >
                   Privacy Policy

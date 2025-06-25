@@ -49,7 +49,16 @@ export function TagStatsChart({ data }: TagStatsChartProps) {
   const chartConfig = data.slice(0, 5).reduce(
     (acc, item, i) => {
       acc[item.name] = {
-        label: item.name,
+        label:
+          item.category != TagStatsCategoryCode.Tag
+            ? t(
+                `${
+                  item.category === TagStatsCategoryCode.Industry
+                    ? 'industry'
+                    : 'jobType'
+                }.${item.name}`,
+              )
+            : t(`tag.${item.name}`),
         color:
           ['#d8fcff', '#d8fcff', '#fcfcaa', 'bg-default-sub'][i] ||
           'bg-default-sub',
@@ -69,7 +78,7 @@ export function TagStatsChart({ data }: TagStatsChartProps) {
                 : 'jobType'
             }.${item.name}`,
           )
-        : item.name,
+        : t(`tag.${item.name}`),
     usageCount: item.usageCount,
     fill: chartConfig[item.name]?.color,
   }));
@@ -77,14 +86,14 @@ export function TagStatsChart({ data }: TagStatsChartProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Tag - Industry - Job Type</CardTitle>
+        <CardTitle>Tag - Lĩnh vực - Ngành nghề</CardTitle>
         <CardDescription>
-          Total: {totalTags}.{' '}
+          Tổng: {totalTags}.{' '}
           <span
             className='underline cursor-pointer text-sm text-orange-400'
             onClick={onOpen}
           >
-            Show more
+            Xem thêm
           </span>
           {!data.length && <Nodata />}
         </CardDescription>
@@ -183,7 +192,7 @@ export function TagStatsChart({ data }: TagStatsChartProps) {
           {(onClose) => (
             <>
               <ModalHeader className='flex flex-col gap-1'>
-                Tags - Industry - Job Type Rank
+                Tags - Lĩnh vực - Ngành nghề
               </ModalHeader>
               <ModalBody>
                 <RankingList
@@ -198,7 +207,7 @@ export function TagStatsChart({ data }: TagStatsChartProps) {
                                 : 'jobType'
                             }.${item.name}`,
                           )
-                        : item.name,
+                        : t(`tag.${item.name}`),
                     extraInfo: item.usageCount,
                   }))}
                   onClick={() => {}}
@@ -210,7 +219,7 @@ export function TagStatsChart({ data }: TagStatsChartProps) {
                   variant='flat'
                   onPress={onClose}
                 >
-                  Close
+                  Đóng
                 </Button>
               </ModalFooter>
             </>

@@ -60,21 +60,21 @@ export default function AttendeeDetail({ id }: AttendeeDetailProps) {
         </div>
         <div className='mt-3'>
           <AttendeeDetailInfoRow
-            title='Phone'
+            title='Số điện thoại'
             content={attendee.phone}
           />
           <AttendeeDetailInfoRow
-            title='Workplace Name'
+            title='Nơi làm việc '
             content={attendee.workplaceName}
           />
           <AttendeeDetailInfoRow
-            title='Industry'
+            title='Lĩnh vực'
             content={
               attendee.industryCode && t(`industry.${attendee.industryCode}`)
             }
           />
           <AttendeeDetailInfoRow
-            title='Job Type'
+            title='Loại công việc'
             content={
               attendee.jobTypeCode && t(`jobType.${attendee.jobTypeCode}`)
             }

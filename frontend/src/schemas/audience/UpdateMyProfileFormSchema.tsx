@@ -11,7 +11,7 @@ const updateMyProfileFormSchema = z.object({
   jobTypeCode: z.nativeEnum(JobTypeCode),
   // cityCode: z.nativeEnum(CityCode),
   avatarUrl: z.string().nullable(),
-  tags: z.array(z.string()).nullable(),
+  tags: z.array(z.coerce.number()).nullable(),
 });
 
 type UpdateMyProfileFormSchema = z.infer<typeof updateMyProfileFormSchema>;

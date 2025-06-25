@@ -27,7 +27,7 @@ export default function TicketSalesSpeedChart({
   return (
     <Card className='w-full'>
       <CardContent className='h-[300px]'>
-        <h2 className='text-md font-semibold my-4'>Ticket Sales Speed</h2>
+        <h2 className='text-md font-semibold my-4'>Tốc độ bán vé</h2>
         <ResponsiveContainer
           width='100%'
           height='100%'
@@ -60,25 +60,25 @@ export default function TicketSalesSpeedChart({
               dataKey='in1h'
               stackId='a'
               fill='#8884d8'
-              name='In 1h'
+              name='Trong 1 giờ'
             />
             <Bar
               dataKey='in1d'
               stackId='a'
               fill='#82ca9d'
-              name='In 1d'
+              name='Trong 1 ngày'
             />
             <Bar
               dataKey='in1w'
               stackId='a'
               fill='#ffc658'
-              name='In 1w'
+              name='Trong 1 tuần'
             />
             <Bar
               dataKey='total'
               stackId='a'
               fill='#ff7f50'
-              name='Total'
+              name='Tất cả'
             />
           </BarChart>
         </ResponsiveContainer>

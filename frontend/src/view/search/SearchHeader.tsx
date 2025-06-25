@@ -55,7 +55,7 @@ function SearchHeader({
               }
               isLoading={isFetching}
             >
-              {isFetching ? 'Searching...' : 'Search'}
+              {isFetching ? 'Đang tìm kiếm...' : 'Tìm kiếm'}
             </Button>
           )}
           <Button
@@ -87,7 +87,7 @@ function SearchHeader({
             }}
             startContent={<GrPowerReset />}
           >
-            Reset
+            Đặt lại
           </Button>
 
           {width <= 450 && (
@@ -104,7 +104,7 @@ function SearchHeader({
             <FormInput
               name='keyword'
               leftIcon={<IoSearchOutline size={20} />}
-              placeholder='Find web(sem)inar events you like...'
+              placeholder='Tìm kiếm sự kiện bạn thích...'
               className='w-full'
               control={control}
               onKeyDown={debounce(
@@ -120,14 +120,14 @@ function SearchHeader({
               name='jobTypeCodes'
               control={control}
               onValueChange={onValueChange}
-              title='job type'
+              title='Ngành nghề'
             />
           )}
         </div>
         {width > 450 && (
           <div className='flex items-center justify-start gap-4 450px:mt-3'>
             <Text
-              content='Sort by:'
+              content='Sắp xếp theo:'
               className='font-light text-gray-500'
             />
             <FormSelect
@@ -145,7 +145,7 @@ function SearchHeader({
       <div className='flex justify-between items-center 450px:mt-4 flex-wrap gap-2'>
         <div className='flex justify-end items-center gap-4'>
           <Text
-            content='Suggestion: '
+            content='Gợi ý:'
             className='font-light'
           />
           {/* <div className='flex justify-start gap-2'>
@@ -168,7 +168,7 @@ function SearchHeader({
             className='text-primary font-semibold'
           />
           <Text
-            content='results'
+            content='kết quả'
             className='font-light text-gray-500'
           />
           {filters['keyword'] && (

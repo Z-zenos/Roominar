@@ -55,10 +55,6 @@ const sidebarMenu = [
         url: '/organization/events/[slug]/create',
         icon: <CreateEventIcon />,
       },
-      {
-        title: 'Explorer',
-        url: '#',
-      },
     ],
   },
   {

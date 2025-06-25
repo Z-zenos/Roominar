@@ -43,8 +43,8 @@ function SearchEvent() {
       width > 800
         ? {}
         : {
-            title: 'Filter Box',
-            description: 'Select something you like search',
+            title: 'Bộ lọc',
+            description: 'Chọn các bộ lọc để thu hẹp kết quả tìm kiếm',
           },
     [width],
   );

@@ -53,12 +53,12 @@ import { FaChevronDown } from 'react-icons/fa6';
 import type { DateRange } from 'react-day-picker';
 
 const columns = [
-  { name: 'Name', uid: 'name', sortable: true },
-  { name: 'Address / Link', uid: 'address' },
-  { name: 'Status', uid: 'status' },
-  { name: 'Ticket State', uid: 'ticket_state' },
-  { name: 'Start - End', uid: 'start_at' },
-  { name: 'Actions', uid: 'actions' },
+  { name: 'Tên', uid: 'name', sortable: true },
+  { name: 'Địa chỉ / Liên kết', uid: 'address' },
+  { name: 'Trạng thái', uid: 'status' },
+  { name: 'Tình trạng vé', uid: 'ticket_state' },
+  { name: 'Bắt đầu - Kết thúc', uid: 'start_at' },
+  { name: 'Hành động', uid: 'actions' },
 ];
 
 export default function EventDataTable() {
@@ -319,13 +319,13 @@ export default function EventDataTable() {
                 }}
                 startContent={<GrPowerReset />}
               >
-                Reset
+                Đặt lại
               </Button>
               <div className='600px:min-w-[300px] min-w-full'>
                 <FormInput
                   name='keyword'
                   leftIcon={<IoSearchOutline size={20} />}
-                  placeholder='Search event name...'
+                  placeholder='Tìm kiếm sự kiện...'
                   className='w-full'
                   control={form.control}
                   onKeyDown={debounce(

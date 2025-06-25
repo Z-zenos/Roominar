@@ -278,7 +278,7 @@ export default function AttendeeDataTable() {
                 }}
                 startContent={<GrPowerReset />}
               >
-                Reset
+                Đặt lại
               </Button>
               <div className='600px:min-w-[300px] min-w-full'>
                 <FormInput

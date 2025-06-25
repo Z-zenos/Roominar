@@ -16,7 +16,7 @@ import { JobTypeCode } from '@/src/lib/api/generated';
 import { IndustryCode } from '@/src/lib/api/generated';
 
 import { useSession } from 'next-auth/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BiSolidSchool } from 'react-icons/bi';
 import { FaPhone } from 'react-icons/fa6';
 import useWindowDimensions from '@/src/hooks/useWindowDimension';
@@ -38,18 +38,32 @@ export default function UpdateMyProfileForm() {
   const form = useForm<UpdateMyProfileFormSchema>({
     mode: 'all',
     defaultValues: {
+      firstName: '',
+      lastName: '',
+      workplaceName: '',
+      phone: '',
+      industryCode: undefined,
+      jobTypeCode: undefined,
+      tags: undefined,
+      avatarUrl: '',
+      address: '',
+    },
+    resolver: zodResolver(updateMyProfileFormSchema),
+  });
+
+  useEffect(() => {
+    form.reset({
       firstName: auth?.user?.firstName || '',
       lastName: auth?.user?.lastName || '',
       workplaceName: auth?.user?.workplaceName || '',
       phone: auth?.user?.phone || '',
       industryCode: (auth?.user?.industryCode as IndustryCode) || undefined,
       jobTypeCode: (auth?.user?.jobTypeCode as JobTypeCode) || undefined,
-      tags: auth?.user?.tags.map((tag) => tag.id + '') || undefined,
+      tags: auth?.user?.tags.map((tag) => tag.id) || undefined,
       avatarUrl: auth?.user?.avatarUrl || '',
       address: auth?.user?.address || '',
-    },
-    resolver: zodResolver(updateMyProfileFormSchema),
-  });
+    });
+  }, [auth, form]);
 
   const { trigger, isMutating: isUpdating } = useUpdateMyProfileMutation({
     onSuccess() {
@@ -88,7 +102,7 @@ export default function UpdateMyProfileForm() {
           <div>
             <h3 className='text-xm font-semibold mb-1'>Profile</h3>
             <p className='opacity-50 font-light text-sm'>
-              View and update your profile details
+              Xem và cập nhật thông tin cá nhân của bạn
             </p>
           </div>
           <Button
@@ -97,7 +111,7 @@ export default function UpdateMyProfileForm() {
             isLoading={isUpdating}
             color='primary'
           >
-            Save changes
+            Lưu thay đổi
           </Button>
         </div>
         <div className='w-full mt-10'>
@@ -195,11 +209,7 @@ export default function UpdateMyProfileForm() {
                 control={form.control}
                 title='type job'
                 multiple={false}
-                className={clsx(
-                  'w-full',
-                  status === 'authenticated' &&
-                    'bg-slate-100 text-gray-500 pointer-events-none',
-                )}
+                className={clsx('w-full')}
               />
             </div>
             <div className='self-start 450px:col-span-1 col-span-2'>
@@ -211,20 +221,18 @@ export default function UpdateMyProfileForm() {
                 control={form.control}
                 title='industry'
                 multiple={false}
-                className={clsx(
-                  'w-full',
-                  status === 'authenticated' &&
-                    'bg-slate-100 text-gray-500 pointer-events-none',
-                )}
+                className={clsx('w-full')}
               />
             </div>
             <div className='col-span-2'>
-              <FormTagsInput
-                title='tags'
-                name='tags'
-                label='tags'
-                control={form.control}
-              />
+              {form.getValues('tags') && (
+                <FormTagsInput
+                  title='tags'
+                  name='tags'
+                  label='tags'
+                  control={form.control}
+                />
+              )}
             </div>
           </div>
         </div>

@@ -69,9 +69,9 @@ export default function ChangePasswordForm() {
           )}
         >
           <div className='self-start 450px:min-w-[300px] mr-[6px]'>
-            <h3 className='font-semibold'>Password</h3>
+            <h3 className='font-semibold'>Mật khẩu</h3>
             <p className='opacity-60 font-light text-sm'>
-              Last updated 9 month(s) ago.
+              Cập nhật 9 tháng trước.
             </p>
           </div>
 
@@ -84,7 +84,7 @@ export default function ChangePasswordForm() {
             }}
             radius='sm'
           >
-            {showForm ? 'Close' : 'Update'}
+            {showForm ? 'Đóng' : 'Cập nhật mật khẩu'}
           </Button>
         </div>
         {showForm && (
@@ -131,7 +131,7 @@ export default function ChangePasswordForm() {
                 className='self-center text-primary'
                 underline='hover'
               >
-                Forgot password ?
+                Quên mật khẩu ?
               </Link>
               <div className='w-full relative mb-1 self-start'>
                 <FormInput
@@ -199,11 +199,11 @@ export default function ChangePasswordForm() {
             <div className='flex justify-between mt-4 gap-3'>
               <ul className='list-disc pl-2'>
                 <li className='opacity-60 font-light text-sm 450px:w-[400px] w-fit'>
-                  Password must contain at least 1 letter, 1 number and 1
-                  symbol.
+                  Mật khẩu phải chứa ít nhất 1 chữ cái, 1 số và 1 ký tự đặc
+                  biệt.
                 </li>
                 <li className='opacity-60 font-light text-sm 450px:w-[400px]'>
-                  Min length is 8 characters.
+                  Độ dài tối thiểu là 8 ký tự.
                 </li>
               </ul>
               <Button
@@ -213,7 +213,7 @@ export default function ChangePasswordForm() {
                 isLoading={isChanging}
                 isDisabled={!form.formState.isValid}
               >
-                Submit
+                Gửi
               </Button>
             </div>
           </div>

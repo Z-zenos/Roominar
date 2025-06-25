@@ -160,7 +160,7 @@ function CreateTicketForm({ eventId, onCreate }: CreateTicketFormProps) {
             label='ticketType'
             required
             control={form.control}
-            placeholder='Select Ticket Type'
+            placeholder='Chọn loại vé'
             options={optionify(TicketTypeCode)}
             i18nPath='code.ticket.type'
             className='w-full'

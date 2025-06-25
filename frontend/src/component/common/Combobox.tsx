@@ -39,15 +39,15 @@ export function Combobox({ options, title }: ComboboxProps) {
         >
           {value
             ? options.find((item) => item.value === value)?.label
-            : `Select ${title}...`}
+            : `${title}...`}
           <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
         </Button>
       </PopoverTrigger>
       <PopoverContent className='w-[200px] p-0'>
         <Command>
-          <CommandInput placeholder={`Search ${title}...`} />
+          <CommandInput placeholder={`${title}...`} />
           <CommandList>
-            <CommandEmpty>No {title} found.</CommandEmpty>
+            <CommandEmpty>Không tìm thấy {title}.</CommandEmpty>
             <CommandGroup>
               {options.map((item) => (
                 <CommandItem

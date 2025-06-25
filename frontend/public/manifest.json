@@ -1,7 +1,7 @@
 {
   "id": "/home",
-  "name": "Roominar",
-  "short_name": "Roominar",
+  "name": "Vievent",
+  "short_name": "Vievent",
   "description": "Find and book virtual and physical event spaces",
   "start_url": "/home",
   "display": "standalone",

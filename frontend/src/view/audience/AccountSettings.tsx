@@ -15,11 +15,12 @@ function AccountSetting() {
       <div className='lg:w-[800px] w-full mx-auto mt-4'>
         <Alert className='w-full'>
           <MdOutlineSecurity className='h-5 w-5' />
-          <AlertTitle>Login & Security</AlertTitle>
+          <AlertTitle>Đăng nhập & Bảo mật</AlertTitle>
           <AlertDescription className='font-light opacity-60 text-sm'>
-            Keeping your account secure. We regularly review accounts to make
-            sure they’re secure as possible. We’ll also let you know if there’s
-            more we can do to increase the security of your account.
+            Giữ an toàn cho tài khoản của bạn. Chúng tôi thường xuyên xem xét
+            các tài khoản để đảm bảo chúng được bảo mật nhất có thể. Chúng tôi
+            cũng sẽ thông báo cho bạn nếu có thêm điều gì chúng tôi có thể làm
+            để tăng cường bảo mật cho tài khoản của bạn.
           </AlertDescription>
         </Alert>
 

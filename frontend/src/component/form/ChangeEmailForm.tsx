@@ -74,12 +74,12 @@ export default function ChangeEmailForm() {
             }}
             radius='sm'
           >
-            {showForm ? 'Close' : 'Change Email'}
+            {showForm ? 'Đóng' : 'Đổi email mới'}
           </Button>
         </div>
         <p className='opacity-60 font-light text-sm mt-3'>
-          (＊) Enter your new email address and confirm the change via the link
-          sent to your inbox.
+          (＊) Nhập địa chỉ email mới của bạn và xác nhận thay đổi qua liên kết
+          được gửi đến hộp thư của bạn.
         </p>
         {showForm && (
           <div className='w-full mt-4 bg-emerald-50 p-5 rounded-md animate-appearance-in'>
@@ -150,7 +150,7 @@ export default function ChangeEmailForm() {
                 isLoading={isRequesting}
                 isDisabled={!form.formState.isValid}
               >
-                Submit
+                Gửi
               </Button>
             </div>
           </div>

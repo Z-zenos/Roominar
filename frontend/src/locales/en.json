@@ -147,6 +147,16 @@
         "NAME": "name",
         "VIEW_NUMBER": "view number",
         "CREATED_AT": "created"
+      },
+      "statusWithUser": {
+        "ALL": "all",
+        "BOOKMARKED": "bookmarked",
+        "APPLIED": "applied",
+        "ENDED": "ended",
+        "CANCELED": "canceled",
+        "PENDING": "pending",
+        "IN_PROGRESS": "in progress",
+        "DEFERRED": "deferred"
       }
     },
     "industry": {
@@ -400,7 +410,8 @@
       "SUBMIT_SURVEY": "submit survey",
       "ADD_TO_CALENDAR": "add to calendar",
       "INVITE_FRIEND": "invite friend",
-      "ANSWER_APPLICATION_SURVEY": "answer application survey"
+      "ANSWER_APPLICATION_SURVEY": "answer application survey",
+      "UNBOOKMARK": "unbookmark"
     },
     "trackingTimeRange": {
       "TODAY": "today",

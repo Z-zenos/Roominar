@@ -273,11 +273,11 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
             </div>
             <div className='flex flex-col justify-between items-end'>
               <Tabs
-                defaultValue='daily'
+                defaultValue='Theo ngày'
                 tabs={[
-                  { value: 'daily', content: '' },
-                  { value: 'weekly', content: 'Weekly' },
-                  { value: 'monthly', content: 'Monthly' },
+                  { value: 'Theo ngày', content: '' },
+                  { value: 'Theo tuần', content: 'Coming soon...' },
+                  { value: 'Theo tháng', content: 'Theo tháng' },
                 ]}
                 className='450px:px-[10%] px-[5%]'
                 tabClassName='max-w-[400px] mx-auto'

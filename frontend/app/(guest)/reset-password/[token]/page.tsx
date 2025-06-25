@@ -8,9 +8,9 @@ async function Page({ params: { token } }: { params: { token: string } }) {
         className='mx-auto text-primary mb-5'
         size={50}
       />
-      <h2 className='text-primary text-lg font-semibold'>Reset password</h2>
+      <h2 className='text-primary text-lg font-semibold'>Đặt lại mật khẩu</h2>
       <p className='mt-2 mb-8 font-light text-gray-700 text-nm'>
-        One further step to reach your account.
+        Một bước nữa để truy cập tài khoản của bạn.
       </p>
       <ResetPasswordForm token={token} />
     </div>

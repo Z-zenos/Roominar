@@ -47,7 +47,7 @@ function SearchFilter({
         className,
       )}
     >
-      <FilterBox title='Industry'>
+      <FilterBox title='Lĩnh vực'>
         <FormCheckBoxList
           name='industryCodes'
           control={control}
@@ -66,7 +66,7 @@ function SearchFilter({
           underline='hover'
           onClick={() => setShowMoreIndustryCodes(!showMoreIndustryCodes)}
         >
-          Show {showMoreIndustryCodes ? 'less' : 'more'}
+          {showMoreIndustryCodes ? 'Ít hơn' : 'Nhiều hơn'}
           {showMoreIndustryCodes ? <FaChevronUp /> : <FaChevronDown />}
         </Link>
       </FilterBox>
@@ -79,7 +79,7 @@ function SearchFilter({
         />
       </FilterBox>
 
-      <FilterBox title='Price'>
+      <FilterBox title='Giá'>
         <FormCheckBox
           name='isFree'
           control={control}
@@ -107,7 +107,7 @@ function SearchFilter({
           label='isOffline'
         />
       </FilterBox>
-      <FilterBox title='Timeline'>
+      <FilterBox title='Thời gian'>
         <FormCheckBox
           name='today'
           control={control}
@@ -126,7 +126,7 @@ function SearchFilter({
           onValueChange={onValueChange}
           label='isApplyEnded'
         />
-        <Label className='mt-3'>Start date</Label>
+        <Label className='mt-3'>Ngày bắt đầu</Label>
         <FormDateRangePicker
           name='startAtRange'
           control={control}

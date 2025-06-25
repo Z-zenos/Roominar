@@ -147,6 +147,16 @@
         "NAME": "tên sự kiện",
         "VIEW_NUMBER": "số lượt truy cập trang",
         "CREATED_AT": "ngày tạo"
+      },
+      "statusWithUser": {
+        "ALL": "tất cả",
+        "BOOKMARKED": "đã đánh dấu",
+        "APPLIED": "đã đăng ký",
+        "ENDED": "đã kết thúc",
+        "CANCELED": "đã hủy",
+        "PENDING": "đang chờ",
+        "IN_PROGRESS": "đang diễn ra",
+        "DEFERRED": "hoãn"
       }
     },
     "industry": {
@@ -400,7 +410,8 @@
       "SUBMIT_SURVEY": "gửi khảo sát",
       "ADD_TO_CALENDAR": "thêm vào lịch",
       "INVITE_FRIEND": "mời bạn bè",
-      "ANSWER_APPLICATION_SURVEY": "trả lời khảo sát đăng ký"
+      "ANSWER_APPLICATION_SURVEY": "trả lời khảo sát đăng ký",
+      "UNBOOKMARK": "bỏ lưu sự kiện"
     },
     "trackingTimeRange": {
       "TODAY": "hôm nay",

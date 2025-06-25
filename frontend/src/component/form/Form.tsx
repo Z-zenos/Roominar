@@ -538,8 +538,7 @@ const FormCombobox = ({
                         `${options.find((option) => option.value === field?.value)?.value}`,
                       )}
 
-                    {(!field?.value || !field?.value?.length) &&
-                      `Select ${title}`}
+                    {(!field?.value || !field?.value?.length) && `${title}`}
                   </span>
                   <ChevronsUpDown className='h-4 w-4 shrink-0 opacity-50' />
                 </Button>
@@ -681,15 +680,16 @@ const FormTagsInput = ({
                     )}
                   >
                     <span className='break-all max-w-[90%]'>
-                      {'#' +
-                        t(
-                          `tag.${
-                            tags?.find(
-                              (tag: { value: number; label: string }) =>
-                                tag.value === id,
-                            )?.label
-                          }`,
-                        )}
+                      {'#' + tags && tags.length > 0
+                        ? t(
+                            `tag.${
+                              tags?.find(
+                                (tag: { value: number; label: string }) =>
+                                  tag.value === id,
+                              )?.label
+                            }`,
+                          )
+                        : ''}
                     </span>
                     <IoClose
                       onClick={() => {

@@ -11,7 +11,7 @@ import { UIProvider } from '@/src/contexts/UIProvider';
 import { Toaster } from 'react-hot-toast';
 
 export const metadata: Metadata = {
-  title: 'Roominar',
+  title: 'Vievent',
   description: 'Webinar & Event System',
 };
 
@@ -33,7 +33,7 @@ export default async function RootLayout({
       <head>
         <meta
           name='application-name'
-          content='Roominar'
+          content='Vievent'
         />
         <meta
           name='apple-mobile-web-app-capable'
@@ -45,7 +45,7 @@ export default async function RootLayout({
         />
         <meta
           name='apple-mobile-web-app-title'
-          content='Roominar'
+          content='Vievent'
         />
         <meta
           name='description'

@@ -16,7 +16,7 @@ function Logo({ className }: LogoProps) {
     >
       <Image
         className='w-auto translate-y-2'
-        alt='Roominar Footer Logo'
+        alt='Vievent Footer Logo'
         width={200}
         src={LogoImage.src}
       />

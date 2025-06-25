@@ -182,26 +182,26 @@ function RegisterAudienceForm() {
               </div>
             </div>
             <p className='text-sm text-gray-600 font-light mt-3'>
-              Please agree to the
+              Vui lòng đọc kỹ
               <Link
                 href='#'
                 underline='hover'
                 className='text-primary mx-1'
               >
-                Terms of Use
+                Điều khoản sử dụng
               </Link>
-              and
+              và
               <Link
                 href='#'
                 underline='hover'
                 className='text-primary mx-1'
               >
-                Personal Information Handling
+                Chính sách bảo mật
               </Link>
-              before registering.
+              của chúng tôi trước khi đăng ký.
             </p>
             <Button
-              title='Register'
+              title='Đăng ký'
               type='submit'
               className='w-80 mt-5'
               disabled={!form.formState.isValid}
@@ -209,7 +209,7 @@ function RegisterAudienceForm() {
             />
             <br />
             <h5 className='text-center pt-4 font-Poppins text-[14px] text-black dark:text-white'>
-              Or join with
+              Hoặc đăng ký bằng
             </h5>
             <div className='flex items-center justify-center mt-3'>
               <FcGoogle
@@ -225,23 +225,23 @@ function RegisterAudienceForm() {
             </div>
 
             <h5 className='text-center pt-4 font-Poppins text-nm font-light'>
-              Already have account?
+              Bạn đã có tài khoản?
               <Link
                 href='/login'
                 className='text-primary font-semibold pl-1 cursor-pointer'
               >
-                Login
+                Đăng nhập
               </Link>
             </h5>
 
             <p className={clsx('mt-4 gap-2 font-light', styles.center)}>
-              Want to host your own event?
+              Bạn muốn tổ chức sự kiện?
               <Button
                 type='button'
                 className='outline-none'
                 onClick={() => router.push('/organization/register')}
               >
-                Navigate to organization
+                Chuyển đến trang tổ chức
               </Button>
             </p>
           </>

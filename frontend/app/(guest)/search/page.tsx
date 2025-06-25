@@ -12,16 +12,16 @@ const Page: FC<Props> = () => {
   return (
     <>
       <Head
-        title='Roominar'
-        description='Roominar help you to search all concerned event you like'
+        title='Vievent'
+        description='Vievent help you to search all concerned event you like'
         keywords='Filter,search,event,seminar,webinar'
       />
       <Tabs
-        defaultValue='events'
+        defaultValue='Sự kiện'
         tabs={[
-          { value: 'events', content: <SearchEvent /> },
+          { value: 'Sự kiện', content: <SearchEvent /> },
           {
-            value: 'organizations',
+            value: 'Nhà tổ chức',
             content: (
               <Text
                 className='py-[10%] text-center'
@@ -30,7 +30,7 @@ const Page: FC<Props> = () => {
             ),
           },
           {
-            value: 'speaker',
+            value: 'Diễn giả',
             content: (
               <Text
                 className='py-[10%] text-center'

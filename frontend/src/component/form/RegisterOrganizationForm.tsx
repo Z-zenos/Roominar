@@ -109,8 +109,8 @@ function RegisterOrganizationForm() {
 
               <FormInstructions>
                 <li>
-                  This email also used for contact between client and your
-                  organization.
+                  Email này sẽ được sử dụng để liên hệ giữa khách hàng và tổ
+                  chức của bạn.
                 </li>
               </FormInstructions>
             </div>
@@ -178,16 +178,16 @@ function RegisterOrganizationForm() {
 
               <FormInstructions>
                 <li>
-                  If the organization type is{' '}
-                  {t(`event.type.${OrganizationTypeCode.Business}`)}, it will
-                  not be possible to change it to{' '}
+                  Nếu bạn chọn loại tổ chức là{' '}
+                  {t(`event.type.${OrganizationTypeCode.Business}`)}, sẽ không
+                  thể thay đổi thành{' '}
                   {t(`event.type.${OrganizationTypeCode.Personal}`)}.
                 </li>
                 <li>
-                  On the contrary, you can change it to{' '}
-                  {t(`event.type.${OrganizationTypeCode.Business}`)} in the
-                  future if needed. But you will need to provide some more
-                  information about your business.
+                  Ngược lại, bạn có thể thay đổi thành{' '}
+                  {t(`event.type.${OrganizationTypeCode.Business}`)} trong tương
+                  lai nếu cần. Nhưng bạn sẽ cần cung cấp thêm một số thông tin
+                  về doanh nghiệp của mình.
                 </li>
               </FormInstructions>
             </div>
@@ -233,7 +233,7 @@ function RegisterOrganizationForm() {
               />
               <div className='grid grid-cols-5 items-center'>
                 <p className='col-span-2 text-sm underline text-primary'>
-                  https://roominar.com/organizations/
+                  https://vievent.com/organizations/
                 </p>
                 <div className='col-span-3'>
                   <FormInput
@@ -245,12 +245,12 @@ function RegisterOrganizationForm() {
                 </div>
               </div>
               <FormInstructions>
-                <li>The organization page URL cannot be changed later.</li>
+                <li>Url của tổ chức sẽ không thể thay đổi sau này.</li>
                 <li>
-                  The system will automatically generate the url for you if you
-                  do not set it yourself.
+                  do not set it yourself. Hệ thống sẽ tự động tạo URL cho bạn
+                  nếu bạn không đặt nó.
                 </li>
-                <li>The URL can contain alphanumeric characters.</li>
+                <li>Url có thể chứa các ký tự chữ và số.</li>
               </FormInstructions>
             </div>
 
@@ -337,7 +337,7 @@ function RegisterOrganizationForm() {
 
             <div className='col-span-2'>
               <Button
-                title='Register'
+                title='Đăng ký'
                 type='submit'
                 className='w-2/3 mt-5 mx-auto'
                 disabled={!form.formState.isValid}
@@ -346,12 +346,12 @@ function RegisterOrganizationForm() {
               <br />
 
               <h5 className='text-center pt-4 font-Poppins text-nm font-light'>
-                Already have account?
+                Bạn đã có tài khoản?
                 <Link
                   href='/organization/login'
                   className='text-primary font-semibold pl-1 cursor-pointer'
                 >
-                  Login
+                  Đăng nhập
                 </Link>
               </h5>
             </div>
