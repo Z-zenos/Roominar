@@ -134,8 +134,6 @@ async def listing_attendees_ranking(
     all_rows = db.exec(query).mappings().all()
     all_rows = [dict(row) for row in all_rows]
 
-    print(all_rows)
-
     # Gán thứ hạng hiện tại và trước đó
     current_ranking = {row["id"]: idx for idx, row in enumerate(all_rows)}
     prev_ranking_query = sorted(all_rows, key=lambda x: -(x.get("prev_score") or 0))
