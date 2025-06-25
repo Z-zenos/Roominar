@@ -104,11 +104,11 @@ async def listing_attendees_ranking(
             User.avatar_url,
             func.sum(score_case).label("total_score"),
             action_count_case(UserActionTypeCode.PURCHASE_TICKET).label(
-                "purchase_count"
+                "purchase_number"
             ),
-            action_count_case(UserActionTypeCode.CHECK_IN).label("checkin_count"),
+            action_count_case(UserActionTypeCode.CHECK_IN).label("checkin_number"),
             action_count_case(UserActionTypeCode.ANSWER_APPLICATION_SURVEY).label(
-                "survey_count"
+                "survey_number"
             ),
             prev_query.c.prev_score,
         )
@@ -133,6 +133,8 @@ async def listing_attendees_ranking(
 
     all_rows = db.exec(query).mappings().all()
     all_rows = [dict(row) for row in all_rows]
+
+    print(all_rows)
 
     # Gán thứ hạng hiện tại và trước đó
     current_ranking = {row["id"]: idx for idx, row in enumerate(all_rows)}

@@ -62,7 +62,7 @@ export default function AttendeesRanking() {
               {attendee.rankChange === 'up' ? (
                 <BiUpArrow className='text-green-500' />
               ) : (
-                <BiDownArrow className='text-red-500 rotate-180' />
+                <BiDownArrow className='text-red-500' />
               )}
             </div>
           );
