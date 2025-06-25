@@ -8,6 +8,7 @@ from backend.core.constants import (
     EventStatusCode,
     TagAssociationEntityCode,
 )
+from backend.core.simple_cache import CacheKeys, cached_response
 from backend.models.bookmark import Bookmark
 from backend.models.event import Event
 from backend.models.organization import Organization
@@ -19,7 +20,13 @@ from backend.models.user import User
 from backend.schemas.event import SearchEventsQueryParams
 
 
-async def search_events(
+@cached_response(
+    cache_key=CacheKeys.EVENTS_SEARCH,
+    ttl=600,  # 10 minutes
+    include_user=True,
+    include_params=True,
+)
+def search_events(
     db: Session,
     user: User | None,
     query_params: SearchEventsQueryParams,

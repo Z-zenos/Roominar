@@ -8,13 +8,13 @@ from backend.core.constants import (
     NotificationTypeCode,
     TransactionStatusCode,
 )
-from backend.db.database import SessionLocal
 from backend.models.check_in import CheckIn
 from backend.models.event import Event
 from backend.models.ticket import Ticket
 from backend.models.transaction_item import TransactionItem
 from backend.models.user import User
 from backend.services.notifications.notification_service import NotificationService
+from backend.utils.database import transaction_scope
 from backend.utils.logger import logger
 
 # Register beat schedule in celery app

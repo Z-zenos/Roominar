@@ -2,8 +2,8 @@ from firebase_admin import messaging
 from firebase_admin.exceptions import FirebaseError
 from sqlmodel import select
 
-from backend.db.database import SessionLocal
 from backend.models.user_notification_token import UserNotificationToken
+from backend.utils.database import transaction_scope
 
 
 async def validate_fcm_token(token: str) -> bool:
@@ -27,8 +27,7 @@ async def validate_fcm_token(token: str) -> bool:
 
 async def cleanup_invalid_tokens():
     """Remove invalid FCM tokens from the database"""
-    db = SessionLocal()
-    try:
+    with transaction_scope(use_master=True) as db:
         tokens = db.exec(select(UserNotificationToken)).all()
 
         for token in tokens:
@@ -37,5 +36,3 @@ async def cleanup_invalid_tokens():
                 db.delete(token)
 
         db.commit()
-    finally:
-        db.close()

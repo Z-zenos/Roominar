@@ -1,50 +1,54 @@
-from sqlmodel import Session, select, text
+from sqlmodel import Session, func, select
 
+from backend.core.constants import EventStatusCode, TagAssociationEntityCode
+from backend.core.simple_cache import CacheKeys, cached_response
 from backend.models.event import Event
-from backend.models.target import Target
+from backend.models.organization import Organization
+from backend.models.tag import Tag
+from backend.models.tag_association import TagAssociation
+from backend.utils.database import transaction_scope
 
 
-async def listing_related_events(db: Session, slug: str):
-    targets = (
-        db.exec(
-            select(Target.industry_codes, Target.job_type_codes)
-            .select_from(Event)
-            .where(Event.slug == slug)
-            .join(Target, Target.id == Event.target_id)
-        )
-        .mappings()
-        .one_or_none()
-    )
+@cached_response(
+    cache_key=CacheKeys.EVENTS_RELATED,
+    ttl=600,  # 10 minutes
+    include_user=False,
+    include_params=True,
+)
+def listing_related_events(db: Session, slug: str):
+    """Get events related to the given event by slug"""
 
-    if not targets:
-        return []
+    with transaction_scope() as session:
+        # First get the event by slug
+        main_event = session.exec(select(Event).where(Event.slug == slug)).first()
 
-    events = (
-        db.exec(
-            text(
-                f"""
-                SELECT e.id, e.slug, e.cover_image_url, e.name, e.start_at
-                FROM events e
-                JOIN targets t ON t.id = e.target_id
-                WHERE e.slug != '{slug}'
-                ORDER BY (
-                    (
-                        SELECT COUNT(*)
-                        FROM unnest(t.industry_codes) AS industry_code
-                        WHERE industry_code = ANY(ARRAY{targets.industry_codes})
-                    ) +
-                    (
-                        SELECT COUNT(*)
-                        FROM unnest(t.job_type_codes) AS job_type_code
-                        WHERE job_type_code = ANY(ARRAY{targets.job_type_codes})
-                    )
-                ) DESC
-                LIMIT 6;
-            """
+        if not main_event:
+            return []
+
+        # Get related events by same organization, excluding the main event
+        related_events = (
+            session.exec(
+                select(
+                    Event.id,
+                    Event.slug,
+                    Event.name,
+                    Event.start_at,
+                    Event.end_at,
+                    Event.cover_image_url,
+                    Organization.name.label("organization_name"),
+                )
+                .join(Organization, Event.organization_id == Organization.id)
+                .where(
+                    Event.organization_id == main_event.organization_id,
+                    Event.id != main_event.id,
+                    Event.published_at.isnot(None),
+                    Event.status == EventStatusCode.PUBLIC,
+                )
+                .order_by(Event.start_at)
+                .limit(5)
             )
+            .mappings()
+            .all()
         )
-        .mappings()
-        .all()
-    )
 
-    return events
+        return list(related_events)

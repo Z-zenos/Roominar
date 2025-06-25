@@ -32,6 +32,35 @@ class Settings(BaseSettings):
     READ_DB_PASSWORD: Optional[str]
     READ_DATABASE_URI: Optional[PostgresDsn | str] = None
 
+    # API Performance & Caching Configuration
+    REDIS_CACHE_TTL_DEFAULT: int = 300  # 5 minutes
+    REDIS_CACHE_TTL_EVENTS: int = 600  # 10 minutes for events
+    REDIS_CACHE_TTL_TRENDING: int = 900  # 15 minutes for trending
+    REDIS_CACHE_TTL_STATIC: int = 3600  # 1 hour for static data
+    REDIS_CACHE_TTL_USER_DATA: int = 1800  # 30 minutes for user data
+
+    # Rate Limiting Configuration
+    RATE_LIMIT_REQUESTS_PER_MINUTE: int = 100
+    RATE_LIMIT_BURST_SIZE: int = 200
+    RATE_LIMIT_SLIDING_WINDOW_SIZE: int = 60  # seconds
+
+    # API Performance Settings
+    API_RESPONSE_TIMEOUT: int = 30  # seconds
+    MAX_CONCURRENT_REQUESTS: int = 1000
+    REQUEST_BATCH_SIZE: int = 50
+    QUERY_BATCH_SIZE: int = 100
+
+    # Connection Pool Optimization
+    DB_POOL_SIZE: int = 20
+    DB_MAX_OVERFLOW: int = 30
+    DB_POOL_RECYCLE: int = 3600
+    DB_POOL_TIMEOUT: int = 10
+
+    # Async Processing Configuration
+    ASYNC_WORKER_COUNT: int = 4
+    ASYNC_QUEUE_SIZE: int = 1000
+    BACKGROUND_TASK_TIMEOUT: int = 300  # 5 minutes
+
     # Auth config
     ALGORITHM: Optional[str]
     SECRET_KEY: Optional[str]

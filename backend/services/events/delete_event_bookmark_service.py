@@ -1,41 +1,39 @@
-from sqlmodel import Session, select, update
+from sqlmodel import Session, select
 
-from backend.core.constants import UserActionTypeCode
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
-from backend.models import Bookmark, User
-from backend.models.event import Event
-from backend.models.user_action import UserAction
+from backend.models.bookmark import Bookmark
+from backend.models.user import User
+from backend.utils.database import transaction_scope
 
 
-async def delete_event_bookmark(db: Session, current_user: User, event_id: int):
-    bookmark = db.exec(
-        select(Bookmark).where(
-            Bookmark.user_id == current_user.id, Bookmark.event_id == event_id
-        )
-    ).one_or_none()
+def delete_event_bookmark(db: Session, current_user: User, event_id: int):
+    """Delete an event bookmark"""
 
-    if not bookmark:
-        raise BadRequestException(
-            ErrorCode.ERR_BOOKMARK_NOT_FOUND, ErrorMessage.ERR_BOOKMARK_NOT_FOUND
-        )
-
-    try:
-        db.delete(bookmark)
-        db.add(
-            UserAction(
-                user_id=current_user.id,
-                event_id=event_id,
-                action_type=UserActionTypeCode.UNBOOKMARK,
+    with transaction_scope() as session:
+        # Find the bookmark
+        bookmark = session.exec(
+            select(Bookmark).where(
+                Bookmark.user_id == current_user.id, Bookmark.event_id == event_id
             )
-        )
-        db.exec(
-            update(Event)
-            .where(Event.id == event_id)
-            .values(bookmark_count=Event.bookmark_count - 1)
-        )
-        db.commit()
+        ).first()
 
-    except Exception as e:
-        db.rollback()
-        raise e
+        if not bookmark:
+            raise BadRequestException(
+                ErrorCode.ERR_BOOKMARK_NOT_FOUND, ErrorMessage.ERR_BOOKMARK_NOT_FOUND
+            )
+
+        # Delete the bookmark
+        session.delete(bookmark)
+        session.commit()
+
+        # Invalidate related caches
+        from backend.core.simple_cache import (
+            invalidate_event_caches,
+            invalidate_user_caches,
+        )
+
+        invalidate_event_caches(event_id)
+        invalidate_user_caches(current_user.id)
+
+        return True

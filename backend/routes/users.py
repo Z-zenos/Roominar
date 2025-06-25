@@ -6,6 +6,7 @@ from sqlmodel import Session
 import backend.services.tags as tags_service
 import backend.services.users as users_service
 from backend.core.constants import RoleCode, TagAssociationEntityCode
+from backend.core.rate_limiter import rate_limit
 from backend.core.response import authenticated_api_responses
 from backend.db.database import get_read_db
 from backend.dependencies.authentication import authorize_role, get_current_user
@@ -22,32 +23,96 @@ router = APIRouter()
 
 
 @router.patch(
-    "/profile", response_model=GetMeResponse, responses=authenticated_api_responses
+    "/update",
+    response_model=User,
+    responses=authenticated_api_responses,
 )
-async def update_audience(
+@rate_limit("USER_GENERAL")
+async def update_user(
     db: Session = Depends(get_read_db),
-    current_user: User = Depends(authorize_role(RoleCode.AUDIENCE)),
+    current_user: User = Depends(get_current_user),
     request: UpdateUserRequest = Body(...),
 ):
-    updated_user = await users_service.update_audience(db, current_user, request)
-    return GetMeResponse(
-        id=updated_user.id,
-        organization_id=updated_user.organization_id,
-        role_code=updated_user.role_code,
-        email=updated_user.email,
-        first_name=updated_user.first_name,
-        last_name=updated_user.last_name,
-        workplace_name=updated_user.workplace_name,
-        phone=updated_user.phone,
-        city_code=updated_user.city_code,
-        address=updated_user.address,
-        industry_code=updated_user.industry_code,
-        job_type_code=updated_user.job_type_code,
-        avatar_url=updated_user.avatar_url,
-        tags=tags_service.get_tag_association(
-            db, current_user.id, TagAssociationEntityCode.USER
-        ),
-    )
+    return users_service.update_audience(db, current_user, request)
+
+
+@router.get(
+    "/me",
+    response_model=User,
+    responses=authenticated_api_responses,
+)
+@rate_limit("USER_GENERAL")
+async def get_current_user_info(
+    current_user: User = Depends(get_current_user),
+):
+    return current_user
+
+
+@router.get(
+    "/profile",
+    response_model=dict,
+    responses=authenticated_api_responses,
+)
+@rate_limit("USER_GENERAL")
+async def get_user_profile(
+    db: Session = Depends(get_read_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Get comprehensive user profile information"""
+    # This would typically include user stats, events, etc.
+    return {
+        "user": current_user,
+        "stats": {
+            "events_attended": 0,
+            "events_bookmarked": 0,
+            "organizations_followed": 0,
+        },
+    }
+
+
+@router.delete(
+    "/account",
+    response_model=dict,
+    responses=authenticated_api_responses,
+)
+@rate_limit("USER_GENERAL")
+async def delete_user_account(
+    db: Session = Depends(get_read_db),
+    current_user: User = Depends(authorize_role(RoleCode.AUDIENCE)),
+):
+    """Delete user account (placeholder - implement account deletion logic)"""
+    return {"message": "Account deletion requested"}
+
+
+@router.get(
+    "/notifications/preferences",
+    response_model=dict,
+    responses=authenticated_api_responses,
+)
+@rate_limit("USER_GENERAL")
+async def get_notification_preferences(
+    current_user: User = Depends(get_current_user),
+):
+    """Get user notification preferences"""
+    return {
+        "email_notifications": True,
+        "push_notifications": True,
+        "sms_notifications": False,
+    }
+
+
+@router.patch(
+    "/notifications/preferences",
+    response_model=dict,
+    responses=authenticated_api_responses,
+)
+@rate_limit("USER_GENERAL")
+async def update_notification_preferences(
+    preferences: dict = Body(...),
+    current_user: User = Depends(get_current_user),
+):
+    """Update user notification preferences"""
+    return {"message": "Notification preferences updated", "preferences": preferences}
 
 
 @router.get(

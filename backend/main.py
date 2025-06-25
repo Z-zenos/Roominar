@@ -18,14 +18,22 @@ from backend.core.exception import (
     BadRequestException,
     UnauthorizedException,
 )
+from backend.core.rate_limiter import RateLimitMiddleware, rate_limiter
 from backend.core.response import (
     AccessDeniedResponse,
     BadRequestResponse,
     UnauthorizedResponse,
 )
+from backend.core.simple_cache import cache
+from backend.db.database import check_database_health
 from backend.routes.router import api_router
+from backend.utils.async_optimizer import async_optimizer, pool_manager
 
-app = FastAPI(title="Roominar", openapi_url="/api/v1/openapi.json")
+app = FastAPI(
+    title="Roominar",
+    openapi_url="/api/v1/openapi.json",
+    description="Optimized Event Management API with advanced caching and rate limiting",
+)
 
 # ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
 # ssl_context.load_cert_chain(
@@ -34,6 +42,9 @@ app = FastAPI(title="Roominar", openapi_url="/api/v1/openapi.json")
 
 os.environ["TZ"] = "Asia/Ho_Chi_Minh"
 time.tzset()
+
+# Add rate limiting middleware
+app.add_middleware(RateLimitMiddleware, rate_limiter=rate_limiter)
 
 app.add_middleware(
     CORSMiddleware,
@@ -60,7 +71,34 @@ celery = Celery(
 
 @app.get("/healthcheck")
 async def healthcheck():
-    return {"status": "OK"}
+    db_health = check_database_health()
+    overall_status = (
+        "OK"
+        if all(db["status"] == "healthy" for db in db_health.values())
+        else "DEGRADED"
+    )
+
+    return {"status": overall_status, "database": db_health, "timestamp": time.time()}
+
+
+@app.get("/performance-stats")
+async def get_performance_stats():
+    """Get comprehensive performance statistics."""
+    try:
+        from backend.utils.query_optimizer import get_performance_stats
+
+        db_stats = get_performance_stats()
+    except ImportError:
+        db_stats = {"error": "Query optimizer not available"}
+
+    return {
+        "database": db_stats,
+        "cache": cache.get_stats(),
+        "rate_limiter": rate_limiter.get_stats(),
+        "async_optimizer": async_optimizer.get_stats(),
+        "connection_pools": pool_manager.get_pool_status(),
+        "timestamp": time.time(),
+    }
 
 
 clients = {}

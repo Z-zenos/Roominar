@@ -1,4 +1,5 @@
 from datetime import date, datetime
+from typing import Optional
 
 from firebase_admin import messaging
 from sqlmodel import Session, func, select
@@ -7,28 +8,78 @@ from backend.core.config import logger
 from backend.core.constants import Lang, NotificationTypeCode
 from backend.core.firebase import get_firebase_app
 from backend.core.notification_message import NOTIFICATION_MESSAGES
-from backend.db.database import SessionLocal
+from backend.core.simple_cache import CacheKeys, cached_response
 from backend.models.notification import Notification
 from backend.models.user import User
 from backend.models.user_notification_token import UserNotificationToken
 from backend.schemas.notification import ListingNotificationsQueryParams
-from backend.utils.database import save
+from backend.utils.database import save_and_commit, transaction_scope
 
 
 class NotificationService:
     @staticmethod
     def push_notification(
-        db: Session,
-        sender: User | None,
         receiver: User,
         type_code: NotificationTypeCode,
+        sender: Optional[User] = None,
         lang: Lang = "vi",
-        action_url: str = None,
+        action_url: Optional[str] = None,
+        db: Optional[Session] = None,
         **kwargs,
     ) -> None:
+        """
+        Push notification to user with proper session management
+
+        Args:
+            receiver: User receiving the notification
+            type_code: Type of notification
+            sender: User sending the notification (optional)
+            lang: Language for the notification
+            action_url: URL for notification action
+            db: Optional database session (if None, creates new session)
+            **kwargs: Additional parameters for notification content
+        """
+        if not receiver or not type_code:
+            raise ValueError("receiver and type_code are required")
+
+        # If no database session provided, create a new one
+        if db is None:
+            with transaction_scope(use_master=True) as session:
+                NotificationService._send_notification_internal(
+                    db=session,
+                    sender=sender,
+                    receiver=receiver,
+                    type_code=type_code,
+                    lang=lang,
+                    action_url=action_url,
+                    **kwargs,
+                )
+        else:
+            # Use provided session
+            NotificationService._send_notification_internal(
+                db=db,
+                sender=sender,
+                receiver=receiver,
+                type_code=type_code,
+                lang=lang,
+                action_url=action_url,
+                **kwargs,
+            )
+
+    @staticmethod
+    def _send_notification_internal(
+        db: Session,
+        receiver: User,
+        type_code: NotificationTypeCode,
+        sender: Optional[User] = None,
+        lang: Lang = "vi",
+        action_url: Optional[str] = None,
+        **kwargs,
+    ) -> None:
+        """Internal method to send notification with existing session"""
         notification_id = None
         try:
-            # First ensure Firebase is initialized
+            # Ensure Firebase is initialized
             get_firebase_app()
 
             # Build multilingual message
@@ -38,32 +89,37 @@ class NotificationService:
                 **kwargs,
             )
 
-            # Save to DB first - we want to keep the notification even if FCM fails
+            # Save to DB first
             notification = Notification(
-                sender_id=None if sender is None else sender.id,
+                sender_id=sender.id if sender else None,
                 receiver_id=receiver.id,
                 content=dict(kwargs),
                 type_code=type_code,
                 action_url=action_url,
+                created_by=sender.id if sender else receiver.id,
+                updated_by=sender.id if sender else receiver.id,
             )
-            notification = save(db, notification)
+            notification = save_and_commit(db, notification)
             notification_id = notification.id
 
-            # Send push to all tokens
-            user_notification_tokens = db.exec(
+            # Invalidate user notification cache after new notification
+            from backend.core.simple_cache import invalidate_user_caches
+
+            invalidate_user_caches(receiver.id)
+
+            # Get user FCM tokens
+            user_tokens = db.exec(
                 select(UserNotificationToken.fcm_token).where(
                     UserNotificationToken.user_id == receiver.id
                 )
             ).all()
 
-            # Extract token strings from result
-            token_strings = [
-                token[0] for token in user_notification_tokens if token and token[0]
-            ]
+            # Extract token strings
+            token_strings = [token for token in user_tokens if token]
 
             if token_strings:
                 try:
-                    NotificationService.__send_notification(
+                    NotificationService._send_fcm_notification(
                         title=message.get("title", ""),
                         body=message.get("body", ""),
                         tokens=token_strings,
@@ -73,9 +129,8 @@ class NotificationService:
                         },
                     )
                 except Exception as e:
-                    # Log error but don't roll back - notification is still saved in DB
                     logger.error(
-                        f"Failed to send push notification to user {receiver.id}: {str(e)}"
+                        f"Failed to send FCM notification to user {receiver.id}: {str(e)}"
                     )
             else:
                 logger.info(
@@ -83,227 +138,285 @@ class NotificationService:
                 )
 
         except Exception as e:
-            # Only rollback if we haven't committed the notification yet
-            if notification_id is None:
-                db.rollback()
             logger.error(f"Error in push_notification: {str(e)}")
             raise
 
     @staticmethod
-    async def listing_notifications(
-        db: Session,
+    @cached_response(
+        cache_key="notifications:list",
+        ttl=120,  # 2 minutes for frequently changing data
+        include_user=True,
+        include_params=True,
+    )
+    def listing_notifications(
+        user_id: int,
         query_params: ListingNotificationsQueryParams,
-        user_id: int,
         lang: Lang = "vi",
+        db: Optional[Session] = None,
     ) -> list[dict]:
-        notifications = (
-            db.exec(
-                select(Notification.__table__.columns, User.avatar_url, User.id)
-                .select_from(Notification)
-                .outerjoin(User, Notification.sender_id == User.id)
+        """
+        List notifications for a user with proper session management
+        """
+
+        def _get_notifications(session: Session) -> list[dict]:
+            # Build base query
+            query = (
+                select(Notification, User.avatar_url)
+                .join(User, Notification.sender_id == User.id, isouter=True)
                 .where(Notification.receiver_id == user_id)
-                .where(
-                    Notification.is_read.is_(query_params.is_read)
-                    if query_params.is_read is not None
-                    else True
-                )
                 .order_by(Notification.created_at.desc())
-                .limit(query_params.per_page)
-                .offset((query_params.page - 1) * query_params.per_page)
-            )
-            .mappings()
-            .all()
-        )
-
-        result = []
-        for n in notifications:
-            type_code = n.type_code
-            # Parse date fields to strings before injecting to notification message
-            parsed_content = NotificationService._parse_dates_to_strings(n.content)
-            content = NotificationService.get_notification_message(
-                key=type_code,
-                lang=lang,
-                **parsed_content,  # reuse stored params with parsed dates
-            )
-            result.append(
-                {
-                    "id": n.id,
-                    "type_code": type_code,
-                    "content": content.get("body"),
-                    "is_read": n.is_read,
-                    "created_at": n.created_at,
-                    "avatar_url": n.avatar_url,
-                    "sender_id": n.sender_id,
-                    "action_url": n.action_url,
-                }
+                .limit(query_params.per_page or 20)
+                .offset(((query_params.page or 1) - 1) * (query_params.per_page or 20))
             )
 
-        return result
+            # Add read filter if specified
+            if query_params.is_read is not None:
+                query = query.where(Notification.is_read == query_params.is_read)
+
+            results = session.exec(query).all()
+
+            result = []
+            for notification, avatar_url in results:
+                # Parse date fields to strings
+                parsed_content = NotificationService._parse_dates_to_strings(
+                    notification.content or {}
+                )
+                content = NotificationService.get_notification_message(
+                    key=NotificationTypeCode(notification.type_code),
+                    lang=lang,
+                    **parsed_content,
+                )
+                result.append(
+                    {
+                        "id": notification.id,
+                        "type_code": notification.type_code,
+                        "content": content.get("body"),
+                        "is_read": notification.is_read,
+                        "created_at": notification.created_at,
+                        "avatar_url": avatar_url,
+                        "sender_id": notification.sender_id,
+                        "action_url": notification.action_url,
+                    }
+                )
+
+            return result
+
+        if db is None:
+            with transaction_scope(use_master=False) as session:
+                return _get_notifications(session)
+        else:
+            return _get_notifications(db)
 
     @staticmethod
-    async def count_notifications(
-        db: Session,
+    @cached_response(
+        cache_key="notifications:count",
+        ttl=300,  # 5 minutes
+        include_user=True,
+        include_params=True,
+    )
+    def count_notifications(
         user_id: int,
+        is_read: Optional[bool] = None,
+        db: Optional[Session] = None,
     ) -> int:
-        return (
-            db.scalar(select(func.count()).where(Notification.receiver_id == user_id))
-            or 0
-        )
+        """Count notifications for a user with caching"""
 
-    @staticmethod
-    async def mark_notification_as_read(
-        db: Session, user: User, notification_id: int
-    ) -> Notification | None:
-        try:
-            notification = db.get(Notification, notification_id)
-            if not notification:
-                return None
-
-            if notification.receiver_id != user.id:
-                raise PermissionError(
-                    "You do not have permission to access this notification."
-                )
-
-            notification.is_read = True
-            db.add(notification)
-            db.commit()
-            return notification_id
-
-        except Exception as e:
-            db.rollback()
-            raise e
-
-    @staticmethod
-    async def count_unread_notifications(db: Session, user_id: int) -> int:
-        return (
-            db.scalar(
-                select(func.count())
-                .select_from(Notification)
-                .where(
-                    Notification.receiver_id == user_id, Notification.is_read.is_(False)
-                )
+        def _count_notifications(session: Session) -> int:
+            query = select(func.count(Notification.id)).where(
+                Notification.receiver_id == user_id
             )
-            or 0
-        )
+
+            if is_read is not None:
+                query = query.where(Notification.is_read == is_read)
+
+            return session.exec(query).one()
+
+        if db is None:
+            with transaction_scope(use_master=False) as session:
+                return _count_notifications(session)
+        else:
+            return _count_notifications(db)
 
     @staticmethod
-    def __send_notification(
+    def mark_notification_as_read(
+        user: User,
+        notification_id: int,
+        db: Optional[Session] = None,
+    ) -> Optional[Notification]:
+        """Mark notification as read and invalidate cache"""
+
+        def _mark_as_read(session: Session) -> Optional[Notification]:
+            notification = session.exec(
+                select(Notification).where(
+                    Notification.id == notification_id,
+                    Notification.receiver_id == user.id,
+                )
+            ).first()
+
+            if notification and not notification.is_read:
+                notification.is_read = True
+                notification.updated_by = user.id
+                session.add(notification)
+                session.commit()
+                session.refresh(notification)
+
+                # Invalidate user notification cache
+                from backend.core.simple_cache import invalidate_user_caches
+
+                invalidate_user_caches(user.id)
+
+                return notification
+
+            return notification
+
+        if db is None:
+            with transaction_scope(use_master=True) as session:
+                return _mark_as_read(session)
+        else:
+            return _mark_as_read(db)
+
+    @staticmethod
+    @cached_response(
+        cache_key="notifications:unread_count",
+        ttl=180,  # 3 minutes for frequently updated data
+        include_user=True,
+        include_params=False,
+    )
+    def count_unread_notifications(user_id: int, db: Optional[Session] = None) -> int:
+        """Count unread notifications with caching"""
+
+        def _count_unread(session: Session) -> int:
+            return session.exec(
+                select(func.count(Notification.id)).where(
+                    Notification.receiver_id == user_id,
+                    Notification.is_read == False,
+                )
+            ).one()
+
+        if db is None:
+            with transaction_scope(use_master=False) as session:
+                return _count_unread(session)
+        else:
+            return _count_unread(db)
+
+    @staticmethod
+    def _send_fcm_notification(
         title: str,
         body: str,
         tokens: list[str],
-        data: dict = None,
-    ) -> messaging.BatchResponse:
-        """Send FCM notification with improved error handling"""
+        data: Optional[dict] = None,
+    ) -> Optional[messaging.BatchResponse]:
+        """Send FCM notification to multiple tokens"""
         if not tokens:
-            logger.warning("No FCM tokens provided for notification")
             return None
 
-        # Ensure data is properly formatted for FCM
-        if data:
-            # Convert all values to strings as FCM requires
-            data = {k: str(v) for k, v in data.items()}
-        else:
-            data = {}
-
-        message = messaging.MulticastMessage(
-            notification=messaging.Notification(title=title, body=body),
-            data=data,
-            tokens=tokens,
-        )
-
         try:
-            response = messaging.send_multicast(message)
+            # Prepare message data
+            message_data = data or {}
 
-            # Handle and log failed tokens
+            # Create multicast message
+            multicast_message = messaging.MulticastMessage(
+                notification=messaging.Notification(
+                    title=title,
+                    body=body,
+                ),
+                data=message_data,
+                tokens=tokens,
+                android=messaging.AndroidConfig(
+                    notification=messaging.AndroidNotification(
+                        click_action="FLUTTER_NOTIFICATION_CLICK",
+                        channel_id="default",
+                    )
+                ),
+                apns=messaging.APNSConfig(
+                    payload=messaging.APNSPayload(
+                        aps=messaging.Aps(
+                            sound="default",
+                            badge=1,
+                        )
+                    )
+                ),
+            )
+
+            # Send the message
+            response = messaging.send_multicast(multicast_message)
+
+            # Handle failed tokens
             if response.failure_count > 0:
                 failed_tokens = []
-                for idx, result in enumerate(response.responses):
-                    if not result.success:
-                        error = result.exception
-                        failed_tokens.append(
-                            {
-                                "token": tokens[idx],
-                                "error": str(error) if error else "Unknown error",
-                            }
+                for idx, resp in enumerate(response.responses):
+                    if not resp.success:
+                        failed_tokens.append(tokens[idx])
+                        error_code = (
+                            resp.exception.code if resp.exception else "unknown"
+                        )
+                        logger.warning(
+                            f"Failed to send notification to token {tokens[idx]}: {error_code}"
                         )
 
-                        # This token should be removed from database
-                        NotificationService._clean_invalid_token(tokens[idx])
-
-                logger.error(
-                    f"Failed to send {response.failure_count} notifications: {failed_tokens}"
-                )
+                        # Clean invalid tokens
+                        if error_code in [
+                            "registration-token-not-registered",
+                            "invalid-registration-token",
+                        ]:
+                            NotificationService._clean_invalid_token(tokens[idx])
 
             logger.info(
-                f"Successfully sent {response.success_count} of {len(tokens)} notifications"
+                f"FCM notification sent: {response.success_count} success, {response.failure_count} failed"
             )
+
             return response
 
-        except messaging.UnregisteredError:
-            logger.error("FCM tokens not registered")
-            # Invalid tokens should be removed
-            for token in tokens:
-                NotificationService._clean_invalid_token(token)
-            raise RuntimeError(
-                "Failed to send notification: Device tokens not registered"
-            )
-
         except Exception as e:
-            logger.error(f"FCM send error: {str(e)}")
-            raise RuntimeError(f"Failed to send notification: {str(e)}")
+            logger.error(f"Error sending FCM notification: {str(e)}")
+            return None
 
     @staticmethod
     def _clean_invalid_token(token: str):
         """Remove invalid FCM token from database"""
         try:
-            with SessionLocal() as db:
-                token_record = db.exec(
+            with transaction_scope(use_master=True) as session:
+                token_record = session.exec(
                     select(UserNotificationToken).where(
                         UserNotificationToken.fcm_token == token
                     )
                 ).first()
 
                 if token_record:
-                    db.delete(token_record)
-                    db.commit()
-                    logger.info(f"Removed invalid FCM token: {token[:10]}...")
+                    session.delete(token_record)
+                    session.commit()
+                    logger.info(f"Removed invalid FCM token: {token}")
+
         except Exception as e:
-            logger.error(f"Error removing invalid token: {str(e)}")
+            logger.error(f"Error cleaning invalid token {token}: {str(e)}")
 
     @staticmethod
     def _parse_dates_to_strings(content: dict) -> dict:
-        """Parse all date/datetime fields in content dict to strings for message formatting"""
-        if not content:
-            return {}
-
+        """Parse date objects to strings for message formatting"""
         parsed_content = {}
         for key, value in content.items():
-            try:
-                # Check if value is datetime or date object
-                if isinstance(value, (datetime, date)):
-                    # Format datetime objects with time, date objects without
-                    parsed_content[key] = (
-                        value.strftime("%Y-%m-%d %H:%M:%S")
-                        if isinstance(value, datetime)
-                        else value.strftime("%Y-%m-%d")
-                    )
-                else:
-                    parsed_content[key] = value
-            except Exception:
-                # If parsing fails, keep original value
+            if isinstance(value, (date, datetime)):
+                parsed_content[key] = value.strftime("%Y-%m-%d %H:%M:%S")
+            else:
                 parsed_content[key] = value
-
         return parsed_content
 
     @staticmethod
     def get_notification_message(
         key: NotificationTypeCode, lang: Lang = "vi", **kwargs
     ) -> dict:
+        """Get localized notification message"""
+        messages = NOTIFICATION_MESSAGES.get(key, {})
+        lang_messages = messages.get(lang, messages.get("vi", {}))
+
+        if not lang_messages:
+            return {"title": "Notification", "body": "You have a new notification"}
+
         try:
-            template = NOTIFICATION_MESSAGES[key][lang]
             return {
-                "title": template["title"].format(**kwargs),
-                "body": template["body"].format(**kwargs),
+                "title": lang_messages.get("title", "").format(**kwargs),
+                "body": lang_messages.get("body", "").format(**kwargs),
             }
-        except KeyError:
-            return {"title": key, "body": ""}
+        except KeyError as e:
+            logger.warning(f"Missing parameter {e} for notification {key}")
+            return {"title": "Notification", "body": "You have a new notification"}

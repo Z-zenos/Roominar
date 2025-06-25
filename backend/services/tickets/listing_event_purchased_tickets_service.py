@@ -1,29 +1,43 @@
 from sqlmodel import Session, String, cast, func, select
 
+from backend.core.simple_cache import CacheKeys, cached_response
 from backend.models.check_in import CheckIn
 from backend.models.event import Event
 from backend.models.transaction import Transaction
 from backend.models.transaction_item import TransactionItem
 from backend.models.user import User
 from backend.schemas.ticket import ListingEventPurchasedTicketsQueryParams
+from backend.utils.database import transaction_scope
 
 
-async def listing_event_purchased_tickets(
+@cached_response(
+    cache_key=CacheKeys.TICKETS_LIST,
+    ttl=300,  # 5 minutes for ticket data
+    include_user=True,
+    include_params=True,
+)
+def listing_event_purchased_tickets(
     db: Session,
     organizer: User,
     query_params: ListingEventPurchasedTicketsQueryParams,
-    event_slug: int,
+    event_slug: str,
 ):
-    filters = _build_filters(organizer, query_params, event_slug)
-    event_purchased_tickets = await _get_event_purchased_tickets(
-        db, filters, query_params
-    )
-    total = await count_event_purchased_tickets(db, filters)
+    """List purchased tickets for an event with caching"""
 
-    return event_purchased_tickets, total
+    with transaction_scope() as session:
+        filters = _build_filters(organizer, query_params, event_slug)
+
+        event_purchased_tickets = _get_event_purchased_tickets(
+            session, filters, query_params
+        )
+        total = count_event_purchased_tickets(session, filters)
+
+        return event_purchased_tickets, total
 
 
-async def count_event_purchased_tickets(db: Session, filters: list):
+def count_event_purchased_tickets(db: Session, filters: list):
+    """Count purchased tickets with filters"""
+
     query = (
         select(func.count(TransactionItem.id))
         .select_from(TransactionItem)
@@ -37,11 +51,13 @@ async def count_event_purchased_tickets(db: Session, filters: list):
     return total
 
 
-async def _get_event_purchased_tickets(
+def _get_event_purchased_tickets(
     db: Session,
     filters: list,
     query_params: ListingEventPurchasedTicketsQueryParams,
 ):
+    """Get purchased tickets with pagination"""
+
     query = (
         select(
             TransactionItem.id.label("transaction_item_id"),
@@ -55,13 +71,14 @@ async def _get_event_purchased_tickets(
         .where(*filters)
     )
 
+    # Apply pagination
     if query_params.per_page:
         query = query.limit(query_params.per_page)
-    if query_params.page:
+    if query_params.page and query_params.per_page:
         query = query.offset(query_params.per_page * (query_params.page - 1))
 
     event_purchased_tickets = db.exec(query).mappings().all()
-    return event_purchased_tickets
+    return list(event_purchased_tickets)
 
 
 def _build_filters(
@@ -69,16 +86,27 @@ def _build_filters(
     query_params: ListingEventPurchasedTicketsQueryParams,
     event_slug: str | None = None,
 ):
+    """Build query filters for purchased tickets"""
+
     filters = [
         Event.organization_id == organizer.organization_id,
-        Event.slug == event_slug,
     ]
+
+    # Add event slug filter if provided
+    if event_slug:
+        filters.append(Event.slug == event_slug)
+
+    # Add keyword search filter
     if query_params.keyword:
         filters.append(
             cast(TransactionItem.id, String).ilike(f"%{query_params.keyword}%")
         )
 
-    if query_params.is_checked_in:
-        filters.append(CheckIn.created_at.isnot(None))
+    # Add check-in status filter
+    if query_params.is_checked_in is not None:
+        if query_params.is_checked_in:
+            filters.append(CheckIn.created_at.isnot(None))
+        else:
+            filters.append(CheckIn.created_at.is_(None))
 
     return filters

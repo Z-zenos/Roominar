@@ -11,7 +11,7 @@ from backend.models.user_action import UserAction
 from backend.schemas.event import SearchEventsQueryParams
 
 
-async def listing_trending_events(
+def listing_trending_events(
     db: Session, user: User | None, query_params: SearchEventsQueryParams
 ):
     # Base query for eligible events

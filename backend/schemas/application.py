@@ -62,3 +62,11 @@ class CreateApplicationRequest(BaseModel):
 
 class CreateApplicationCheckoutSessionResponse(BaseModel):
     client_secret: str | None = None
+
+
+class CancelApplicationRequest(BaseModel):
+    """Empty request body for cancelling an application"""
+
+
+class CreateApplicationCheckoutSessionRequest(CreateApplicationRequest):
+    """Request schema for creating a checkout session, inheriting all fields from CreateApplicationRequest"""
