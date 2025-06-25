@@ -141,7 +141,7 @@ export default function Drawer({ title, description, children }: DrawerProps) {
           </DrawerHeader>
           <div className='p-4 pb-0'>{children}</div>
           <DrawerFooter>
-            <DrawerClose asChild>Close</DrawerClose>
+            <DrawerClose asChild>Đóng</DrawerClose>
           </DrawerFooter>
         </div>
       </DrawerContent>

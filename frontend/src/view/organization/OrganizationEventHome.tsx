@@ -467,7 +467,7 @@ function OrganizationEventHome({ slug }: OrganizationEventHomeProps) {
                   // }
                   disabled={true}
                 >
-                  More event +
+                  Nhiều sự kiện hơn +
                 </button>
               </div>
             </div>
@@ -483,7 +483,7 @@ function OrganizationEventHome({ slug }: OrganizationEventHomeProps) {
                   )}
                 >
                   <GiPartyPopper />
-                  Related Events
+                  Sự kiện liên quan
                 </h3>
               )}
 

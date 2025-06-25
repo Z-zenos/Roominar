@@ -58,13 +58,13 @@ import { SheetTrigger } from '@/src/component/common/Sheet';
 import { useRightSidebar } from '@/src/contexts/RightSidebarContext';
 
 const columns = [
-  { name: 'Apply Time', uid: 'apply_time', sortable: false },
-  { name: 'User Name', uid: 'name', sortable: false },
-  { name: 'Event Name', uid: 'event_name', sortable: false },
-  { name: 'Phone', uid: 'phone', sortable: false },
-  { name: 'Industry / Job', uid: 'industry_job', sortable: false },
-  { name: 'Checkin Status', uid: 'checkin', sortable: false },
-  { name: 'Actions', uid: 'actions' },
+  { name: 'Thời gian đăng ký', uid: 'apply_time', sortable: false },
+  { name: 'Tên người dùng', uid: 'name', sortable: false },
+  { name: 'Tên sự kiện', uid: 'event_name', sortable: false },
+  { name: 'Số điện thoại', uid: 'phone', sortable: false },
+  { name: 'Ngành nghề / Công việc', uid: 'industry_job', sortable: false },
+  { name: 'Trạng thái checkin', uid: 'checkin', sortable: false },
+  { name: 'Hành động', uid: 'actions' },
 ];
 
 export default function AttendeeDataTable() {
@@ -284,7 +284,7 @@ export default function AttendeeDataTable() {
                 <FormInput
                   name='keyword'
                   leftIcon={<IoSearchOutline size={20} />}
-                  placeholder='Search keyword related to attendee...'
+                  placeholder='Tìm kiếm người dùng, email, số điện thoại...'
                   className='w-full'
                   control={form.control}
                   onKeyDown={debounce(
@@ -299,7 +299,7 @@ export default function AttendeeDataTable() {
                 name='industryCode'
                 control={form.control}
                 onValueChange={handleSearch}
-                title='Industry'
+                title='Ngành nghề'
               />
               <FormCombobox
                 options={optionify(JobTypeCode)}
@@ -307,7 +307,7 @@ export default function AttendeeDataTable() {
                 name='jobTypeCode'
                 control={form.control}
                 onValueChange={handleSearch}
-                title='Job type'
+                title='Công việc'
               />
 
               <FormDateRangePicker
@@ -339,19 +339,9 @@ export default function AttendeeDataTable() {
                     setIsWithFilterData(value);
                   }}
                 >
-                  With Filter Data
+                  Với dữ liệu lọc
                 </Checkbox>
               </div>
-              {/* {Array.from(selectedKeys).length > 1 && (
-                <Button
-                  type='button'
-                  className='text-white'
-                  radius='sm'
-                  size='md'
-                >
-                  Multi Check In
-                </Button>
-              )} */}
             </div>
           </div>
         </form>
@@ -380,7 +370,7 @@ export default function AttendeeDataTable() {
           )}
         </TableHeader>
         <TableBody
-          emptyContent={isFetching ? 'Loading...' : 'No data found'}
+          emptyContent={isFetching ? 'Loading...' : 'Không tìm thấy dữ liệu'}
           items={data?.data ?? []}
         >
           {(item) => (
@@ -396,8 +386,8 @@ export default function AttendeeDataTable() {
       <div className='py-2 px-2 flex justify-between items-center'>
         <span className='w-[30%] text-small text-default-400'>
           {selectedKeys === 'all'
-            ? 'All items selected'
-            : `${selectedKeys?.size ?? 0} of ${data?.data?.length} selected`}
+            ? 'Đã chọn tất cả'
+            : `Đã chọn ${selectedKeys?.size ?? 0} trong số ${data?.data?.length} đã chọn`}
         </span>
         {pageCount > 1 && (
           <ReactPaginate

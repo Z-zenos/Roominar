@@ -70,7 +70,7 @@ export default function ConfirmDialog({
                   onPress={onClose}
                   radius='sm'
                 >
-                  Close
+                  Đóng
                 </Button>
                 <Button
                   color='primary'

@@ -256,7 +256,7 @@ async def generate_event_ai(
     return await events_service.generate_event_ai(db, organizer, request)
 
 
-@router.post("/{event_id}", response_model=int, responses=authenticated_api_responses)
+@router.post("/{event_id}", response_model=str, responses=authenticated_api_responses)
 async def publish_event(
     db: Session = Depends(get_read_db),
     organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),

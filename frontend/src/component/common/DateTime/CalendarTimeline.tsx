@@ -285,7 +285,7 @@ export default function CalendarTimeline({
                       setIsPopoverOpen(false);
                     }}
                   >
-                    Close
+                    Đóng
                   </button>
                 </div>
               </div>

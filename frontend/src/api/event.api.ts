@@ -109,11 +109,11 @@ export const useDeleteEventBookmarkMutation = <T>(
 };
 
 export const usePublishEventMutation = <T>(
-  options?: SWRMutationConfiguration<number, T>,
+  options?: SWRMutationConfiguration<string, T>,
 ) => {
   const api = useApi();
   const key = 'publish-event';
-  return useSWRMutation<number, T, typeof key, EventsApiPublishEventRequest>(
+  return useSWRMutation<string, T, typeof key, EventsApiPublishEventRequest>(
     key,
     async (_: string, { arg }) => await api.events.publishEvent(arg),
     options,

@@ -160,7 +160,7 @@ function CreateTargetForm({ onCreate }: CreateTargetFormProps) {
           isDisabled={!form.formState.isValid}
           type='submit'
         >
-          Create Target
+          Tạo mục tiêu
         </Button>
       </form>
     </Form>

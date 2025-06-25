@@ -590,21 +590,21 @@ function TableActionMenu({
         onClick={() => deleteTableColumnAtSelection()}
         data-test-id='table-delete-columns'
       >
-        <span className='text'>Delete column</span>
+        <span className='text'>Xoá cột</span>
       </button>
       <button
         className='item'
         onClick={() => deleteTableRowAtSelection()}
         data-test-id='table-delete-rows'
       >
-        <span className='text'>Delete row</span>
+        <span className='text'>Xoá dòng</span>
       </button>
       <button
         className='item'
         onClick={() => deleteTableAtSelection()}
         data-test-id='table-delete'
       >
-        <span className='text'>Delete table</span>
+        <span className='text'>Xoá bảng</span>
       </button>
       <hr />
       <button

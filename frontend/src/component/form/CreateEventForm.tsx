@@ -68,6 +68,7 @@ import { RiRobot2Line } from 'react-icons/ri';
 import { AiOutlineSend } from 'react-icons/ai';
 import { exportHTML } from '../editor/components/editor/utils/html';
 import { useRouter } from 'next/navigation';
+import useWindowDimensions from '@/src/hooks/useWindowDimension';
 
 const LazyMap = dynamic(() => import('../common/Map/Map'), {
   ssr: false,
@@ -113,6 +114,7 @@ const UpdateTicketForm = dynamic(() => import('./UpdateTicketForm'), {
 export default function CreateEventForm() {
   const t = useTranslations('form');
   const router = useRouter();
+  const { width } = useWindowDimensions();
 
   const { data: draftEvent } = useGetDraftEventQuery(true);
   const { data: surveyOptions } = useListingSurveyOptionsQuery();
@@ -238,9 +240,9 @@ export default function CreateEventForm() {
 
   const { trigger: publishEvent, isMutating: isPublishing } =
     usePublishEventMutation({
-      onSuccess() {
+      onSuccess(slug: string) {
         toast.success('Đã công bố sự kiện ra cộng đồng!');
-        router.push(`/events/${draftEvent?.slug}/detail`);
+        router.push(`/organization/events/${slug}/home`);
       },
       onError: handleApiError,
     });
@@ -652,6 +654,43 @@ export default function CreateEventForm() {
               </FormInstructions>
             </div>
 
+            {width <= 1200 && (
+              <div className='col-span-2'>
+                <main className='flex flex-col items-center justify-between'>
+                  <LexicalEditor
+                    content={form.getValues('description')}
+                    onChange={(_, lexicalEditor) => {
+                      const htmlContent = exportHTML(lexicalEditor);
+                      form.setValue('description', htmlContent);
+                    }}
+                    onAutoGenerate={() =>
+                      generateEventAI({
+                        generateEventAIRequest: {
+                          name: form.getValues('name'),
+                          startAt: form.getValues('startAt'),
+                          endAt: form.getValues('endAt'),
+                          applicationStartAt:
+                            form.getValues('applicationStartAt'),
+                          applicationEndAt: form.getValues('applicationEndAt'),
+                          isOnline: form.getValues('isOnline') ?? false,
+                          isOffline: form.getValues('isOffline') ?? false,
+                          organizeAddress: form.getValues('organizeAddress'),
+                          price: tickets[tickets.length - 1]?.price ?? 0,
+                          tags: form.getValues('tags'),
+                          prompt: form.getValues('prompt'),
+                        },
+                      })
+                    }
+                    isGenerating={isGenerating}
+                  />
+                  <FormMessage
+                    label='description'
+                    className='mt-2'
+                  />
+                </main>
+              </div>
+            )}
+
             {/* === EVENT FORMAT & ADDRESS === */}
             <h3 className='col-span-2 text-md p-3 border-l-4 border-l-primary'>
               Hình thức sự kiện & địa điểm tổ chức ⛩️
@@ -913,75 +952,78 @@ export default function CreateEventForm() {
             </div>
           </div>
 
-          <div className='col-span-6 p-2'>
-            <main className='flex flex-col items-center justify-between'>
-              <LexicalEditor
-                content={form.getValues('description')}
-                onChange={(_, lexicalEditor) => {
-                  const htmlContent = exportHTML(lexicalEditor);
-                  form.setValue('description', htmlContent);
-                }}
-                onAutoGenerate={() =>
-                  generateEventAI({
-                    generateEventAIRequest: {
-                      name: form.getValues('name'),
-                      startAt: form.getValues('startAt'),
-                      endAt: form.getValues('endAt'),
-                      applicationStartAt: form.getValues('applicationStartAt'),
-                      applicationEndAt: form.getValues('applicationEndAt'),
-                      isOnline: form.getValues('isOnline') ?? false,
-                      isOffline: form.getValues('isOffline') ?? false,
-                      organizeAddress: form.getValues('organizeAddress'),
-                      price: tickets[tickets.length - 1]?.price ?? 0,
-                      tags: form.getValues('tags'),
-                      prompt: form.getValues('prompt'),
-                    },
-                  })
-                }
-                isGenerating={isGenerating}
-              />
-              <FormMessage
-                label='description'
-                className='mt-2'
-              />
-            </main>
-
-            <div className='p-3 bg-white mt-4 shadow-md rounded-md'>
-              <div className={clsx(styles.flexStart, 'mb-2')}>
-                <h3 className='text-nm font-medium'>AI assistants</h3>
-                <RiRobot2Line size={20} />
-              </div>
-              <div className='relative'>
-                <FormTextarea
-                  id='prompt'
-                  name='prompt'
-                  placeholder='What do you want to ask AI?'
-                  control={form.control}
-                  showError={true}
-                  classNames={{
-                    label: 'text-nm font-medium',
+          {width > 1200 && (
+            <div className='col-span-6 p-2'>
+              <main className='flex flex-col items-center justify-between'>
+                <LexicalEditor
+                  content={form.getValues('description')}
+                  onChange={(_, lexicalEditor) => {
+                    const htmlContent = exportHTML(lexicalEditor);
+                    form.setValue('description', htmlContent);
                   }}
-                  rows={5}
+                  onAutoGenerate={() =>
+                    generateEventAI({
+                      generateEventAIRequest: {
+                        name: form.getValues('name'),
+                        startAt: form.getValues('startAt'),
+                        endAt: form.getValues('endAt'),
+                        applicationStartAt:
+                          form.getValues('applicationStartAt'),
+                        applicationEndAt: form.getValues('applicationEndAt'),
+                        isOnline: form.getValues('isOnline') ?? false,
+                        isOffline: form.getValues('isOffline') ?? false,
+                        organizeAddress: form.getValues('organizeAddress'),
+                        price: tickets[tickets.length - 1]?.price ?? 0,
+                        tags: form.getValues('tags'),
+                        prompt: form.getValues('prompt'),
+                      },
+                    })
+                  }
+                  isGenerating={isGenerating}
                 />
-                <Button
-                  variant='solid'
-                  className='absolute top-2 right-2'
-                  // onClick={() => {
-                  //   generateEventAI(form.getValues('prompt'));
-                  // }}
-                  size='sm'
-                  radius='sm'
-                  color='primary'
-                >
-                  <AiOutlineSend className='w-4 h-4' />
-                </Button>
-              </div>
+                <FormMessage
+                  label='description'
+                  className='mt-2'
+                />
+              </main>
 
-              <div className='min-h-[500px] max-h-[1000px] overflow-y-auto flex flex-col items-center justify-center mt-4'>
-                AI Response (Comming soon)
+              <div className='p-3 bg-white mt-4 shadow-md rounded-md'>
+                <div className={clsx(styles.flexStart, 'mb-2')}>
+                  <h3 className='text-nm font-medium'>AI assistants</h3>
+                  <RiRobot2Line size={20} />
+                </div>
+                <div className='relative'>
+                  <FormTextarea
+                    id='prompt'
+                    name='prompt'
+                    placeholder='What do you want to ask AI?'
+                    control={form.control}
+                    showError={true}
+                    classNames={{
+                      label: 'text-nm font-medium',
+                    }}
+                    rows={5}
+                  />
+                  <Button
+                    variant='solid'
+                    className='absolute top-2 right-2'
+                    // onClick={() => {
+                    //   generateEventAI(form.getValues('prompt'));
+                    // }}
+                    size='sm'
+                    radius='sm'
+                    color='primary'
+                  >
+                    <AiOutlineSend className='w-4 h-4' />
+                  </Button>
+                </div>
+
+                <div className='min-h-[500px] max-h-[1000px] overflow-y-auto flex flex-col items-center justify-center mt-4'>
+                  AI Response (Comming soon)
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </form>
       </Form>
       <SheetOverlay>

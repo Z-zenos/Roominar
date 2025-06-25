@@ -2,6 +2,7 @@ from datetime import datetime
 
 from geoalchemy2.shape import from_shape
 from shapely.geometry import Point
+from slugify import slugify
 from sqlmodel import Session, delete, select
 
 from backend.core.constants import EventStatusCode, TagAssociationEntityCode
@@ -37,6 +38,7 @@ async def publish_event(
         event.status = EventStatusCode.PUBLIC
         event.updated_at = datetime.now()
         event.updated_by = organizer.id
+        event.slug = slugify(event.name)
 
         if request.lat and request.lng:
             # event.coordinate = f"POINT({request.lng} {request.lat})"
@@ -97,7 +99,7 @@ async def publish_event(
         db.flush()
         save(db, event)
 
-        return event.id
+        return event.slug
 
     except Exception as e:
         db.rollback()

@@ -157,7 +157,7 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
       >
         <NavbarContent>
           <NavbarMenuToggle
-            aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-label={isMenuOpen ? 'Đóng menu' : 'Mở menu'}
             className='sm:hidden'
           />
           {hasLogo && (

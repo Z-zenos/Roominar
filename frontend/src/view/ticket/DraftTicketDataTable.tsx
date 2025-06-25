@@ -164,7 +164,7 @@ export default function DraftTicketDataTable({
               onDeleteTicket?.();
               onClose();
             }}
-            confirmLabel='Delete'
+            confirmLabel='Xoá'
             isLoading={isDeletingTicket}
           />
         </div>
