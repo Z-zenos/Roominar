@@ -16,6 +16,11 @@ from backend.dependencies.authentication import (
 )
 from backend.models import User
 from backend.schemas.check_in import ManualCheckInRequest, QRCheckInRequest
+from backend.schemas.comment import (
+    CommentEventRequest,
+    ListingEventCommentsQueryParams,
+    ListingEventCommentsResponse,
+)
 from backend.schemas.event import (
     CreateDraftEventRequest,
     GenerateEventAIRequest,
@@ -277,6 +282,44 @@ async def listing_tickets_of_event(
     event_id: int = None,
 ):
     return await tickets_service.listing_tickets_of_event(db, organizer, event_id)
+
+
+@router.get(
+    "/{event_id}/comments",
+    response_model=ListingEventCommentsResponse,
+    responses=public_api_responses,
+)
+async def listing_event_comments(
+    db: Session = Depends(get_read_db),
+    user: User = Depends(get_user_if_logged_in),
+    query_params: ListingEventCommentsQueryParams = Depends(
+        ListingEventCommentsQueryParams
+    ),
+    event_id: int = None,
+):
+    comments, total = await events_service.listing_event_comments(
+        db, user, query_params, event_id
+    )
+    return ListingEventCommentsResponse(
+        page=query_params.page,
+        per_page=query_params.per_page,
+        total=total,
+        data=comments,
+    )
+
+
+@router.post(
+    "/{event_id}/comments",
+    response_model=int,
+    responses=authenticated_api_responses,
+)
+async def comment_event(
+    db: Session = Depends(get_read_db),
+    user: User = Depends(authorize_role(RoleCode.AUDIENCE)),
+    request: CommentEventRequest = None,
+    event_id: int = None,
+):
+    return await events_service.comment_event(db, user, request, event_id)
 
 
 @router.post(

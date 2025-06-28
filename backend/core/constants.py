@@ -488,3 +488,8 @@ class ReminderTypeCode(str, Enum):
     THREE_DAYS_BEFORE = "THREE_DAYS_BEFORE"
     ONE_DAY_BEFORE = "ONE_DAY_BEFORE"
     TEN_MINUTES_BEFORE = "TEN_MINUTES_BEFORE"
+
+
+class VoteTypeCode(str, Enum):
+    UPVOTE = "UPVOTE"
+    DOWNVOTE = "DOWNVOTE"

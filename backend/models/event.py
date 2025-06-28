@@ -89,6 +89,10 @@ class Event(BaseModel, table=True):
     sold_ticket_count: Optional[int] = Field(default=0)
     share_count: Optional[int] = Field(default=0)
 
+    comment_count: Optional[int] = Field(default=0)
+    feedback_count: Optional[int] = Field(default=0)
+    rating_count: Optional[int] = Field(default=0)
+
     @model_validator(mode="before")
     @classmethod
     def set_slug(cls, values: dict):
