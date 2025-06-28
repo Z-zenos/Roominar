@@ -2,7 +2,7 @@
 
 import clsx from 'clsx';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Checkbox, Image, Link } from '@nextui-org/react';
 import {
   FaFacebookSquare,
@@ -11,7 +11,7 @@ import {
   FaRegCopy,
   FaRegEye,
 } from 'react-icons/fa';
-import { FaArrowRight, FaXTwitter } from 'react-icons/fa6';
+import { FaArrowRight, FaRegCommentDots, FaXTwitter } from 'react-icons/fa6';
 import { MdOutlineMail } from 'react-icons/md';
 import { GoOrganization } from 'react-icons/go';
 import { GiMicrophone, GiPartyPopper } from 'react-icons/gi';
@@ -57,7 +57,6 @@ import { HiOutlineTicket } from 'react-icons/hi2';
 import { ArrowRight } from 'lucide-react';
 import { EventDetailMenuBar } from '@/src/component/common/Navbar/EventDetailNavbar';
 import { CiViewTimeline } from 'react-icons/ci';
-import { PiNote } from 'react-icons/pi';
 
 const LazyMap = dynamic(() => import('../../component/common/Map/Map'), {
   ssr: false,
@@ -74,9 +73,9 @@ const menuItems = [
     iconColor: 'text-blue-500',
   },
   {
-    icon: PiNote,
-    label: 'Mô tả',
-    href: 'descriptions',
+    icon: FaRegCommentDots,
+    label: 'Bình luận',
+    href: 'comments',
     gradient:
       'radial-gradient(circle, rgba(249,115,22,0.15) 0%, rgba(234,88,12,0.06) 50%, rgba(194,65,12,0) 100%)',
     iconColor: 'text-orange-500',
@@ -121,54 +120,20 @@ function EventDetail({ slug }: EventDetailProps) {
 
   const [isCopied, setIsCopied] = useState<boolean>(false);
 
-  const sectionNavigationMenuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const pathname = usePathname();
   const { data: auth } = useSession();
   const [activeItem, setActiveItem] = useState<string>('timeline');
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(({ target, isIntersecting }) => {
-          if (target === sectionNavigationMenuRef.current) {
-            return isIntersecting;
-
-            // dispatch(
-            // 	displaySubHeader({
-            // 		open: !isIntersecting,
-            // 		data: isIntersecting
-            // 			? undefined
-            // 			: {
-            // 					menu: [
-            // 						{ name: 'Description', id: 'description-section' },
-            // 						{ name: 'Reviews', id: 'reviews-section' },
-            // 						{ name: 'FAQ', id: 'faq-section' },
-            // 					],
-            // 				},
-            // 		addons: ['menu'],
-            // 	}),
-            // );
-          }
-        });
-      },
-      {
-        threshold: 0.5,
-      },
-    );
-
-    if (sectionNavigationMenuRef.current) {
-      observer.observe(sectionNavigationMenuRef.current);
-    }
-
-    return () => {
-      observer.disconnect();
-    };
-  });
+  const [showCommentsSection, setShowCommentsSection] =
+    useState<boolean>(false);
 
   useEffect(() => {
     setTimeout(() => setIsCopied(false), 30000);
   }, [isCopied]);
+
+  useEffect(() => {
+    handleScroll(activeItem.toLowerCase());
+  }, [showCommentsSection]);
 
   const handleScroll = (id: string) => {
     const el = document.getElementById(id);
@@ -192,18 +157,20 @@ function EventDetail({ slug }: EventDetailProps) {
           styles.between,
         )}
       >
-        <div className='bg-transparent h-[200px] w-full flex items-center justify-center absolute top-0 left-0'>
-          <div className='relative w-full '>
-            <div className='my-8 relative space-y-4 opacity-15'>
-              <Image
-                src={event.coverImageUrl}
-                alt='Cover image'
-                className='w-full blur-xl'
-                classNames={{ wrapper: '!max-w-full' }}
-              />
+        {!showCommentsSection && (
+          <div className='bg-transparent h-[200px] w-full flex items-center justify-center absolute top-0 left-0'>
+            <div className='relative w-full '>
+              <div className='my-8 relative space-y-4 opacity-15'>
+                <Image
+                  src={event.coverImageUrl}
+                  alt='Cover image'
+                  className='w-full blur-xl'
+                  classNames={{ wrapper: '!max-w-full' }}
+                />
+              </div>
             </div>
           </div>
-        </div>
+        )}
         <div
           className={clsx(
             'flex flex-col 450px:gap-7 gap-4',
@@ -212,11 +179,24 @@ function EventDetail({ slug }: EventDetailProps) {
         >
           <div className='flex justify-between flex-wrap gap-4 450px:w-[95%] w-full items-end'>
             <EventDetailMenuBar
-              items={menuItems}
+              items={menuItems.map((item) => {
+                if (item.label === 'Bình luận') {
+                  return {
+                    ...item,
+                    label: `Bình luận (${event?.commentCount})`,
+                  };
+                }
+                return item;
+              })}
               activeItem={activeItem}
               onItemClick={(item) => {
                 setActiveItem(item);
-                handleScroll(item.toLowerCase());
+                if (item === 'comments') {
+                  setShowCommentsSection(true);
+                } else {
+                  setShowCommentsSection(false);
+                  handleScroll(item.toLowerCase());
+                }
               }}
             />
             <Chip
@@ -375,12 +355,12 @@ function EventDetail({ slug }: EventDetailProps) {
               <div>
                 <p className='font-light mb-2'>{event?.organizeAddress}</p>
                 <div className='border border-gray-400 rounded-md shadow-sm'>
-                  {event.organizeAddress && event.lat && event.lng && (
+                  {/* {event.organizeAddress && event.lat && event.lng && (
                     <LazyMap
                       defaultCoordinate={[event?.lat, event?.lng]}
                       className='w-full !h-[200px] rounded-md'
                     />
-                  )}
+                  )} */}
                 </div>
               </div>
             </div>
@@ -393,157 +373,165 @@ function EventDetail({ slug }: EventDetailProps) {
           'dark:bg-dark-sub w-full 450px:py-4 py-6 450px:px-[15%] px-[5%] relative flex-wrap flex justify-between items-start',
         )}
       >
-        <div
-          className={clsx(
-            'flex flex-col gap-7',
-            width > 1200 ? 'w-[70%]' : 'w-full mb-8',
-          )}
-        >
-          {/* === Timeline === */}
-          <div id='timeline'>
+        {showCommentsSection && (
+          <div id='comments'>
             <h3 className='font-semibold 450px:text-lg text-xm border-b border-b-gray-400'>
-              Lịch trình chung
+              Bình luận
             </h3>
-
-            <HorizontalTimeline
-              applicationStartAt={event?.applicationStartAt}
-              applicationEndAt={event?.applicationEndAt}
-              startAt={event?.startAt}
-              endAt={event?.endAt}
-            />
           </div>
+        )}
+        {!showCommentsSection && (
+          <div
+            className={clsx(
+              'flex flex-col gap-7',
+              width > 1200 ? 'w-[70%]' : 'w-full mb-8',
+            )}
+          >
+            {/* === Timeline === */}
+            <div id='timeline'>
+              <h3 className='font-semibold 450px:text-lg text-xm border-b border-b-gray-400'>
+                Lịch trình chung
+              </h3>
 
-          {/* === DESCRIPTION === */}
-          <div id='descriptions'>
-            <h3 className='font-semibold 450px:text-lg text-xm border-b border-b-gray-400'>
-              Về sự kiện này
-            </h3>
-            <div className='mt-3'>
-              <div
-                dangerouslySetInnerHTML={{ __html: event?.description }}
-              ></div>
+              <HorizontalTimeline
+                applicationStartAt={event?.applicationStartAt}
+                applicationEndAt={event?.applicationEndAt}
+                startAt={event?.startAt}
+                endAt={event?.endAt}
+              />
             </div>
-          </div>
 
-          {/* === Tickets === */}
-          <div id='tickets'>
-            <h3 className='font-semibold 450px:text-lg text-xm'>
-              Thông tin vé
-            </h3>
-            <div className='mt-3'>
-              <div className='grid 1200px:grid-cols-1 450px:grid-cols-2 grid-cols-1'>
-                {event &&
-                  event.tickets.map((ticket: TicketItem) => (
-                    <Checkbox
-                      aria-label='tickets'
-                      name='tickets'
-                      classNames={{
-                        base: cn(
-                          'flex max-w-full mx-0 my-1 w-full bg-content1',
-                          'hover:bg-content2 items-center justify-start',
-                          'cursor-pointer rounded-lg gap-2 p-4 border-2 border-transparent',
-                          'data-[selected=true]:border-gray-100',
-                          'pointer-events-none',
-                        ),
-                        label: 'w-full m-0',
-                        icon: 'w-6 h-6 rotate-45',
-                      }}
-                      key={`t-${ticket.id}`}
-                      icon={(props) => {
-                        delete props.isIndeterminate;
-                        delete props.isSelected;
-                        delete props.disableAnimation;
-                        return <HiOutlineTicket {...props} />;
-                      }}
-                      isSelected={true}
-                      color='default'
-                    >
-                      <div className='w-full flex justify-between items-center gap-2'>
-                        <div className='font-normal w-full'>
-                          <h4
-                            className={clsx(
-                              styles.between,
-                              'text-nm font-medium leading-5',
-                            )}
-                          >
-                            <span>
-                              {ticket.name}{' '}
-                              {ticket.salesStartAt && (
-                                <>
-                                  ({formatEventDate(ticket.salesStartAt)}{' '}
-                                  <FaArrowRight className='inline-flex' />{' '}
-                                  {formatEventDate(ticket.salesEndAt)})
-                                </>
-                              )}
-                            </span>
-                            <button
-                              className='group relative flex items-center gap-1 overflow-hidden rounded-md border-[1.5px] border-[#333333]/40 bg-transparent px-8 py-2 text-sm font-semibold text-[#111111] cursor-pointer transition-all duration-[600ms] ease-[cubic-bezier(0.23,1,0.32,1)] hover:border-transparent hover:text-white hover:rounded-[12px] active:scale-[0.95] !pointer-events-auto'
-                              onClick={(e) => {
-                                e.preventDefault();
-                                router.push(`/events/${event.slug}/apply`);
-                              }}
-                            >
-                              {/* Left arrow (arr-2) */}
-                              <ArrowRight className='absolute w-4 h-4 left-[-25%] stroke-[#111111] fill-none z-[9] group-hover:left-4 group-hover:stroke-white transition-all duration-[800ms] ease-[cubic-bezier(0.34,1.56,0.64,1)]' />
-
-                              {/* Text */}
-                              <span className='relative z-[1] -translate-x-3 group-hover:translate-x-3 transition-all duration-[800ms] ease-out'>
-                                Mua vé ngay
-                              </span>
-
-                              {/* Circle */}
-                              <span className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-[#111111] rounded-[50%] opacity-0 group-hover:w-[220px] group-hover:h-[220px] group-hover:opacity-100 transition-all duration-[800ms] ease-[cubic-bezier(0.19,1,0.22,1)]'></span>
-
-                              {/* Right arrow (arr-1) */}
-                              <ArrowRight className='absolute w-4 h-4 right-4 stroke-[#111111] fill-none z-[9] group-hover:right-[-25%] group-hover:stroke-white transition-all duration-[800ms] ease-[cubic-bezier(0.34,1.56,0.64,1)]' />
-                            </button>
-                          </h4>
-                          <p className='font-light opacity-80 leading-5 text-ss mt-1'>
-                            {ticket.description}
-                          </p>
-                          <div className={clsx(styles.between, 'w-full')}>
-                            {ticket.price ? (
-                              <div className='text-sm w-full'>
-                                <span>Giá: </span>
-                                <span className='text-primary font-semibold ml-2'>
-                                  {formatMoney(ticket.price)}
-                                </span>
-                              </div>
-                            ) : (
-                              <span>Miễn phí</span>
-                            )}
-                            <p className='text-nm'>
-                              <span className='text-orange-500 font-bold mr-1'>
-                                {ticket.quantity}
-                              </span>
-                              vé
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </Checkbox>
-                  ))}
+            {/* === DESCRIPTION === */}
+            <div>
+              <h3 className='font-semibold 450px:text-lg text-xm border-b border-b-gray-400'>
+                Về sự kiện này
+              </h3>
+              <div className='mt-3'>
+                <div
+                  dangerouslySetInnerHTML={{ __html: event?.description }}
+                ></div>
               </div>
             </div>
-          </div>
 
-          {/* === Refund Policy === */}
-          <div>
-            <h3 className='font-semibold 450px:text-lg text-xm'>
-              Chính sách hoàn tiền
-            </h3>
-            <div className='mt-3'>
-              <p className='font-light'>Không có chính sách hoàn tiền nào.</p>
+            {/* === Tickets === */}
+            <div id='tickets'>
+              <h3 className='font-semibold 450px:text-lg text-xm'>
+                Thông tin vé
+              </h3>
+              <div className='mt-3'>
+                <div className='grid 1200px:grid-cols-1 450px:grid-cols-2 grid-cols-1'>
+                  {event &&
+                    event.tickets.map((ticket: TicketItem) => (
+                      <Checkbox
+                        aria-label='tickets'
+                        name='tickets'
+                        classNames={{
+                          base: cn(
+                            'flex max-w-full mx-0 my-1 w-full bg-content1',
+                            'hover:bg-content2 items-center justify-start',
+                            'cursor-pointer rounded-lg gap-2 p-4 border-2 border-transparent',
+                            'data-[selected=true]:border-gray-100',
+                            'pointer-events-none',
+                          ),
+                          label: 'w-full m-0',
+                          icon: 'w-6 h-6 rotate-45',
+                        }}
+                        key={`t-${ticket.id}`}
+                        icon={(props) => {
+                          delete props.isIndeterminate;
+                          delete props.isSelected;
+                          delete props.disableAnimation;
+                          return <HiOutlineTicket {...props} />;
+                        }}
+                        isSelected={true}
+                        color='default'
+                      >
+                        <div className='w-full flex justify-between items-center gap-2'>
+                          <div className='font-normal w-full'>
+                            <h4
+                              className={clsx(
+                                styles.between,
+                                'text-nm font-medium leading-5',
+                              )}
+                            >
+                              <span>
+                                {ticket.name}{' '}
+                                {ticket.salesStartAt && (
+                                  <>
+                                    ({formatEventDate(ticket.salesStartAt)}{' '}
+                                    <FaArrowRight className='inline-flex' />{' '}
+                                    {formatEventDate(ticket.salesEndAt)})
+                                  </>
+                                )}
+                              </span>
+                              <button
+                                className='group relative flex items-center gap-1 overflow-hidden rounded-md border-[1.5px] border-[#333333]/40 bg-transparent px-8 py-2 text-sm font-semibold text-[#111111] cursor-pointer transition-all duration-[600ms] ease-[cubic-bezier(0.23,1,0.32,1)] hover:border-transparent hover:text-white hover:rounded-[12px] active:scale-[0.95] !pointer-events-auto'
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  router.push(`/events/${event.slug}/apply`);
+                                }}
+                              >
+                                {/* Left arrow (arr-2) */}
+                                <ArrowRight className='absolute w-4 h-4 left-[-25%] stroke-[#111111] fill-none z-[9] group-hover:left-4 group-hover:stroke-white transition-all duration-[800ms] ease-[cubic-bezier(0.34,1.56,0.64,1)]' />
+
+                                {/* Text */}
+                                <span className='relative z-[1] -translate-x-3 group-hover:translate-x-3 transition-all duration-[800ms] ease-out'>
+                                  Mua vé ngay
+                                </span>
+
+                                {/* Circle */}
+                                <span className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-[#111111] rounded-[50%] opacity-0 group-hover:w-[220px] group-hover:h-[220px] group-hover:opacity-100 transition-all duration-[800ms] ease-[cubic-bezier(0.19,1,0.22,1)]'></span>
+
+                                {/* Right arrow (arr-1) */}
+                                <ArrowRight className='absolute w-4 h-4 right-4 stroke-[#111111] fill-none z-[9] group-hover:right-[-25%] group-hover:stroke-white transition-all duration-[800ms] ease-[cubic-bezier(0.34,1.56,0.64,1)]' />
+                              </button>
+                            </h4>
+                            <p className='font-light opacity-80 leading-5 text-ss mt-1'>
+                              {ticket.description}
+                            </p>
+                            <div className={clsx(styles.between, 'w-full')}>
+                              {ticket.price ? (
+                                <div className='text-sm w-full'>
+                                  <span>Giá: </span>
+                                  <span className='text-primary font-semibold ml-2'>
+                                    {formatMoney(ticket.price)}
+                                  </span>
+                                </div>
+                              ) : (
+                                <span>Miễn phí</span>
+                              )}
+                              <p className='text-nm'>
+                                <span className='text-orange-500 font-bold mr-1'>
+                                  {ticket.quantity}
+                                </span>
+                                vé
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </Checkbox>
+                    ))}
+                </div>
+              </div>
             </div>
-          </div>
 
-          {/* === Speaker === */}
-          <div id='speakers'>
-            <h3 className='font-semibold 450px:text-lg text-xm border-b border-b-gray-400'>
-              Diễn giả
-            </h3>
+            {/* === Refund Policy === */}
+            <div>
+              <h3 className='font-semibold 450px:text-lg text-xm'>
+                Chính sách hoàn tiền
+              </h3>
+              <div className='mt-3'>
+                <p className='font-light'>Không có chính sách hoàn tiền nào.</p>
+              </div>
+            </div>
 
-            {/* <div className='flex gap-5 items-center justify-start mt-6 flex-wrap'>
+            {/* === Speaker === */}
+            <div id='speakers'>
+              <h3 className='font-semibold 450px:text-lg text-xm border-b border-b-gray-400'>
+                Diễn giả
+              </h3>
+
+              {/* <div className='flex gap-5 items-center justify-start mt-6 flex-wrap'>
               {[10, 11, 12, 15].map((speaker, i) => (
                 <SpeakerCard
                   key={`speaker-${i}`}
@@ -551,8 +539,9 @@ function EventDetail({ slug }: EventDetailProps) {
                 />
               ))}
             </div> */}
+            </div>
           </div>
-        </div>
+        )}
         <div
           className={clsx(width > 1200 ? 'w-[25%]' : 'w-full', 'self-start')}
         >
