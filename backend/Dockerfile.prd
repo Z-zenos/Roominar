@@ -1,0 +1,32 @@
+# ---- Base ----
+FROM python:3.11-slim AS base
+
+ENV PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=off \
+    PIP_DISABLE_PIP_VERSION_CHECK=on \
+    POETRY_VERSION=1.4.1
+
+RUN apt-get update && apt-get install -y curl && \
+    curl -sSL https://install.python-poetry.org | python && \
+    apt-get purge -y curl && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+ENV PATH="/root/.local/bin:$PATH"
+
+# ---- Builder ----
+FROM base AS builder
+
+WORKDIR /app
+
+COPY pyproject.toml poetry.lock ./
+RUN apt-get update && apt-get install -y build-essential libpq-dev && \
+    poetry install --only main
+
+# ---- Final ----
+FROM python:3.11-slim AS backend
+
+WORKDIR /app
+
+COPY --from=builder /app /app
+COPY ./backend ./backend
+
+CMD ["poetry", "run", "uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
