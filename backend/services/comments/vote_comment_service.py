@@ -39,7 +39,7 @@ async def vote_comment(
         )
     ).one_or_none()
 
-    vote_count = comment.vote_count
+    vote_count = comment.vote_count or 0
 
     if not comment_vote:
         comment_vote = CommentVote(
@@ -52,7 +52,8 @@ async def vote_comment(
     else:
         if comment_vote.vote_type == request.vote_type:
             raise BadRequestException(
-                ErrorCode.ERR_CANT_VOTE_COMMENT, ErrorMessage.ERR_CANT_VOTE_COMMENT
+                ErrorCode.ERR_CANT_VOTE_COMMENT_TWICE,
+                ErrorMessage.ERR_CANT_VOTE_COMMENT_TWICE,
             )
 
         db.exec(

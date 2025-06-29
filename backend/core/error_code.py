@@ -61,6 +61,7 @@ class ErrorCode:
     ERR_EVENT_ENDED = "ERR_EVENT_ENDED"
     ERR_CANT_VOTE_COMMENT = "ERR_CANT_VOTE_COMMENT"
     ERR_CANT_SELF_VOTE_COMMENT = "ERR_CANT_SELF_VOTE_COMMENT"
+    ERR_CANT_VOTE_COMMENT_TWICE = "ERR_CANT_VOTE_COMMENT_TWICE"
 
 
 class ErrorMessage:
@@ -128,3 +129,4 @@ class ErrorMessage:
     ERR_EVENT_ENDED = "The event has ended."
     ERR_CANT_VOTE_COMMENT = "You can't vote a comment because it's deleted."
     ERR_CANT_SELF_VOTE_COMMENT = "You can't vote your own comment."
+    ERR_CANT_VOTE_COMMENT_TWICE = "You can't vote a comment twice."
