@@ -25,6 +25,8 @@ services:
       - "3000:3000"
     env_file:
       - ./frontend/.env.prd
+    depends_on:
+      - backend
     restart: unless-stopped
 
   db:
