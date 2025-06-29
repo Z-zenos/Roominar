@@ -39,15 +39,9 @@ async def vote_comment(
         )
     ).one_or_none()
 
-    upvote_count = comment.upvote_count
-    downvote_count = comment.downvote_count
+    vote_count = comment.vote_count
 
     if not comment_vote:
-        if request.vote_type == VoteTypeCode.UPVOTE:
-            upvote_count += 1
-        else:
-            downvote_count += 1
-
         comment_vote = CommentVote(
             comment_id=comment_id,
             user_id=user.id,
@@ -67,17 +61,13 @@ async def vote_comment(
             .values(vote_type=request.vote_type)
         )
 
-        if request.vote_type == VoteTypeCode.UPVOTE:
-            upvote_count += 1
-            downvote_count -= 1
-        else:
-            upvote_count -= 1
-            downvote_count += 1
+    if request.vote_type == VoteTypeCode.UPVOTE:
+        vote_count += 1
+    else:
+        vote_count -= 1
 
     db.exec(
-        update(Comment)
-        .where(Comment.id == comment_id)
-        .values(upvote_count=upvote_count, downvote_count=downvote_count)
+        update(Comment).where(Comment.id == comment_id).values(vote_count=vote_count)
     )
     db.commit()
 

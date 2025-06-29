@@ -16,6 +16,5 @@ class Comment(BaseModel, table=True):
     deleted_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
     deletion_reason: Optional[str] = Field(sa_type=String(255))
 
-    upvote_count: int = Field(default=0)
-    downvote_count: int = Field(default=0)
+    vote_count: int = Field(default=0)
     reply_count: int = Field(default=0)

@@ -1,0 +1,5 @@
+{
+	"dependencies": {
+		"relativeTime": "link:dayjs/plugin/relativeTime"
+	}
+}

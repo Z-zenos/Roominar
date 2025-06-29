@@ -16,8 +16,7 @@ class ListingEventCommentsItem(BaseModel):
     user_name: str | None = None
     user_avatar: str | None = None
     reply_count: int | None = None
-    upvote_count: int | None = None
-    downvote_count: int | None = None
+    vote_count: int | None = None
     is_pinned: bool
     vote_type: VoteTypeCode | None = None
     deleted_at: datetime | None = None

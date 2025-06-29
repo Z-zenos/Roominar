@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import pytz
 from sqlmodel import Session, update
 
 from backend.core.constants import UserActionTypeCode
@@ -25,7 +26,7 @@ async def comment_event(
             ErrorCode.ERR_EVENT_NOT_FOUND, ErrorMessage.ERR_EVENT_NOT_FOUND
         )
 
-    if event.end_at < datetime.now():
+    if event.end_at < datetime.now(pytz.utc):
         raise BadRequestException(
             ErrorCode.ERR_EVENT_ENDED, ErrorMessage.ERR_EVENT_ENDED
         )

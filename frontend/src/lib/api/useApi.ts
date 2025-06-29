@@ -3,6 +3,7 @@ import useApiConfig from './useConfigApi';
 import {
   ApplicationsApi,
   AuthApi,
+  CommentsApi,
   EventsApi,
   NotificationsApi,
   OrganizationsApi,
@@ -20,6 +21,7 @@ function useApi() {
   return {
     auth: new AuthApi(config),
     events: new EventsApi(config),
+    comments: new CommentsApi(config),
     users: new UsersApi(config),
     tags: new TagsApi(config),
     applications: new ApplicationsApi(config),

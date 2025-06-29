@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+import pytz
 from sqlmodel import Session, select, update
 
 from backend.core.error_code import ErrorCode, ErrorMessage
@@ -20,12 +21,14 @@ async def delete_comment_reply(
             ErrorCode.ERR_COMMENT_NOT_FOUND, ErrorMessage.ERR_COMMENT_NOT_FOUND
         )
 
-    if reply.created_at < datetime.now() - timedelta(days=7):
+    if reply.created_at < datetime.now(pytz.utc) - timedelta(days=7):
         raise BadRequestException(
             ErrorCode.ERR_CANT_DELETE_COMMENT, ErrorMessage.ERR_CANT_DELETE_COMMENT
         )
 
     db.exec(
-        update(CommentReply).where(CommentReply.id == reply_id).values(deleted_at=True)
+        update(CommentReply)
+        .where(CommentReply.id == reply_id)
+        .values(deleted_at=datetime.now(pytz.utc))
     )
     db.commit()

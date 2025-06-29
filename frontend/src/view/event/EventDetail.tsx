@@ -57,6 +57,7 @@ import { HiOutlineTicket } from 'react-icons/hi2';
 import { ArrowRight } from 'lucide-react';
 import { EventDetailMenuBar } from '@/src/component/common/Navbar/EventDetailNavbar';
 import { CiViewTimeline } from 'react-icons/ci';
+import EventComment from './EventComment';
 
 const LazyMap = dynamic(() => import('../../component/common/Map/Map'), {
   ssr: false,
@@ -74,7 +75,7 @@ const menuItems = [
   },
   {
     icon: FaRegCommentDots,
-    label: 'Bình luận',
+    label: 'Q & A',
     href: 'comments',
     gradient:
       'radial-gradient(circle, rgba(249,115,22,0.15) 0%, rgba(234,88,12,0.06) 50%, rgba(194,65,12,0) 100%)',
@@ -162,7 +163,7 @@ function EventDetail({ slug }: EventDetailProps) {
             <div className='relative w-full '>
               <div className='my-8 relative space-y-4 opacity-15'>
                 <Image
-                  src={event.coverImageUrl}
+                  src={event?.coverImageUrl}
                   alt='Cover image'
                   className='w-full blur-xl'
                   classNames={{ wrapper: '!max-w-full' }}
@@ -374,10 +375,17 @@ function EventDetail({ slug }: EventDetailProps) {
         )}
       >
         {showCommentsSection && (
-          <div id='comments'>
+          <div
+            id='comments'
+            className={clsx(
+              'flex flex-col gap-7',
+              width > 1200 ? 'w-[70%]' : 'w-full mb-8',
+            )}
+          >
             <h3 className='font-semibold 450px:text-lg text-xm border-b border-b-gray-400'>
-              Bình luận
+              Q & A
             </h3>
+            <EventComment eventId={event?.id} />
           </div>
         )}
         {!showCommentsSection && (

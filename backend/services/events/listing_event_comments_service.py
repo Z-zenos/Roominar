@@ -34,12 +34,11 @@ async def _get_all_event_comments(
             func.concat(User.first_name, " ", User.last_name).label("user_name"),
             User.avatar_url.label("user_avatar"),
             Comment.reply_count,
-            Comment.upvote_count,
-            Comment.downvote_count,
+            Comment.vote_count,
             Comment.is_pinned,
             Comment.deleted_at,
         )
-        .join(User, User.id == Comment.user_id)
+        .outerjoin(User, User.id == Comment.user_id)
         .where(Comment.event_id == event_id)
         .order_by(Comment.is_pinned.desc(), Comment.created_at.desc())
         .offset((query_params.page - 1) * query_params.per_page)
@@ -47,7 +46,7 @@ async def _get_all_event_comments(
     )
 
     if user:
-        query = query.add_columns(CommentVote.vote_type.label("vote_type")).join(
+        query = query.add_columns(CommentVote.vote_type.label("vote_type")).outerjoin(
             CommentVote,
             and_(CommentVote.comment_id == Comment.id, CommentVote.user_id == user.id),
         )

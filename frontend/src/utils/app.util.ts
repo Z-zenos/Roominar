@@ -13,6 +13,9 @@ import type {
   ErrorResponse403,
 } from '../lib/api/generated';
 import toast from 'react-hot-toast';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(relativeTime);
 
 export const parseErrorMessage = (errorMessage?: string) => {
   const parts = errorMessage?.split('\n');
@@ -185,3 +188,7 @@ export function handleApiError(error: ApiException<unknown>) {
       ?.message ?? 'Lỗi không xác định 😵';
   toast.error(errorMessage);
 }
+
+export const timeAgo = (inputDate: string | Date) => {
+  return dayjs(inputDate).fromNow();
+};
