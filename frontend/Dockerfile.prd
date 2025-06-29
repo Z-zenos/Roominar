@@ -10,7 +10,7 @@ COPY frontend/package.json frontend/pnpm-lock.yaml ./
 RUN pnpm install
 
 COPY ./frontend ./
-RUN pnpm build
+RUN pnpm generate-api-local && pnpm build
 
 # ---- Production Image ----
 FROM node:22-slim AS runner

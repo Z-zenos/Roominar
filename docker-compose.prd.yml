@@ -10,7 +10,7 @@ services:
     ports:
       - "8000:8000"
     env_file:
-      - ./backend/.env.prod
+      - ./backend/.env.prd
     depends_on:
       - db
       - redis
@@ -61,7 +61,7 @@ services:
     container_name: roominar-celery
     command: poetry run celery -A backend.celery worker --loglevel=info
     env_file:
-      - ./backend.env.prod
+      - ./backend/.env.prd
     depends_on:
       - backend
       - redis
@@ -74,7 +74,7 @@ services:
     container_name: roominar-celery-beat
     command: poetry run celery -A backend.celery beat --loglevel=info
     env_file:
-      - ./backend/.env.prod
+      - ./backend/.env.prd
     depends_on:
       - backend
       - redis
