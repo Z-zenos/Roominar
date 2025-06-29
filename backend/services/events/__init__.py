@@ -1,9 +1,11 @@
+from .comment_event_service import comment_event
 from .create_draft_event_service import create_draft_event
 from .create_event_bookmark_service import create_event_bookmark
 from .delete_event_bookmark_service import delete_event_bookmark
 from .generate_event_ai_service import generate_event_ai
 from .get_draft_event_service import get_draft_event
 from .get_event_detail_service import get_event_detail
+from .listing_event_comments_service import listing_event_comments
 from .listing_event_options_service import listing_event_options
 from .listing_event_rank_service import listing_event_rank
 from .listing_my_events_service import listing_my_events
@@ -36,4 +38,6 @@ __all__ = [
     "listing_event_rank",
     "listing_trending_events",
     "generate_event_ai",
+    "listing_event_comments",
+    "comment_event",
 ]

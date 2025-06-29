@@ -37,6 +37,15 @@ const config = {
     extend: {
       colors: {
         ...colors,
+        'Moderate-blue': 'hsl(238, 40%, 52%)',
+        'Soft-Red': 'hsl(358, 79%, 66%)',
+        'Light-grayish-blue': 'hsl(239, 57%, 85%)',
+        'Pale-red': 'hsl(357, 100%, 86%)',
+        'Dark-blue': 'hsl(212, 24%, 26%)',
+        'Grayish-Blue': 'hsl(211, 10%, 45%)',
+        'Light-gray': 'hsl(223, 19%, 93%)',
+        'Very-light-gray': 'hsl(228, 33%, 97%)',
+        White: 'hsl(0, 0%, 100%)',
         transparent: 'transparent',
         gradient: 'gradient',
         border: 'hsl(var(--border))',
@@ -98,11 +107,18 @@ const config = {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
         },
+        slide: {
+          '0%, 100%': { transform: 'rotate(-3deg)' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        slide: 'slide 1s ease-in-out linear',
       },
+    },
+    fontFamily: {
+      rubik: ['Rubik', 'sans-serif'],
     },
   },
   plugins: [

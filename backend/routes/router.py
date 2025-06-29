@@ -3,6 +3,7 @@ from fastapi.routing import APIRoute
 
 from .applications import router as application_router
 from .auth import router as auth_router
+from .comments import router as comment_router
 from .events import router as event_router
 from .notifications import router as notification_router
 from .organizations import router as organization_router
@@ -36,6 +37,7 @@ api_router.include_router(speaker_router, prefix="/speakers", tags=["speakers"])
 api_router.include_router(
     notification_router, prefix="/notifications", tags=["notifications"]
 )
+api_router.include_router(comment_router, prefix="/comments", tags=["comments"])
 
 
 def use_route_names_as_operation_ids(app: FastAPI) -> None:

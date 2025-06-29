@@ -2,7 +2,11 @@ from .answer import Answer
 from .application import Application
 from .bookmark import Bookmark
 from .check_in import CheckIn
+from .comment import Comment
+from .comment_reply import CommentReply
+from .comment_vote import CommentVote
 from .event import Event
+from .feedback import Feedback
 from .follow import Follow
 from .notification import Notification
 from .organization import Organization
@@ -48,4 +52,8 @@ all = (
     UserAction,
     Notification,
     UserNotificationToken,
+    Comment,
+    CommentReply,
+    CommentVote,
+    Feedback,
 )

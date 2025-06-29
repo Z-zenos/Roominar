@@ -55,6 +55,13 @@ class ErrorCode:
     ERR_TICKET_REFUNDED = "ERR_TICKET_REFUNDED"
     ERR_EVENT_NOT_STARTED = "ERR_EVENT_NOT_STARTED"
     ERR_TRANSACTION_ITEM_NOT_FOUND = "ERR_TRANSACTION_ITEM_NOT_FOUND"
+    ERR_COMMENT_NOT_FOUND = "ERR_COMMENT_NOT_FOUND"
+    ERR_CANT_UPDATE_COMMENT = "ERR_CANT_UPDATE_COMMENT"
+    ERR_CANT_DELETE_COMMENT = "ERR_CANT_DELETE_COMMENT"
+    ERR_EVENT_ENDED = "ERR_EVENT_ENDED"
+    ERR_CANT_VOTE_COMMENT = "ERR_CANT_VOTE_COMMENT"
+    ERR_CANT_SELF_VOTE_COMMENT = "ERR_CANT_SELF_VOTE_COMMENT"
+    ERR_CANT_VOTE_COMMENT_TWICE = "ERR_CANT_VOTE_COMMENT_TWICE"
 
 
 class ErrorMessage:
@@ -116,3 +123,10 @@ class ErrorMessage:
     ERR_TICKET_REFUNDED = "Ticket was refunded."
     ERR_EVENT_NOT_STARTED = "The event has not started yet."
     ERR_TRANSACTION_ITEM_NOT_FOUND = "The transaction item doesn't exist."
+    ERR_COMMENT_NOT_FOUND = "The comment doesn't exist."
+    ERR_CANT_UPDATE_COMMENT = "You can't update a comment that has a reply."
+    ERR_CANT_DELETE_COMMENT = "You can't delete a comment that is older than 7 days."
+    ERR_EVENT_ENDED = "The event has ended."
+    ERR_CANT_VOTE_COMMENT = "You can't vote a comment because it's deleted."
+    ERR_CANT_SELF_VOTE_COMMENT = "You can't vote your own comment."
+    ERR_CANT_VOTE_COMMENT_TWICE = "You can't vote a comment twice."
