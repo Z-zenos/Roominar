@@ -112,7 +112,7 @@ export function PrettierButton({ lang, editor, getCodeDOMNode }: Props) {
       setSyntaxError(error.message);
       setTipsVisible(true);
     } else {
-      console.error('Unexpected error: ', error);
+      // console.error('Unexpected error: ', error);
     }
   }
 

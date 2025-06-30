@@ -103,7 +103,7 @@ export function OrganizationSidebar({
         );
       }
     } catch (error) {
-      console.error('Logout failed:', error);
+      console.error('Logout failed');
     } finally {
       // Ensure the refresh and reload happen only after signOut resolves
       router.refresh();

@@ -19,7 +19,7 @@ import clsx from 'clsx';
 
 async function validateEditorState(editor: LexicalEditor): Promise<void> {
   const stringifiedEditorState = JSON.stringify(editor.getEditorState());
-  console.log('Validating editor state on server:', stringifiedEditorState);
+
   let response = null;
   try {
     response = await fetch('http://localhost:1235/validateEditorState', {

@@ -72,9 +72,7 @@ export function useNotification() {
             });
           }
         }
-      } catch (error) {
-        console.error('Error setting up notifications:', error);
-      }
+      } catch {}
     };
 
     setupNotifications();
@@ -108,9 +106,7 @@ export function useNotification() {
           });
         }
       }
-    } catch (error) {
-      console.error('Error requesting notification permission:', error);
-    }
+    } catch {}
   };
 
   return {

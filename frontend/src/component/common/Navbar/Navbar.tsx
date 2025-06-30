@@ -111,9 +111,7 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
       try {
         await removeToken({ logoutRequest: { fcmToken } });
         localStorage.removeItem('fcm_token');
-      } catch (error) {
-        console.error('Error removing FCM token:', error);
-      }
+      } catch {}
     }
 
     // Then logout

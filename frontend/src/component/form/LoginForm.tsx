@@ -59,7 +59,7 @@ export default function LoginForm({ roleCode }: LoginFormProps) {
           callbackUrl: window.location.origin,
         });
       } catch (error) {
-        console.error('Error setting cookie:', error);
+        // console.error('Error setting cookie:', error);
       }
 
       if (res.status === 200) {

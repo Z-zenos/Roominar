@@ -90,27 +90,43 @@ export default function Home() {
   const [activeEvent, setActiveEvent] = useState<number>(0);
 
   const { deferredPrompt, promptInstall } = usePwaInstallPrompt();
+  const [showPrompt, setShowPrompt] = useState(true);
 
   return (
     <div className='overflow-x-hidden'>
-      {deferredPrompt && (
-        <div className='fixed bottom-4 right-4 bg-white border p-4 rounded shadow-xl'>
+      {showPrompt && deferredPrompt && width < 450 && (
+        <div className='fixed bottom-4 right-4 bg-white border p-4 rounded-md shadow-xl z-50'>
           <div className={clsx(styles.flexStart)}>
             <Image
-              src='/images/icons/icon-192x192.png'
+              src='/icons/icon-192x192.png'
               alt='PWA Icon'
               width={48}
               height={48}
               className='rounded-full'
             />
-            <p>Cài đặt website để có trải nghiệm tốt hơn!</p>
+            <p>📱 Cài đặt web app để có trải nghiệm tốt hơn! 🚀</p>
           </div>
-          <button
-            onClick={promptInstall}
-            className='mt-2 px-4 py-1 bg-blue-500 text-white rounded'
-          >
-            Cài đặt
-          </button>
+
+          <div className={clsx(styles.flexStart, 'gap-2 mt-3')}>
+            <Button
+              className='bg-transparent  border px-10 font-bold'
+              radius='sm'
+              color='default'
+              onPress={() => {
+                setShowPrompt(false);
+              }}
+            >
+              Đóng
+            </Button>
+            <Button
+              className='text-info-main bg-transparent border-info-main border px-10 font-bold'
+              radius='sm'
+              variant='flat'
+              onPress={promptInstall}
+            >
+              Cài đặt
+            </Button>
+          </div>
         </div>
       )}
 
