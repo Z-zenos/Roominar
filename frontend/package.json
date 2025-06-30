@@ -114,6 +114,7 @@
     "recharts": "^2.15.1",
     "recoil": "^0.7.7",
     "recoil-persist": "^5.1.0",
+    "relativeTime": "link:dayjs/plugin/relativeTime",
     "sharp": "^0.33.4",
     "stripe": "^17.4.0",
     "swiper": "^11.1.9",

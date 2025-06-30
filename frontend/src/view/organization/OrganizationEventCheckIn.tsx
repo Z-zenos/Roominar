@@ -20,7 +20,7 @@ export default function OrganizationEventCheckIn({
   const [message, setMessage] = useState('');
   const { trigger: qrCheckIn } = useQRChecInMutation({
     onSuccess: () => {
-      toast.success('✅ Check-in successfully!');
+      toast.success('✅ Check-in thành công!');
     },
     onError: handleApiError,
   });

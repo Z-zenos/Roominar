@@ -17,7 +17,7 @@ import {
   useUpdateCommentMutation,
   useVoteCommentMutation,
 } from '@/src/api/comment.api';
-import { CiCirclePlus, CiEdit } from 'react-icons/ci';
+import { CiEdit } from 'react-icons/ci';
 import { BsReplyAll } from 'react-icons/bs';
 import {
   PiArrowFatDownThin,

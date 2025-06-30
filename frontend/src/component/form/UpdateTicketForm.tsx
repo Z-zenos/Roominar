@@ -73,7 +73,7 @@ function UpdateTicketForm({ ticketId, onUpdate }: UpdateTicketFormProps) {
 
   const { trigger, isMutating: isUpdating } = useUpdateTicketMutation({
     onSuccess(updatedData) {
-      toast.success('Update ticket successfully!');
+      toast.success('Cập nhật vé thành công! 🎉');
       onUpdate?.();
       form.reset({
         name: updatedData.name,

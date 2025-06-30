@@ -36,7 +36,7 @@ export default function ChangeEmailForm() {
 
   const { trigger, isMutating: isRequesting } = useRequestChangeEmailMutation({
     onSuccess() {
-      toast.success('A verify link sent to your new email!');
+      toast.success('Một link xác nhận đã được gửi đến email mới của bạn! 🔗');
       form.reset();
       router.refresh();
     },

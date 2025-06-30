@@ -37,7 +37,7 @@ export default function CreateSurveyForm() {
 
   const { trigger, isMutating: isCreating } = useCreateSurveyMutation({
     onSuccess() {
-      toast.success('Create survey successfully!');
+      toast.success('Tạo khảo sát thành công! 🎉');
       form.reset();
     },
     onError: handleApiError,

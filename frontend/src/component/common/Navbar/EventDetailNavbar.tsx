@@ -72,7 +72,7 @@ export const EventDetailMenuBar = React.forwardRef<
     <motion.nav
       ref={ref}
       className={cn(
-        'p-2 rounded-2xl bg-gradient-to-b from-background/80 to-background/40 backdrop-blur-lg border border-border/40 shadow-lg relative overflow-hidden',
+        '450px:p-2 p-0 rounded-2xl bg-gradient-to-b from-background/80 to-background/40 backdrop-blur-lg border border-border/40 shadow-lg relative overflow-hidden w-full',
         className,
       )}
       initial='initial'
@@ -87,7 +87,7 @@ export const EventDetailMenuBar = React.forwardRef<
         } to-transparent rounded-3xl z-0 pointer-events-none`}
         variants={navGlowVariants}
       />
-      <ul className='flex items-center gap-2 relative z-10'>
+      <ul className='flex items-center justify-around gap-2 relative z-10'>
         {items.map((item) => {
           const Icon = item.icon;
           const isActive = item.href === activeItem;
@@ -119,7 +119,7 @@ export const EventDetailMenuBar = React.forwardRef<
                   />
                   <motion.div
                     className={cn(
-                      'flex items-center gap-2 px-4 py-2 relative z-10 bg-transparent transition-colors rounded-xl',
+                      'flex items-center 450px:flex-row flex-col gap-2 px-4 py-2 relative z-10 bg-transparent transition-colors rounded-xl',
                       isActive
                         ? 'text-foreground'
                         : 'text-muted-foreground group-hover:text-foreground',
@@ -140,11 +140,13 @@ export const EventDetailMenuBar = React.forwardRef<
                     >
                       <Icon className='h-5 w-5' />
                     </span>
-                    <span>{item.label}</span>
+                    <span className='450px:text-inherit text-sm'>
+                      {item.label}
+                    </span>
                   </motion.div>
                   <motion.div
                     className={cn(
-                      'flex items-center gap-2 px-4 py-2 absolute inset-0 z-10 bg-transparent transition-colors rounded-xl cursor-pointer',
+                      'flex items-center 450px:flex-row flex-col flex-wrap gap-2 px-4 py-2 absolute inset-0 z-10 bg-transparent transition-colors rounded-xl cursor-pointer',
                       isActive
                         ? 'text-foreground'
                         : 'text-muted-foreground group-hover:text-foreground',
@@ -166,7 +168,9 @@ export const EventDetailMenuBar = React.forwardRef<
                     >
                       <Icon className='h-5 w-5' />
                     </span>
-                    <span>{item.label}</span>
+                    <span className='450px:text-inherit text-sm'>
+                      {item.label}
+                    </span>
                   </motion.div>
                 </motion.div>
               </button>

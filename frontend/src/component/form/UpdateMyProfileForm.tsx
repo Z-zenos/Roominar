@@ -67,7 +67,7 @@ export default function UpdateMyProfileForm() {
 
   const { trigger, isMutating: isUpdating } = useUpdateMyProfileMutation({
     onSuccess() {
-      toast.success('Update profile successfully!');
+      toast.success('Cập nhật thông tin cá nhân thành công! 🎉');
       form.reset();
       router.refresh();
     },

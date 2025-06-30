@@ -39,7 +39,7 @@ export default function ChangePasswordForm() {
 
   const { trigger, isMutating: isChanging } = useChangePasswordMutation({
     onSuccess() {
-      toast.success('Update password successfully!');
+      toast.success('Đổi mật khẩu thành công! 🎉');
       form.reset();
       router.refresh();
     },

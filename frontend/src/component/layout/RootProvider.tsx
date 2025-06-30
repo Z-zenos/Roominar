@@ -37,7 +37,6 @@ export default function RootProvider({
         },
         queryCache: new QueryCache({
           onError: (error) => {
-            console.log('queryCache: ', error);
             const err = parseErrorMessage(error?.message);
             toast.error(`${+err.httpCode}: ${err?.body?.message}`);
           },
@@ -45,8 +44,6 @@ export default function RootProvider({
         mutationCache: new MutationCache({
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           onError: (error, _, __) => {
-            console.log('mutationCache: ', error);
-
             const err = parseErrorMessage(error?.message);
             toast.error(`${+err.httpCode}: ${err?.body?.message}`);
           },
