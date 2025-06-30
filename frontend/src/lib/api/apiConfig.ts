@@ -4,6 +4,7 @@ import {
   createConfiguration,
   ServerConfiguration,
 } from '@/src/lib/api/generated';
+import { API_URL } from '@/src/constants/app.constant';
 
 export default function apiConfig(session: Session) {
   return createConfiguration({
@@ -12,10 +13,7 @@ export default function apiConfig(session: Session) {
         accessToken: session?.token?.accessToken,
       },
     },
-    baseServer: new ServerConfiguration(
-      process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
-      {},
-    ),
+    baseServer: new ServerConfiguration(API_URL, {}),
     promiseMiddleware: [
       {
         pre(context) {

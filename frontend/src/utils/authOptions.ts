@@ -13,6 +13,7 @@ import utc from 'dayjs/plugin/utc';
 import type { GoogleProfile } from 'next-auth/providers/google';
 import GoogleProvider from 'next-auth/providers/google';
 import { RoleCode } from '../constants/role_code.constant';
+import { API_URL } from '../constants/app.constant';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -25,10 +26,7 @@ function makeAuthApi(accessToken?: string) {
           accessToken,
         },
       },
-      baseServer: new ServerConfiguration(
-        process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
-        {},
-      ),
+      baseServer: new ServerConfiguration(API_URL, {}),
     }),
   );
 }

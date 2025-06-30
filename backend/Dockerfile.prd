@@ -1,0 +1,54 @@
+FROM python:3.11-slim AS base
+
+ENV PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=off \
+    PIP_DISABLE_PIP_VERSION_CHECK=on \
+    POETRY_VERSION=1.4.1 \
+    POETRY_HOME="/opt/poetry" \
+    PATH="/opt/poetry/bin:$PATH" \
+    POETRY_VIRTUALENVS_IN_PROJECT=true \
+    PYTHONPATH="/app"
+
+# Install poetry
+RUN apt-get update && apt-get install -y curl && \
+    curl -sSL https://install.python-poetry.org | python3 - && \
+    apt-get purge -y curl && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user
+RUN addgroup --system appgroup && \
+    adduser --system --ingroup appgroup appuser
+
+# ----------- Builder Stage -----------
+FROM base AS builder
+
+WORKDIR /app
+
+# Install build deps
+RUN apt-get update && apt-get install -y build-essential libpq-dev
+
+# Install Python deps
+COPY pyproject.toml poetry.lock alembic.ini ./
+RUN poetry install --only main
+
+# Copy app source
+COPY ./backend ./backend
+
+# ----------- Final Runtime Stage -----------
+FROM base AS backend
+
+WORKDIR /app
+
+# Install runtime libs only
+RUN apt-get update && apt-get install -y libpq5 && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Copy from builder
+COPY --from=builder /app /app
+
+# Set permissions and user
+RUN chown -R appuser:appgroup /app
+USER appuser
+
+EXPOSE 8000
+
+CMD ["poetry", "run", "uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]

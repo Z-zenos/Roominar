@@ -1,0 +1,10 @@
+# Dockerfile.postgres
+FROM postgres:latest
+
+RUN apt-get update && \
+    apt-get install -y postgis postgresql-17-postgis-3 && \
+    rm -rf /var/lib/apt/lists/*
+
+# Enable PostGIS when container is initialized
+RUN echo "CREATE EXTENSION IF NOT EXISTS postgis;" >> /docker-entrypoint-initdb.d/init-postgis.sql
+# This just ensures shared_preload_libraries isn't blocking later

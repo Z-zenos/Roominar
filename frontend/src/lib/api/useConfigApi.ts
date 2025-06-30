@@ -8,6 +8,7 @@ import { jwtDecode } from 'jwt-decode';
 import { signOut, useSession } from 'next-auth/react';
 import { useMemo } from 'react';
 import queryString from 'query-string';
+import { API_URL } from '@/src/constants/app.constant';
 
 function useApiConfig() {
   const session = useSession();
@@ -21,10 +22,7 @@ function useApiConfig() {
               },
             }
           : {},
-        baseServer: new ServerConfiguration(
-          process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
-          {},
-        ),
+        baseServer: new ServerConfiguration(API_URL, {}),
         promiseMiddleware: [
           {
             async pre(context) {

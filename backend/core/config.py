@@ -86,6 +86,8 @@ class Settings(BaseSettings):
     CLOUDINARY_API_SECRET: Optional[str]
 
     QR_CHECK_IN_SECRET_KEY: Optional[str]
+    
+    DATABASE_URL: Optional[str] = None
 
     ENVIRONMENT: Literal["dev", "staging", "production"] = "dev"
 
