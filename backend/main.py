@@ -38,12 +38,7 @@ time.tzset()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:3000",
-        "http://192.168.1.6:3000",
-        "http://192.168.80.62:3000",
-        "http://192.168.88.151:3000",
-        "http://192.168.0.111:3000",
-        "http://dungct.navistar.io:2002",
+        "https://vievent.site",
     ],
     allow_credentials=True,
     allow_methods=["*"],
