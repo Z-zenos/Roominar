@@ -93,7 +93,7 @@ export const useUploadMultipleFiles = (
             })
             .catch((err) => {
               if (axios.isAxiosError<{ message: string }>(err)) {
-                toast.error(err.response?.data.message || 'Upload failed');
+                toast.error(err.response?.data.message || 'Upload thất bại');
               }
             });
         }),

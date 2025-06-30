@@ -9,7 +9,7 @@ const Footer = () => {
     <footer className='bg-gray-900 z-[5] sticky'>
       <div className='mx-auto max-w-screen-xl px-4 py-8 sm:px-6 lg:px-8'>
         <div className='lg:flex lg:items-start lg:gap-8'>
-          <Logo className='bg-white scale-110 pb-4 min-w-[120px]' />
+          <Logo className='scale-110 pb-4 min-w-[120px]' />
 
           <div className='mt-8 grid grid-cols-2 gap-8 lg:mt-0 lg:grid-cols-5 lg:gap-y-16'>
             <div className='col-span-2'>

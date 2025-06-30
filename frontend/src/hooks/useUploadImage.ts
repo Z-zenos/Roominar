@@ -82,9 +82,9 @@ export const useUpload = (
         signature,
       });
       setImage(null);
-      toast.success('Image deleted successfully!');
+      toast.success('Đã xoá ảnh!');
     } catch (err) {
-      toast.error('Failed to delete image. Please try again.');
+      toast.error('Xoá ảnh thất bại!');
     }
   }, []);
 
@@ -153,7 +153,7 @@ export const useUpload = (
           setImage(data);
           setIsFetching(false);
           setIsSuccess(true);
-          toast.success('Successfully uploaded!');
+          toast.success('Upload thành công!');
         }
       } catch (err) {
         if (axios.isAxiosError<{ message: string }>(err)) {

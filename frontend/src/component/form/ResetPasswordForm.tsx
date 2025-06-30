@@ -44,7 +44,7 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
 
   const { trigger, isMutating } = useResetPasswordMutation({
     onSuccess() {
-      toast.success('Reset password successfully');
+      toast.success('Đổi mật khẩu thành công! 🎉');
       setTimeout(() => router.push('/login'), 1500);
     },
     onError: handleApiError,

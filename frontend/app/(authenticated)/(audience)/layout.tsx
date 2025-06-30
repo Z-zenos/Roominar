@@ -9,10 +9,13 @@ import {
 } from '@/src/component/common/Sidebar';
 import AudienceSidebar from '@/src/component/common/SideBar/AudienceSidebar';
 import Footer from '@/src/component/layout/Footer';
+import { useIsStandalone } from '@/src/hooks/useIsStandalone';
 import useWindowDimensions from '@/src/hooks/useWindowDimension';
 
 export default function RootLayout({ children }) {
   const { width } = useWindowDimensions();
+  const isStandalone = useIsStandalone();
+
   return (
     <div>
       <Navbar />
@@ -36,7 +39,7 @@ export default function RootLayout({ children }) {
           </SidebarInset>
         </SidebarProvider>
       </div>
-      <Footer />
+      {!isStandalone && <Footer />}
     </div>
   );
 }
