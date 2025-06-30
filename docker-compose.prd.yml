@@ -48,6 +48,7 @@ services:
       timeout: 5s
       retries: 5
     restart: unless-stopped
+    command: postgres -c listen_addresses='*' -c password_encryption=md5
 
   redis:
     image: redis:7
@@ -61,7 +62,7 @@ services:
       context: .
       dockerfile: ./backend/Dockerfile.prd
     container_name: roominar-celery
-    command: poetry run celery -A backend.celery worker --loglevel=info
+    command: poetry run celery -A backend.celery:app worker --loglevel=info
     env_file:
       - ./backend/.env.prd
     depends_on:
@@ -74,7 +75,7 @@ services:
       context: .
       dockerfile: ./backend/Dockerfile.prd
     container_name: roominar-celery-beat
-    command: poetry run celery -A backend.celery beat --loglevel=info
+    command: poetry run celery -A backend.celery:app beat --loglevel=info
     env_file:
       - ./backend/.env.prd
     depends_on:
