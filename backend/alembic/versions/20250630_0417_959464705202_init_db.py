@@ -495,13 +495,13 @@ def upgrade() -> None:
         sa.Column("rating_count", sa.Integer(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index(
-        "idx_events_coordinate",
-        "events",
-        ["coordinate"],
-        unique=False,
-        postgresql_using="gist",
-    )
+    # op.create_index(
+    #     "idx_events_coordinate",
+    #     "events",
+    #     ["coordinate"],
+    #     unique=False,
+    #     postgresql_using="gist",
+    # )
     op.create_index(op.f("ix_events_slug"), "events", ["slug"], unique=False)
     op.create_table(
         "notifications",
