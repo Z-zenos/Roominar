@@ -45,6 +45,7 @@ import { useListingRandomSpeakersQuery } from '@/src/api/speaker.api';
 import RecommendedEvents from '../event/RecommendedEvents';
 import { useTranslations } from 'next-intl';
 import { styles } from '@/src/constants/styles.constant';
+import { usePwaInstallPrompt } from '@/src/hooks/usePwaInstallPrompt';
 
 export default function Home() {
   const t = useTranslations();
@@ -88,8 +89,31 @@ export default function Home() {
   const [value, setValue] = useState<string>('');
   const [activeEvent, setActiveEvent] = useState<number>(0);
 
+  const { deferredPrompt, promptInstall } = usePwaInstallPrompt();
+
   return (
     <div className='overflow-x-hidden'>
+      {deferredPrompt && (
+        <div className='fixed bottom-4 right-4 bg-white border p-4 rounded shadow-xl'>
+          <div className={clsx(styles.flexStart)}>
+            <Image
+              src='/images/icons/icon-192x192.png'
+              alt='PWA Icon'
+              width={48}
+              height={48}
+              className='rounded-full'
+            />
+            <p>Cài đặt website để có trải nghiệm tốt hơn!</p>
+          </div>
+          <button
+            onClick={promptInstall}
+            className='mt-2 px-4 py-1 bg-blue-500 text-white rounded'
+          >
+            Cài đặt
+          </button>
+        </div>
+      )}
+
       {/* === HERO SECTION === */}
       <section className='text-center flex items-center justify-center flex-col pt-20 pb-10 relative '>
         <div className='z-10'>
@@ -109,12 +133,12 @@ export default function Home() {
             <span className='text-gradient'> E</span>vent{' '}
             {new Date().getFullYear()} 🎉
           </h1>
-          {status == 'unauthenticated' && (
-            <p className='text-primary font-semibold mb-8'>
-              Đăng ký một tài khoản miễn phí để nâng cao trải nghiệm của chính
-              bạn.
-            </p>
-          )}
+          {status == 'unauthenticated' ||
+            (width > 450 && (
+              <p className='text-primary font-semibold mb-8'>
+                Trải nghiệm sự kiện theo cách cá nhân hóa và đầy cảm hứng
+              </p>
+            ))}
           <Input
             className='450px:max-w-[500px] max-w-[300px] mt-5 mx-auto'
             placeholder='Tìm bất kỳ sự kiện nào bạn muốn...'

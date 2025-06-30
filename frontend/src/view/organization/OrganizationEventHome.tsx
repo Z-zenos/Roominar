@@ -263,19 +263,19 @@ function OrganizationEventHome({ slug }: OrganizationEventHomeProps) {
                           <div className='p-3 bg-red-500 rounded-full'>
                             <TbClockExclamation className='text-white' />
                           </div>
-                          <div>
-                            <h3 className='text-red-500 font-semibold'>
-                              Application is not available
-                            </h3>
-                            <p className='text-sm'>
-                              The application is not available at this time
-                            </p>
-                          </div>
+                          <p className='text-sm'>
+                            Không thể đăng ký tham gia sự kiện này vì thời gian
+                            đăng ký đã kết thúc hoặc chưa bắt đầu.
+                          </p>
                         </div>
                       </div>
                     ));
                   } else {
-                    router.push(auth?.user ? `${pathname}/apply` : '/login');
+                    router.push(
+                      auth?.user
+                        ? `${pathname}/apply`
+                        : `/login?callbackUrl=events/${event?.slug}/apply`,
+                    );
                   }
                 }}
                 isDisabled={true}

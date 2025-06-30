@@ -51,7 +51,7 @@ function RegisterOrganizationForm() {
     isMutating: isLoading,
   } = useRegisterOrganizationMutation({
     onSuccess() {
-      toast.success('Successfully Account Registration!');
+      toast.success('Đăng ký tổ chức thành công! 🎉');
       setIsRegisterSuccess(true);
     },
     onError: handleApiError,

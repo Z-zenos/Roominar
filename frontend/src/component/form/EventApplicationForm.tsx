@@ -130,7 +130,7 @@ export default function EventApplicationForm({
 
   const { trigger, isMutating: isCreating } = useCreateFreeApplicationMutation({
     onSuccess() {
-      toast.success('Buy ticket successfully');
+      toast.success('Mua vé thành công! 🎉');
       setTimeout(() => {
         router.push('/tickets-n-payments');
       }, 2000);

@@ -316,14 +316,19 @@ function EventDetail({ slug }: EventDetailProps) {
                           <div>
                             <p className='text-sm'>
                               Không thể đăng ký sự kiện trong khoảng thời gian
-                              này.
+                              này vì thời gian đăng ký đã kết thúc hoặc chưa bắt
+                              đầu.
                             </p>
                           </div>
                         </div>
                       </div>
                     ));
                   } else {
-                    router.push(auth?.user ? `${pathname}/apply` : '/login');
+                    router.push(
+                      auth?.user
+                        ? `${pathname}/apply`
+                        : `/login?callbackUrl=/events/${event?.slug}/apply`,
+                    );
                   }
                 }}
                 isDisabled={event?.applicationEndAt < new Date()}
@@ -459,7 +464,7 @@ function EventDetail({ slug }: EventDetailProps) {
                             <h4
                               className={clsx(
                                 styles.between,
-                                'text-nm font-medium leading-5',
+                                'text-nm font-medium leading-5 flex-wrap gap-2',
                               )}
                             >
                               <span>

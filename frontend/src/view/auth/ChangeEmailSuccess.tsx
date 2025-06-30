@@ -25,9 +25,9 @@ function ChangeEmailSuccess({ token }: ChangeEmailSuccessProps) {
 
   const { trigger } = useVerifyChangeEmailMutation({
     onSuccess() {
-      setText('Your new email changed successfully ✔');
+      setText('Thay đổi email thành công ✔');
       setIsSuccess(true);
-      toast.success('Your new email has verified completely!');
+      toast.success('Email mới đã được xác nhận thành công!');
       setTimeout(() => router.push('/login'), 1500);
     },
     onError(error: ApiException<unknown>) {

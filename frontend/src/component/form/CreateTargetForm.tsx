@@ -34,7 +34,7 @@ function CreateTargetForm({ onCreate }: CreateTargetFormProps) {
 
   const { trigger, isMutating: isCreating } = useCreateTargetMutation({
     onSuccess() {
-      toast.success('Create target successfully!');
+      toast.success('Tạo mục tiêu thành công! 🎉');
       onCreate?.();
       form.reset();
     },

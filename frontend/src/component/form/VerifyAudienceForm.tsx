@@ -42,7 +42,7 @@ function VerifyAudienceForm({ token }: VerifyAudienceFormProps) {
 
   const { trigger, isMutating: isVerifying } = useVerifyAudienceMutation({
     onSuccess() {
-      toast.success('Your account has verified and updated completely!');
+      toast.success('Tài khoản của bạn đã được xác minh thành công! 🎉');
       form.reset();
       router.push('/login');
     },

@@ -52,7 +52,7 @@ function CreateTicketForm({ eventId, onCreate }: CreateTicketFormProps) {
 
   const { trigger, isMutating: isCreating } = useCreateTicketMutation({
     onSuccess() {
-      toast.success('Create ticket successfully!');
+      toast.success('Tạo vé thành công! 🎉');
       onCreate?.();
       form.reset();
     },

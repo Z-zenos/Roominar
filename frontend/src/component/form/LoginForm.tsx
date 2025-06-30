@@ -75,11 +75,11 @@ export default function LoginForm({ roleCode }: LoginFormProps) {
       }
       if (res.status == 401) {
         setIsLoading(false);
-        return toast.error('Invalid email or password.');
+        return toast.error('Email hoặc mật khẩu không đúng.');
       }
       if (res.status == 404) {
         setIsLoading(false);
-        return toast.error('Invalid email or password.');
+        return toast.error('Email hoặc mật khẩu không đúng.');
       }
     }
   });

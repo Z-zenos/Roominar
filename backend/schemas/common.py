@@ -17,7 +17,7 @@ class PaginationResponse(BaseModel, Generic[T]):
 
 
 def phone_validator(v):
-    if not re.match("^[0-9]*$", v) or len(v) != 11:
+    if not re.match("^[0-9]*$", v) or len(v) > 11 or len(v) < 10:
         raise ValueError(ErrorCode.ERR_INVALID_PHONE, ErrorMessage.ERR_INVALID_PHONE)
     return v
 

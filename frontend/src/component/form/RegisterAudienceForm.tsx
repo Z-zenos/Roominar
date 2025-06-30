@@ -50,7 +50,7 @@ function RegisterAudienceForm() {
     isMutating: isLoading,
   } = useRegisterAudienceMutation({
     onSuccess() {
-      toast.success('Successfully Account Registration!');
+      toast.success('Đăng ký thành công! 🎉');
       setIsRegisterSuccess(true);
     },
     onError: handleApiError,

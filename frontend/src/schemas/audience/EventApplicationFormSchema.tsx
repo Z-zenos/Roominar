@@ -20,8 +20,8 @@ const eventApplicationFormSchema = z.object({
   lastName: z.string().trim().min(1).max(255),
   workplaceName: z.string().max(255).optional(),
   phone: z.string().min(1),
-  industryCode: z.nativeEnum(IndustryCode).optional(),
-  jobTypeCode: z.nativeEnum(JobTypeCode).optional(),
+  industryCode: z.nativeEnum(IndustryCode).nullable(),
+  jobTypeCode: z.nativeEnum(JobTypeCode).nullable(),
 
   surveyResponseResults: z
     .array(
