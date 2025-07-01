@@ -23,10 +23,11 @@ services:
     container_name: roominar-frontend
     ports:
       - "3000:3000"
-    environment:
-      - NEXT_PUBLIC_API_URL=https://api.vievent.site
     env_file:
       - ./frontend/.env.prd
+    environment:
+      - NEXT_PUBLIC_API_URL=https://api.vievent.site
+      - NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}
     depends_on:
       - backend
     restart: unless-stopped
