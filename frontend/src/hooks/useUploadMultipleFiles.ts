@@ -2,6 +2,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { CDN_UPLOAD_PRESET } from '../constants/app.constant';
 
 export type CDNImage = {
   public_id: string;
@@ -50,10 +51,7 @@ export const useUploadMultipleFiles = (
     const newQueue = acceptedFiles.map((file) => {
       const formData = new FormData();
       formData.append('file', file);
-      formData.append(
-        'upload_preset',
-        process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET as string,
-      );
+      formData.append('upload_preset', CDN_UPLOAD_PRESET);
       return formData;
     });
 
@@ -124,10 +122,7 @@ export const useUploadMultipleFiles = (
       const newQueue = Array.from(files).map((file) => {
         const formData = new FormData();
         formData.append('file', file);
-        formData.append(
-          'upload_preset',
-          process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET as string,
-        );
+        formData.append('upload_preset', CDN_UPLOAD_PRESET);
         return formData;
       });
 

@@ -10,3 +10,6 @@ export const initialScreen = {
 
 export const API_URL =
   process.env.NEXT_PUBLIC_API_URL || 'https://api.vievent.site';
+
+export const CDN_UPLOAD_PRESET =
+  process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'roominar';

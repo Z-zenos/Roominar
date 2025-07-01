@@ -11,6 +11,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import type { Message } from 'react-hook-form';
 import crypto from 'crypto';
+import { CDN_UPLOAD_PRESET } from '../constants/app.constant';
 
 export const DROPZONE_OPTIONS: DropzoneOptions = {
   accept: {
@@ -35,21 +36,24 @@ export const uploadFile = async ({
   formData,
   onUploadProgress,
 }: UploadFileProps): Promise<CDNImage> => {
-  const { data } = await axios.request<CDNImage>({
-    method: 'POST',
-    headers: { 'Content-Type': 'multipart/form-data' },
-    url: process.env.NEXT_PUBLIC_CLOUDINARY_URL || '',
-    data: formData,
-    onUploadProgress(progressEvent) {
-      const completedPercent = Math.round(
-        (progressEvent.loaded * 100) / progressEvent.total!,
-      );
+  try {
+    const { data } = await axios.request<CDNImage>({
+      method: 'POST',
+      headers: { 'Content-Type': 'multipart/form-data' },
+      url: process.env.NEXT_PUBLIC_CLOUDINARY_URL || '',
+      data: formData,
+      onUploadProgress(progressEvent) {
+        const completedPercent = Math.round(
+          (progressEvent.loaded * 100) / progressEvent.total!,
+        );
 
-      onUploadProgress(completedPercent);
-    },
-  });
-
-  return { ...data };
+        onUploadProgress(completedPercent);
+      },
+    });
+    return { ...data };
+  } catch (error) {
+    console.log('Upload error:', error);
+  }
 };
 export const useUpload = (
   formats: string[] = ['.png', '.jpg', '.jpeg'],
@@ -99,10 +103,7 @@ export const useUpload = (
 
       const formData = new FormData();
       formData.append('file', acceptedFiles[0]);
-      formData.append(
-        'upload_preset',
-        process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET as string,
-      );
+      formData.append('upload_preset', CDN_UPLOAD_PRESET);
       setFormatImage(formData);
     },
     [image, deleteImage],
@@ -128,10 +129,7 @@ export const useUpload = (
     const file = files?.[0];
     if (!formats.map((f) => `image/${f.slice(1)}`).includes(file?.type)) return;
     formData.append('file', file);
-    formData.append(
-      'upload_preset',
-      process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET as string,
-    );
+    formData.append('upload_preset', CDN_UPLOAD_PRESET);
     setFormatImage(formData);
   };
 
