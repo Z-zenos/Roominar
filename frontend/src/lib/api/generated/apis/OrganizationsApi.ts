@@ -48,7 +48,7 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Analyze Event Check Ins
-            * @param slug 
+            * @param slug
         */
         public async analyzeEventCheckIns(slug: string, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -85,7 +85,7 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Analyze Event Tickets
-            * @param slug 
+            * @param slug
             * @param granularity The granularity of the data.
         */
         public async analyzeEventTickets(slug: string, granularity?: 'daily' | 'weekly' | 'monthly', _options?: Configuration): Promise<RequestContext> {
@@ -129,7 +129,7 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Create Organization Follow
-            * @param organizationId 
+            * @param organizationId
         */
         public async createOrganizationFollow(organizationId: number, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -166,7 +166,7 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Delete Organization Follow
-            * @param organizationId 
+            * @param organizationId
         */
         public async deleteOrganizationFollow(organizationId: number, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -203,16 +203,16 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Download Attendees Csv
-            * @param keyword 
-            * @param applyAtFrom 
-            * @param applyAtTo 
-            * @param isCheckedIn 
-            * @param jobTypeCode 
-            * @param industryCode 
-            * @param sortBy 
-            * @param withFilter 
-            * @param page 
-            * @param perPage 
+            * @param keyword
+            * @param applyAtFrom
+            * @param applyAtTo
+            * @param isCheckedIn
+            * @param jobTypeCode
+            * @param industryCode
+            * @param sortBy
+            * @param withFilter
+            * @param page
+            * @param perPage
         */
         public async downloadAttendeesCsv(keyword?: string, applyAtFrom?: Date, applyAtTo?: Date, isCheckedIn?: boolean, jobTypeCode?: JobTypeCode, industryCode?: IndustryCode, sortBy?: AttendeeSortByCode, withFilter?: boolean, page?: number, perPage?: number, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -302,7 +302,7 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Get Attendee Detail
-            * @param attendeeId 
+            * @param attendeeId
         */
         public async getAttendeeDetail(attendeeId: number, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -368,7 +368,7 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Get Organization Detail
-            * @param organizationSlug 
+            * @param organizationSlug
         */
         public async getOrganizationDetail(organizationSlug: string, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -434,11 +434,11 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Get Ticket Stats
-            * @param eventId 
-            * @param startDate 
-            * @param endDate 
-            * @param ticketType 
-            * @param ticketStatus 
+            * @param eventId
+            * @param startDate
+            * @param endDate
+            * @param ticketType
+            * @param ticketStatus
         */
         public async getTicketStats(eventId?: number, startDate?: Date, endDate?: Date, ticketType?: TicketTypeCode, ticketStatus?: TicketStatusCode, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -501,17 +501,19 @@ import type {SecurityAuthentication} from '../auth/auth';
             * @param slug Event slug
             * @param eventId Event ID
             * @param keyword user name | event name | phone | email
-            * @param applyAtFrom 
-            * @param applyAtTo 
-            * @param isCheckedIn 
-            * @param jobTypeCode 
-            * @param industryCode 
-            * @param sortBy 
-            * @param perPage 
-            * @param page 
+            * @param applyAtFrom
+            * @param applyAtTo
+            * @param isCheckedIn
+            * @param jobTypeCode
+            * @param industryCode
+            * @param ticketTypeCode
+            * @param sortBy
+            * @param perPage
+            * @param page
         */
-        public async listingAttendees(slug?: string, eventId?: number, keyword?: string, applyAtFrom?: Date, applyAtTo?: Date, isCheckedIn?: boolean, jobTypeCode?: JobTypeCode, industryCode?: IndustryCode, sortBy?: AttendeeSortByCode, perPage?: number, page?: number, _options?: Configuration): Promise<RequestContext> {
+        public async listingAttendees(slug?: string, eventId?: number, keyword?: string, applyAtFrom?: Date, applyAtTo?: Date, isCheckedIn?: boolean, jobTypeCode?: JobTypeCode, industryCode?: IndustryCode, ticketTypeCode?: TicketTypeCode, sortBy?: AttendeeSortByCode, perPage?: number, page?: number, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
+
 
 
 
@@ -572,6 +574,11 @@ import type {SecurityAuthentication} from '../auth/auth';
                 }
 
                 // Query Params
+                if (ticketTypeCode !== undefined) {
+                requestContext.setQueryParam("ticket_type_code", ObjectSerializer.serialize(ticketTypeCode, "TicketTypeCode", ""));
+                }
+
+                // Query Params
                 if (sortBy !== undefined) {
                 requestContext.setQueryParam("sort_by", ObjectSerializer.serialize(sortBy, "AttendeeSortByCode", ""));
                 }
@@ -604,12 +611,12 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Listing Attendees Ranking
-            * @param keyword 
-            * @param eventId 
-            * @param month 
-            * @param year 
-            * @param page 
-            * @param perPage 
+            * @param keyword
+            * @param eventId
+            * @param month
+            * @param year
+            * @param page
+            * @param perPage
         */
         public async listingAttendeesRanking(keyword?: string, eventId?: number, month?: number, year?: number, page?: number, perPage?: number, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -675,16 +682,16 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Listing Organization Events
-            * @param keyword 
-            * @param tags 
-            * @param meetingToolCodes 
-            * @param startAtFrom 
-            * @param startAtTo 
-            * @param eventStatus 
-            * @param timeStatus 
-            * @param sortBy 
-            * @param perPage 
-            * @param page 
+            * @param keyword
+            * @param tags
+            * @param meetingToolCodes
+            * @param startAtFrom
+            * @param startAtTo
+            * @param eventStatus
+            * @param timeStatus
+            * @param sortBy
+            * @param perPage
+            * @param page
         */
         public async listingOrganizationEvents(keyword?: string, tags?: Array<number>, meetingToolCodes?: Array<EventMeetingToolCode>, startAtFrom?: string, startAtTo?: string, eventStatus?: Array<EventStatusCode>, timeStatus?: EventTimeStatusCode, sortBy?: ManageEventSortByCode, perPage?: number, page?: number, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -832,7 +839,7 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Listing Top Organization Events
-            * @param organizationId 
+            * @param organizationId
         */
         public async listingTopOrganizationEvents(organizationId: number, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -863,7 +870,7 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Register Organization
-            * @param registerOrganizationRequest 
+            * @param registerOrganizationRequest
         */
         public async registerOrganization(registerOrganizationRequest?: RegisterOrganizationRequest, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -899,11 +906,11 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Track User Actions
-            * @param timeRange 
-            * @param groupBy 
-            * @param actionTypes 
-            * @param eventId 
-            * @param topN 
+            * @param timeRange
+            * @param groupBy
+            * @param actionTypes
+            * @param eventId
+            * @param topN
         */
         public async trackUserActions(timeRange?: TrackingTimeRangeCode, groupBy?: TrackingTimeRangeCode, actionTypes?: Array<UserActionTypeCode>, eventId?: number, topN?: number, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;

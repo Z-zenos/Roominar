@@ -165,7 +165,7 @@ import type { ApplicationsApiRequestFactory, ApplicationsApiResponseProcessor} f
 
 export interface ApplicationsApiCancelApplicationRequest {
     /**
-     * 
+     *
      * @type number
      * @memberof ApplicationsApicancelApplication
      */
@@ -174,7 +174,7 @@ export interface ApplicationsApiCancelApplicationRequest {
 
 export interface ApplicationsApiCreateApplicationCheckoutSessionRequest {
     /**
-     * 
+     *
      * @type CreateApplicationRequest
      * @memberof ApplicationsApicreateApplicationCheckoutSession
      */
@@ -183,7 +183,7 @@ export interface ApplicationsApiCreateApplicationCheckoutSessionRequest {
 
 export interface ApplicationsApiCreateFreeApplicationRequest {
     /**
-     * 
+     *
      * @type CreateApplicationRequest
      * @memberof ApplicationsApicreateFreeApplication
      */
@@ -252,7 +252,7 @@ import type { AuthApiRequestFactory, AuthApiResponseProcessor} from "../apis/Aut
 
 export interface AuthApiChangePasswordRequest {
     /**
-     * 
+     *
      * @type ChangePasswordRequest
      * @memberof AuthApichangePassword
      */
@@ -261,7 +261,7 @@ export interface AuthApiChangePasswordRequest {
 
 export interface AuthApiForgotPasswordRequest {
     /**
-     * 
+     *
      * @type ForgotPasswordRequest
      * @memberof AuthApiforgotPassword
      */
@@ -270,13 +270,13 @@ export interface AuthApiForgotPasswordRequest {
 
 export interface AuthApiLoginRequest {
     /**
-     * 
+     *
      * @type string
      * @memberof AuthApilogin
      */
     userAgent?: string
     /**
-     * 
+     *
      * @type LoginRequest
      * @memberof AuthApilogin
      */
@@ -285,7 +285,7 @@ export interface AuthApiLoginRequest {
 
 export interface AuthApiLogoutRequest {
     /**
-     * 
+     *
      * @type LogoutRequest
      * @memberof AuthApilogout
      */
@@ -297,7 +297,7 @@ export interface AuthApiMeRequest {
 
 export interface AuthApiRefreshTokenRequest {
     /**
-     * 
+     *
      * @type string
      * @memberof AuthApirefreshToken
      */
@@ -306,7 +306,7 @@ export interface AuthApiRefreshTokenRequest {
 
 export interface AuthApiRegisterAudienceRequest {
     /**
-     * 
+     *
      * @type RegisterAudienceRequest
      * @memberof AuthApiregisterAudience
      */
@@ -315,7 +315,7 @@ export interface AuthApiRegisterAudienceRequest {
 
 export interface AuthApiRequestChangeEmailRequest {
     /**
-     * 
+     *
      * @type ChangeEmailRequest
      * @memberof AuthApirequestChangeEmail
      */
@@ -324,13 +324,13 @@ export interface AuthApiRequestChangeEmailRequest {
 
 export interface AuthApiResetPasswordRequest {
     /**
-     * 
+     *
      * @type string
      * @memberof AuthApiresetPassword
      */
     token: string
     /**
-     * 
+     *
      * @type ResetPasswordRequest
      * @memberof AuthApiresetPassword
      */
@@ -339,7 +339,7 @@ export interface AuthApiResetPasswordRequest {
 
 export interface AuthApiRevertEmailRequest {
     /**
-     * 
+     *
      * @type string
      * @memberof AuthApirevertEmail
      */
@@ -348,7 +348,7 @@ export interface AuthApiRevertEmailRequest {
 
 export interface AuthApiSocialAuthRequest {
     /**
-     * 
+     *
      * @type SocialAuthRequest
      * @memberof AuthApisocialAuth
      */
@@ -357,13 +357,13 @@ export interface AuthApiSocialAuthRequest {
 
 export interface AuthApiVerifyAudienceRequest {
     /**
-     * 
+     *
      * @type string
      * @memberof AuthApiverifyAudience
      */
     token: string
     /**
-     * 
+     *
      * @type VerifyAudienceRequest
      * @memberof AuthApiverifyAudience
      */
@@ -372,7 +372,7 @@ export interface AuthApiVerifyAudienceRequest {
 
 export interface AuthApiVerifyChangeEmailRequest {
     /**
-     * 
+     *
      * @type string
      * @memberof AuthApiverifyChangeEmail
      */
@@ -603,7 +603,7 @@ import type { CommentsApiRequestFactory, CommentsApiResponseProcessor} from "../
 
 export interface CommentsApiDeleteCommentRequest {
     /**
-     * 
+     *
      * @type number
      * @memberof CommentsApideleteComment
      */
@@ -612,7 +612,7 @@ export interface CommentsApiDeleteCommentRequest {
 
 export interface CommentsApiDeleteCommentReplyRequest {
     /**
-     * 
+     *
      * @type number
      * @memberof CommentsApideleteCommentReply
      */
@@ -621,7 +621,7 @@ export interface CommentsApiDeleteCommentReplyRequest {
 
 export interface CommentsApiListingCommentRepliesRequest {
     /**
-     * 
+     *
      * @type number
      * @memberof CommentsApilistingCommentReplies
      */
@@ -630,7 +630,7 @@ export interface CommentsApiListingCommentRepliesRequest {
 
 export interface CommentsApiPinCommentRequest {
     /**
-     * 
+     *
      * @type number
      * @memberof CommentsApipinComment
      */
@@ -639,13 +639,13 @@ export interface CommentsApiPinCommentRequest {
 
 export interface CommentsApiReplyCommentRequest {
     /**
-     * 
+     *
      * @type number
      * @memberof CommentsApireplyComment
      */
     commentId: number
     /**
-     * 
+     *
      * @type CreateCommentReplyRequest
      * @memberof CommentsApireplyComment
      */
@@ -654,7 +654,7 @@ export interface CommentsApiReplyCommentRequest {
 
 export interface CommentsApiUnpinCommentRequest {
     /**
-     * 
+     *
      * @type number
      * @memberof CommentsApiunpinComment
      */
@@ -663,13 +663,13 @@ export interface CommentsApiUnpinCommentRequest {
 
 export interface CommentsApiUpdateCommentRequest {
     /**
-     * 
+     *
      * @type number
      * @memberof CommentsApiupdateComment
      */
     commentId: number
     /**
-     * 
+     *
      * @type UpdateEventCommentRequest
      * @memberof CommentsApiupdateComment
      */
@@ -678,13 +678,13 @@ export interface CommentsApiUpdateCommentRequest {
 
 export interface CommentsApiUpdateCommentReplyRequest {
     /**
-     * 
+     *
      * @type number
      * @memberof CommentsApiupdateCommentReply
      */
     replyId: number
     /**
-     * 
+     *
      * @type UpdateCommentReplyRequest
      * @memberof CommentsApiupdateCommentReply
      */
@@ -693,13 +693,13 @@ export interface CommentsApiUpdateCommentReplyRequest {
 
 export interface CommentsApiVoteCommentRequest {
     /**
-     * 
+     *
      * @type number
      * @memberof CommentsApivoteComment
      */
     commentId: number
     /**
-     * 
+     *
      * @type VoteCommentRequest
      * @memberof CommentsApivoteComment
      */
@@ -895,13 +895,13 @@ import type { EventsApiRequestFactory, EventsApiResponseProcessor} from "../apis
 
 export interface EventsApiCommentEventRequest {
     /**
-     * 
+     *
      * @type number
      * @memberof EventsApicommentEvent
      */
     eventId: number
     /**
-     * 
+     *
      * @type CommentEventRequest
      * @memberof EventsApicommentEvent
      */
@@ -910,7 +910,7 @@ export interface EventsApiCommentEventRequest {
 
 export interface EventsApiCreateDraftEventRequest {
     /**
-     * 
+     *
      * @type CreateDraftEventRequest
      * @memberof EventsApicreateDraftEvent
      */
@@ -919,7 +919,7 @@ export interface EventsApiCreateDraftEventRequest {
 
 export interface EventsApiCreateEventBookmarkRequest {
     /**
-     * 
+     *
      * @type number
      * @memberof EventsApicreateEventBookmark
      */
@@ -928,7 +928,7 @@ export interface EventsApiCreateEventBookmarkRequest {
 
 export interface EventsApiDeleteEventBookmarkRequest {
     /**
-     * 
+     *
      * @type number
      * @memberof EventsApideleteEventBookmark
      */
@@ -937,7 +937,7 @@ export interface EventsApiDeleteEventBookmarkRequest {
 
 export interface EventsApiDeleteManualCheckInRequest {
     /**
-     * 
+     *
      * @type number
      * @memberof EventsApideleteManualCheckIn
      */
@@ -946,7 +946,7 @@ export interface EventsApiDeleteManualCheckInRequest {
 
 export interface EventsApiGenerateEventAiRequest {
     /**
-     * 
+     *
      * @type GenerateEventAIRequest
      * @memberof EventsApigenerateEventAi
      */
@@ -958,7 +958,7 @@ export interface EventsApiGetDraftEventRequest {
 
 export interface EventsApiGetEventDetailRequest {
     /**
-     * 
+     *
      * @type string
      * @memberof EventsApigetEventDetail
      */
@@ -967,19 +967,19 @@ export interface EventsApiGetEventDetailRequest {
 
 export interface EventsApiListingEventCommentsRequest {
     /**
-     * 
+     *
      * @type number
      * @memberof EventsApilistingEventComments
      */
     eventId: number
     /**
-     * 
+     *
      * @type number
      * @memberof EventsApilistingEventComments
      */
     perPage?: number
     /**
-     * 
+     *
      * @type number
      * @memberof EventsApilistingEventComments
      */
@@ -991,31 +991,31 @@ export interface EventsApiListingEventOptionsRequest {
 
 export interface EventsApiListingEventPurchasedTicketsRequest {
     /**
-     * 
+     *
      * @type string
      * @memberof EventsApilistingEventPurchasedTickets
      */
     slug: string
     /**
-     * 
+     *
      * @type string
      * @memberof EventsApilistingEventPurchasedTickets
      */
     keyword?: string
     /**
-     * 
+     *
      * @type boolean
      * @memberof EventsApilistingEventPurchasedTickets
      */
     isCheckedIn?: boolean
     /**
-     * 
+     *
      * @type number
      * @memberof EventsApilistingEventPurchasedTickets
      */
     perPage?: number
     /**
-     * 
+     *
      * @type number
      * @memberof EventsApilistingEventPurchasedTickets
      */
@@ -1027,25 +1027,25 @@ export interface EventsApiListingEventRankRequest {
 
 export interface EventsApiListingMyEventsRequest {
     /**
-     * 
+     *
      * @type string
      * @memberof EventsApilistingMyEvents
      */
     keyword?: string
     /**
-     * 
+     *
      * @type MyEventStatusCode
      * @memberof EventsApilistingMyEvents
      */
     status?: MyEventStatusCode
     /**
-     * 
+     *
      * @type number
      * @memberof EventsApilistingMyEvents
      */
     perPage?: number
     /**
-     * 
+     *
      * @type number
      * @memberof EventsApilistingMyEvents
      */
@@ -1054,109 +1054,109 @@ export interface EventsApiListingMyEventsRequest {
 
 export interface EventsApiListingRecommendationEventsRequest {
     /**
-     * 
+     *
      * @type string
      * @memberof EventsApilistingRecommendationEvents
      */
     keyword?: string
     /**
-     * 
+     *
      * @type boolean
      * @memberof EventsApilistingRecommendationEvents
      */
     isOnline?: boolean
     /**
-     * 
+     *
      * @type boolean
      * @memberof EventsApilistingRecommendationEvents
      */
     isOffline?: boolean
     /**
-     * 
+     *
      * @type boolean
      * @memberof EventsApilistingRecommendationEvents
      */
     isApplyOngoing?: boolean
     /**
-     * 
+     *
      * @type boolean
      * @memberof EventsApilistingRecommendationEvents
      */
     isApplyEnded?: boolean
     /**
-     * 
+     *
      * @type boolean
      * @memberof EventsApilistingRecommendationEvents
      */
     isToday?: boolean
     /**
-     * 
+     *
      * @type boolean
      * @memberof EventsApilistingRecommendationEvents
      */
     isFree?: boolean
     /**
-     * 
+     *
      * @type boolean
      * @memberof EventsApilistingRecommendationEvents
      */
     isPaid?: boolean
     /**
-     * 
+     *
      * @type Array&lt;JobTypeCode&gt;
      * @memberof EventsApilistingRecommendationEvents
      */
     jobTypeCodes?: Array<JobTypeCode>
     /**
-     * 
+     *
      * @type Array&lt;IndustryCode&gt;
      * @memberof EventsApilistingRecommendationEvents
      */
     industryCodes?: Array<IndustryCode>
     /**
-     * 
+     *
      * @type Array&lt;string&gt;
      * @memberof EventsApilistingRecommendationEvents
      */
     cityCodes?: Array<string>
     /**
-     * 
+     *
      * @type Array&lt;number&gt;
      * @memberof EventsApilistingRecommendationEvents
      */
     tags?: Array<number>
     /**
-     * 
+     *
      * @type string
      * @memberof EventsApilistingRecommendationEvents
      */
     startAtFrom?: string
     /**
-     * 
+     *
      * @type string
      * @memberof EventsApilistingRecommendationEvents
      */
     startAtTo?: string
     /**
-     * 
+     *
      * @type number
      * @memberof EventsApilistingRecommendationEvents
      */
     organizationId?: number
     /**
-     * 
+     *
      * @type EventSortByCode
      * @memberof EventsApilistingRecommendationEvents
      */
     sortBy?: EventSortByCode
     /**
-     * 
+     *
      * @type number
      * @memberof EventsApilistingRecommendationEvents
      */
     perPage?: number
     /**
-     * 
+     *
      * @type number
      * @memberof EventsApilistingRecommendationEvents
      */
@@ -1165,7 +1165,7 @@ export interface EventsApiListingRecommendationEventsRequest {
 
 export interface EventsApiListingRelatedEventsRequest {
     /**
-     * 
+     *
      * @type string
      * @memberof EventsApilistingRelatedEvents
      */
@@ -1174,7 +1174,7 @@ export interface EventsApiListingRelatedEventsRequest {
 
 export interface EventsApiListingTicketsOfEventRequest {
     /**
-     * 
+     *
      * @type number
      * @memberof EventsApilistingTicketsOfEvent
      */
@@ -1183,109 +1183,109 @@ export interface EventsApiListingTicketsOfEventRequest {
 
 export interface EventsApiListingTrendingEventsRequest {
     /**
-     * 
+     *
      * @type string
      * @memberof EventsApilistingTrendingEvents
      */
     keyword?: string
     /**
-     * 
+     *
      * @type boolean
      * @memberof EventsApilistingTrendingEvents
      */
     isOnline?: boolean
     /**
-     * 
+     *
      * @type boolean
      * @memberof EventsApilistingTrendingEvents
      */
     isOffline?: boolean
     /**
-     * 
+     *
      * @type boolean
      * @memberof EventsApilistingTrendingEvents
      */
     isApplyOngoing?: boolean
     /**
-     * 
+     *
      * @type boolean
      * @memberof EventsApilistingTrendingEvents
      */
     isApplyEnded?: boolean
     /**
-     * 
+     *
      * @type boolean
      * @memberof EventsApilistingTrendingEvents
      */
     isToday?: boolean
     /**
-     * 
+     *
      * @type boolean
      * @memberof EventsApilistingTrendingEvents
      */
     isFree?: boolean
     /**
-     * 
+     *
      * @type boolean
      * @memberof EventsApilistingTrendingEvents
      */
     isPaid?: boolean
     /**
-     * 
+     *
      * @type Array&lt;JobTypeCode&gt;
      * @memberof EventsApilistingTrendingEvents
      */
     jobTypeCodes?: Array<JobTypeCode>
     /**
-     * 
+     *
      * @type Array&lt;IndustryCode&gt;
      * @memberof EventsApilistingTrendingEvents
      */
     industryCodes?: Array<IndustryCode>
     /**
-     * 
+     *
      * @type Array&lt;string&gt;
      * @memberof EventsApilistingTrendingEvents
      */
     cityCodes?: Array<string>
     /**
-     * 
+     *
      * @type Array&lt;number&gt;
      * @memberof EventsApilistingTrendingEvents
      */
     tags?: Array<number>
     /**
-     * 
+     *
      * @type string
      * @memberof EventsApilistingTrendingEvents
      */
     startAtFrom?: string
     /**
-     * 
+     *
      * @type string
      * @memberof EventsApilistingTrendingEvents
      */
     startAtTo?: string
     /**
-     * 
+     *
      * @type number
      * @memberof EventsApilistingTrendingEvents
      */
     organizationId?: number
     /**
-     * 
+     *
      * @type EventSortByCode
      * @memberof EventsApilistingTrendingEvents
      */
     sortBy?: EventSortByCode
     /**
-     * 
+     *
      * @type number
      * @memberof EventsApilistingTrendingEvents
      */
     perPage?: number
     /**
-     * 
+     *
      * @type number
      * @memberof EventsApilistingTrendingEvents
      */
@@ -1294,7 +1294,7 @@ export interface EventsApiListingTrendingEventsRequest {
 
 export interface EventsApiManualCheckInRequest {
     /**
-     * 
+     *
      * @type ManualCheckInRequest
      * @memberof EventsApimanualCheckIn
      */
@@ -1303,13 +1303,13 @@ export interface EventsApiManualCheckInRequest {
 
 export interface EventsApiPublishEventRequest {
     /**
-     * 
+     *
      * @type number
      * @memberof EventsApipublishEvent
      */
     eventId: number
     /**
-     * 
+     *
      * @type PublishEventRequest
      * @memberof EventsApipublishEvent
      */
@@ -1318,13 +1318,13 @@ export interface EventsApiPublishEventRequest {
 
 export interface EventsApiQrCheckInRequest {
     /**
-     * 
+     *
      * @type number
      * @memberof EventsApiqrCheckIn
      */
     eventId: number
     /**
-     * 
+     *
      * @type QRCheckInRequest
      * @memberof EventsApiqrCheckIn
      */
@@ -1333,13 +1333,13 @@ export interface EventsApiQrCheckInRequest {
 
 export interface EventsApiSaveDraftEventRequest {
     /**
-     * 
+     *
      * @type number
      * @memberof EventsApisaveDraftEvent
      */
     eventId: number
     /**
-     * 
+     *
      * @type SaveDraftEventRequest
      * @memberof EventsApisaveDraftEvent
      */
@@ -1348,109 +1348,109 @@ export interface EventsApiSaveDraftEventRequest {
 
 export interface EventsApiSearchEventsRequest {
     /**
-     * 
+     *
      * @type string
      * @memberof EventsApisearchEvents
      */
     keyword?: string
     /**
-     * 
+     *
      * @type boolean
      * @memberof EventsApisearchEvents
      */
     isOnline?: boolean
     /**
-     * 
+     *
      * @type boolean
      * @memberof EventsApisearchEvents
      */
     isOffline?: boolean
     /**
-     * 
+     *
      * @type boolean
      * @memberof EventsApisearchEvents
      */
     isApplyOngoing?: boolean
     /**
-     * 
+     *
      * @type boolean
      * @memberof EventsApisearchEvents
      */
     isApplyEnded?: boolean
     /**
-     * 
+     *
      * @type boolean
      * @memberof EventsApisearchEvents
      */
     isToday?: boolean
     /**
-     * 
+     *
      * @type boolean
      * @memberof EventsApisearchEvents
      */
     isFree?: boolean
     /**
-     * 
+     *
      * @type boolean
      * @memberof EventsApisearchEvents
      */
     isPaid?: boolean
     /**
-     * 
+     *
      * @type Array&lt;JobTypeCode&gt;
      * @memberof EventsApisearchEvents
      */
     jobTypeCodes?: Array<JobTypeCode>
     /**
-     * 
+     *
      * @type Array&lt;IndustryCode&gt;
      * @memberof EventsApisearchEvents
      */
     industryCodes?: Array<IndustryCode>
     /**
-     * 
+     *
      * @type Array&lt;string&gt;
      * @memberof EventsApisearchEvents
      */
     cityCodes?: Array<string>
     /**
-     * 
+     *
      * @type Array&lt;number&gt;
      * @memberof EventsApisearchEvents
      */
     tags?: Array<number>
     /**
-     * 
+     *
      * @type string
      * @memberof EventsApisearchEvents
      */
     startAtFrom?: string
     /**
-     * 
+     *
      * @type string
      * @memberof EventsApisearchEvents
      */
     startAtTo?: string
     /**
-     * 
+     *
      * @type number
      * @memberof EventsApisearchEvents
      */
     organizationId?: number
     /**
-     * 
+     *
      * @type EventSortByCode
      * @memberof EventsApisearchEvents
      */
     sortBy?: EventSortByCode
     /**
-     * 
+     *
      * @type number
      * @memberof EventsApisearchEvents
      */
     perPage?: number
     /**
-     * 
+     *
      * @type number
      * @memberof EventsApisearchEvents
      */
@@ -1823,7 +1823,7 @@ import type { NotificationsApiRequestFactory, NotificationsApiResponseProcessor}
 
 export interface NotificationsApiRegisterNotificationDeviceTokenRequest {
     /**
-     * 
+     *
      * @type RegisterNotificationDeviceTokenRequest
      * @memberof NotificationsApiregisterNotificationDeviceToken
      */
@@ -1832,7 +1832,7 @@ export interface NotificationsApiRegisterNotificationDeviceTokenRequest {
 
 export interface NotificationsApiRemoveNotificationDeviceTokenRequest {
     /**
-     * 
+     *
      * @type string
      * @memberof NotificationsApiremoveNotificationDeviceToken
      */
@@ -1889,7 +1889,7 @@ import type { OrganizationsApiRequestFactory, OrganizationsApiResponseProcessor}
 
 export interface OrganizationsApiAnalyzeEventCheckInsRequest {
     /**
-     * 
+     *
      * @type string
      * @memberof OrganizationsApianalyzeEventCheckIns
      */
@@ -1898,7 +1898,7 @@ export interface OrganizationsApiAnalyzeEventCheckInsRequest {
 
 export interface OrganizationsApiAnalyzeEventTicketsRequest {
     /**
-     * 
+     *
      * @type string
      * @memberof OrganizationsApianalyzeEventTickets
      */
@@ -1913,7 +1913,7 @@ export interface OrganizationsApiAnalyzeEventTicketsRequest {
 
 export interface OrganizationsApiCreateOrganizationFollowRequest {
     /**
-     * 
+     *
      * @type number
      * @memberof OrganizationsApicreateOrganizationFollow
      */
@@ -1922,7 +1922,7 @@ export interface OrganizationsApiCreateOrganizationFollowRequest {
 
 export interface OrganizationsApiDeleteOrganizationFollowRequest {
     /**
-     * 
+     *
      * @type number
      * @memberof OrganizationsApideleteOrganizationFollow
      */
@@ -1931,61 +1931,61 @@ export interface OrganizationsApiDeleteOrganizationFollowRequest {
 
 export interface OrganizationsApiDownloadAttendeesCsvRequest {
     /**
-     * 
+     *
      * @type string
      * @memberof OrganizationsApidownloadAttendeesCsv
      */
     keyword?: string
     /**
-     * 
+     *
      * @type Date
      * @memberof OrganizationsApidownloadAttendeesCsv
      */
     applyAtFrom?: Date
     /**
-     * 
+     *
      * @type Date
      * @memberof OrganizationsApidownloadAttendeesCsv
      */
     applyAtTo?: Date
     /**
-     * 
+     *
      * @type boolean
      * @memberof OrganizationsApidownloadAttendeesCsv
      */
     isCheckedIn?: boolean
     /**
-     * 
+     *
      * @type JobTypeCode
      * @memberof OrganizationsApidownloadAttendeesCsv
      */
     jobTypeCode?: JobTypeCode
     /**
-     * 
+     *
      * @type IndustryCode
      * @memberof OrganizationsApidownloadAttendeesCsv
      */
     industryCode?: IndustryCode
     /**
-     * 
+     *
      * @type AttendeeSortByCode
      * @memberof OrganizationsApidownloadAttendeesCsv
      */
     sortBy?: AttendeeSortByCode
     /**
-     * 
+     *
      * @type boolean
      * @memberof OrganizationsApidownloadAttendeesCsv
      */
     withFilter?: boolean
     /**
-     * 
+     *
      * @type number
      * @memberof OrganizationsApidownloadAttendeesCsv
      */
     page?: number
     /**
-     * 
+     *
      * @type number
      * @memberof OrganizationsApidownloadAttendeesCsv
      */
@@ -1994,7 +1994,7 @@ export interface OrganizationsApiDownloadAttendeesCsvRequest {
 
 export interface OrganizationsApiGetAttendeeDetailRequest {
     /**
-     * 
+     *
      * @type number
      * @memberof OrganizationsApigetAttendeeDetail
      */
@@ -2006,7 +2006,7 @@ export interface OrganizationsApiGetOrganizationDashboardRequest {
 
 export interface OrganizationsApiGetOrganizationDetailRequest {
     /**
-     * 
+     *
      * @type string
      * @memberof OrganizationsApigetOrganizationDetail
      */
@@ -2018,31 +2018,31 @@ export interface OrganizationsApiGetTagStatsRequest {
 
 export interface OrganizationsApiGetTicketStatsRequest {
     /**
-     * 
+     *
      * @type number
      * @memberof OrganizationsApigetTicketStats
      */
     eventId?: number
     /**
-     * 
+     *
      * @type Date
      * @memberof OrganizationsApigetTicketStats
      */
     startDate?: Date
     /**
-     * 
+     *
      * @type Date
      * @memberof OrganizationsApigetTicketStats
      */
     endDate?: Date
     /**
-     * 
+     *
      * @type TicketTypeCode
      * @memberof OrganizationsApigetTicketStats
      */
     ticketType?: TicketTypeCode
     /**
-     * 
+     *
      * @type TicketStatusCode
      * @memberof OrganizationsApigetTicketStats
      */
@@ -2069,49 +2069,55 @@ export interface OrganizationsApiListingAttendeesRequest {
      */
     keyword?: string
     /**
-     * 
+     *
      * @type Date
      * @memberof OrganizationsApilistingAttendees
      */
     applyAtFrom?: Date
     /**
-     * 
+     *
      * @type Date
      * @memberof OrganizationsApilistingAttendees
      */
     applyAtTo?: Date
     /**
-     * 
+     *
      * @type boolean
      * @memberof OrganizationsApilistingAttendees
      */
     isCheckedIn?: boolean
     /**
-     * 
+     *
      * @type JobTypeCode
      * @memberof OrganizationsApilistingAttendees
      */
     jobTypeCode?: JobTypeCode
     /**
-     * 
+     *
      * @type IndustryCode
      * @memberof OrganizationsApilistingAttendees
      */
     industryCode?: IndustryCode
     /**
-     * 
+     *
+     * @type TicketTypeCode
+     * @memberof OrganizationsApilistingAttendees
+     */
+    ticketTypeCode?: TicketTypeCode
+    /**
+     *
      * @type AttendeeSortByCode
      * @memberof OrganizationsApilistingAttendees
      */
     sortBy?: AttendeeSortByCode
     /**
-     * 
+     *
      * @type number
      * @memberof OrganizationsApilistingAttendees
      */
     perPage?: number
     /**
-     * 
+     *
      * @type number
      * @memberof OrganizationsApilistingAttendees
      */
@@ -2120,37 +2126,37 @@ export interface OrganizationsApiListingAttendeesRequest {
 
 export interface OrganizationsApiListingAttendeesRankingRequest {
     /**
-     * 
+     *
      * @type string
      * @memberof OrganizationsApilistingAttendeesRanking
      */
     keyword?: string
     /**
-     * 
+     *
      * @type number
      * @memberof OrganizationsApilistingAttendeesRanking
      */
     eventId?: number
     /**
-     * 
+     *
      * @type number
      * @memberof OrganizationsApilistingAttendeesRanking
      */
     month?: number
     /**
-     * 
+     *
      * @type number
      * @memberof OrganizationsApilistingAttendeesRanking
      */
     year?: number
     /**
-     * 
+     *
      * @type number
      * @memberof OrganizationsApilistingAttendeesRanking
      */
     page?: number
     /**
-     * 
+     *
      * @type number
      * @memberof OrganizationsApilistingAttendeesRanking
      */
@@ -2159,61 +2165,61 @@ export interface OrganizationsApiListingAttendeesRankingRequest {
 
 export interface OrganizationsApiListingOrganizationEventsRequest {
     /**
-     * 
+     *
      * @type string
      * @memberof OrganizationsApilistingOrganizationEvents
      */
     keyword?: string
     /**
-     * 
+     *
      * @type Array&lt;number&gt;
      * @memberof OrganizationsApilistingOrganizationEvents
      */
     tags?: Array<number>
     /**
-     * 
+     *
      * @type Array&lt;EventMeetingToolCode&gt;
      * @memberof OrganizationsApilistingOrganizationEvents
      */
     meetingToolCodes?: Array<EventMeetingToolCode>
     /**
-     * 
+     *
      * @type string
      * @memberof OrganizationsApilistingOrganizationEvents
      */
     startAtFrom?: string
     /**
-     * 
+     *
      * @type string
      * @memberof OrganizationsApilistingOrganizationEvents
      */
     startAtTo?: string
     /**
-     * 
+     *
      * @type Array&lt;EventStatusCode&gt;
      * @memberof OrganizationsApilistingOrganizationEvents
      */
     eventStatus?: Array<EventStatusCode>
     /**
-     * 
+     *
      * @type EventTimeStatusCode
      * @memberof OrganizationsApilistingOrganizationEvents
      */
     timeStatus?: EventTimeStatusCode
     /**
-     * 
+     *
      * @type ManageEventSortByCode
      * @memberof OrganizationsApilistingOrganizationEvents
      */
     sortBy?: ManageEventSortByCode
     /**
-     * 
+     *
      * @type number
      * @memberof OrganizationsApilistingOrganizationEvents
      */
     perPage?: number
     /**
-     * 
+     *
      * @type number
      * @memberof OrganizationsApilistingOrganizationEvents
      */
@@ -2228,7 +2234,7 @@ export interface OrganizationsApiListingRandomOrganizationsRequest {
 
 export interface OrganizationsApiListingTopOrganizationEventsRequest {
     /**
-     * 
+     *
      * @type number
      * @memberof OrganizationsApilistingTopOrganizationEvents
      */
@@ -2237,7 +2243,7 @@ export interface OrganizationsApiListingTopOrganizationEventsRequest {
 
 export interface OrganizationsApiRegisterOrganizationRequest {
     /**
-     * 
+     *
      * @type RegisterOrganizationRequest
      * @memberof OrganizationsApiregisterOrganization
      */
@@ -2246,31 +2252,31 @@ export interface OrganizationsApiRegisterOrganizationRequest {
 
 export interface OrganizationsApiTrackUserActionsRequest {
     /**
-     * 
+     *
      * @type TrackingTimeRangeCode
      * @memberof OrganizationsApitrackUserActions
      */
     timeRange?: TrackingTimeRangeCode
     /**
-     * 
+     *
      * @type TrackingTimeRangeCode
      * @memberof OrganizationsApitrackUserActions
      */
     groupBy?: TrackingTimeRangeCode
     /**
-     * 
+     *
      * @type Array&lt;UserActionTypeCode&gt;
      * @memberof OrganizationsApitrackUserActions
      */
     actionTypes?: Array<UserActionTypeCode>
     /**
-     * 
+     *
      * @type number
      * @memberof OrganizationsApitrackUserActions
      */
     eventId?: number
     /**
-     * 
+     *
      * @type number
      * @memberof OrganizationsApitrackUserActions
      */
@@ -2449,7 +2455,7 @@ export class ObjectOrganizationsApi {
      * @param param the request object
      */
     public listingAttendeesWithHttpInfo(param: OrganizationsApiListingAttendeesRequest = {}, options?: Configuration): Promise<HttpInfo<ListingAttendeesResponse>> {
-        return this.api.listingAttendeesWithHttpInfo(param.slug, param.eventId, param.keyword, param.applyAtFrom, param.applyAtTo, param.isCheckedIn, param.jobTypeCode, param.industryCode, param.sortBy, param.perPage, param.page,  options).toPromise();
+        return this.api.listingAttendeesWithHttpInfo(param.slug, param.eventId, param.keyword, param.applyAtFrom, param.applyAtTo, param.isCheckedIn, param.jobTypeCode, param.industryCode, param.ticketTypeCode, param.sortBy, param.perPage, param.page,  options).toPromise();
     }
 
     /**
@@ -2457,7 +2463,7 @@ export class ObjectOrganizationsApi {
      * @param param the request object
      */
     public listingAttendees(param: OrganizationsApiListingAttendeesRequest = {}, options?: Configuration): Promise<ListingAttendeesResponse> {
-        return this.api.listingAttendees(param.slug, param.eventId, param.keyword, param.applyAtFrom, param.applyAtTo, param.isCheckedIn, param.jobTypeCode, param.industryCode, param.sortBy, param.perPage, param.page,  options).toPromise();
+        return this.api.listingAttendees(param.slug, param.eventId, param.keyword, param.applyAtFrom, param.applyAtTo, param.isCheckedIn, param.jobTypeCode, param.industryCode, param.ticketTypeCode, param.sortBy, param.perPage, param.page,  options).toPromise();
     }
 
     /**
@@ -2579,7 +2585,7 @@ import type { SpeakersApiRequestFactory, SpeakersApiResponseProcessor} from "../
 
 export interface SpeakersApiGetSpeakerDetailRequest {
     /**
-     * 
+     *
      * @type string
      * @memberof SpeakersApigetSpeakerDetail
      */
@@ -2635,7 +2641,7 @@ import type { SurveysApiRequestFactory, SurveysApiResponseProcessor} from "../ap
 
 export interface SurveysApiCreateSurveyRequest {
     /**
-     * 
+     *
      * @type CreateSurveyRequest
      * @memberof SurveysApicreateSurvey
      */
@@ -2741,7 +2747,7 @@ import type { TargetsApiRequestFactory, TargetsApiResponseProcessor} from "../ap
 
 export interface TargetsApiCreateTargetRequest {
     /**
-     * 
+     *
      * @type CreateTargetRequest
      * @memberof TargetsApicreateTarget
      */
@@ -2797,7 +2803,7 @@ import type { TicketsApiRequestFactory, TicketsApiResponseProcessor} from "../ap
 
 export interface TicketsApiCancelTicketsRequest {
     /**
-     * 
+     *
      * @type CancelTicketsRequest
      * @memberof TicketsApicancelTickets
      */
@@ -2806,7 +2812,7 @@ export interface TicketsApiCancelTicketsRequest {
 
 export interface TicketsApiCreateTicketRequest {
     /**
-     * 
+     *
      * @type CreateTicketRequest
      * @memberof TicketsApicreateTicket
      */
@@ -2815,7 +2821,7 @@ export interface TicketsApiCreateTicketRequest {
 
 export interface TicketsApiDeleteTicketRequest {
     /**
-     * 
+     *
      * @type number
      * @memberof TicketsApideleteTicket
      */
@@ -2824,7 +2830,7 @@ export interface TicketsApiDeleteTicketRequest {
 
 export interface TicketsApiGetDraftTicketRequest {
     /**
-     * 
+     *
      * @type number
      * @memberof TicketsApigetDraftTicket
      */
@@ -2833,13 +2839,13 @@ export interface TicketsApiGetDraftTicketRequest {
 
 export interface TicketsApiUpdateTicketRequest {
     /**
-     * 
+     *
      * @type number
      * @memberof TicketsApiupdateTicket
      */
     ticketId: number
     /**
-     * 
+     *
      * @type UpdateTicketRequest
      * @memberof TicketsApiupdateTicket
      */
@@ -2946,25 +2952,25 @@ export interface TransactionsApiHandleApplicationTransactionRequest {
 
 export interface TransactionsApiListingMyTransactionsRequest {
     /**
-     * 
+     *
      * @type string
      * @memberof TransactionsApilistingMyTransactions
      */
     keyword?: string
     /**
-     * 
+     *
      * @type TransactionStatusCode
      * @memberof TransactionsApilistingMyTransactions
      */
     status?: TransactionStatusCode
     /**
-     * 
+     *
      * @type number
      * @memberof TransactionsApilistingMyTransactions
      */
     page?: number
     /**
-     * 
+     *
      * @type number
      * @memberof TransactionsApilistingMyTransactions
      */
@@ -3055,19 +3061,19 @@ export interface UsersApiGetTotalUnreadNotificationsRequest {
 
 export interface UsersApiListingNotificationsRequest {
     /**
-     * 
+     *
      * @type number
      * @memberof UsersApilistingNotifications
      */
     perPage?: number
     /**
-     * 
+     *
      * @type number
      * @memberof UsersApilistingNotifications
      */
     page?: number
     /**
-     * 
+     *
      * @type boolean
      * @memberof UsersApilistingNotifications
      */
@@ -3076,7 +3082,7 @@ export interface UsersApiListingNotificationsRequest {
 
 export interface UsersApiMarkNotificationAsReadRequest {
     /**
-     * 
+     *
      * @type number
      * @memberof UsersApimarkNotificationAsRead
      */
@@ -3085,7 +3091,7 @@ export interface UsersApiMarkNotificationAsReadRequest {
 
 export interface UsersApiUpdateAudienceRequest {
     /**
-     * 
+     *
      * @type UpdateUserRequest
      * @memberof UsersApiupdateAudience
      */

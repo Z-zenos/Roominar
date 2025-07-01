@@ -653,6 +653,8 @@ let body:.OrganizationsApiListingAttendeesRequest = {
   jobTypeCode: "DEV",
   // IndustryCode (optional)
   industryCode: "REAL_ESTATE",
+  // TicketTypeCode (optional)
+  ticketTypeCode: "EARLY_BIRD",
   // AttendeeSortByCode (optional)
   sortBy: "APPLY_AT",
   // number (optional)
@@ -679,6 +681,7 @@ Name | Type | Description  | Notes
  **isCheckedIn** | [**boolean**] |  | (optional) defaults to undefined
  **jobTypeCode** | **JobTypeCode** |  | (optional) defaults to undefined
  **industryCode** | **IndustryCode** |  | (optional) defaults to undefined
+ **ticketTypeCode** | **TicketTypeCode** |  | (optional) defaults to undefined
  **sortBy** | **AttendeeSortByCode** |  | (optional) defaults to undefined
  **perPage** | [**number**] |  | (optional) defaults to undefined
  **page** | [**number**] |  | (optional) defaults to undefined
@@ -1155,5 +1158,3 @@ Name | Type | Description  | Notes
 **422** | Validation Error |  -  |
 
 [[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
-
-

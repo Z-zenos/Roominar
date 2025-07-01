@@ -175,7 +175,7 @@ export class PromiseApplicationsApi {
 
     /**
      * Cancel Application
-     * @param applicationId 
+     * @param applicationId
      */
     public cancelApplicationWithHttpInfo(applicationId: number, _options?: Configuration): Promise<HttpInfo<void>> {
         const result = this.api.cancelApplicationWithHttpInfo(applicationId, _options);
@@ -184,7 +184,7 @@ export class PromiseApplicationsApi {
 
     /**
      * Cancel Application
-     * @param applicationId 
+     * @param applicationId
      */
     public cancelApplication(applicationId: number, _options?: Configuration): Promise<void> {
         const result = this.api.cancelApplication(applicationId, _options);
@@ -193,7 +193,7 @@ export class PromiseApplicationsApi {
 
     /**
      * Create Application Checkout Session
-     * @param createApplicationRequest 
+     * @param createApplicationRequest
      */
     public createApplicationCheckoutSessionWithHttpInfo(createApplicationRequest?: CreateApplicationRequest, _options?: Configuration): Promise<HttpInfo<CreateApplicationCheckoutSessionResponse>> {
         const result = this.api.createApplicationCheckoutSessionWithHttpInfo(createApplicationRequest, _options);
@@ -202,7 +202,7 @@ export class PromiseApplicationsApi {
 
     /**
      * Create Application Checkout Session
-     * @param createApplicationRequest 
+     * @param createApplicationRequest
      */
     public createApplicationCheckoutSession(createApplicationRequest?: CreateApplicationRequest, _options?: Configuration): Promise<CreateApplicationCheckoutSessionResponse> {
         const result = this.api.createApplicationCheckoutSession(createApplicationRequest, _options);
@@ -211,7 +211,7 @@ export class PromiseApplicationsApi {
 
     /**
      * Create Free Application
-     * @param createApplicationRequest 
+     * @param createApplicationRequest
      */
     public createFreeApplicationWithHttpInfo(createApplicationRequest?: CreateApplicationRequest, _options?: Configuration): Promise<HttpInfo<string>> {
         const result = this.api.createFreeApplicationWithHttpInfo(createApplicationRequest, _options);
@@ -220,7 +220,7 @@ export class PromiseApplicationsApi {
 
     /**
      * Create Free Application
-     * @param createApplicationRequest 
+     * @param createApplicationRequest
      */
     public createFreeApplication(createApplicationRequest?: CreateApplicationRequest, _options?: Configuration): Promise<string> {
         const result = this.api.createFreeApplication(createApplicationRequest, _options);
@@ -248,7 +248,7 @@ export class PromiseAuthApi {
 
     /**
      * Change Password
-     * @param changePasswordRequest 
+     * @param changePasswordRequest
      */
     public changePasswordWithHttpInfo(changePasswordRequest?: ChangePasswordRequest, _options?: Configuration): Promise<HttpInfo<void>> {
         const result = this.api.changePasswordWithHttpInfo(changePasswordRequest, _options);
@@ -257,7 +257,7 @@ export class PromiseAuthApi {
 
     /**
      * Change Password
-     * @param changePasswordRequest 
+     * @param changePasswordRequest
      */
     public changePassword(changePasswordRequest?: ChangePasswordRequest, _options?: Configuration): Promise<void> {
         const result = this.api.changePassword(changePasswordRequest, _options);
@@ -266,7 +266,7 @@ export class PromiseAuthApi {
 
     /**
      * Forgot Password
-     * @param forgotPasswordRequest 
+     * @param forgotPasswordRequest
      */
     public forgotPasswordWithHttpInfo(forgotPasswordRequest?: ForgotPasswordRequest, _options?: Configuration): Promise<HttpInfo<ForgotPasswordResponse>> {
         const result = this.api.forgotPasswordWithHttpInfo(forgotPasswordRequest, _options);
@@ -275,7 +275,7 @@ export class PromiseAuthApi {
 
     /**
      * Forgot Password
-     * @param forgotPasswordRequest 
+     * @param forgotPasswordRequest
      */
     public forgotPassword(forgotPasswordRequest?: ForgotPasswordRequest, _options?: Configuration): Promise<ForgotPasswordResponse> {
         const result = this.api.forgotPassword(forgotPasswordRequest, _options);
@@ -284,8 +284,8 @@ export class PromiseAuthApi {
 
     /**
      * Login
-     * @param userAgent 
-     * @param loginRequest 
+     * @param userAgent
+     * @param loginRequest
      */
     public loginWithHttpInfo(userAgent?: string, loginRequest?: LoginRequest, _options?: Configuration): Promise<HttpInfo<TokenResponse>> {
         const result = this.api.loginWithHttpInfo(userAgent, loginRequest, _options);
@@ -294,8 +294,8 @@ export class PromiseAuthApi {
 
     /**
      * Login
-     * @param userAgent 
-     * @param loginRequest 
+     * @param userAgent
+     * @param loginRequest
      */
     public login(userAgent?: string, loginRequest?: LoginRequest, _options?: Configuration): Promise<TokenResponse> {
         const result = this.api.login(userAgent, loginRequest, _options);
@@ -305,7 +305,7 @@ export class PromiseAuthApi {
     /**
      * Log out user from the current device
      * Logout
-     * @param logoutRequest 
+     * @param logoutRequest
      */
     public logoutWithHttpInfo(logoutRequest?: LogoutRequest, _options?: Configuration): Promise<HttpInfo<void>> {
         const result = this.api.logoutWithHttpInfo(logoutRequest, _options);
@@ -315,7 +315,7 @@ export class PromiseAuthApi {
     /**
      * Log out user from the current device
      * Logout
-     * @param logoutRequest 
+     * @param logoutRequest
      */
     public logout(logoutRequest?: LogoutRequest, _options?: Configuration): Promise<void> {
         const result = this.api.logout(logoutRequest, _options);
@@ -340,7 +340,7 @@ export class PromiseAuthApi {
 
     /**
      * Refresh Token
-     * @param token 
+     * @param token
      */
     public refreshTokenWithHttpInfo(token: string, _options?: Configuration): Promise<HttpInfo<TokenResponse>> {
         const result = this.api.refreshTokenWithHttpInfo(token, _options);
@@ -349,7 +349,7 @@ export class PromiseAuthApi {
 
     /**
      * Refresh Token
-     * @param token 
+     * @param token
      */
     public refreshToken(token: string, _options?: Configuration): Promise<TokenResponse> {
         const result = this.api.refreshToken(token, _options);
@@ -358,7 +358,7 @@ export class PromiseAuthApi {
 
     /**
      * Register Audience
-     * @param registerAudienceRequest 
+     * @param registerAudienceRequest
      */
     public registerAudienceWithHttpInfo(registerAudienceRequest?: RegisterAudienceRequest, _options?: Configuration): Promise<HttpInfo<RegisterAudienceResponse>> {
         const result = this.api.registerAudienceWithHttpInfo(registerAudienceRequest, _options);
@@ -367,7 +367,7 @@ export class PromiseAuthApi {
 
     /**
      * Register Audience
-     * @param registerAudienceRequest 
+     * @param registerAudienceRequest
      */
     public registerAudience(registerAudienceRequest?: RegisterAudienceRequest, _options?: Configuration): Promise<RegisterAudienceResponse> {
         const result = this.api.registerAudience(registerAudienceRequest, _options);
@@ -376,7 +376,7 @@ export class PromiseAuthApi {
 
     /**
      * Request Change Email
-     * @param changeEmailRequest 
+     * @param changeEmailRequest
      */
     public requestChangeEmailWithHttpInfo(changeEmailRequest?: ChangeEmailRequest, _options?: Configuration): Promise<HttpInfo<RequestChangeEmailResponse>> {
         const result = this.api.requestChangeEmailWithHttpInfo(changeEmailRequest, _options);
@@ -385,7 +385,7 @@ export class PromiseAuthApi {
 
     /**
      * Request Change Email
-     * @param changeEmailRequest 
+     * @param changeEmailRequest
      */
     public requestChangeEmail(changeEmailRequest?: ChangeEmailRequest, _options?: Configuration): Promise<RequestChangeEmailResponse> {
         const result = this.api.requestChangeEmail(changeEmailRequest, _options);
@@ -394,8 +394,8 @@ export class PromiseAuthApi {
 
     /**
      * Reset Password
-     * @param token 
-     * @param resetPasswordRequest 
+     * @param token
+     * @param resetPasswordRequest
      */
     public resetPasswordWithHttpInfo(token: string, resetPasswordRequest?: ResetPasswordRequest, _options?: Configuration): Promise<HttpInfo<void>> {
         const result = this.api.resetPasswordWithHttpInfo(token, resetPasswordRequest, _options);
@@ -404,8 +404,8 @@ export class PromiseAuthApi {
 
     /**
      * Reset Password
-     * @param token 
-     * @param resetPasswordRequest 
+     * @param token
+     * @param resetPasswordRequest
      */
     public resetPassword(token: string, resetPasswordRequest?: ResetPasswordRequest, _options?: Configuration): Promise<void> {
         const result = this.api.resetPassword(token, resetPasswordRequest, _options);
@@ -414,7 +414,7 @@ export class PromiseAuthApi {
 
     /**
      * Revert Email
-     * @param token 
+     * @param token
      */
     public revertEmailWithHttpInfo(token: string, _options?: Configuration): Promise<HttpInfo<void>> {
         const result = this.api.revertEmailWithHttpInfo(token, _options);
@@ -423,7 +423,7 @@ export class PromiseAuthApi {
 
     /**
      * Revert Email
-     * @param token 
+     * @param token
      */
     public revertEmail(token: string, _options?: Configuration): Promise<void> {
         const result = this.api.revertEmail(token, _options);
@@ -432,7 +432,7 @@ export class PromiseAuthApi {
 
     /**
      * Social Auth
-     * @param socialAuthRequest 
+     * @param socialAuthRequest
      */
     public socialAuthWithHttpInfo(socialAuthRequest: SocialAuthRequest, _options?: Configuration): Promise<HttpInfo<TokenResponse>> {
         const result = this.api.socialAuthWithHttpInfo(socialAuthRequest, _options);
@@ -441,7 +441,7 @@ export class PromiseAuthApi {
 
     /**
      * Social Auth
-     * @param socialAuthRequest 
+     * @param socialAuthRequest
      */
     public socialAuth(socialAuthRequest: SocialAuthRequest, _options?: Configuration): Promise<TokenResponse> {
         const result = this.api.socialAuth(socialAuthRequest, _options);
@@ -450,8 +450,8 @@ export class PromiseAuthApi {
 
     /**
      * Verify Audience
-     * @param token 
-     * @param verifyAudienceRequest 
+     * @param token
+     * @param verifyAudienceRequest
      */
     public verifyAudienceWithHttpInfo(token: string, verifyAudienceRequest?: VerifyAudienceRequest, _options?: Configuration): Promise<HttpInfo<number>> {
         const result = this.api.verifyAudienceWithHttpInfo(token, verifyAudienceRequest, _options);
@@ -460,8 +460,8 @@ export class PromiseAuthApi {
 
     /**
      * Verify Audience
-     * @param token 
-     * @param verifyAudienceRequest 
+     * @param token
+     * @param verifyAudienceRequest
      */
     public verifyAudience(token: string, verifyAudienceRequest?: VerifyAudienceRequest, _options?: Configuration): Promise<number> {
         const result = this.api.verifyAudience(token, verifyAudienceRequest, _options);
@@ -470,7 +470,7 @@ export class PromiseAuthApi {
 
     /**
      * Verify Change Email
-     * @param token 
+     * @param token
      */
     public verifyChangeEmailWithHttpInfo(token: string, _options?: Configuration): Promise<HttpInfo<void>> {
         const result = this.api.verifyChangeEmailWithHttpInfo(token, _options);
@@ -479,7 +479,7 @@ export class PromiseAuthApi {
 
     /**
      * Verify Change Email
-     * @param token 
+     * @param token
      */
     public verifyChangeEmail(token: string, _options?: Configuration): Promise<void> {
         const result = this.api.verifyChangeEmail(token, _options);
@@ -507,7 +507,7 @@ export class PromiseCommentsApi {
 
     /**
      * Delete Comment
-     * @param commentId 
+     * @param commentId
      */
     public deleteCommentWithHttpInfo(commentId: number, _options?: Configuration): Promise<HttpInfo<void>> {
         const result = this.api.deleteCommentWithHttpInfo(commentId, _options);
@@ -516,7 +516,7 @@ export class PromiseCommentsApi {
 
     /**
      * Delete Comment
-     * @param commentId 
+     * @param commentId
      */
     public deleteComment(commentId: number, _options?: Configuration): Promise<void> {
         const result = this.api.deleteComment(commentId, _options);
@@ -525,7 +525,7 @@ export class PromiseCommentsApi {
 
     /**
      * Delete Comment Reply
-     * @param replyId 
+     * @param replyId
      */
     public deleteCommentReplyWithHttpInfo(replyId: number, _options?: Configuration): Promise<HttpInfo<void>> {
         const result = this.api.deleteCommentReplyWithHttpInfo(replyId, _options);
@@ -534,7 +534,7 @@ export class PromiseCommentsApi {
 
     /**
      * Delete Comment Reply
-     * @param replyId 
+     * @param replyId
      */
     public deleteCommentReply(replyId: number, _options?: Configuration): Promise<void> {
         const result = this.api.deleteCommentReply(replyId, _options);
@@ -543,7 +543,7 @@ export class PromiseCommentsApi {
 
     /**
      * Listing Comment Replies
-     * @param commentId 
+     * @param commentId
      */
     public listingCommentRepliesWithHttpInfo(commentId: number, _options?: Configuration): Promise<HttpInfo<ListingCommentRepliesResponse>> {
         const result = this.api.listingCommentRepliesWithHttpInfo(commentId, _options);
@@ -552,7 +552,7 @@ export class PromiseCommentsApi {
 
     /**
      * Listing Comment Replies
-     * @param commentId 
+     * @param commentId
      */
     public listingCommentReplies(commentId: number, _options?: Configuration): Promise<ListingCommentRepliesResponse> {
         const result = this.api.listingCommentReplies(commentId, _options);
@@ -561,7 +561,7 @@ export class PromiseCommentsApi {
 
     /**
      * Pin Comment
-     * @param commentId 
+     * @param commentId
      */
     public pinCommentWithHttpInfo(commentId: number, _options?: Configuration): Promise<HttpInfo<number>> {
         const result = this.api.pinCommentWithHttpInfo(commentId, _options);
@@ -570,7 +570,7 @@ export class PromiseCommentsApi {
 
     /**
      * Pin Comment
-     * @param commentId 
+     * @param commentId
      */
     public pinComment(commentId: number, _options?: Configuration): Promise<number> {
         const result = this.api.pinComment(commentId, _options);
@@ -579,8 +579,8 @@ export class PromiseCommentsApi {
 
     /**
      * Reply Comment
-     * @param commentId 
-     * @param createCommentReplyRequest 
+     * @param commentId
+     * @param createCommentReplyRequest
      */
     public replyCommentWithHttpInfo(commentId: number, createCommentReplyRequest?: CreateCommentReplyRequest, _options?: Configuration): Promise<HttpInfo<number>> {
         const result = this.api.replyCommentWithHttpInfo(commentId, createCommentReplyRequest, _options);
@@ -589,8 +589,8 @@ export class PromiseCommentsApi {
 
     /**
      * Reply Comment
-     * @param commentId 
-     * @param createCommentReplyRequest 
+     * @param commentId
+     * @param createCommentReplyRequest
      */
     public replyComment(commentId: number, createCommentReplyRequest?: CreateCommentReplyRequest, _options?: Configuration): Promise<number> {
         const result = this.api.replyComment(commentId, createCommentReplyRequest, _options);
@@ -599,7 +599,7 @@ export class PromiseCommentsApi {
 
     /**
      * Unpin Comment
-     * @param commentId 
+     * @param commentId
      */
     public unpinCommentWithHttpInfo(commentId: number, _options?: Configuration): Promise<HttpInfo<void>> {
         const result = this.api.unpinCommentWithHttpInfo(commentId, _options);
@@ -608,7 +608,7 @@ export class PromiseCommentsApi {
 
     /**
      * Unpin Comment
-     * @param commentId 
+     * @param commentId
      */
     public unpinComment(commentId: number, _options?: Configuration): Promise<void> {
         const result = this.api.unpinComment(commentId, _options);
@@ -617,8 +617,8 @@ export class PromiseCommentsApi {
 
     /**
      * Update Comment
-     * @param commentId 
-     * @param updateEventCommentRequest 
+     * @param commentId
+     * @param updateEventCommentRequest
      */
     public updateCommentWithHttpInfo(commentId: number, updateEventCommentRequest?: UpdateEventCommentRequest, _options?: Configuration): Promise<HttpInfo<number>> {
         const result = this.api.updateCommentWithHttpInfo(commentId, updateEventCommentRequest, _options);
@@ -627,8 +627,8 @@ export class PromiseCommentsApi {
 
     /**
      * Update Comment
-     * @param commentId 
-     * @param updateEventCommentRequest 
+     * @param commentId
+     * @param updateEventCommentRequest
      */
     public updateComment(commentId: number, updateEventCommentRequest?: UpdateEventCommentRequest, _options?: Configuration): Promise<number> {
         const result = this.api.updateComment(commentId, updateEventCommentRequest, _options);
@@ -637,8 +637,8 @@ export class PromiseCommentsApi {
 
     /**
      * Update Comment Reply
-     * @param replyId 
-     * @param updateCommentReplyRequest 
+     * @param replyId
+     * @param updateCommentReplyRequest
      */
     public updateCommentReplyWithHttpInfo(replyId: number, updateCommentReplyRequest?: UpdateCommentReplyRequest, _options?: Configuration): Promise<HttpInfo<number>> {
         const result = this.api.updateCommentReplyWithHttpInfo(replyId, updateCommentReplyRequest, _options);
@@ -647,8 +647,8 @@ export class PromiseCommentsApi {
 
     /**
      * Update Comment Reply
-     * @param replyId 
-     * @param updateCommentReplyRequest 
+     * @param replyId
+     * @param updateCommentReplyRequest
      */
     public updateCommentReply(replyId: number, updateCommentReplyRequest?: UpdateCommentReplyRequest, _options?: Configuration): Promise<number> {
         const result = this.api.updateCommentReply(replyId, updateCommentReplyRequest, _options);
@@ -657,8 +657,8 @@ export class PromiseCommentsApi {
 
     /**
      * Vote Comment
-     * @param commentId 
-     * @param voteCommentRequest 
+     * @param commentId
+     * @param voteCommentRequest
      */
     public voteCommentWithHttpInfo(commentId: number, voteCommentRequest?: VoteCommentRequest, _options?: Configuration): Promise<HttpInfo<number>> {
         const result = this.api.voteCommentWithHttpInfo(commentId, voteCommentRequest, _options);
@@ -667,8 +667,8 @@ export class PromiseCommentsApi {
 
     /**
      * Vote Comment
-     * @param commentId 
-     * @param voteCommentRequest 
+     * @param commentId
+     * @param voteCommentRequest
      */
     public voteComment(commentId: number, voteCommentRequest?: VoteCommentRequest, _options?: Configuration): Promise<number> {
         const result = this.api.voteComment(commentId, voteCommentRequest, _options);
@@ -731,8 +731,8 @@ export class PromiseEventsApi {
 
     /**
      * Comment Event
-     * @param eventId 
-     * @param commentEventRequest 
+     * @param eventId
+     * @param commentEventRequest
      */
     public commentEventWithHttpInfo(eventId: number, commentEventRequest?: CommentEventRequest, _options?: Configuration): Promise<HttpInfo<number>> {
         const result = this.api.commentEventWithHttpInfo(eventId, commentEventRequest, _options);
@@ -741,8 +741,8 @@ export class PromiseEventsApi {
 
     /**
      * Comment Event
-     * @param eventId 
-     * @param commentEventRequest 
+     * @param eventId
+     * @param commentEventRequest
      */
     public commentEvent(eventId: number, commentEventRequest?: CommentEventRequest, _options?: Configuration): Promise<number> {
         const result = this.api.commentEvent(eventId, commentEventRequest, _options);
@@ -751,7 +751,7 @@ export class PromiseEventsApi {
 
     /**
      * Create Draft Event
-     * @param createDraftEventRequest 
+     * @param createDraftEventRequest
      */
     public createDraftEventWithHttpInfo(createDraftEventRequest?: CreateDraftEventRequest, _options?: Configuration): Promise<HttpInfo<number>> {
         const result = this.api.createDraftEventWithHttpInfo(createDraftEventRequest, _options);
@@ -760,7 +760,7 @@ export class PromiseEventsApi {
 
     /**
      * Create Draft Event
-     * @param createDraftEventRequest 
+     * @param createDraftEventRequest
      */
     public createDraftEvent(createDraftEventRequest?: CreateDraftEventRequest, _options?: Configuration): Promise<number> {
         const result = this.api.createDraftEvent(createDraftEventRequest, _options);
@@ -769,7 +769,7 @@ export class PromiseEventsApi {
 
     /**
      * Create Event Bookmark
-     * @param eventId 
+     * @param eventId
      */
     public createEventBookmarkWithHttpInfo(eventId: number, _options?: Configuration): Promise<HttpInfo<number>> {
         const result = this.api.createEventBookmarkWithHttpInfo(eventId, _options);
@@ -778,7 +778,7 @@ export class PromiseEventsApi {
 
     /**
      * Create Event Bookmark
-     * @param eventId 
+     * @param eventId
      */
     public createEventBookmark(eventId: number, _options?: Configuration): Promise<number> {
         const result = this.api.createEventBookmark(eventId, _options);
@@ -787,7 +787,7 @@ export class PromiseEventsApi {
 
     /**
      * Delete Event Bookmark
-     * @param eventId 
+     * @param eventId
      */
     public deleteEventBookmarkWithHttpInfo(eventId: number, _options?: Configuration): Promise<HttpInfo<void>> {
         const result = this.api.deleteEventBookmarkWithHttpInfo(eventId, _options);
@@ -796,7 +796,7 @@ export class PromiseEventsApi {
 
     /**
      * Delete Event Bookmark
-     * @param eventId 
+     * @param eventId
      */
     public deleteEventBookmark(eventId: number, _options?: Configuration): Promise<void> {
         const result = this.api.deleteEventBookmark(eventId, _options);
@@ -805,7 +805,7 @@ export class PromiseEventsApi {
 
     /**
      * Delete Manual Check In
-     * @param checkInId 
+     * @param checkInId
      */
     public deleteManualCheckInWithHttpInfo(checkInId: number, _options?: Configuration): Promise<HttpInfo<void>> {
         const result = this.api.deleteManualCheckInWithHttpInfo(checkInId, _options);
@@ -814,7 +814,7 @@ export class PromiseEventsApi {
 
     /**
      * Delete Manual Check In
-     * @param checkInId 
+     * @param checkInId
      */
     public deleteManualCheckIn(checkInId: number, _options?: Configuration): Promise<void> {
         const result = this.api.deleteManualCheckIn(checkInId, _options);
@@ -823,7 +823,7 @@ export class PromiseEventsApi {
 
     /**
      * Generate Event Ai
-     * @param generateEventAIRequest 
+     * @param generateEventAIRequest
      */
     public generateEventAiWithHttpInfo(generateEventAIRequest?: GenerateEventAIRequest, _options?: Configuration): Promise<HttpInfo<GenerateEventAIResponse>> {
         const result = this.api.generateEventAiWithHttpInfo(generateEventAIRequest, _options);
@@ -832,7 +832,7 @@ export class PromiseEventsApi {
 
     /**
      * Generate Event Ai
-     * @param generateEventAIRequest 
+     * @param generateEventAIRequest
      */
     public generateEventAi(generateEventAIRequest?: GenerateEventAIRequest, _options?: Configuration): Promise<GenerateEventAIResponse> {
         const result = this.api.generateEventAi(generateEventAIRequest, _options);
@@ -857,7 +857,7 @@ export class PromiseEventsApi {
 
     /**
      * Get Event Detail
-     * @param slug 
+     * @param slug
      */
     public getEventDetailWithHttpInfo(slug: string, _options?: Configuration): Promise<HttpInfo<GetEventDetailResponse>> {
         const result = this.api.getEventDetailWithHttpInfo(slug, _options);
@@ -866,7 +866,7 @@ export class PromiseEventsApi {
 
     /**
      * Get Event Detail
-     * @param slug 
+     * @param slug
      */
     public getEventDetail(slug: string, _options?: Configuration): Promise<GetEventDetailResponse> {
         const result = this.api.getEventDetail(slug, _options);
@@ -875,9 +875,9 @@ export class PromiseEventsApi {
 
     /**
      * Listing Event Comments
-     * @param eventId 
-     * @param perPage 
-     * @param page 
+     * @param eventId
+     * @param perPage
+     * @param page
      */
     public listingEventCommentsWithHttpInfo(eventId: number, perPage?: number, page?: number, _options?: Configuration): Promise<HttpInfo<ListingEventCommentsResponse>> {
         const result = this.api.listingEventCommentsWithHttpInfo(eventId, perPage, page, _options);
@@ -886,9 +886,9 @@ export class PromiseEventsApi {
 
     /**
      * Listing Event Comments
-     * @param eventId 
-     * @param perPage 
-     * @param page 
+     * @param eventId
+     * @param perPage
+     * @param page
      */
     public listingEventComments(eventId: number, perPage?: number, page?: number, _options?: Configuration): Promise<ListingEventCommentsResponse> {
         const result = this.api.listingEventComments(eventId, perPage, page, _options);
@@ -913,11 +913,11 @@ export class PromiseEventsApi {
 
     /**
      * Listing Event Purchased Tickets
-     * @param slug 
-     * @param keyword 
-     * @param isCheckedIn 
-     * @param perPage 
-     * @param page 
+     * @param slug
+     * @param keyword
+     * @param isCheckedIn
+     * @param perPage
+     * @param page
      */
     public listingEventPurchasedTicketsWithHttpInfo(slug: string, keyword?: string, isCheckedIn?: boolean, perPage?: number, page?: number, _options?: Configuration): Promise<HttpInfo<ListingEventPurchasedTicketsResponse>> {
         const result = this.api.listingEventPurchasedTicketsWithHttpInfo(slug, keyword, isCheckedIn, perPage, page, _options);
@@ -926,11 +926,11 @@ export class PromiseEventsApi {
 
     /**
      * Listing Event Purchased Tickets
-     * @param slug 
-     * @param keyword 
-     * @param isCheckedIn 
-     * @param perPage 
-     * @param page 
+     * @param slug
+     * @param keyword
+     * @param isCheckedIn
+     * @param perPage
+     * @param page
      */
     public listingEventPurchasedTickets(slug: string, keyword?: string, isCheckedIn?: boolean, perPage?: number, page?: number, _options?: Configuration): Promise<ListingEventPurchasedTicketsResponse> {
         const result = this.api.listingEventPurchasedTickets(slug, keyword, isCheckedIn, perPage, page, _options);
@@ -955,10 +955,10 @@ export class PromiseEventsApi {
 
     /**
      * Listing My Events
-     * @param keyword 
-     * @param status 
-     * @param perPage 
-     * @param page 
+     * @param keyword
+     * @param status
+     * @param perPage
+     * @param page
      */
     public listingMyEventsWithHttpInfo(keyword?: string, status?: MyEventStatusCode, perPage?: number, page?: number, _options?: Configuration): Promise<HttpInfo<ListingMyEventsResponse>> {
         const result = this.api.listingMyEventsWithHttpInfo(keyword, status, perPage, page, _options);
@@ -967,10 +967,10 @@ export class PromiseEventsApi {
 
     /**
      * Listing My Events
-     * @param keyword 
-     * @param status 
-     * @param perPage 
-     * @param page 
+     * @param keyword
+     * @param status
+     * @param perPage
+     * @param page
      */
     public listingMyEvents(keyword?: string, status?: MyEventStatusCode, perPage?: number, page?: number, _options?: Configuration): Promise<ListingMyEventsResponse> {
         const result = this.api.listingMyEvents(keyword, status, perPage, page, _options);
@@ -979,24 +979,24 @@ export class PromiseEventsApi {
 
     /**
      * Listing Recommendation Events
-     * @param keyword 
-     * @param isOnline 
-     * @param isOffline 
-     * @param isApplyOngoing 
-     * @param isApplyEnded 
-     * @param isToday 
-     * @param isFree 
-     * @param isPaid 
-     * @param jobTypeCodes 
-     * @param industryCodes 
-     * @param cityCodes 
-     * @param tags 
-     * @param startAtFrom 
-     * @param startAtTo 
-     * @param organizationId 
-     * @param sortBy 
-     * @param perPage 
-     * @param page 
+     * @param keyword
+     * @param isOnline
+     * @param isOffline
+     * @param isApplyOngoing
+     * @param isApplyEnded
+     * @param isToday
+     * @param isFree
+     * @param isPaid
+     * @param jobTypeCodes
+     * @param industryCodes
+     * @param cityCodes
+     * @param tags
+     * @param startAtFrom
+     * @param startAtTo
+     * @param organizationId
+     * @param sortBy
+     * @param perPage
+     * @param page
      */
     public listingRecommendationEventsWithHttpInfo(keyword?: string, isOnline?: boolean, isOffline?: boolean, isApplyOngoing?: boolean, isApplyEnded?: boolean, isToday?: boolean, isFree?: boolean, isPaid?: boolean, jobTypeCodes?: Array<JobTypeCode>, industryCodes?: Array<IndustryCode>, cityCodes?: Array<string>, tags?: Array<number>, startAtFrom?: string, startAtTo?: string, organizationId?: number, sortBy?: EventSortByCode, perPage?: number, page?: number, _options?: Configuration): Promise<HttpInfo<ListingRecommendationEventsResponse>> {
         const result = this.api.listingRecommendationEventsWithHttpInfo(keyword, isOnline, isOffline, isApplyOngoing, isApplyEnded, isToday, isFree, isPaid, jobTypeCodes, industryCodes, cityCodes, tags, startAtFrom, startAtTo, organizationId, sortBy, perPage, page, _options);
@@ -1005,24 +1005,24 @@ export class PromiseEventsApi {
 
     /**
      * Listing Recommendation Events
-     * @param keyword 
-     * @param isOnline 
-     * @param isOffline 
-     * @param isApplyOngoing 
-     * @param isApplyEnded 
-     * @param isToday 
-     * @param isFree 
-     * @param isPaid 
-     * @param jobTypeCodes 
-     * @param industryCodes 
-     * @param cityCodes 
-     * @param tags 
-     * @param startAtFrom 
-     * @param startAtTo 
-     * @param organizationId 
-     * @param sortBy 
-     * @param perPage 
-     * @param page 
+     * @param keyword
+     * @param isOnline
+     * @param isOffline
+     * @param isApplyOngoing
+     * @param isApplyEnded
+     * @param isToday
+     * @param isFree
+     * @param isPaid
+     * @param jobTypeCodes
+     * @param industryCodes
+     * @param cityCodes
+     * @param tags
+     * @param startAtFrom
+     * @param startAtTo
+     * @param organizationId
+     * @param sortBy
+     * @param perPage
+     * @param page
      */
     public listingRecommendationEvents(keyword?: string, isOnline?: boolean, isOffline?: boolean, isApplyOngoing?: boolean, isApplyEnded?: boolean, isToday?: boolean, isFree?: boolean, isPaid?: boolean, jobTypeCodes?: Array<JobTypeCode>, industryCodes?: Array<IndustryCode>, cityCodes?: Array<string>, tags?: Array<number>, startAtFrom?: string, startAtTo?: string, organizationId?: number, sortBy?: EventSortByCode, perPage?: number, page?: number, _options?: Configuration): Promise<ListingRecommendationEventsResponse> {
         const result = this.api.listingRecommendationEvents(keyword, isOnline, isOffline, isApplyOngoing, isApplyEnded, isToday, isFree, isPaid, jobTypeCodes, industryCodes, cityCodes, tags, startAtFrom, startAtTo, organizationId, sortBy, perPage, page, _options);
@@ -1031,7 +1031,7 @@ export class PromiseEventsApi {
 
     /**
      * Listing Related Events
-     * @param slug 
+     * @param slug
      */
     public listingRelatedEventsWithHttpInfo(slug: string, _options?: Configuration): Promise<HttpInfo<ListingRelatedEventsResponse>> {
         const result = this.api.listingRelatedEventsWithHttpInfo(slug, _options);
@@ -1040,7 +1040,7 @@ export class PromiseEventsApi {
 
     /**
      * Listing Related Events
-     * @param slug 
+     * @param slug
      */
     public listingRelatedEvents(slug: string, _options?: Configuration): Promise<ListingRelatedEventsResponse> {
         const result = this.api.listingRelatedEvents(slug, _options);
@@ -1049,7 +1049,7 @@ export class PromiseEventsApi {
 
     /**
      * Listing Tickets Of Event
-     * @param eventId 
+     * @param eventId
      */
     public listingTicketsOfEventWithHttpInfo(eventId: number, _options?: Configuration): Promise<HttpInfo<Array<TicketItem>>> {
         const result = this.api.listingTicketsOfEventWithHttpInfo(eventId, _options);
@@ -1058,7 +1058,7 @@ export class PromiseEventsApi {
 
     /**
      * Listing Tickets Of Event
-     * @param eventId 
+     * @param eventId
      */
     public listingTicketsOfEvent(eventId: number, _options?: Configuration): Promise<Array<TicketItem>> {
         const result = this.api.listingTicketsOfEvent(eventId, _options);
@@ -1067,24 +1067,24 @@ export class PromiseEventsApi {
 
     /**
      * Listing Trending Events
-     * @param keyword 
-     * @param isOnline 
-     * @param isOffline 
-     * @param isApplyOngoing 
-     * @param isApplyEnded 
-     * @param isToday 
-     * @param isFree 
-     * @param isPaid 
-     * @param jobTypeCodes 
-     * @param industryCodes 
-     * @param cityCodes 
-     * @param tags 
-     * @param startAtFrom 
-     * @param startAtTo 
-     * @param organizationId 
-     * @param sortBy 
-     * @param perPage 
-     * @param page 
+     * @param keyword
+     * @param isOnline
+     * @param isOffline
+     * @param isApplyOngoing
+     * @param isApplyEnded
+     * @param isToday
+     * @param isFree
+     * @param isPaid
+     * @param jobTypeCodes
+     * @param industryCodes
+     * @param cityCodes
+     * @param tags
+     * @param startAtFrom
+     * @param startAtTo
+     * @param organizationId
+     * @param sortBy
+     * @param perPage
+     * @param page
      */
     public listingTrendingEventsWithHttpInfo(keyword?: string, isOnline?: boolean, isOffline?: boolean, isApplyOngoing?: boolean, isApplyEnded?: boolean, isToday?: boolean, isFree?: boolean, isPaid?: boolean, jobTypeCodes?: Array<JobTypeCode>, industryCodes?: Array<IndustryCode>, cityCodes?: Array<string>, tags?: Array<number>, startAtFrom?: string, startAtTo?: string, organizationId?: number, sortBy?: EventSortByCode, perPage?: number, page?: number, _options?: Configuration): Promise<HttpInfo<ListingTrendingEventsResponse>> {
         const result = this.api.listingTrendingEventsWithHttpInfo(keyword, isOnline, isOffline, isApplyOngoing, isApplyEnded, isToday, isFree, isPaid, jobTypeCodes, industryCodes, cityCodes, tags, startAtFrom, startAtTo, organizationId, sortBy, perPage, page, _options);
@@ -1093,24 +1093,24 @@ export class PromiseEventsApi {
 
     /**
      * Listing Trending Events
-     * @param keyword 
-     * @param isOnline 
-     * @param isOffline 
-     * @param isApplyOngoing 
-     * @param isApplyEnded 
-     * @param isToday 
-     * @param isFree 
-     * @param isPaid 
-     * @param jobTypeCodes 
-     * @param industryCodes 
-     * @param cityCodes 
-     * @param tags 
-     * @param startAtFrom 
-     * @param startAtTo 
-     * @param organizationId 
-     * @param sortBy 
-     * @param perPage 
-     * @param page 
+     * @param keyword
+     * @param isOnline
+     * @param isOffline
+     * @param isApplyOngoing
+     * @param isApplyEnded
+     * @param isToday
+     * @param isFree
+     * @param isPaid
+     * @param jobTypeCodes
+     * @param industryCodes
+     * @param cityCodes
+     * @param tags
+     * @param startAtFrom
+     * @param startAtTo
+     * @param organizationId
+     * @param sortBy
+     * @param perPage
+     * @param page
      */
     public listingTrendingEvents(keyword?: string, isOnline?: boolean, isOffline?: boolean, isApplyOngoing?: boolean, isApplyEnded?: boolean, isToday?: boolean, isFree?: boolean, isPaid?: boolean, jobTypeCodes?: Array<JobTypeCode>, industryCodes?: Array<IndustryCode>, cityCodes?: Array<string>, tags?: Array<number>, startAtFrom?: string, startAtTo?: string, organizationId?: number, sortBy?: EventSortByCode, perPage?: number, page?: number, _options?: Configuration): Promise<ListingTrendingEventsResponse> {
         const result = this.api.listingTrendingEvents(keyword, isOnline, isOffline, isApplyOngoing, isApplyEnded, isToday, isFree, isPaid, jobTypeCodes, industryCodes, cityCodes, tags, startAtFrom, startAtTo, organizationId, sortBy, perPage, page, _options);
@@ -1119,7 +1119,7 @@ export class PromiseEventsApi {
 
     /**
      * Manual Check In
-     * @param manualCheckInRequest 
+     * @param manualCheckInRequest
      */
     public manualCheckInWithHttpInfo(manualCheckInRequest?: ManualCheckInRequest, _options?: Configuration): Promise<HttpInfo<number>> {
         const result = this.api.manualCheckInWithHttpInfo(manualCheckInRequest, _options);
@@ -1128,7 +1128,7 @@ export class PromiseEventsApi {
 
     /**
      * Manual Check In
-     * @param manualCheckInRequest 
+     * @param manualCheckInRequest
      */
     public manualCheckIn(manualCheckInRequest?: ManualCheckInRequest, _options?: Configuration): Promise<number> {
         const result = this.api.manualCheckIn(manualCheckInRequest, _options);
@@ -1137,8 +1137,8 @@ export class PromiseEventsApi {
 
     /**
      * Publish Event
-     * @param eventId 
-     * @param publishEventRequest 
+     * @param eventId
+     * @param publishEventRequest
      */
     public publishEventWithHttpInfo(eventId: number, publishEventRequest?: PublishEventRequest, _options?: Configuration): Promise<HttpInfo<string>> {
         const result = this.api.publishEventWithHttpInfo(eventId, publishEventRequest, _options);
@@ -1147,8 +1147,8 @@ export class PromiseEventsApi {
 
     /**
      * Publish Event
-     * @param eventId 
-     * @param publishEventRequest 
+     * @param eventId
+     * @param publishEventRequest
      */
     public publishEvent(eventId: number, publishEventRequest?: PublishEventRequest, _options?: Configuration): Promise<string> {
         const result = this.api.publishEvent(eventId, publishEventRequest, _options);
@@ -1157,8 +1157,8 @@ export class PromiseEventsApi {
 
     /**
      * Qr Check In
-     * @param eventId 
-     * @param qRCheckInRequest 
+     * @param eventId
+     * @param qRCheckInRequest
      */
     public qrCheckInWithHttpInfo(eventId: number, qRCheckInRequest?: QRCheckInRequest, _options?: Configuration): Promise<HttpInfo<number>> {
         const result = this.api.qrCheckInWithHttpInfo(eventId, qRCheckInRequest, _options);
@@ -1167,8 +1167,8 @@ export class PromiseEventsApi {
 
     /**
      * Qr Check In
-     * @param eventId 
-     * @param qRCheckInRequest 
+     * @param eventId
+     * @param qRCheckInRequest
      */
     public qrCheckIn(eventId: number, qRCheckInRequest?: QRCheckInRequest, _options?: Configuration): Promise<number> {
         const result = this.api.qrCheckIn(eventId, qRCheckInRequest, _options);
@@ -1177,8 +1177,8 @@ export class PromiseEventsApi {
 
     /**
      * Save Draft Event
-     * @param eventId 
-     * @param saveDraftEventRequest 
+     * @param eventId
+     * @param saveDraftEventRequest
      */
     public saveDraftEventWithHttpInfo(eventId: number, saveDraftEventRequest?: SaveDraftEventRequest, _options?: Configuration): Promise<HttpInfo<number>> {
         const result = this.api.saveDraftEventWithHttpInfo(eventId, saveDraftEventRequest, _options);
@@ -1187,8 +1187,8 @@ export class PromiseEventsApi {
 
     /**
      * Save Draft Event
-     * @param eventId 
-     * @param saveDraftEventRequest 
+     * @param eventId
+     * @param saveDraftEventRequest
      */
     public saveDraftEvent(eventId: number, saveDraftEventRequest?: SaveDraftEventRequest, _options?: Configuration): Promise<number> {
         const result = this.api.saveDraftEvent(eventId, saveDraftEventRequest, _options);
@@ -1197,24 +1197,24 @@ export class PromiseEventsApi {
 
     /**
      * Search Events
-     * @param keyword 
-     * @param isOnline 
-     * @param isOffline 
-     * @param isApplyOngoing 
-     * @param isApplyEnded 
-     * @param isToday 
-     * @param isFree 
-     * @param isPaid 
-     * @param jobTypeCodes 
-     * @param industryCodes 
-     * @param cityCodes 
-     * @param tags 
-     * @param startAtFrom 
-     * @param startAtTo 
-     * @param organizationId 
-     * @param sortBy 
-     * @param perPage 
-     * @param page 
+     * @param keyword
+     * @param isOnline
+     * @param isOffline
+     * @param isApplyOngoing
+     * @param isApplyEnded
+     * @param isToday
+     * @param isFree
+     * @param isPaid
+     * @param jobTypeCodes
+     * @param industryCodes
+     * @param cityCodes
+     * @param tags
+     * @param startAtFrom
+     * @param startAtTo
+     * @param organizationId
+     * @param sortBy
+     * @param perPage
+     * @param page
      */
     public searchEventsWithHttpInfo(keyword?: string, isOnline?: boolean, isOffline?: boolean, isApplyOngoing?: boolean, isApplyEnded?: boolean, isToday?: boolean, isFree?: boolean, isPaid?: boolean, jobTypeCodes?: Array<JobTypeCode>, industryCodes?: Array<IndustryCode>, cityCodes?: Array<string>, tags?: Array<number>, startAtFrom?: string, startAtTo?: string, organizationId?: number, sortBy?: EventSortByCode, perPage?: number, page?: number, _options?: Configuration): Promise<HttpInfo<SearchEventsResponse>> {
         const result = this.api.searchEventsWithHttpInfo(keyword, isOnline, isOffline, isApplyOngoing, isApplyEnded, isToday, isFree, isPaid, jobTypeCodes, industryCodes, cityCodes, tags, startAtFrom, startAtTo, organizationId, sortBy, perPage, page, _options);
@@ -1223,24 +1223,24 @@ export class PromiseEventsApi {
 
     /**
      * Search Events
-     * @param keyword 
-     * @param isOnline 
-     * @param isOffline 
-     * @param isApplyOngoing 
-     * @param isApplyEnded 
-     * @param isToday 
-     * @param isFree 
-     * @param isPaid 
-     * @param jobTypeCodes 
-     * @param industryCodes 
-     * @param cityCodes 
-     * @param tags 
-     * @param startAtFrom 
-     * @param startAtTo 
-     * @param organizationId 
-     * @param sortBy 
-     * @param perPage 
-     * @param page 
+     * @param keyword
+     * @param isOnline
+     * @param isOffline
+     * @param isApplyOngoing
+     * @param isApplyEnded
+     * @param isToday
+     * @param isFree
+     * @param isPaid
+     * @param jobTypeCodes
+     * @param industryCodes
+     * @param cityCodes
+     * @param tags
+     * @param startAtFrom
+     * @param startAtTo
+     * @param organizationId
+     * @param sortBy
+     * @param perPage
+     * @param page
      */
     public searchEvents(keyword?: string, isOnline?: boolean, isOffline?: boolean, isApplyOngoing?: boolean, isApplyEnded?: boolean, isToday?: boolean, isFree?: boolean, isPaid?: boolean, jobTypeCodes?: Array<JobTypeCode>, industryCodes?: Array<IndustryCode>, cityCodes?: Array<string>, tags?: Array<number>, startAtFrom?: string, startAtTo?: string, organizationId?: number, sortBy?: EventSortByCode, perPage?: number, page?: number, _options?: Configuration): Promise<SearchEventsResponse> {
         const result = this.api.searchEvents(keyword, isOnline, isOffline, isApplyOngoing, isApplyEnded, isToday, isFree, isPaid, jobTypeCodes, industryCodes, cityCodes, tags, startAtFrom, startAtTo, organizationId, sortBy, perPage, page, _options);
@@ -1269,7 +1269,7 @@ export class PromiseNotificationsApi {
     /**
      * Register or update a device token for push notifications
      * Register Notification Device Token
-     * @param registerNotificationDeviceTokenRequest 
+     * @param registerNotificationDeviceTokenRequest
      */
     public registerNotificationDeviceTokenWithHttpInfo(registerNotificationDeviceTokenRequest?: RegisterNotificationDeviceTokenRequest, _options?: Configuration): Promise<HttpInfo<RegisterNotificationDeviceTokenResponse>> {
         const result = this.api.registerNotificationDeviceTokenWithHttpInfo(registerNotificationDeviceTokenRequest, _options);
@@ -1279,7 +1279,7 @@ export class PromiseNotificationsApi {
     /**
      * Register or update a device token for push notifications
      * Register Notification Device Token
-     * @param registerNotificationDeviceTokenRequest 
+     * @param registerNotificationDeviceTokenRequest
      */
     public registerNotificationDeviceToken(registerNotificationDeviceTokenRequest?: RegisterNotificationDeviceTokenRequest, _options?: Configuration): Promise<RegisterNotificationDeviceTokenResponse> {
         const result = this.api.registerNotificationDeviceToken(registerNotificationDeviceTokenRequest, _options);
@@ -1289,7 +1289,7 @@ export class PromiseNotificationsApi {
     /**
      * Remove a device token when logging out
      * Remove Notification Device Token
-     * @param fcmToken 
+     * @param fcmToken
      */
     public removeNotificationDeviceTokenWithHttpInfo(fcmToken: string, _options?: Configuration): Promise<HttpInfo<void>> {
         const result = this.api.removeNotificationDeviceTokenWithHttpInfo(fcmToken, _options);
@@ -1299,7 +1299,7 @@ export class PromiseNotificationsApi {
     /**
      * Remove a device token when logging out
      * Remove Notification Device Token
-     * @param fcmToken 
+     * @param fcmToken
      */
     public removeNotificationDeviceToken(fcmToken: string, _options?: Configuration): Promise<void> {
         const result = this.api.removeNotificationDeviceToken(fcmToken, _options);
@@ -1327,7 +1327,7 @@ export class PromiseOrganizationsApi {
 
     /**
      * Analyze Event Check Ins
-     * @param slug 
+     * @param slug
      */
     public analyzeEventCheckInsWithHttpInfo(slug: string, _options?: Configuration): Promise<HttpInfo<AnalyzeEventCheckInsResponse>> {
         const result = this.api.analyzeEventCheckInsWithHttpInfo(slug, _options);
@@ -1336,7 +1336,7 @@ export class PromiseOrganizationsApi {
 
     /**
      * Analyze Event Check Ins
-     * @param slug 
+     * @param slug
      */
     public analyzeEventCheckIns(slug: string, _options?: Configuration): Promise<AnalyzeEventCheckInsResponse> {
         const result = this.api.analyzeEventCheckIns(slug, _options);
@@ -1345,7 +1345,7 @@ export class PromiseOrganizationsApi {
 
     /**
      * Analyze Event Tickets
-     * @param slug 
+     * @param slug
      * @param granularity The granularity of the data.
      */
     public analyzeEventTicketsWithHttpInfo(slug: string, granularity?: 'daily' | 'weekly' | 'monthly', _options?: Configuration): Promise<HttpInfo<AnalyzeEventTicketsResponse>> {
@@ -1355,7 +1355,7 @@ export class PromiseOrganizationsApi {
 
     /**
      * Analyze Event Tickets
-     * @param slug 
+     * @param slug
      * @param granularity The granularity of the data.
      */
     public analyzeEventTickets(slug: string, granularity?: 'daily' | 'weekly' | 'monthly', _options?: Configuration): Promise<AnalyzeEventTicketsResponse> {
@@ -1365,7 +1365,7 @@ export class PromiseOrganizationsApi {
 
     /**
      * Create Organization Follow
-     * @param organizationId 
+     * @param organizationId
      */
     public createOrganizationFollowWithHttpInfo(organizationId: number, _options?: Configuration): Promise<HttpInfo<number>> {
         const result = this.api.createOrganizationFollowWithHttpInfo(organizationId, _options);
@@ -1374,7 +1374,7 @@ export class PromiseOrganizationsApi {
 
     /**
      * Create Organization Follow
-     * @param organizationId 
+     * @param organizationId
      */
     public createOrganizationFollow(organizationId: number, _options?: Configuration): Promise<number> {
         const result = this.api.createOrganizationFollow(organizationId, _options);
@@ -1383,7 +1383,7 @@ export class PromiseOrganizationsApi {
 
     /**
      * Delete Organization Follow
-     * @param organizationId 
+     * @param organizationId
      */
     public deleteOrganizationFollowWithHttpInfo(organizationId: number, _options?: Configuration): Promise<HttpInfo<void>> {
         const result = this.api.deleteOrganizationFollowWithHttpInfo(organizationId, _options);
@@ -1392,7 +1392,7 @@ export class PromiseOrganizationsApi {
 
     /**
      * Delete Organization Follow
-     * @param organizationId 
+     * @param organizationId
      */
     public deleteOrganizationFollow(organizationId: number, _options?: Configuration): Promise<void> {
         const result = this.api.deleteOrganizationFollow(organizationId, _options);
@@ -1401,16 +1401,16 @@ export class PromiseOrganizationsApi {
 
     /**
      * Download Attendees Csv
-     * @param keyword 
-     * @param applyAtFrom 
-     * @param applyAtTo 
-     * @param isCheckedIn 
-     * @param jobTypeCode 
-     * @param industryCode 
-     * @param sortBy 
-     * @param withFilter 
-     * @param page 
-     * @param perPage 
+     * @param keyword
+     * @param applyAtFrom
+     * @param applyAtTo
+     * @param isCheckedIn
+     * @param jobTypeCode
+     * @param industryCode
+     * @param sortBy
+     * @param withFilter
+     * @param page
+     * @param perPage
      */
     public downloadAttendeesCsvWithHttpInfo(keyword?: string, applyAtFrom?: Date, applyAtTo?: Date, isCheckedIn?: boolean, jobTypeCode?: JobTypeCode, industryCode?: IndustryCode, sortBy?: AttendeeSortByCode, withFilter?: boolean, page?: number, perPage?: number, _options?: Configuration): Promise<HttpInfo<void>> {
         const result = this.api.downloadAttendeesCsvWithHttpInfo(keyword, applyAtFrom, applyAtTo, isCheckedIn, jobTypeCode, industryCode, sortBy, withFilter, page, perPage, _options);
@@ -1419,16 +1419,16 @@ export class PromiseOrganizationsApi {
 
     /**
      * Download Attendees Csv
-     * @param keyword 
-     * @param applyAtFrom 
-     * @param applyAtTo 
-     * @param isCheckedIn 
-     * @param jobTypeCode 
-     * @param industryCode 
-     * @param sortBy 
-     * @param withFilter 
-     * @param page 
-     * @param perPage 
+     * @param keyword
+     * @param applyAtFrom
+     * @param applyAtTo
+     * @param isCheckedIn
+     * @param jobTypeCode
+     * @param industryCode
+     * @param sortBy
+     * @param withFilter
+     * @param page
+     * @param perPage
      */
     public downloadAttendeesCsv(keyword?: string, applyAtFrom?: Date, applyAtTo?: Date, isCheckedIn?: boolean, jobTypeCode?: JobTypeCode, industryCode?: IndustryCode, sortBy?: AttendeeSortByCode, withFilter?: boolean, page?: number, perPage?: number, _options?: Configuration): Promise<void> {
         const result = this.api.downloadAttendeesCsv(keyword, applyAtFrom, applyAtTo, isCheckedIn, jobTypeCode, industryCode, sortBy, withFilter, page, perPage, _options);
@@ -1437,7 +1437,7 @@ export class PromiseOrganizationsApi {
 
     /**
      * Get Attendee Detail
-     * @param attendeeId 
+     * @param attendeeId
      */
     public getAttendeeDetailWithHttpInfo(attendeeId: number, _options?: Configuration): Promise<HttpInfo<GetAttendeeDetailResponse>> {
         const result = this.api.getAttendeeDetailWithHttpInfo(attendeeId, _options);
@@ -1446,7 +1446,7 @@ export class PromiseOrganizationsApi {
 
     /**
      * Get Attendee Detail
-     * @param attendeeId 
+     * @param attendeeId
      */
     public getAttendeeDetail(attendeeId: number, _options?: Configuration): Promise<GetAttendeeDetailResponse> {
         const result = this.api.getAttendeeDetail(attendeeId, _options);
@@ -1471,7 +1471,7 @@ export class PromiseOrganizationsApi {
 
     /**
      * Get Organization Detail
-     * @param organizationSlug 
+     * @param organizationSlug
      */
     public getOrganizationDetailWithHttpInfo(organizationSlug: string, _options?: Configuration): Promise<HttpInfo<GetOrganizationDetailResponse>> {
         const result = this.api.getOrganizationDetailWithHttpInfo(organizationSlug, _options);
@@ -1480,7 +1480,7 @@ export class PromiseOrganizationsApi {
 
     /**
      * Get Organization Detail
-     * @param organizationSlug 
+     * @param organizationSlug
      */
     public getOrganizationDetail(organizationSlug: string, _options?: Configuration): Promise<GetOrganizationDetailResponse> {
         const result = this.api.getOrganizationDetail(organizationSlug, _options);
@@ -1505,11 +1505,11 @@ export class PromiseOrganizationsApi {
 
     /**
      * Get Ticket Stats
-     * @param eventId 
-     * @param startDate 
-     * @param endDate 
-     * @param ticketType 
-     * @param ticketStatus 
+     * @param eventId
+     * @param startDate
+     * @param endDate
+     * @param ticketType
+     * @param ticketStatus
      */
     public getTicketStatsWithHttpInfo(eventId?: number, startDate?: Date, endDate?: Date, ticketType?: TicketTypeCode, ticketStatus?: TicketStatusCode, _options?: Configuration): Promise<HttpInfo<GetTicketStatsResponse>> {
         const result = this.api.getTicketStatsWithHttpInfo(eventId, startDate, endDate, ticketType, ticketStatus, _options);
@@ -1518,11 +1518,11 @@ export class PromiseOrganizationsApi {
 
     /**
      * Get Ticket Stats
-     * @param eventId 
-     * @param startDate 
-     * @param endDate 
-     * @param ticketType 
-     * @param ticketStatus 
+     * @param eventId
+     * @param startDate
+     * @param endDate
+     * @param ticketType
+     * @param ticketStatus
      */
     public getTicketStats(eventId?: number, startDate?: Date, endDate?: Date, ticketType?: TicketTypeCode, ticketStatus?: TicketStatusCode, _options?: Configuration): Promise<GetTicketStatsResponse> {
         const result = this.api.getTicketStats(eventId, startDate, endDate, ticketType, ticketStatus, _options);
@@ -1534,17 +1534,18 @@ export class PromiseOrganizationsApi {
      * @param slug Event slug
      * @param eventId Event ID
      * @param keyword user name | event name | phone | email
-     * @param applyAtFrom 
-     * @param applyAtTo 
-     * @param isCheckedIn 
-     * @param jobTypeCode 
-     * @param industryCode 
-     * @param sortBy 
-     * @param perPage 
-     * @param page 
+     * @param applyAtFrom
+     * @param applyAtTo
+     * @param isCheckedIn
+     * @param jobTypeCode
+     * @param industryCode
+     * @param ticketTypeCode
+     * @param sortBy
+     * @param perPage
+     * @param page
      */
-    public listingAttendeesWithHttpInfo(slug?: string, eventId?: number, keyword?: string, applyAtFrom?: Date, applyAtTo?: Date, isCheckedIn?: boolean, jobTypeCode?: JobTypeCode, industryCode?: IndustryCode, sortBy?: AttendeeSortByCode, perPage?: number, page?: number, _options?: Configuration): Promise<HttpInfo<ListingAttendeesResponse>> {
-        const result = this.api.listingAttendeesWithHttpInfo(slug, eventId, keyword, applyAtFrom, applyAtTo, isCheckedIn, jobTypeCode, industryCode, sortBy, perPage, page, _options);
+    public listingAttendeesWithHttpInfo(slug?: string, eventId?: number, keyword?: string, applyAtFrom?: Date, applyAtTo?: Date, isCheckedIn?: boolean, jobTypeCode?: JobTypeCode, industryCode?: IndustryCode, ticketTypeCode?: TicketTypeCode, sortBy?: AttendeeSortByCode, perPage?: number, page?: number, _options?: Configuration): Promise<HttpInfo<ListingAttendeesResponse>> {
+        const result = this.api.listingAttendeesWithHttpInfo(slug, eventId, keyword, applyAtFrom, applyAtTo, isCheckedIn, jobTypeCode, industryCode, ticketTypeCode, sortBy, perPage, page, _options);
         return result.toPromise();
     }
 
@@ -1553,28 +1554,29 @@ export class PromiseOrganizationsApi {
      * @param slug Event slug
      * @param eventId Event ID
      * @param keyword user name | event name | phone | email
-     * @param applyAtFrom 
-     * @param applyAtTo 
-     * @param isCheckedIn 
-     * @param jobTypeCode 
-     * @param industryCode 
-     * @param sortBy 
-     * @param perPage 
-     * @param page 
+     * @param applyAtFrom
+     * @param applyAtTo
+     * @param isCheckedIn
+     * @param jobTypeCode
+     * @param industryCode
+     * @param ticketTypeCode
+     * @param sortBy
+     * @param perPage
+     * @param page
      */
-    public listingAttendees(slug?: string, eventId?: number, keyword?: string, applyAtFrom?: Date, applyAtTo?: Date, isCheckedIn?: boolean, jobTypeCode?: JobTypeCode, industryCode?: IndustryCode, sortBy?: AttendeeSortByCode, perPage?: number, page?: number, _options?: Configuration): Promise<ListingAttendeesResponse> {
-        const result = this.api.listingAttendees(slug, eventId, keyword, applyAtFrom, applyAtTo, isCheckedIn, jobTypeCode, industryCode, sortBy, perPage, page, _options);
+    public listingAttendees(slug?: string, eventId?: number, keyword?: string, applyAtFrom?: Date, applyAtTo?: Date, isCheckedIn?: boolean, jobTypeCode?: JobTypeCode, industryCode?: IndustryCode, ticketTypeCode?: TicketTypeCode, sortBy?: AttendeeSortByCode, perPage?: number, page?: number, _options?: Configuration): Promise<ListingAttendeesResponse> {
+        const result = this.api.listingAttendees(slug, eventId, keyword, applyAtFrom, applyAtTo, isCheckedIn, jobTypeCode, industryCode, ticketTypeCode, sortBy, perPage, page, _options);
         return result.toPromise();
     }
 
     /**
      * Listing Attendees Ranking
-     * @param keyword 
-     * @param eventId 
-     * @param month 
-     * @param year 
-     * @param page 
-     * @param perPage 
+     * @param keyword
+     * @param eventId
+     * @param month
+     * @param year
+     * @param page
+     * @param perPage
      */
     public listingAttendeesRankingWithHttpInfo(keyword?: string, eventId?: number, month?: number, year?: number, page?: number, perPage?: number, _options?: Configuration): Promise<HttpInfo<Array<ListingAttendeesRankingItem>>> {
         const result = this.api.listingAttendeesRankingWithHttpInfo(keyword, eventId, month, year, page, perPage, _options);
@@ -1583,12 +1585,12 @@ export class PromiseOrganizationsApi {
 
     /**
      * Listing Attendees Ranking
-     * @param keyword 
-     * @param eventId 
-     * @param month 
-     * @param year 
-     * @param page 
-     * @param perPage 
+     * @param keyword
+     * @param eventId
+     * @param month
+     * @param year
+     * @param page
+     * @param perPage
      */
     public listingAttendeesRanking(keyword?: string, eventId?: number, month?: number, year?: number, page?: number, perPage?: number, _options?: Configuration): Promise<Array<ListingAttendeesRankingItem>> {
         const result = this.api.listingAttendeesRanking(keyword, eventId, month, year, page, perPage, _options);
@@ -1597,16 +1599,16 @@ export class PromiseOrganizationsApi {
 
     /**
      * Listing Organization Events
-     * @param keyword 
-     * @param tags 
-     * @param meetingToolCodes 
-     * @param startAtFrom 
-     * @param startAtTo 
-     * @param eventStatus 
-     * @param timeStatus 
-     * @param sortBy 
-     * @param perPage 
-     * @param page 
+     * @param keyword
+     * @param tags
+     * @param meetingToolCodes
+     * @param startAtFrom
+     * @param startAtTo
+     * @param eventStatus
+     * @param timeStatus
+     * @param sortBy
+     * @param perPage
+     * @param page
      */
     public listingOrganizationEventsWithHttpInfo(keyword?: string, tags?: Array<number>, meetingToolCodes?: Array<EventMeetingToolCode>, startAtFrom?: string, startAtTo?: string, eventStatus?: Array<EventStatusCode>, timeStatus?: EventTimeStatusCode, sortBy?: ManageEventSortByCode, perPage?: number, page?: number, _options?: Configuration): Promise<HttpInfo<ListingOrganizationEventsResponse>> {
         const result = this.api.listingOrganizationEventsWithHttpInfo(keyword, tags, meetingToolCodes, startAtFrom, startAtTo, eventStatus, timeStatus, sortBy, perPage, page, _options);
@@ -1615,16 +1617,16 @@ export class PromiseOrganizationsApi {
 
     /**
      * Listing Organization Events
-     * @param keyword 
-     * @param tags 
-     * @param meetingToolCodes 
-     * @param startAtFrom 
-     * @param startAtTo 
-     * @param eventStatus 
-     * @param timeStatus 
-     * @param sortBy 
-     * @param perPage 
-     * @param page 
+     * @param keyword
+     * @param tags
+     * @param meetingToolCodes
+     * @param startAtFrom
+     * @param startAtTo
+     * @param eventStatus
+     * @param timeStatus
+     * @param sortBy
+     * @param perPage
+     * @param page
      */
     public listingOrganizationEvents(keyword?: string, tags?: Array<number>, meetingToolCodes?: Array<EventMeetingToolCode>, startAtFrom?: string, startAtTo?: string, eventStatus?: Array<EventStatusCode>, timeStatus?: EventTimeStatusCode, sortBy?: ManageEventSortByCode, perPage?: number, page?: number, _options?: Configuration): Promise<ListingOrganizationEventsResponse> {
         const result = this.api.listingOrganizationEvents(keyword, tags, meetingToolCodes, startAtFrom, startAtTo, eventStatus, timeStatus, sortBy, perPage, page, _options);
@@ -1665,7 +1667,7 @@ export class PromiseOrganizationsApi {
 
     /**
      * Listing Top Organization Events
-     * @param organizationId 
+     * @param organizationId
      */
     public listingTopOrganizationEventsWithHttpInfo(organizationId: number, _options?: Configuration): Promise<HttpInfo<ListingTopOrganizationEventsResponse>> {
         const result = this.api.listingTopOrganizationEventsWithHttpInfo(organizationId, _options);
@@ -1674,7 +1676,7 @@ export class PromiseOrganizationsApi {
 
     /**
      * Listing Top Organization Events
-     * @param organizationId 
+     * @param organizationId
      */
     public listingTopOrganizationEvents(organizationId: number, _options?: Configuration): Promise<ListingTopOrganizationEventsResponse> {
         const result = this.api.listingTopOrganizationEvents(organizationId, _options);
@@ -1683,7 +1685,7 @@ export class PromiseOrganizationsApi {
 
     /**
      * Register Organization
-     * @param registerOrganizationRequest 
+     * @param registerOrganizationRequest
      */
     public registerOrganizationWithHttpInfo(registerOrganizationRequest?: RegisterOrganizationRequest, _options?: Configuration): Promise<HttpInfo<RegisterOrganizationResponse>> {
         const result = this.api.registerOrganizationWithHttpInfo(registerOrganizationRequest, _options);
@@ -1692,7 +1694,7 @@ export class PromiseOrganizationsApi {
 
     /**
      * Register Organization
-     * @param registerOrganizationRequest 
+     * @param registerOrganizationRequest
      */
     public registerOrganization(registerOrganizationRequest?: RegisterOrganizationRequest, _options?: Configuration): Promise<RegisterOrganizationResponse> {
         const result = this.api.registerOrganization(registerOrganizationRequest, _options);
@@ -1701,11 +1703,11 @@ export class PromiseOrganizationsApi {
 
     /**
      * Track User Actions
-     * @param timeRange 
-     * @param groupBy 
-     * @param actionTypes 
-     * @param eventId 
-     * @param topN 
+     * @param timeRange
+     * @param groupBy
+     * @param actionTypes
+     * @param eventId
+     * @param topN
      */
     public trackUserActionsWithHttpInfo(timeRange?: TrackingTimeRangeCode, groupBy?: TrackingTimeRangeCode, actionTypes?: Array<UserActionTypeCode>, eventId?: number, topN?: number, _options?: Configuration): Promise<HttpInfo<TrackUserActionsResponse>> {
         const result = this.api.trackUserActionsWithHttpInfo(timeRange, groupBy, actionTypes, eventId, topN, _options);
@@ -1714,11 +1716,11 @@ export class PromiseOrganizationsApi {
 
     /**
      * Track User Actions
-     * @param timeRange 
-     * @param groupBy 
-     * @param actionTypes 
-     * @param eventId 
-     * @param topN 
+     * @param timeRange
+     * @param groupBy
+     * @param actionTypes
+     * @param eventId
+     * @param topN
      */
     public trackUserActions(timeRange?: TrackingTimeRangeCode, groupBy?: TrackingTimeRangeCode, actionTypes?: Array<UserActionTypeCode>, eventId?: number, topN?: number, _options?: Configuration): Promise<TrackUserActionsResponse> {
         const result = this.api.trackUserActions(timeRange, groupBy, actionTypes, eventId, topN, _options);
@@ -1746,7 +1748,7 @@ export class PromiseSpeakersApi {
 
     /**
      * Get Speaker Detail
-     * @param slug 
+     * @param slug
      */
     public getSpeakerDetailWithHttpInfo(slug: string, _options?: Configuration): Promise<HttpInfo<GetSpeakerDetailResponse>> {
         const result = this.api.getSpeakerDetailWithHttpInfo(slug, _options);
@@ -1755,7 +1757,7 @@ export class PromiseSpeakersApi {
 
     /**
      * Get Speaker Detail
-     * @param slug 
+     * @param slug
      */
     public getSpeakerDetail(slug: string, _options?: Configuration): Promise<GetSpeakerDetailResponse> {
         const result = this.api.getSpeakerDetail(slug, _options);
@@ -1799,7 +1801,7 @@ export class PromiseSurveysApi {
 
     /**
      * Create Survey
-     * @param createSurveyRequest 
+     * @param createSurveyRequest
      */
     public createSurveyWithHttpInfo(createSurveyRequest?: CreateSurveyRequest, _options?: Configuration): Promise<HttpInfo<number>> {
         const result = this.api.createSurveyWithHttpInfo(createSurveyRequest, _options);
@@ -1808,7 +1810,7 @@ export class PromiseSurveysApi {
 
     /**
      * Create Survey
-     * @param createSurveyRequest 
+     * @param createSurveyRequest
      */
     public createSurvey(createSurveyRequest?: CreateSurveyRequest, _options?: Configuration): Promise<number> {
         const result = this.api.createSurvey(createSurveyRequest, _options);
@@ -1903,7 +1905,7 @@ export class PromiseTargetsApi {
 
     /**
      * Create Target
-     * @param createTargetRequest 
+     * @param createTargetRequest
      */
     public createTargetWithHttpInfo(createTargetRequest?: CreateTargetRequest, _options?: Configuration): Promise<HttpInfo<number>> {
         const result = this.api.createTargetWithHttpInfo(createTargetRequest, _options);
@@ -1912,7 +1914,7 @@ export class PromiseTargetsApi {
 
     /**
      * Create Target
-     * @param createTargetRequest 
+     * @param createTargetRequest
      */
     public createTarget(createTargetRequest?: CreateTargetRequest, _options?: Configuration): Promise<number> {
         const result = this.api.createTarget(createTargetRequest, _options);
@@ -1956,7 +1958,7 @@ export class PromiseTicketsApi {
 
     /**
      * Cancel Tickets
-     * @param cancelTicketsRequest 
+     * @param cancelTicketsRequest
      */
     public cancelTicketsWithHttpInfo(cancelTicketsRequest?: CancelTicketsRequest, _options?: Configuration): Promise<HttpInfo<number>> {
         const result = this.api.cancelTicketsWithHttpInfo(cancelTicketsRequest, _options);
@@ -1965,7 +1967,7 @@ export class PromiseTicketsApi {
 
     /**
      * Cancel Tickets
-     * @param cancelTicketsRequest 
+     * @param cancelTicketsRequest
      */
     public cancelTickets(cancelTicketsRequest?: CancelTicketsRequest, _options?: Configuration): Promise<number> {
         const result = this.api.cancelTickets(cancelTicketsRequest, _options);
@@ -1974,7 +1976,7 @@ export class PromiseTicketsApi {
 
     /**
      * Create Ticket
-     * @param createTicketRequest 
+     * @param createTicketRequest
      */
     public createTicketWithHttpInfo(createTicketRequest?: CreateTicketRequest, _options?: Configuration): Promise<HttpInfo<number>> {
         const result = this.api.createTicketWithHttpInfo(createTicketRequest, _options);
@@ -1983,7 +1985,7 @@ export class PromiseTicketsApi {
 
     /**
      * Create Ticket
-     * @param createTicketRequest 
+     * @param createTicketRequest
      */
     public createTicket(createTicketRequest?: CreateTicketRequest, _options?: Configuration): Promise<number> {
         const result = this.api.createTicket(createTicketRequest, _options);
@@ -1992,7 +1994,7 @@ export class PromiseTicketsApi {
 
     /**
      * Delete Ticket
-     * @param ticketId 
+     * @param ticketId
      */
     public deleteTicketWithHttpInfo(ticketId: number, _options?: Configuration): Promise<HttpInfo<void>> {
         const result = this.api.deleteTicketWithHttpInfo(ticketId, _options);
@@ -2001,7 +2003,7 @@ export class PromiseTicketsApi {
 
     /**
      * Delete Ticket
-     * @param ticketId 
+     * @param ticketId
      */
     public deleteTicket(ticketId: number, _options?: Configuration): Promise<void> {
         const result = this.api.deleteTicket(ticketId, _options);
@@ -2010,7 +2012,7 @@ export class PromiseTicketsApi {
 
     /**
      * Get Draft Ticket
-     * @param ticketId 
+     * @param ticketId
      */
     public getDraftTicketWithHttpInfo(ticketId: number, _options?: Configuration): Promise<HttpInfo<Ticket>> {
         const result = this.api.getDraftTicketWithHttpInfo(ticketId, _options);
@@ -2019,7 +2021,7 @@ export class PromiseTicketsApi {
 
     /**
      * Get Draft Ticket
-     * @param ticketId 
+     * @param ticketId
      */
     public getDraftTicket(ticketId: number, _options?: Configuration): Promise<Ticket> {
         const result = this.api.getDraftTicket(ticketId, _options);
@@ -2028,8 +2030,8 @@ export class PromiseTicketsApi {
 
     /**
      * Update Ticket
-     * @param ticketId 
-     * @param updateTicketRequest 
+     * @param ticketId
+     * @param updateTicketRequest
      */
     public updateTicketWithHttpInfo(ticketId: number, updateTicketRequest?: UpdateTicketRequest, _options?: Configuration): Promise<HttpInfo<TicketItem>> {
         const result = this.api.updateTicketWithHttpInfo(ticketId, updateTicketRequest, _options);
@@ -2038,8 +2040,8 @@ export class PromiseTicketsApi {
 
     /**
      * Update Ticket
-     * @param ticketId 
-     * @param updateTicketRequest 
+     * @param ticketId
+     * @param updateTicketRequest
      */
     public updateTicket(ticketId: number, updateTicketRequest?: UpdateTicketRequest, _options?: Configuration): Promise<TicketItem> {
         const result = this.api.updateTicket(ticketId, updateTicketRequest, _options);
@@ -2099,10 +2101,10 @@ export class PromiseTransactionsApi {
 
     /**
      * Listing My Transactions
-     * @param keyword 
-     * @param status 
-     * @param page 
-     * @param perPage 
+     * @param keyword
+     * @param status
+     * @param page
+     * @param perPage
      */
     public listingMyTransactionsWithHttpInfo(keyword?: string, status?: TransactionStatusCode, page?: number, perPage?: number, _options?: Configuration): Promise<HttpInfo<ListingMyTransactionsResponse>> {
         const result = this.api.listingMyTransactionsWithHttpInfo(keyword, status, page, perPage, _options);
@@ -2111,10 +2113,10 @@ export class PromiseTransactionsApi {
 
     /**
      * Listing My Transactions
-     * @param keyword 
-     * @param status 
-     * @param page 
-     * @param perPage 
+     * @param keyword
+     * @param status
+     * @param page
+     * @param perPage
      */
     public listingMyTransactions(keyword?: string, status?: TransactionStatusCode, page?: number, perPage?: number, _options?: Configuration): Promise<ListingMyTransactionsResponse> {
         const result = this.api.listingMyTransactions(keyword, status, page, perPage, _options);
@@ -2174,9 +2176,9 @@ export class PromiseUsersApi {
 
     /**
      * Listing Notifications
-     * @param perPage 
-     * @param page 
-     * @param isRead 
+     * @param perPage
+     * @param page
+     * @param isRead
      */
     public listingNotificationsWithHttpInfo(perPage?: number, page?: number, isRead?: boolean, _options?: Configuration): Promise<HttpInfo<ListingNotificationsResponse>> {
         const result = this.api.listingNotificationsWithHttpInfo(perPage, page, isRead, _options);
@@ -2185,9 +2187,9 @@ export class PromiseUsersApi {
 
     /**
      * Listing Notifications
-     * @param perPage 
-     * @param page 
-     * @param isRead 
+     * @param perPage
+     * @param page
+     * @param isRead
      */
     public listingNotifications(perPage?: number, page?: number, isRead?: boolean, _options?: Configuration): Promise<ListingNotificationsResponse> {
         const result = this.api.listingNotifications(perPage, page, isRead, _options);
@@ -2196,7 +2198,7 @@ export class PromiseUsersApi {
 
     /**
      * Mark Notification As Read
-     * @param notificationId 
+     * @param notificationId
      */
     public markNotificationAsReadWithHttpInfo(notificationId: number, _options?: Configuration): Promise<HttpInfo<number>> {
         const result = this.api.markNotificationAsReadWithHttpInfo(notificationId, _options);
@@ -2205,7 +2207,7 @@ export class PromiseUsersApi {
 
     /**
      * Mark Notification As Read
-     * @param notificationId 
+     * @param notificationId
      */
     public markNotificationAsRead(notificationId: number, _options?: Configuration): Promise<number> {
         const result = this.api.markNotificationAsRead(notificationId, _options);
@@ -2214,7 +2216,7 @@ export class PromiseUsersApi {
 
     /**
      * Update Audience
-     * @param updateUserRequest 
+     * @param updateUserRequest
      */
     public updateAudienceWithHttpInfo(updateUserRequest: UpdateUserRequest, _options?: Configuration): Promise<HttpInfo<GetMeResponse>> {
         const result = this.api.updateAudienceWithHttpInfo(updateUserRequest, _options);
@@ -2223,7 +2225,7 @@ export class PromiseUsersApi {
 
     /**
      * Update Audience
-     * @param updateUserRequest 
+     * @param updateUserRequest
      */
     public updateAudience(updateUserRequest: UpdateUserRequest, _options?: Configuration): Promise<GetMeResponse> {
         const result = this.api.updateAudience(updateUserRequest, _options);
@@ -2232,6 +2234,3 @@ export class PromiseUsersApi {
 
 
 }
-
-
-

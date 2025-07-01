@@ -180,7 +180,7 @@ export class ObservableApplicationsApi {
 
     /**
      * Cancel Application
-     * @param applicationId 
+     * @param applicationId
      */
     public cancelApplicationWithHttpInfo(applicationId: number, _options?: Configuration): Observable<HttpInfo<void>> {
         const requestContextPromise = this.requestFactory.cancelApplication(applicationId, _options);
@@ -203,7 +203,7 @@ export class ObservableApplicationsApi {
 
     /**
      * Cancel Application
-     * @param applicationId 
+     * @param applicationId
      */
     public cancelApplication(applicationId: number, _options?: Configuration): Observable<void> {
         return this.cancelApplicationWithHttpInfo(applicationId, _options).pipe(map((apiResponse: HttpInfo<void>) => apiResponse.data));
@@ -211,7 +211,7 @@ export class ObservableApplicationsApi {
 
     /**
      * Create Application Checkout Session
-     * @param createApplicationRequest 
+     * @param createApplicationRequest
      */
     public createApplicationCheckoutSessionWithHttpInfo(createApplicationRequest?: CreateApplicationRequest, _options?: Configuration): Observable<HttpInfo<CreateApplicationCheckoutSessionResponse>> {
         const requestContextPromise = this.requestFactory.createApplicationCheckoutSession(createApplicationRequest, _options);
@@ -234,7 +234,7 @@ export class ObservableApplicationsApi {
 
     /**
      * Create Application Checkout Session
-     * @param createApplicationRequest 
+     * @param createApplicationRequest
      */
     public createApplicationCheckoutSession(createApplicationRequest?: CreateApplicationRequest, _options?: Configuration): Observable<CreateApplicationCheckoutSessionResponse> {
         return this.createApplicationCheckoutSessionWithHttpInfo(createApplicationRequest, _options).pipe(map((apiResponse: HttpInfo<CreateApplicationCheckoutSessionResponse>) => apiResponse.data));
@@ -242,7 +242,7 @@ export class ObservableApplicationsApi {
 
     /**
      * Create Free Application
-     * @param createApplicationRequest 
+     * @param createApplicationRequest
      */
     public createFreeApplicationWithHttpInfo(createApplicationRequest?: CreateApplicationRequest, _options?: Configuration): Observable<HttpInfo<string>> {
         const requestContextPromise = this.requestFactory.createFreeApplication(createApplicationRequest, _options);
@@ -265,7 +265,7 @@ export class ObservableApplicationsApi {
 
     /**
      * Create Free Application
-     * @param createApplicationRequest 
+     * @param createApplicationRequest
      */
     public createFreeApplication(createApplicationRequest?: CreateApplicationRequest, _options?: Configuration): Observable<string> {
         return this.createFreeApplicationWithHttpInfo(createApplicationRequest, _options).pipe(map((apiResponse: HttpInfo<string>) => apiResponse.data));
@@ -291,7 +291,7 @@ export class ObservableAuthApi {
 
     /**
      * Change Password
-     * @param changePasswordRequest 
+     * @param changePasswordRequest
      */
     public changePasswordWithHttpInfo(changePasswordRequest?: ChangePasswordRequest, _options?: Configuration): Observable<HttpInfo<void>> {
         const requestContextPromise = this.requestFactory.changePassword(changePasswordRequest, _options);
@@ -314,7 +314,7 @@ export class ObservableAuthApi {
 
     /**
      * Change Password
-     * @param changePasswordRequest 
+     * @param changePasswordRequest
      */
     public changePassword(changePasswordRequest?: ChangePasswordRequest, _options?: Configuration): Observable<void> {
         return this.changePasswordWithHttpInfo(changePasswordRequest, _options).pipe(map((apiResponse: HttpInfo<void>) => apiResponse.data));
@@ -322,7 +322,7 @@ export class ObservableAuthApi {
 
     /**
      * Forgot Password
-     * @param forgotPasswordRequest 
+     * @param forgotPasswordRequest
      */
     public forgotPasswordWithHttpInfo(forgotPasswordRequest?: ForgotPasswordRequest, _options?: Configuration): Observable<HttpInfo<ForgotPasswordResponse>> {
         const requestContextPromise = this.requestFactory.forgotPassword(forgotPasswordRequest, _options);
@@ -345,7 +345,7 @@ export class ObservableAuthApi {
 
     /**
      * Forgot Password
-     * @param forgotPasswordRequest 
+     * @param forgotPasswordRequest
      */
     public forgotPassword(forgotPasswordRequest?: ForgotPasswordRequest, _options?: Configuration): Observable<ForgotPasswordResponse> {
         return this.forgotPasswordWithHttpInfo(forgotPasswordRequest, _options).pipe(map((apiResponse: HttpInfo<ForgotPasswordResponse>) => apiResponse.data));
@@ -353,8 +353,8 @@ export class ObservableAuthApi {
 
     /**
      * Login
-     * @param userAgent 
-     * @param loginRequest 
+     * @param userAgent
+     * @param loginRequest
      */
     public loginWithHttpInfo(userAgent?: string, loginRequest?: LoginRequest, _options?: Configuration): Observable<HttpInfo<TokenResponse>> {
         const requestContextPromise = this.requestFactory.login(userAgent, loginRequest, _options);
@@ -377,8 +377,8 @@ export class ObservableAuthApi {
 
     /**
      * Login
-     * @param userAgent 
-     * @param loginRequest 
+     * @param userAgent
+     * @param loginRequest
      */
     public login(userAgent?: string, loginRequest?: LoginRequest, _options?: Configuration): Observable<TokenResponse> {
         return this.loginWithHttpInfo(userAgent, loginRequest, _options).pipe(map((apiResponse: HttpInfo<TokenResponse>) => apiResponse.data));
@@ -387,7 +387,7 @@ export class ObservableAuthApi {
     /**
      * Log out user from the current device
      * Logout
-     * @param logoutRequest 
+     * @param logoutRequest
      */
     public logoutWithHttpInfo(logoutRequest?: LogoutRequest, _options?: Configuration): Observable<HttpInfo<void>> {
         const requestContextPromise = this.requestFactory.logout(logoutRequest, _options);
@@ -411,7 +411,7 @@ export class ObservableAuthApi {
     /**
      * Log out user from the current device
      * Logout
-     * @param logoutRequest 
+     * @param logoutRequest
      */
     public logout(logoutRequest?: LogoutRequest, _options?: Configuration): Observable<void> {
         return this.logoutWithHttpInfo(logoutRequest, _options).pipe(map((apiResponse: HttpInfo<void>) => apiResponse.data));
@@ -448,7 +448,7 @@ export class ObservableAuthApi {
 
     /**
      * Refresh Token
-     * @param token 
+     * @param token
      */
     public refreshTokenWithHttpInfo(token: string, _options?: Configuration): Observable<HttpInfo<TokenResponse>> {
         const requestContextPromise = this.requestFactory.refreshToken(token, _options);
@@ -471,7 +471,7 @@ export class ObservableAuthApi {
 
     /**
      * Refresh Token
-     * @param token 
+     * @param token
      */
     public refreshToken(token: string, _options?: Configuration): Observable<TokenResponse> {
         return this.refreshTokenWithHttpInfo(token, _options).pipe(map((apiResponse: HttpInfo<TokenResponse>) => apiResponse.data));
@@ -479,7 +479,7 @@ export class ObservableAuthApi {
 
     /**
      * Register Audience
-     * @param registerAudienceRequest 
+     * @param registerAudienceRequest
      */
     public registerAudienceWithHttpInfo(registerAudienceRequest?: RegisterAudienceRequest, _options?: Configuration): Observable<HttpInfo<RegisterAudienceResponse>> {
         const requestContextPromise = this.requestFactory.registerAudience(registerAudienceRequest, _options);
@@ -502,7 +502,7 @@ export class ObservableAuthApi {
 
     /**
      * Register Audience
-     * @param registerAudienceRequest 
+     * @param registerAudienceRequest
      */
     public registerAudience(registerAudienceRequest?: RegisterAudienceRequest, _options?: Configuration): Observable<RegisterAudienceResponse> {
         return this.registerAudienceWithHttpInfo(registerAudienceRequest, _options).pipe(map((apiResponse: HttpInfo<RegisterAudienceResponse>) => apiResponse.data));
@@ -510,7 +510,7 @@ export class ObservableAuthApi {
 
     /**
      * Request Change Email
-     * @param changeEmailRequest 
+     * @param changeEmailRequest
      */
     public requestChangeEmailWithHttpInfo(changeEmailRequest?: ChangeEmailRequest, _options?: Configuration): Observable<HttpInfo<RequestChangeEmailResponse>> {
         const requestContextPromise = this.requestFactory.requestChangeEmail(changeEmailRequest, _options);
@@ -533,7 +533,7 @@ export class ObservableAuthApi {
 
     /**
      * Request Change Email
-     * @param changeEmailRequest 
+     * @param changeEmailRequest
      */
     public requestChangeEmail(changeEmailRequest?: ChangeEmailRequest, _options?: Configuration): Observable<RequestChangeEmailResponse> {
         return this.requestChangeEmailWithHttpInfo(changeEmailRequest, _options).pipe(map((apiResponse: HttpInfo<RequestChangeEmailResponse>) => apiResponse.data));
@@ -541,8 +541,8 @@ export class ObservableAuthApi {
 
     /**
      * Reset Password
-     * @param token 
-     * @param resetPasswordRequest 
+     * @param token
+     * @param resetPasswordRequest
      */
     public resetPasswordWithHttpInfo(token: string, resetPasswordRequest?: ResetPasswordRequest, _options?: Configuration): Observable<HttpInfo<void>> {
         const requestContextPromise = this.requestFactory.resetPassword(token, resetPasswordRequest, _options);
@@ -565,8 +565,8 @@ export class ObservableAuthApi {
 
     /**
      * Reset Password
-     * @param token 
-     * @param resetPasswordRequest 
+     * @param token
+     * @param resetPasswordRequest
      */
     public resetPassword(token: string, resetPasswordRequest?: ResetPasswordRequest, _options?: Configuration): Observable<void> {
         return this.resetPasswordWithHttpInfo(token, resetPasswordRequest, _options).pipe(map((apiResponse: HttpInfo<void>) => apiResponse.data));
@@ -574,7 +574,7 @@ export class ObservableAuthApi {
 
     /**
      * Revert Email
-     * @param token 
+     * @param token
      */
     public revertEmailWithHttpInfo(token: string, _options?: Configuration): Observable<HttpInfo<void>> {
         const requestContextPromise = this.requestFactory.revertEmail(token, _options);
@@ -597,7 +597,7 @@ export class ObservableAuthApi {
 
     /**
      * Revert Email
-     * @param token 
+     * @param token
      */
     public revertEmail(token: string, _options?: Configuration): Observable<void> {
         return this.revertEmailWithHttpInfo(token, _options).pipe(map((apiResponse: HttpInfo<void>) => apiResponse.data));
@@ -605,7 +605,7 @@ export class ObservableAuthApi {
 
     /**
      * Social Auth
-     * @param socialAuthRequest 
+     * @param socialAuthRequest
      */
     public socialAuthWithHttpInfo(socialAuthRequest: SocialAuthRequest, _options?: Configuration): Observable<HttpInfo<TokenResponse>> {
         const requestContextPromise = this.requestFactory.socialAuth(socialAuthRequest, _options);
@@ -628,7 +628,7 @@ export class ObservableAuthApi {
 
     /**
      * Social Auth
-     * @param socialAuthRequest 
+     * @param socialAuthRequest
      */
     public socialAuth(socialAuthRequest: SocialAuthRequest, _options?: Configuration): Observable<TokenResponse> {
         return this.socialAuthWithHttpInfo(socialAuthRequest, _options).pipe(map((apiResponse: HttpInfo<TokenResponse>) => apiResponse.data));
@@ -636,8 +636,8 @@ export class ObservableAuthApi {
 
     /**
      * Verify Audience
-     * @param token 
-     * @param verifyAudienceRequest 
+     * @param token
+     * @param verifyAudienceRequest
      */
     public verifyAudienceWithHttpInfo(token: string, verifyAudienceRequest?: VerifyAudienceRequest, _options?: Configuration): Observable<HttpInfo<number>> {
         const requestContextPromise = this.requestFactory.verifyAudience(token, verifyAudienceRequest, _options);
@@ -660,8 +660,8 @@ export class ObservableAuthApi {
 
     /**
      * Verify Audience
-     * @param token 
-     * @param verifyAudienceRequest 
+     * @param token
+     * @param verifyAudienceRequest
      */
     public verifyAudience(token: string, verifyAudienceRequest?: VerifyAudienceRequest, _options?: Configuration): Observable<number> {
         return this.verifyAudienceWithHttpInfo(token, verifyAudienceRequest, _options).pipe(map((apiResponse: HttpInfo<number>) => apiResponse.data));
@@ -669,7 +669,7 @@ export class ObservableAuthApi {
 
     /**
      * Verify Change Email
-     * @param token 
+     * @param token
      */
     public verifyChangeEmailWithHttpInfo(token: string, _options?: Configuration): Observable<HttpInfo<void>> {
         const requestContextPromise = this.requestFactory.verifyChangeEmail(token, _options);
@@ -692,7 +692,7 @@ export class ObservableAuthApi {
 
     /**
      * Verify Change Email
-     * @param token 
+     * @param token
      */
     public verifyChangeEmail(token: string, _options?: Configuration): Observable<void> {
         return this.verifyChangeEmailWithHttpInfo(token, _options).pipe(map((apiResponse: HttpInfo<void>) => apiResponse.data));
@@ -718,7 +718,7 @@ export class ObservableCommentsApi {
 
     /**
      * Delete Comment
-     * @param commentId 
+     * @param commentId
      */
     public deleteCommentWithHttpInfo(commentId: number, _options?: Configuration): Observable<HttpInfo<void>> {
         const requestContextPromise = this.requestFactory.deleteComment(commentId, _options);
@@ -741,7 +741,7 @@ export class ObservableCommentsApi {
 
     /**
      * Delete Comment
-     * @param commentId 
+     * @param commentId
      */
     public deleteComment(commentId: number, _options?: Configuration): Observable<void> {
         return this.deleteCommentWithHttpInfo(commentId, _options).pipe(map((apiResponse: HttpInfo<void>) => apiResponse.data));
@@ -749,7 +749,7 @@ export class ObservableCommentsApi {
 
     /**
      * Delete Comment Reply
-     * @param replyId 
+     * @param replyId
      */
     public deleteCommentReplyWithHttpInfo(replyId: number, _options?: Configuration): Observable<HttpInfo<void>> {
         const requestContextPromise = this.requestFactory.deleteCommentReply(replyId, _options);
@@ -772,7 +772,7 @@ export class ObservableCommentsApi {
 
     /**
      * Delete Comment Reply
-     * @param replyId 
+     * @param replyId
      */
     public deleteCommentReply(replyId: number, _options?: Configuration): Observable<void> {
         return this.deleteCommentReplyWithHttpInfo(replyId, _options).pipe(map((apiResponse: HttpInfo<void>) => apiResponse.data));
@@ -780,7 +780,7 @@ export class ObservableCommentsApi {
 
     /**
      * Listing Comment Replies
-     * @param commentId 
+     * @param commentId
      */
     public listingCommentRepliesWithHttpInfo(commentId: number, _options?: Configuration): Observable<HttpInfo<ListingCommentRepliesResponse>> {
         const requestContextPromise = this.requestFactory.listingCommentReplies(commentId, _options);
@@ -803,7 +803,7 @@ export class ObservableCommentsApi {
 
     /**
      * Listing Comment Replies
-     * @param commentId 
+     * @param commentId
      */
     public listingCommentReplies(commentId: number, _options?: Configuration): Observable<ListingCommentRepliesResponse> {
         return this.listingCommentRepliesWithHttpInfo(commentId, _options).pipe(map((apiResponse: HttpInfo<ListingCommentRepliesResponse>) => apiResponse.data));
@@ -811,7 +811,7 @@ export class ObservableCommentsApi {
 
     /**
      * Pin Comment
-     * @param commentId 
+     * @param commentId
      */
     public pinCommentWithHttpInfo(commentId: number, _options?: Configuration): Observable<HttpInfo<number>> {
         const requestContextPromise = this.requestFactory.pinComment(commentId, _options);
@@ -834,7 +834,7 @@ export class ObservableCommentsApi {
 
     /**
      * Pin Comment
-     * @param commentId 
+     * @param commentId
      */
     public pinComment(commentId: number, _options?: Configuration): Observable<number> {
         return this.pinCommentWithHttpInfo(commentId, _options).pipe(map((apiResponse: HttpInfo<number>) => apiResponse.data));
@@ -842,8 +842,8 @@ export class ObservableCommentsApi {
 
     /**
      * Reply Comment
-     * @param commentId 
-     * @param createCommentReplyRequest 
+     * @param commentId
+     * @param createCommentReplyRequest
      */
     public replyCommentWithHttpInfo(commentId: number, createCommentReplyRequest?: CreateCommentReplyRequest, _options?: Configuration): Observable<HttpInfo<number>> {
         const requestContextPromise = this.requestFactory.replyComment(commentId, createCommentReplyRequest, _options);
@@ -866,8 +866,8 @@ export class ObservableCommentsApi {
 
     /**
      * Reply Comment
-     * @param commentId 
-     * @param createCommentReplyRequest 
+     * @param commentId
+     * @param createCommentReplyRequest
      */
     public replyComment(commentId: number, createCommentReplyRequest?: CreateCommentReplyRequest, _options?: Configuration): Observable<number> {
         return this.replyCommentWithHttpInfo(commentId, createCommentReplyRequest, _options).pipe(map((apiResponse: HttpInfo<number>) => apiResponse.data));
@@ -875,7 +875,7 @@ export class ObservableCommentsApi {
 
     /**
      * Unpin Comment
-     * @param commentId 
+     * @param commentId
      */
     public unpinCommentWithHttpInfo(commentId: number, _options?: Configuration): Observable<HttpInfo<void>> {
         const requestContextPromise = this.requestFactory.unpinComment(commentId, _options);
@@ -898,7 +898,7 @@ export class ObservableCommentsApi {
 
     /**
      * Unpin Comment
-     * @param commentId 
+     * @param commentId
      */
     public unpinComment(commentId: number, _options?: Configuration): Observable<void> {
         return this.unpinCommentWithHttpInfo(commentId, _options).pipe(map((apiResponse: HttpInfo<void>) => apiResponse.data));
@@ -906,8 +906,8 @@ export class ObservableCommentsApi {
 
     /**
      * Update Comment
-     * @param commentId 
-     * @param updateEventCommentRequest 
+     * @param commentId
+     * @param updateEventCommentRequest
      */
     public updateCommentWithHttpInfo(commentId: number, updateEventCommentRequest?: UpdateEventCommentRequest, _options?: Configuration): Observable<HttpInfo<number>> {
         const requestContextPromise = this.requestFactory.updateComment(commentId, updateEventCommentRequest, _options);
@@ -930,8 +930,8 @@ export class ObservableCommentsApi {
 
     /**
      * Update Comment
-     * @param commentId 
-     * @param updateEventCommentRequest 
+     * @param commentId
+     * @param updateEventCommentRequest
      */
     public updateComment(commentId: number, updateEventCommentRequest?: UpdateEventCommentRequest, _options?: Configuration): Observable<number> {
         return this.updateCommentWithHttpInfo(commentId, updateEventCommentRequest, _options).pipe(map((apiResponse: HttpInfo<number>) => apiResponse.data));
@@ -939,8 +939,8 @@ export class ObservableCommentsApi {
 
     /**
      * Update Comment Reply
-     * @param replyId 
-     * @param updateCommentReplyRequest 
+     * @param replyId
+     * @param updateCommentReplyRequest
      */
     public updateCommentReplyWithHttpInfo(replyId: number, updateCommentReplyRequest?: UpdateCommentReplyRequest, _options?: Configuration): Observable<HttpInfo<number>> {
         const requestContextPromise = this.requestFactory.updateCommentReply(replyId, updateCommentReplyRequest, _options);
@@ -963,8 +963,8 @@ export class ObservableCommentsApi {
 
     /**
      * Update Comment Reply
-     * @param replyId 
-     * @param updateCommentReplyRequest 
+     * @param replyId
+     * @param updateCommentReplyRequest
      */
     public updateCommentReply(replyId: number, updateCommentReplyRequest?: UpdateCommentReplyRequest, _options?: Configuration): Observable<number> {
         return this.updateCommentReplyWithHttpInfo(replyId, updateCommentReplyRequest, _options).pipe(map((apiResponse: HttpInfo<number>) => apiResponse.data));
@@ -972,8 +972,8 @@ export class ObservableCommentsApi {
 
     /**
      * Vote Comment
-     * @param commentId 
-     * @param voteCommentRequest 
+     * @param commentId
+     * @param voteCommentRequest
      */
     public voteCommentWithHttpInfo(commentId: number, voteCommentRequest?: VoteCommentRequest, _options?: Configuration): Observable<HttpInfo<number>> {
         const requestContextPromise = this.requestFactory.voteComment(commentId, voteCommentRequest, _options);
@@ -996,8 +996,8 @@ export class ObservableCommentsApi {
 
     /**
      * Vote Comment
-     * @param commentId 
-     * @param voteCommentRequest 
+     * @param commentId
+     * @param voteCommentRequest
      */
     public voteComment(commentId: number, voteCommentRequest?: VoteCommentRequest, _options?: Configuration): Observable<number> {
         return this.voteCommentWithHttpInfo(commentId, voteCommentRequest, _options).pipe(map((apiResponse: HttpInfo<number>) => apiResponse.data));
@@ -1070,8 +1070,8 @@ export class ObservableEventsApi {
 
     /**
      * Comment Event
-     * @param eventId 
-     * @param commentEventRequest 
+     * @param eventId
+     * @param commentEventRequest
      */
     public commentEventWithHttpInfo(eventId: number, commentEventRequest?: CommentEventRequest, _options?: Configuration): Observable<HttpInfo<number>> {
         const requestContextPromise = this.requestFactory.commentEvent(eventId, commentEventRequest, _options);
@@ -1094,8 +1094,8 @@ export class ObservableEventsApi {
 
     /**
      * Comment Event
-     * @param eventId 
-     * @param commentEventRequest 
+     * @param eventId
+     * @param commentEventRequest
      */
     public commentEvent(eventId: number, commentEventRequest?: CommentEventRequest, _options?: Configuration): Observable<number> {
         return this.commentEventWithHttpInfo(eventId, commentEventRequest, _options).pipe(map((apiResponse: HttpInfo<number>) => apiResponse.data));
@@ -1103,7 +1103,7 @@ export class ObservableEventsApi {
 
     /**
      * Create Draft Event
-     * @param createDraftEventRequest 
+     * @param createDraftEventRequest
      */
     public createDraftEventWithHttpInfo(createDraftEventRequest?: CreateDraftEventRequest, _options?: Configuration): Observable<HttpInfo<number>> {
         const requestContextPromise = this.requestFactory.createDraftEvent(createDraftEventRequest, _options);
@@ -1126,7 +1126,7 @@ export class ObservableEventsApi {
 
     /**
      * Create Draft Event
-     * @param createDraftEventRequest 
+     * @param createDraftEventRequest
      */
     public createDraftEvent(createDraftEventRequest?: CreateDraftEventRequest, _options?: Configuration): Observable<number> {
         return this.createDraftEventWithHttpInfo(createDraftEventRequest, _options).pipe(map((apiResponse: HttpInfo<number>) => apiResponse.data));
@@ -1134,7 +1134,7 @@ export class ObservableEventsApi {
 
     /**
      * Create Event Bookmark
-     * @param eventId 
+     * @param eventId
      */
     public createEventBookmarkWithHttpInfo(eventId: number, _options?: Configuration): Observable<HttpInfo<number>> {
         const requestContextPromise = this.requestFactory.createEventBookmark(eventId, _options);
@@ -1157,7 +1157,7 @@ export class ObservableEventsApi {
 
     /**
      * Create Event Bookmark
-     * @param eventId 
+     * @param eventId
      */
     public createEventBookmark(eventId: number, _options?: Configuration): Observable<number> {
         return this.createEventBookmarkWithHttpInfo(eventId, _options).pipe(map((apiResponse: HttpInfo<number>) => apiResponse.data));
@@ -1165,7 +1165,7 @@ export class ObservableEventsApi {
 
     /**
      * Delete Event Bookmark
-     * @param eventId 
+     * @param eventId
      */
     public deleteEventBookmarkWithHttpInfo(eventId: number, _options?: Configuration): Observable<HttpInfo<void>> {
         const requestContextPromise = this.requestFactory.deleteEventBookmark(eventId, _options);
@@ -1188,7 +1188,7 @@ export class ObservableEventsApi {
 
     /**
      * Delete Event Bookmark
-     * @param eventId 
+     * @param eventId
      */
     public deleteEventBookmark(eventId: number, _options?: Configuration): Observable<void> {
         return this.deleteEventBookmarkWithHttpInfo(eventId, _options).pipe(map((apiResponse: HttpInfo<void>) => apiResponse.data));
@@ -1196,7 +1196,7 @@ export class ObservableEventsApi {
 
     /**
      * Delete Manual Check In
-     * @param checkInId 
+     * @param checkInId
      */
     public deleteManualCheckInWithHttpInfo(checkInId: number, _options?: Configuration): Observable<HttpInfo<void>> {
         const requestContextPromise = this.requestFactory.deleteManualCheckIn(checkInId, _options);
@@ -1219,7 +1219,7 @@ export class ObservableEventsApi {
 
     /**
      * Delete Manual Check In
-     * @param checkInId 
+     * @param checkInId
      */
     public deleteManualCheckIn(checkInId: number, _options?: Configuration): Observable<void> {
         return this.deleteManualCheckInWithHttpInfo(checkInId, _options).pipe(map((apiResponse: HttpInfo<void>) => apiResponse.data));
@@ -1227,7 +1227,7 @@ export class ObservableEventsApi {
 
     /**
      * Generate Event Ai
-     * @param generateEventAIRequest 
+     * @param generateEventAIRequest
      */
     public generateEventAiWithHttpInfo(generateEventAIRequest?: GenerateEventAIRequest, _options?: Configuration): Observable<HttpInfo<GenerateEventAIResponse>> {
         const requestContextPromise = this.requestFactory.generateEventAi(generateEventAIRequest, _options);
@@ -1250,7 +1250,7 @@ export class ObservableEventsApi {
 
     /**
      * Generate Event Ai
-     * @param generateEventAIRequest 
+     * @param generateEventAIRequest
      */
     public generateEventAi(generateEventAIRequest?: GenerateEventAIRequest, _options?: Configuration): Observable<GenerateEventAIResponse> {
         return this.generateEventAiWithHttpInfo(generateEventAIRequest, _options).pipe(map((apiResponse: HttpInfo<GenerateEventAIResponse>) => apiResponse.data));
@@ -1287,7 +1287,7 @@ export class ObservableEventsApi {
 
     /**
      * Get Event Detail
-     * @param slug 
+     * @param slug
      */
     public getEventDetailWithHttpInfo(slug: string, _options?: Configuration): Observable<HttpInfo<GetEventDetailResponse>> {
         const requestContextPromise = this.requestFactory.getEventDetail(slug, _options);
@@ -1310,7 +1310,7 @@ export class ObservableEventsApi {
 
     /**
      * Get Event Detail
-     * @param slug 
+     * @param slug
      */
     public getEventDetail(slug: string, _options?: Configuration): Observable<GetEventDetailResponse> {
         return this.getEventDetailWithHttpInfo(slug, _options).pipe(map((apiResponse: HttpInfo<GetEventDetailResponse>) => apiResponse.data));
@@ -1318,9 +1318,9 @@ export class ObservableEventsApi {
 
     /**
      * Listing Event Comments
-     * @param eventId 
-     * @param perPage 
-     * @param page 
+     * @param eventId
+     * @param perPage
+     * @param page
      */
     public listingEventCommentsWithHttpInfo(eventId: number, perPage?: number, page?: number, _options?: Configuration): Observable<HttpInfo<ListingEventCommentsResponse>> {
         const requestContextPromise = this.requestFactory.listingEventComments(eventId, perPage, page, _options);
@@ -1343,9 +1343,9 @@ export class ObservableEventsApi {
 
     /**
      * Listing Event Comments
-     * @param eventId 
-     * @param perPage 
-     * @param page 
+     * @param eventId
+     * @param perPage
+     * @param page
      */
     public listingEventComments(eventId: number, perPage?: number, page?: number, _options?: Configuration): Observable<ListingEventCommentsResponse> {
         return this.listingEventCommentsWithHttpInfo(eventId, perPage, page, _options).pipe(map((apiResponse: HttpInfo<ListingEventCommentsResponse>) => apiResponse.data));
@@ -1382,11 +1382,11 @@ export class ObservableEventsApi {
 
     /**
      * Listing Event Purchased Tickets
-     * @param slug 
-     * @param keyword 
-     * @param isCheckedIn 
-     * @param perPage 
-     * @param page 
+     * @param slug
+     * @param keyword
+     * @param isCheckedIn
+     * @param perPage
+     * @param page
      */
     public listingEventPurchasedTicketsWithHttpInfo(slug: string, keyword?: string, isCheckedIn?: boolean, perPage?: number, page?: number, _options?: Configuration): Observable<HttpInfo<ListingEventPurchasedTicketsResponse>> {
         const requestContextPromise = this.requestFactory.listingEventPurchasedTickets(slug, keyword, isCheckedIn, perPage, page, _options);
@@ -1409,11 +1409,11 @@ export class ObservableEventsApi {
 
     /**
      * Listing Event Purchased Tickets
-     * @param slug 
-     * @param keyword 
-     * @param isCheckedIn 
-     * @param perPage 
-     * @param page 
+     * @param slug
+     * @param keyword
+     * @param isCheckedIn
+     * @param perPage
+     * @param page
      */
     public listingEventPurchasedTickets(slug: string, keyword?: string, isCheckedIn?: boolean, perPage?: number, page?: number, _options?: Configuration): Observable<ListingEventPurchasedTicketsResponse> {
         return this.listingEventPurchasedTicketsWithHttpInfo(slug, keyword, isCheckedIn, perPage, page, _options).pipe(map((apiResponse: HttpInfo<ListingEventPurchasedTicketsResponse>) => apiResponse.data));
@@ -1450,10 +1450,10 @@ export class ObservableEventsApi {
 
     /**
      * Listing My Events
-     * @param keyword 
-     * @param status 
-     * @param perPage 
-     * @param page 
+     * @param keyword
+     * @param status
+     * @param perPage
+     * @param page
      */
     public listingMyEventsWithHttpInfo(keyword?: string, status?: MyEventStatusCode, perPage?: number, page?: number, _options?: Configuration): Observable<HttpInfo<ListingMyEventsResponse>> {
         const requestContextPromise = this.requestFactory.listingMyEvents(keyword, status, perPage, page, _options);
@@ -1476,10 +1476,10 @@ export class ObservableEventsApi {
 
     /**
      * Listing My Events
-     * @param keyword 
-     * @param status 
-     * @param perPage 
-     * @param page 
+     * @param keyword
+     * @param status
+     * @param perPage
+     * @param page
      */
     public listingMyEvents(keyword?: string, status?: MyEventStatusCode, perPage?: number, page?: number, _options?: Configuration): Observable<ListingMyEventsResponse> {
         return this.listingMyEventsWithHttpInfo(keyword, status, perPage, page, _options).pipe(map((apiResponse: HttpInfo<ListingMyEventsResponse>) => apiResponse.data));
@@ -1487,24 +1487,24 @@ export class ObservableEventsApi {
 
     /**
      * Listing Recommendation Events
-     * @param keyword 
-     * @param isOnline 
-     * @param isOffline 
-     * @param isApplyOngoing 
-     * @param isApplyEnded 
-     * @param isToday 
-     * @param isFree 
-     * @param isPaid 
-     * @param jobTypeCodes 
-     * @param industryCodes 
-     * @param cityCodes 
-     * @param tags 
-     * @param startAtFrom 
-     * @param startAtTo 
-     * @param organizationId 
-     * @param sortBy 
-     * @param perPage 
-     * @param page 
+     * @param keyword
+     * @param isOnline
+     * @param isOffline
+     * @param isApplyOngoing
+     * @param isApplyEnded
+     * @param isToday
+     * @param isFree
+     * @param isPaid
+     * @param jobTypeCodes
+     * @param industryCodes
+     * @param cityCodes
+     * @param tags
+     * @param startAtFrom
+     * @param startAtTo
+     * @param organizationId
+     * @param sortBy
+     * @param perPage
+     * @param page
      */
     public listingRecommendationEventsWithHttpInfo(keyword?: string, isOnline?: boolean, isOffline?: boolean, isApplyOngoing?: boolean, isApplyEnded?: boolean, isToday?: boolean, isFree?: boolean, isPaid?: boolean, jobTypeCodes?: Array<JobTypeCode>, industryCodes?: Array<IndustryCode>, cityCodes?: Array<string>, tags?: Array<number>, startAtFrom?: string, startAtTo?: string, organizationId?: number, sortBy?: EventSortByCode, perPage?: number, page?: number, _options?: Configuration): Observable<HttpInfo<ListingRecommendationEventsResponse>> {
         const requestContextPromise = this.requestFactory.listingRecommendationEvents(keyword, isOnline, isOffline, isApplyOngoing, isApplyEnded, isToday, isFree, isPaid, jobTypeCodes, industryCodes, cityCodes, tags, startAtFrom, startAtTo, organizationId, sortBy, perPage, page, _options);
@@ -1527,24 +1527,24 @@ export class ObservableEventsApi {
 
     /**
      * Listing Recommendation Events
-     * @param keyword 
-     * @param isOnline 
-     * @param isOffline 
-     * @param isApplyOngoing 
-     * @param isApplyEnded 
-     * @param isToday 
-     * @param isFree 
-     * @param isPaid 
-     * @param jobTypeCodes 
-     * @param industryCodes 
-     * @param cityCodes 
-     * @param tags 
-     * @param startAtFrom 
-     * @param startAtTo 
-     * @param organizationId 
-     * @param sortBy 
-     * @param perPage 
-     * @param page 
+     * @param keyword
+     * @param isOnline
+     * @param isOffline
+     * @param isApplyOngoing
+     * @param isApplyEnded
+     * @param isToday
+     * @param isFree
+     * @param isPaid
+     * @param jobTypeCodes
+     * @param industryCodes
+     * @param cityCodes
+     * @param tags
+     * @param startAtFrom
+     * @param startAtTo
+     * @param organizationId
+     * @param sortBy
+     * @param perPage
+     * @param page
      */
     public listingRecommendationEvents(keyword?: string, isOnline?: boolean, isOffline?: boolean, isApplyOngoing?: boolean, isApplyEnded?: boolean, isToday?: boolean, isFree?: boolean, isPaid?: boolean, jobTypeCodes?: Array<JobTypeCode>, industryCodes?: Array<IndustryCode>, cityCodes?: Array<string>, tags?: Array<number>, startAtFrom?: string, startAtTo?: string, organizationId?: number, sortBy?: EventSortByCode, perPage?: number, page?: number, _options?: Configuration): Observable<ListingRecommendationEventsResponse> {
         return this.listingRecommendationEventsWithHttpInfo(keyword, isOnline, isOffline, isApplyOngoing, isApplyEnded, isToday, isFree, isPaid, jobTypeCodes, industryCodes, cityCodes, tags, startAtFrom, startAtTo, organizationId, sortBy, perPage, page, _options).pipe(map((apiResponse: HttpInfo<ListingRecommendationEventsResponse>) => apiResponse.data));
@@ -1552,7 +1552,7 @@ export class ObservableEventsApi {
 
     /**
      * Listing Related Events
-     * @param slug 
+     * @param slug
      */
     public listingRelatedEventsWithHttpInfo(slug: string, _options?: Configuration): Observable<HttpInfo<ListingRelatedEventsResponse>> {
         const requestContextPromise = this.requestFactory.listingRelatedEvents(slug, _options);
@@ -1575,7 +1575,7 @@ export class ObservableEventsApi {
 
     /**
      * Listing Related Events
-     * @param slug 
+     * @param slug
      */
     public listingRelatedEvents(slug: string, _options?: Configuration): Observable<ListingRelatedEventsResponse> {
         return this.listingRelatedEventsWithHttpInfo(slug, _options).pipe(map((apiResponse: HttpInfo<ListingRelatedEventsResponse>) => apiResponse.data));
@@ -1583,7 +1583,7 @@ export class ObservableEventsApi {
 
     /**
      * Listing Tickets Of Event
-     * @param eventId 
+     * @param eventId
      */
     public listingTicketsOfEventWithHttpInfo(eventId: number, _options?: Configuration): Observable<HttpInfo<Array<TicketItem>>> {
         const requestContextPromise = this.requestFactory.listingTicketsOfEvent(eventId, _options);
@@ -1606,7 +1606,7 @@ export class ObservableEventsApi {
 
     /**
      * Listing Tickets Of Event
-     * @param eventId 
+     * @param eventId
      */
     public listingTicketsOfEvent(eventId: number, _options?: Configuration): Observable<Array<TicketItem>> {
         return this.listingTicketsOfEventWithHttpInfo(eventId, _options).pipe(map((apiResponse: HttpInfo<Array<TicketItem>>) => apiResponse.data));
@@ -1614,24 +1614,24 @@ export class ObservableEventsApi {
 
     /**
      * Listing Trending Events
-     * @param keyword 
-     * @param isOnline 
-     * @param isOffline 
-     * @param isApplyOngoing 
-     * @param isApplyEnded 
-     * @param isToday 
-     * @param isFree 
-     * @param isPaid 
-     * @param jobTypeCodes 
-     * @param industryCodes 
-     * @param cityCodes 
-     * @param tags 
-     * @param startAtFrom 
-     * @param startAtTo 
-     * @param organizationId 
-     * @param sortBy 
-     * @param perPage 
-     * @param page 
+     * @param keyword
+     * @param isOnline
+     * @param isOffline
+     * @param isApplyOngoing
+     * @param isApplyEnded
+     * @param isToday
+     * @param isFree
+     * @param isPaid
+     * @param jobTypeCodes
+     * @param industryCodes
+     * @param cityCodes
+     * @param tags
+     * @param startAtFrom
+     * @param startAtTo
+     * @param organizationId
+     * @param sortBy
+     * @param perPage
+     * @param page
      */
     public listingTrendingEventsWithHttpInfo(keyword?: string, isOnline?: boolean, isOffline?: boolean, isApplyOngoing?: boolean, isApplyEnded?: boolean, isToday?: boolean, isFree?: boolean, isPaid?: boolean, jobTypeCodes?: Array<JobTypeCode>, industryCodes?: Array<IndustryCode>, cityCodes?: Array<string>, tags?: Array<number>, startAtFrom?: string, startAtTo?: string, organizationId?: number, sortBy?: EventSortByCode, perPage?: number, page?: number, _options?: Configuration): Observable<HttpInfo<ListingTrendingEventsResponse>> {
         const requestContextPromise = this.requestFactory.listingTrendingEvents(keyword, isOnline, isOffline, isApplyOngoing, isApplyEnded, isToday, isFree, isPaid, jobTypeCodes, industryCodes, cityCodes, tags, startAtFrom, startAtTo, organizationId, sortBy, perPage, page, _options);
@@ -1654,24 +1654,24 @@ export class ObservableEventsApi {
 
     /**
      * Listing Trending Events
-     * @param keyword 
-     * @param isOnline 
-     * @param isOffline 
-     * @param isApplyOngoing 
-     * @param isApplyEnded 
-     * @param isToday 
-     * @param isFree 
-     * @param isPaid 
-     * @param jobTypeCodes 
-     * @param industryCodes 
-     * @param cityCodes 
-     * @param tags 
-     * @param startAtFrom 
-     * @param startAtTo 
-     * @param organizationId 
-     * @param sortBy 
-     * @param perPage 
-     * @param page 
+     * @param keyword
+     * @param isOnline
+     * @param isOffline
+     * @param isApplyOngoing
+     * @param isApplyEnded
+     * @param isToday
+     * @param isFree
+     * @param isPaid
+     * @param jobTypeCodes
+     * @param industryCodes
+     * @param cityCodes
+     * @param tags
+     * @param startAtFrom
+     * @param startAtTo
+     * @param organizationId
+     * @param sortBy
+     * @param perPage
+     * @param page
      */
     public listingTrendingEvents(keyword?: string, isOnline?: boolean, isOffline?: boolean, isApplyOngoing?: boolean, isApplyEnded?: boolean, isToday?: boolean, isFree?: boolean, isPaid?: boolean, jobTypeCodes?: Array<JobTypeCode>, industryCodes?: Array<IndustryCode>, cityCodes?: Array<string>, tags?: Array<number>, startAtFrom?: string, startAtTo?: string, organizationId?: number, sortBy?: EventSortByCode, perPage?: number, page?: number, _options?: Configuration): Observable<ListingTrendingEventsResponse> {
         return this.listingTrendingEventsWithHttpInfo(keyword, isOnline, isOffline, isApplyOngoing, isApplyEnded, isToday, isFree, isPaid, jobTypeCodes, industryCodes, cityCodes, tags, startAtFrom, startAtTo, organizationId, sortBy, perPage, page, _options).pipe(map((apiResponse: HttpInfo<ListingTrendingEventsResponse>) => apiResponse.data));
@@ -1679,7 +1679,7 @@ export class ObservableEventsApi {
 
     /**
      * Manual Check In
-     * @param manualCheckInRequest 
+     * @param manualCheckInRequest
      */
     public manualCheckInWithHttpInfo(manualCheckInRequest?: ManualCheckInRequest, _options?: Configuration): Observable<HttpInfo<number>> {
         const requestContextPromise = this.requestFactory.manualCheckIn(manualCheckInRequest, _options);
@@ -1702,7 +1702,7 @@ export class ObservableEventsApi {
 
     /**
      * Manual Check In
-     * @param manualCheckInRequest 
+     * @param manualCheckInRequest
      */
     public manualCheckIn(manualCheckInRequest?: ManualCheckInRequest, _options?: Configuration): Observable<number> {
         return this.manualCheckInWithHttpInfo(manualCheckInRequest, _options).pipe(map((apiResponse: HttpInfo<number>) => apiResponse.data));
@@ -1710,8 +1710,8 @@ export class ObservableEventsApi {
 
     /**
      * Publish Event
-     * @param eventId 
-     * @param publishEventRequest 
+     * @param eventId
+     * @param publishEventRequest
      */
     public publishEventWithHttpInfo(eventId: number, publishEventRequest?: PublishEventRequest, _options?: Configuration): Observable<HttpInfo<string>> {
         const requestContextPromise = this.requestFactory.publishEvent(eventId, publishEventRequest, _options);
@@ -1734,8 +1734,8 @@ export class ObservableEventsApi {
 
     /**
      * Publish Event
-     * @param eventId 
-     * @param publishEventRequest 
+     * @param eventId
+     * @param publishEventRequest
      */
     public publishEvent(eventId: number, publishEventRequest?: PublishEventRequest, _options?: Configuration): Observable<string> {
         return this.publishEventWithHttpInfo(eventId, publishEventRequest, _options).pipe(map((apiResponse: HttpInfo<string>) => apiResponse.data));
@@ -1743,8 +1743,8 @@ export class ObservableEventsApi {
 
     /**
      * Qr Check In
-     * @param eventId 
-     * @param qRCheckInRequest 
+     * @param eventId
+     * @param qRCheckInRequest
      */
     public qrCheckInWithHttpInfo(eventId: number, qRCheckInRequest?: QRCheckInRequest, _options?: Configuration): Observable<HttpInfo<number>> {
         const requestContextPromise = this.requestFactory.qrCheckIn(eventId, qRCheckInRequest, _options);
@@ -1767,8 +1767,8 @@ export class ObservableEventsApi {
 
     /**
      * Qr Check In
-     * @param eventId 
-     * @param qRCheckInRequest 
+     * @param eventId
+     * @param qRCheckInRequest
      */
     public qrCheckIn(eventId: number, qRCheckInRequest?: QRCheckInRequest, _options?: Configuration): Observable<number> {
         return this.qrCheckInWithHttpInfo(eventId, qRCheckInRequest, _options).pipe(map((apiResponse: HttpInfo<number>) => apiResponse.data));
@@ -1776,8 +1776,8 @@ export class ObservableEventsApi {
 
     /**
      * Save Draft Event
-     * @param eventId 
-     * @param saveDraftEventRequest 
+     * @param eventId
+     * @param saveDraftEventRequest
      */
     public saveDraftEventWithHttpInfo(eventId: number, saveDraftEventRequest?: SaveDraftEventRequest, _options?: Configuration): Observable<HttpInfo<number>> {
         const requestContextPromise = this.requestFactory.saveDraftEvent(eventId, saveDraftEventRequest, _options);
@@ -1800,8 +1800,8 @@ export class ObservableEventsApi {
 
     /**
      * Save Draft Event
-     * @param eventId 
-     * @param saveDraftEventRequest 
+     * @param eventId
+     * @param saveDraftEventRequest
      */
     public saveDraftEvent(eventId: number, saveDraftEventRequest?: SaveDraftEventRequest, _options?: Configuration): Observable<number> {
         return this.saveDraftEventWithHttpInfo(eventId, saveDraftEventRequest, _options).pipe(map((apiResponse: HttpInfo<number>) => apiResponse.data));
@@ -1809,24 +1809,24 @@ export class ObservableEventsApi {
 
     /**
      * Search Events
-     * @param keyword 
-     * @param isOnline 
-     * @param isOffline 
-     * @param isApplyOngoing 
-     * @param isApplyEnded 
-     * @param isToday 
-     * @param isFree 
-     * @param isPaid 
-     * @param jobTypeCodes 
-     * @param industryCodes 
-     * @param cityCodes 
-     * @param tags 
-     * @param startAtFrom 
-     * @param startAtTo 
-     * @param organizationId 
-     * @param sortBy 
-     * @param perPage 
-     * @param page 
+     * @param keyword
+     * @param isOnline
+     * @param isOffline
+     * @param isApplyOngoing
+     * @param isApplyEnded
+     * @param isToday
+     * @param isFree
+     * @param isPaid
+     * @param jobTypeCodes
+     * @param industryCodes
+     * @param cityCodes
+     * @param tags
+     * @param startAtFrom
+     * @param startAtTo
+     * @param organizationId
+     * @param sortBy
+     * @param perPage
+     * @param page
      */
     public searchEventsWithHttpInfo(keyword?: string, isOnline?: boolean, isOffline?: boolean, isApplyOngoing?: boolean, isApplyEnded?: boolean, isToday?: boolean, isFree?: boolean, isPaid?: boolean, jobTypeCodes?: Array<JobTypeCode>, industryCodes?: Array<IndustryCode>, cityCodes?: Array<string>, tags?: Array<number>, startAtFrom?: string, startAtTo?: string, organizationId?: number, sortBy?: EventSortByCode, perPage?: number, page?: number, _options?: Configuration): Observable<HttpInfo<SearchEventsResponse>> {
         const requestContextPromise = this.requestFactory.searchEvents(keyword, isOnline, isOffline, isApplyOngoing, isApplyEnded, isToday, isFree, isPaid, jobTypeCodes, industryCodes, cityCodes, tags, startAtFrom, startAtTo, organizationId, sortBy, perPage, page, _options);
@@ -1849,24 +1849,24 @@ export class ObservableEventsApi {
 
     /**
      * Search Events
-     * @param keyword 
-     * @param isOnline 
-     * @param isOffline 
-     * @param isApplyOngoing 
-     * @param isApplyEnded 
-     * @param isToday 
-     * @param isFree 
-     * @param isPaid 
-     * @param jobTypeCodes 
-     * @param industryCodes 
-     * @param cityCodes 
-     * @param tags 
-     * @param startAtFrom 
-     * @param startAtTo 
-     * @param organizationId 
-     * @param sortBy 
-     * @param perPage 
-     * @param page 
+     * @param keyword
+     * @param isOnline
+     * @param isOffline
+     * @param isApplyOngoing
+     * @param isApplyEnded
+     * @param isToday
+     * @param isFree
+     * @param isPaid
+     * @param jobTypeCodes
+     * @param industryCodes
+     * @param cityCodes
+     * @param tags
+     * @param startAtFrom
+     * @param startAtTo
+     * @param organizationId
+     * @param sortBy
+     * @param perPage
+     * @param page
      */
     public searchEvents(keyword?: string, isOnline?: boolean, isOffline?: boolean, isApplyOngoing?: boolean, isApplyEnded?: boolean, isToday?: boolean, isFree?: boolean, isPaid?: boolean, jobTypeCodes?: Array<JobTypeCode>, industryCodes?: Array<IndustryCode>, cityCodes?: Array<string>, tags?: Array<number>, startAtFrom?: string, startAtTo?: string, organizationId?: number, sortBy?: EventSortByCode, perPage?: number, page?: number, _options?: Configuration): Observable<SearchEventsResponse> {
         return this.searchEventsWithHttpInfo(keyword, isOnline, isOffline, isApplyOngoing, isApplyEnded, isToday, isFree, isPaid, jobTypeCodes, industryCodes, cityCodes, tags, startAtFrom, startAtTo, organizationId, sortBy, perPage, page, _options).pipe(map((apiResponse: HttpInfo<SearchEventsResponse>) => apiResponse.data));
@@ -1893,7 +1893,7 @@ export class ObservableNotificationsApi {
     /**
      * Register or update a device token for push notifications
      * Register Notification Device Token
-     * @param registerNotificationDeviceTokenRequest 
+     * @param registerNotificationDeviceTokenRequest
      */
     public registerNotificationDeviceTokenWithHttpInfo(registerNotificationDeviceTokenRequest?: RegisterNotificationDeviceTokenRequest, _options?: Configuration): Observable<HttpInfo<RegisterNotificationDeviceTokenResponse>> {
         const requestContextPromise = this.requestFactory.registerNotificationDeviceToken(registerNotificationDeviceTokenRequest, _options);
@@ -1917,7 +1917,7 @@ export class ObservableNotificationsApi {
     /**
      * Register or update a device token for push notifications
      * Register Notification Device Token
-     * @param registerNotificationDeviceTokenRequest 
+     * @param registerNotificationDeviceTokenRequest
      */
     public registerNotificationDeviceToken(registerNotificationDeviceTokenRequest?: RegisterNotificationDeviceTokenRequest, _options?: Configuration): Observable<RegisterNotificationDeviceTokenResponse> {
         return this.registerNotificationDeviceTokenWithHttpInfo(registerNotificationDeviceTokenRequest, _options).pipe(map((apiResponse: HttpInfo<RegisterNotificationDeviceTokenResponse>) => apiResponse.data));
@@ -1926,7 +1926,7 @@ export class ObservableNotificationsApi {
     /**
      * Remove a device token when logging out
      * Remove Notification Device Token
-     * @param fcmToken 
+     * @param fcmToken
      */
     public removeNotificationDeviceTokenWithHttpInfo(fcmToken: string, _options?: Configuration): Observable<HttpInfo<void>> {
         const requestContextPromise = this.requestFactory.removeNotificationDeviceToken(fcmToken, _options);
@@ -1950,7 +1950,7 @@ export class ObservableNotificationsApi {
     /**
      * Remove a device token when logging out
      * Remove Notification Device Token
-     * @param fcmToken 
+     * @param fcmToken
      */
     public removeNotificationDeviceToken(fcmToken: string, _options?: Configuration): Observable<void> {
         return this.removeNotificationDeviceTokenWithHttpInfo(fcmToken, _options).pipe(map((apiResponse: HttpInfo<void>) => apiResponse.data));
@@ -1976,7 +1976,7 @@ export class ObservableOrganizationsApi {
 
     /**
      * Analyze Event Check Ins
-     * @param slug 
+     * @param slug
      */
     public analyzeEventCheckInsWithHttpInfo(slug: string, _options?: Configuration): Observable<HttpInfo<AnalyzeEventCheckInsResponse>> {
         const requestContextPromise = this.requestFactory.analyzeEventCheckIns(slug, _options);
@@ -1999,7 +1999,7 @@ export class ObservableOrganizationsApi {
 
     /**
      * Analyze Event Check Ins
-     * @param slug 
+     * @param slug
      */
     public analyzeEventCheckIns(slug: string, _options?: Configuration): Observable<AnalyzeEventCheckInsResponse> {
         return this.analyzeEventCheckInsWithHttpInfo(slug, _options).pipe(map((apiResponse: HttpInfo<AnalyzeEventCheckInsResponse>) => apiResponse.data));
@@ -2007,7 +2007,7 @@ export class ObservableOrganizationsApi {
 
     /**
      * Analyze Event Tickets
-     * @param slug 
+     * @param slug
      * @param granularity The granularity of the data.
      */
     public analyzeEventTicketsWithHttpInfo(slug: string, granularity?: 'daily' | 'weekly' | 'monthly', _options?: Configuration): Observable<HttpInfo<AnalyzeEventTicketsResponse>> {
@@ -2031,7 +2031,7 @@ export class ObservableOrganizationsApi {
 
     /**
      * Analyze Event Tickets
-     * @param slug 
+     * @param slug
      * @param granularity The granularity of the data.
      */
     public analyzeEventTickets(slug: string, granularity?: 'daily' | 'weekly' | 'monthly', _options?: Configuration): Observable<AnalyzeEventTicketsResponse> {
@@ -2040,7 +2040,7 @@ export class ObservableOrganizationsApi {
 
     /**
      * Create Organization Follow
-     * @param organizationId 
+     * @param organizationId
      */
     public createOrganizationFollowWithHttpInfo(organizationId: number, _options?: Configuration): Observable<HttpInfo<number>> {
         const requestContextPromise = this.requestFactory.createOrganizationFollow(organizationId, _options);
@@ -2063,7 +2063,7 @@ export class ObservableOrganizationsApi {
 
     /**
      * Create Organization Follow
-     * @param organizationId 
+     * @param organizationId
      */
     public createOrganizationFollow(organizationId: number, _options?: Configuration): Observable<number> {
         return this.createOrganizationFollowWithHttpInfo(organizationId, _options).pipe(map((apiResponse: HttpInfo<number>) => apiResponse.data));
@@ -2071,7 +2071,7 @@ export class ObservableOrganizationsApi {
 
     /**
      * Delete Organization Follow
-     * @param organizationId 
+     * @param organizationId
      */
     public deleteOrganizationFollowWithHttpInfo(organizationId: number, _options?: Configuration): Observable<HttpInfo<void>> {
         const requestContextPromise = this.requestFactory.deleteOrganizationFollow(organizationId, _options);
@@ -2094,7 +2094,7 @@ export class ObservableOrganizationsApi {
 
     /**
      * Delete Organization Follow
-     * @param organizationId 
+     * @param organizationId
      */
     public deleteOrganizationFollow(organizationId: number, _options?: Configuration): Observable<void> {
         return this.deleteOrganizationFollowWithHttpInfo(organizationId, _options).pipe(map((apiResponse: HttpInfo<void>) => apiResponse.data));
@@ -2102,16 +2102,16 @@ export class ObservableOrganizationsApi {
 
     /**
      * Download Attendees Csv
-     * @param keyword 
-     * @param applyAtFrom 
-     * @param applyAtTo 
-     * @param isCheckedIn 
-     * @param jobTypeCode 
-     * @param industryCode 
-     * @param sortBy 
-     * @param withFilter 
-     * @param page 
-     * @param perPage 
+     * @param keyword
+     * @param applyAtFrom
+     * @param applyAtTo
+     * @param isCheckedIn
+     * @param jobTypeCode
+     * @param industryCode
+     * @param sortBy
+     * @param withFilter
+     * @param page
+     * @param perPage
      */
     public downloadAttendeesCsvWithHttpInfo(keyword?: string, applyAtFrom?: Date, applyAtTo?: Date, isCheckedIn?: boolean, jobTypeCode?: JobTypeCode, industryCode?: IndustryCode, sortBy?: AttendeeSortByCode, withFilter?: boolean, page?: number, perPage?: number, _options?: Configuration): Observable<HttpInfo<void>> {
         const requestContextPromise = this.requestFactory.downloadAttendeesCsv(keyword, applyAtFrom, applyAtTo, isCheckedIn, jobTypeCode, industryCode, sortBy, withFilter, page, perPage, _options);
@@ -2134,16 +2134,16 @@ export class ObservableOrganizationsApi {
 
     /**
      * Download Attendees Csv
-     * @param keyword 
-     * @param applyAtFrom 
-     * @param applyAtTo 
-     * @param isCheckedIn 
-     * @param jobTypeCode 
-     * @param industryCode 
-     * @param sortBy 
-     * @param withFilter 
-     * @param page 
-     * @param perPage 
+     * @param keyword
+     * @param applyAtFrom
+     * @param applyAtTo
+     * @param isCheckedIn
+     * @param jobTypeCode
+     * @param industryCode
+     * @param sortBy
+     * @param withFilter
+     * @param page
+     * @param perPage
      */
     public downloadAttendeesCsv(keyword?: string, applyAtFrom?: Date, applyAtTo?: Date, isCheckedIn?: boolean, jobTypeCode?: JobTypeCode, industryCode?: IndustryCode, sortBy?: AttendeeSortByCode, withFilter?: boolean, page?: number, perPage?: number, _options?: Configuration): Observable<void> {
         return this.downloadAttendeesCsvWithHttpInfo(keyword, applyAtFrom, applyAtTo, isCheckedIn, jobTypeCode, industryCode, sortBy, withFilter, page, perPage, _options).pipe(map((apiResponse: HttpInfo<void>) => apiResponse.data));
@@ -2151,7 +2151,7 @@ export class ObservableOrganizationsApi {
 
     /**
      * Get Attendee Detail
-     * @param attendeeId 
+     * @param attendeeId
      */
     public getAttendeeDetailWithHttpInfo(attendeeId: number, _options?: Configuration): Observable<HttpInfo<GetAttendeeDetailResponse>> {
         const requestContextPromise = this.requestFactory.getAttendeeDetail(attendeeId, _options);
@@ -2174,7 +2174,7 @@ export class ObservableOrganizationsApi {
 
     /**
      * Get Attendee Detail
-     * @param attendeeId 
+     * @param attendeeId
      */
     public getAttendeeDetail(attendeeId: number, _options?: Configuration): Observable<GetAttendeeDetailResponse> {
         return this.getAttendeeDetailWithHttpInfo(attendeeId, _options).pipe(map((apiResponse: HttpInfo<GetAttendeeDetailResponse>) => apiResponse.data));
@@ -2211,7 +2211,7 @@ export class ObservableOrganizationsApi {
 
     /**
      * Get Organization Detail
-     * @param organizationSlug 
+     * @param organizationSlug
      */
     public getOrganizationDetailWithHttpInfo(organizationSlug: string, _options?: Configuration): Observable<HttpInfo<GetOrganizationDetailResponse>> {
         const requestContextPromise = this.requestFactory.getOrganizationDetail(organizationSlug, _options);
@@ -2234,7 +2234,7 @@ export class ObservableOrganizationsApi {
 
     /**
      * Get Organization Detail
-     * @param organizationSlug 
+     * @param organizationSlug
      */
     public getOrganizationDetail(organizationSlug: string, _options?: Configuration): Observable<GetOrganizationDetailResponse> {
         return this.getOrganizationDetailWithHttpInfo(organizationSlug, _options).pipe(map((apiResponse: HttpInfo<GetOrganizationDetailResponse>) => apiResponse.data));
@@ -2271,11 +2271,11 @@ export class ObservableOrganizationsApi {
 
     /**
      * Get Ticket Stats
-     * @param eventId 
-     * @param startDate 
-     * @param endDate 
-     * @param ticketType 
-     * @param ticketStatus 
+     * @param eventId
+     * @param startDate
+     * @param endDate
+     * @param ticketType
+     * @param ticketStatus
      */
     public getTicketStatsWithHttpInfo(eventId?: number, startDate?: Date, endDate?: Date, ticketType?: TicketTypeCode, ticketStatus?: TicketStatusCode, _options?: Configuration): Observable<HttpInfo<GetTicketStatsResponse>> {
         const requestContextPromise = this.requestFactory.getTicketStats(eventId, startDate, endDate, ticketType, ticketStatus, _options);
@@ -2298,11 +2298,11 @@ export class ObservableOrganizationsApi {
 
     /**
      * Get Ticket Stats
-     * @param eventId 
-     * @param startDate 
-     * @param endDate 
-     * @param ticketType 
-     * @param ticketStatus 
+     * @param eventId
+     * @param startDate
+     * @param endDate
+     * @param ticketType
+     * @param ticketStatus
      */
     public getTicketStats(eventId?: number, startDate?: Date, endDate?: Date, ticketType?: TicketTypeCode, ticketStatus?: TicketStatusCode, _options?: Configuration): Observable<GetTicketStatsResponse> {
         return this.getTicketStatsWithHttpInfo(eventId, startDate, endDate, ticketType, ticketStatus, _options).pipe(map((apiResponse: HttpInfo<GetTicketStatsResponse>) => apiResponse.data));
@@ -2313,17 +2313,18 @@ export class ObservableOrganizationsApi {
      * @param slug Event slug
      * @param eventId Event ID
      * @param keyword user name | event name | phone | email
-     * @param applyAtFrom 
-     * @param applyAtTo 
-     * @param isCheckedIn 
-     * @param jobTypeCode 
-     * @param industryCode 
-     * @param sortBy 
-     * @param perPage 
-     * @param page 
+     * @param applyAtFrom
+     * @param applyAtTo
+     * @param isCheckedIn
+     * @param jobTypeCode
+     * @param industryCode
+     * @param ticketTypeCode
+     * @param sortBy
+     * @param perPage
+     * @param page
      */
-    public listingAttendeesWithHttpInfo(slug?: string, eventId?: number, keyword?: string, applyAtFrom?: Date, applyAtTo?: Date, isCheckedIn?: boolean, jobTypeCode?: JobTypeCode, industryCode?: IndustryCode, sortBy?: AttendeeSortByCode, perPage?: number, page?: number, _options?: Configuration): Observable<HttpInfo<ListingAttendeesResponse>> {
-        const requestContextPromise = this.requestFactory.listingAttendees(slug, eventId, keyword, applyAtFrom, applyAtTo, isCheckedIn, jobTypeCode, industryCode, sortBy, perPage, page, _options);
+    public listingAttendeesWithHttpInfo(slug?: string, eventId?: number, keyword?: string, applyAtFrom?: Date, applyAtTo?: Date, isCheckedIn?: boolean, jobTypeCode?: JobTypeCode, industryCode?: IndustryCode, ticketTypeCode?: TicketTypeCode, sortBy?: AttendeeSortByCode, perPage?: number, page?: number, _options?: Configuration): Observable<HttpInfo<ListingAttendeesResponse>> {
+        const requestContextPromise = this.requestFactory.listingAttendees(slug, eventId, keyword, applyAtFrom, applyAtTo, isCheckedIn, jobTypeCode, industryCode, ticketTypeCode, sortBy, perPage, page, _options);
 
         // build promise chain
         let middlewarePreObservable = from<RequestContext>(requestContextPromise);
@@ -2346,27 +2347,28 @@ export class ObservableOrganizationsApi {
      * @param slug Event slug
      * @param eventId Event ID
      * @param keyword user name | event name | phone | email
-     * @param applyAtFrom 
-     * @param applyAtTo 
-     * @param isCheckedIn 
-     * @param jobTypeCode 
-     * @param industryCode 
-     * @param sortBy 
-     * @param perPage 
-     * @param page 
+     * @param applyAtFrom
+     * @param applyAtTo
+     * @param isCheckedIn
+     * @param jobTypeCode
+     * @param industryCode
+     * @param ticketTypeCode
+     * @param sortBy
+     * @param perPage
+     * @param page
      */
-    public listingAttendees(slug?: string, eventId?: number, keyword?: string, applyAtFrom?: Date, applyAtTo?: Date, isCheckedIn?: boolean, jobTypeCode?: JobTypeCode, industryCode?: IndustryCode, sortBy?: AttendeeSortByCode, perPage?: number, page?: number, _options?: Configuration): Observable<ListingAttendeesResponse> {
-        return this.listingAttendeesWithHttpInfo(slug, eventId, keyword, applyAtFrom, applyAtTo, isCheckedIn, jobTypeCode, industryCode, sortBy, perPage, page, _options).pipe(map((apiResponse: HttpInfo<ListingAttendeesResponse>) => apiResponse.data));
+    public listingAttendees(slug?: string, eventId?: number, keyword?: string, applyAtFrom?: Date, applyAtTo?: Date, isCheckedIn?: boolean, jobTypeCode?: JobTypeCode, industryCode?: IndustryCode, ticketTypeCode?: TicketTypeCode, sortBy?: AttendeeSortByCode, perPage?: number, page?: number, _options?: Configuration): Observable<ListingAttendeesResponse> {
+        return this.listingAttendeesWithHttpInfo(slug, eventId, keyword, applyAtFrom, applyAtTo, isCheckedIn, jobTypeCode, industryCode, ticketTypeCode, sortBy, perPage, page, _options).pipe(map((apiResponse: HttpInfo<ListingAttendeesResponse>) => apiResponse.data));
     }
 
     /**
      * Listing Attendees Ranking
-     * @param keyword 
-     * @param eventId 
-     * @param month 
-     * @param year 
-     * @param page 
-     * @param perPage 
+     * @param keyword
+     * @param eventId
+     * @param month
+     * @param year
+     * @param page
+     * @param perPage
      */
     public listingAttendeesRankingWithHttpInfo(keyword?: string, eventId?: number, month?: number, year?: number, page?: number, perPage?: number, _options?: Configuration): Observable<HttpInfo<Array<ListingAttendeesRankingItem>>> {
         const requestContextPromise = this.requestFactory.listingAttendeesRanking(keyword, eventId, month, year, page, perPage, _options);
@@ -2389,12 +2391,12 @@ export class ObservableOrganizationsApi {
 
     /**
      * Listing Attendees Ranking
-     * @param keyword 
-     * @param eventId 
-     * @param month 
-     * @param year 
-     * @param page 
-     * @param perPage 
+     * @param keyword
+     * @param eventId
+     * @param month
+     * @param year
+     * @param page
+     * @param perPage
      */
     public listingAttendeesRanking(keyword?: string, eventId?: number, month?: number, year?: number, page?: number, perPage?: number, _options?: Configuration): Observable<Array<ListingAttendeesRankingItem>> {
         return this.listingAttendeesRankingWithHttpInfo(keyword, eventId, month, year, page, perPage, _options).pipe(map((apiResponse: HttpInfo<Array<ListingAttendeesRankingItem>>) => apiResponse.data));
@@ -2402,16 +2404,16 @@ export class ObservableOrganizationsApi {
 
     /**
      * Listing Organization Events
-     * @param keyword 
-     * @param tags 
-     * @param meetingToolCodes 
-     * @param startAtFrom 
-     * @param startAtTo 
-     * @param eventStatus 
-     * @param timeStatus 
-     * @param sortBy 
-     * @param perPage 
-     * @param page 
+     * @param keyword
+     * @param tags
+     * @param meetingToolCodes
+     * @param startAtFrom
+     * @param startAtTo
+     * @param eventStatus
+     * @param timeStatus
+     * @param sortBy
+     * @param perPage
+     * @param page
      */
     public listingOrganizationEventsWithHttpInfo(keyword?: string, tags?: Array<number>, meetingToolCodes?: Array<EventMeetingToolCode>, startAtFrom?: string, startAtTo?: string, eventStatus?: Array<EventStatusCode>, timeStatus?: EventTimeStatusCode, sortBy?: ManageEventSortByCode, perPage?: number, page?: number, _options?: Configuration): Observable<HttpInfo<ListingOrganizationEventsResponse>> {
         const requestContextPromise = this.requestFactory.listingOrganizationEvents(keyword, tags, meetingToolCodes, startAtFrom, startAtTo, eventStatus, timeStatus, sortBy, perPage, page, _options);
@@ -2434,16 +2436,16 @@ export class ObservableOrganizationsApi {
 
     /**
      * Listing Organization Events
-     * @param keyword 
-     * @param tags 
-     * @param meetingToolCodes 
-     * @param startAtFrom 
-     * @param startAtTo 
-     * @param eventStatus 
-     * @param timeStatus 
-     * @param sortBy 
-     * @param perPage 
-     * @param page 
+     * @param keyword
+     * @param tags
+     * @param meetingToolCodes
+     * @param startAtFrom
+     * @param startAtTo
+     * @param eventStatus
+     * @param timeStatus
+     * @param sortBy
+     * @param perPage
+     * @param page
      */
     public listingOrganizationEvents(keyword?: string, tags?: Array<number>, meetingToolCodes?: Array<EventMeetingToolCode>, startAtFrom?: string, startAtTo?: string, eventStatus?: Array<EventStatusCode>, timeStatus?: EventTimeStatusCode, sortBy?: ManageEventSortByCode, perPage?: number, page?: number, _options?: Configuration): Observable<ListingOrganizationEventsResponse> {
         return this.listingOrganizationEventsWithHttpInfo(keyword, tags, meetingToolCodes, startAtFrom, startAtTo, eventStatus, timeStatus, sortBy, perPage, page, _options).pipe(map((apiResponse: HttpInfo<ListingOrganizationEventsResponse>) => apiResponse.data));
@@ -2509,7 +2511,7 @@ export class ObservableOrganizationsApi {
 
     /**
      * Listing Top Organization Events
-     * @param organizationId 
+     * @param organizationId
      */
     public listingTopOrganizationEventsWithHttpInfo(organizationId: number, _options?: Configuration): Observable<HttpInfo<ListingTopOrganizationEventsResponse>> {
         const requestContextPromise = this.requestFactory.listingTopOrganizationEvents(organizationId, _options);
@@ -2532,7 +2534,7 @@ export class ObservableOrganizationsApi {
 
     /**
      * Listing Top Organization Events
-     * @param organizationId 
+     * @param organizationId
      */
     public listingTopOrganizationEvents(organizationId: number, _options?: Configuration): Observable<ListingTopOrganizationEventsResponse> {
         return this.listingTopOrganizationEventsWithHttpInfo(organizationId, _options).pipe(map((apiResponse: HttpInfo<ListingTopOrganizationEventsResponse>) => apiResponse.data));
@@ -2540,7 +2542,7 @@ export class ObservableOrganizationsApi {
 
     /**
      * Register Organization
-     * @param registerOrganizationRequest 
+     * @param registerOrganizationRequest
      */
     public registerOrganizationWithHttpInfo(registerOrganizationRequest?: RegisterOrganizationRequest, _options?: Configuration): Observable<HttpInfo<RegisterOrganizationResponse>> {
         const requestContextPromise = this.requestFactory.registerOrganization(registerOrganizationRequest, _options);
@@ -2563,7 +2565,7 @@ export class ObservableOrganizationsApi {
 
     /**
      * Register Organization
-     * @param registerOrganizationRequest 
+     * @param registerOrganizationRequest
      */
     public registerOrganization(registerOrganizationRequest?: RegisterOrganizationRequest, _options?: Configuration): Observable<RegisterOrganizationResponse> {
         return this.registerOrganizationWithHttpInfo(registerOrganizationRequest, _options).pipe(map((apiResponse: HttpInfo<RegisterOrganizationResponse>) => apiResponse.data));
@@ -2571,11 +2573,11 @@ export class ObservableOrganizationsApi {
 
     /**
      * Track User Actions
-     * @param timeRange 
-     * @param groupBy 
-     * @param actionTypes 
-     * @param eventId 
-     * @param topN 
+     * @param timeRange
+     * @param groupBy
+     * @param actionTypes
+     * @param eventId
+     * @param topN
      */
     public trackUserActionsWithHttpInfo(timeRange?: TrackingTimeRangeCode, groupBy?: TrackingTimeRangeCode, actionTypes?: Array<UserActionTypeCode>, eventId?: number, topN?: number, _options?: Configuration): Observable<HttpInfo<TrackUserActionsResponse>> {
         const requestContextPromise = this.requestFactory.trackUserActions(timeRange, groupBy, actionTypes, eventId, topN, _options);
@@ -2598,11 +2600,11 @@ export class ObservableOrganizationsApi {
 
     /**
      * Track User Actions
-     * @param timeRange 
-     * @param groupBy 
-     * @param actionTypes 
-     * @param eventId 
-     * @param topN 
+     * @param timeRange
+     * @param groupBy
+     * @param actionTypes
+     * @param eventId
+     * @param topN
      */
     public trackUserActions(timeRange?: TrackingTimeRangeCode, groupBy?: TrackingTimeRangeCode, actionTypes?: Array<UserActionTypeCode>, eventId?: number, topN?: number, _options?: Configuration): Observable<TrackUserActionsResponse> {
         return this.trackUserActionsWithHttpInfo(timeRange, groupBy, actionTypes, eventId, topN, _options).pipe(map((apiResponse: HttpInfo<TrackUserActionsResponse>) => apiResponse.data));
@@ -2628,7 +2630,7 @@ export class ObservableSpeakersApi {
 
     /**
      * Get Speaker Detail
-     * @param slug 
+     * @param slug
      */
     public getSpeakerDetailWithHttpInfo(slug: string, _options?: Configuration): Observable<HttpInfo<GetSpeakerDetailResponse>> {
         const requestContextPromise = this.requestFactory.getSpeakerDetail(slug, _options);
@@ -2651,7 +2653,7 @@ export class ObservableSpeakersApi {
 
     /**
      * Get Speaker Detail
-     * @param slug 
+     * @param slug
      */
     public getSpeakerDetail(slug: string, _options?: Configuration): Observable<GetSpeakerDetailResponse> {
         return this.getSpeakerDetailWithHttpInfo(slug, _options).pipe(map((apiResponse: HttpInfo<GetSpeakerDetailResponse>) => apiResponse.data));
@@ -2706,7 +2708,7 @@ export class ObservableSurveysApi {
 
     /**
      * Create Survey
-     * @param createSurveyRequest 
+     * @param createSurveyRequest
      */
     public createSurveyWithHttpInfo(createSurveyRequest?: CreateSurveyRequest, _options?: Configuration): Observable<HttpInfo<number>> {
         const requestContextPromise = this.requestFactory.createSurvey(createSurveyRequest, _options);
@@ -2729,7 +2731,7 @@ export class ObservableSurveysApi {
 
     /**
      * Create Survey
-     * @param createSurveyRequest 
+     * @param createSurveyRequest
      */
     public createSurvey(createSurveyRequest?: CreateSurveyRequest, _options?: Configuration): Observable<number> {
         return this.createSurveyWithHttpInfo(createSurveyRequest, _options).pipe(map((apiResponse: HttpInfo<number>) => apiResponse.data));
@@ -2860,7 +2862,7 @@ export class ObservableTargetsApi {
 
     /**
      * Create Target
-     * @param createTargetRequest 
+     * @param createTargetRequest
      */
     public createTargetWithHttpInfo(createTargetRequest?: CreateTargetRequest, _options?: Configuration): Observable<HttpInfo<number>> {
         const requestContextPromise = this.requestFactory.createTarget(createTargetRequest, _options);
@@ -2883,7 +2885,7 @@ export class ObservableTargetsApi {
 
     /**
      * Create Target
-     * @param createTargetRequest 
+     * @param createTargetRequest
      */
     public createTarget(createTargetRequest?: CreateTargetRequest, _options?: Configuration): Observable<number> {
         return this.createTargetWithHttpInfo(createTargetRequest, _options).pipe(map((apiResponse: HttpInfo<number>) => apiResponse.data));
@@ -2938,7 +2940,7 @@ export class ObservableTicketsApi {
 
     /**
      * Cancel Tickets
-     * @param cancelTicketsRequest 
+     * @param cancelTicketsRequest
      */
     public cancelTicketsWithHttpInfo(cancelTicketsRequest?: CancelTicketsRequest, _options?: Configuration): Observable<HttpInfo<number>> {
         const requestContextPromise = this.requestFactory.cancelTickets(cancelTicketsRequest, _options);
@@ -2961,7 +2963,7 @@ export class ObservableTicketsApi {
 
     /**
      * Cancel Tickets
-     * @param cancelTicketsRequest 
+     * @param cancelTicketsRequest
      */
     public cancelTickets(cancelTicketsRequest?: CancelTicketsRequest, _options?: Configuration): Observable<number> {
         return this.cancelTicketsWithHttpInfo(cancelTicketsRequest, _options).pipe(map((apiResponse: HttpInfo<number>) => apiResponse.data));
@@ -2969,7 +2971,7 @@ export class ObservableTicketsApi {
 
     /**
      * Create Ticket
-     * @param createTicketRequest 
+     * @param createTicketRequest
      */
     public createTicketWithHttpInfo(createTicketRequest?: CreateTicketRequest, _options?: Configuration): Observable<HttpInfo<number>> {
         const requestContextPromise = this.requestFactory.createTicket(createTicketRequest, _options);
@@ -2992,7 +2994,7 @@ export class ObservableTicketsApi {
 
     /**
      * Create Ticket
-     * @param createTicketRequest 
+     * @param createTicketRequest
      */
     public createTicket(createTicketRequest?: CreateTicketRequest, _options?: Configuration): Observable<number> {
         return this.createTicketWithHttpInfo(createTicketRequest, _options).pipe(map((apiResponse: HttpInfo<number>) => apiResponse.data));
@@ -3000,7 +3002,7 @@ export class ObservableTicketsApi {
 
     /**
      * Delete Ticket
-     * @param ticketId 
+     * @param ticketId
      */
     public deleteTicketWithHttpInfo(ticketId: number, _options?: Configuration): Observable<HttpInfo<void>> {
         const requestContextPromise = this.requestFactory.deleteTicket(ticketId, _options);
@@ -3023,7 +3025,7 @@ export class ObservableTicketsApi {
 
     /**
      * Delete Ticket
-     * @param ticketId 
+     * @param ticketId
      */
     public deleteTicket(ticketId: number, _options?: Configuration): Observable<void> {
         return this.deleteTicketWithHttpInfo(ticketId, _options).pipe(map((apiResponse: HttpInfo<void>) => apiResponse.data));
@@ -3031,7 +3033,7 @@ export class ObservableTicketsApi {
 
     /**
      * Get Draft Ticket
-     * @param ticketId 
+     * @param ticketId
      */
     public getDraftTicketWithHttpInfo(ticketId: number, _options?: Configuration): Observable<HttpInfo<Ticket>> {
         const requestContextPromise = this.requestFactory.getDraftTicket(ticketId, _options);
@@ -3054,7 +3056,7 @@ export class ObservableTicketsApi {
 
     /**
      * Get Draft Ticket
-     * @param ticketId 
+     * @param ticketId
      */
     public getDraftTicket(ticketId: number, _options?: Configuration): Observable<Ticket> {
         return this.getDraftTicketWithHttpInfo(ticketId, _options).pipe(map((apiResponse: HttpInfo<Ticket>) => apiResponse.data));
@@ -3062,8 +3064,8 @@ export class ObservableTicketsApi {
 
     /**
      * Update Ticket
-     * @param ticketId 
-     * @param updateTicketRequest 
+     * @param ticketId
+     * @param updateTicketRequest
      */
     public updateTicketWithHttpInfo(ticketId: number, updateTicketRequest?: UpdateTicketRequest, _options?: Configuration): Observable<HttpInfo<TicketItem>> {
         const requestContextPromise = this.requestFactory.updateTicket(ticketId, updateTicketRequest, _options);
@@ -3086,8 +3088,8 @@ export class ObservableTicketsApi {
 
     /**
      * Update Ticket
-     * @param ticketId 
-     * @param updateTicketRequest 
+     * @param ticketId
+     * @param updateTicketRequest
      */
     public updateTicket(ticketId: number, updateTicketRequest?: UpdateTicketRequest, _options?: Configuration): Observable<TicketItem> {
         return this.updateTicketWithHttpInfo(ticketId, updateTicketRequest, _options).pipe(map((apiResponse: HttpInfo<TicketItem>) => apiResponse.data));
@@ -3171,10 +3173,10 @@ export class ObservableTransactionsApi {
 
     /**
      * Listing My Transactions
-     * @param keyword 
-     * @param status 
-     * @param page 
-     * @param perPage 
+     * @param keyword
+     * @param status
+     * @param page
+     * @param perPage
      */
     public listingMyTransactionsWithHttpInfo(keyword?: string, status?: TransactionStatusCode, page?: number, perPage?: number, _options?: Configuration): Observable<HttpInfo<ListingMyTransactionsResponse>> {
         const requestContextPromise = this.requestFactory.listingMyTransactions(keyword, status, page, perPage, _options);
@@ -3197,10 +3199,10 @@ export class ObservableTransactionsApi {
 
     /**
      * Listing My Transactions
-     * @param keyword 
-     * @param status 
-     * @param page 
-     * @param perPage 
+     * @param keyword
+     * @param status
+     * @param page
+     * @param perPage
      */
     public listingMyTransactions(keyword?: string, status?: TransactionStatusCode, page?: number, perPage?: number, _options?: Configuration): Observable<ListingMyTransactionsResponse> {
         return this.listingMyTransactionsWithHttpInfo(keyword, status, page, perPage, _options).pipe(map((apiResponse: HttpInfo<ListingMyTransactionsResponse>) => apiResponse.data));
@@ -3284,9 +3286,9 @@ export class ObservableUsersApi {
 
     /**
      * Listing Notifications
-     * @param perPage 
-     * @param page 
-     * @param isRead 
+     * @param perPage
+     * @param page
+     * @param isRead
      */
     public listingNotificationsWithHttpInfo(perPage?: number, page?: number, isRead?: boolean, _options?: Configuration): Observable<HttpInfo<ListingNotificationsResponse>> {
         const requestContextPromise = this.requestFactory.listingNotifications(perPage, page, isRead, _options);
@@ -3309,9 +3311,9 @@ export class ObservableUsersApi {
 
     /**
      * Listing Notifications
-     * @param perPage 
-     * @param page 
-     * @param isRead 
+     * @param perPage
+     * @param page
+     * @param isRead
      */
     public listingNotifications(perPage?: number, page?: number, isRead?: boolean, _options?: Configuration): Observable<ListingNotificationsResponse> {
         return this.listingNotificationsWithHttpInfo(perPage, page, isRead, _options).pipe(map((apiResponse: HttpInfo<ListingNotificationsResponse>) => apiResponse.data));
@@ -3319,7 +3321,7 @@ export class ObservableUsersApi {
 
     /**
      * Mark Notification As Read
-     * @param notificationId 
+     * @param notificationId
      */
     public markNotificationAsReadWithHttpInfo(notificationId: number, _options?: Configuration): Observable<HttpInfo<number>> {
         const requestContextPromise = this.requestFactory.markNotificationAsRead(notificationId, _options);
@@ -3342,7 +3344,7 @@ export class ObservableUsersApi {
 
     /**
      * Mark Notification As Read
-     * @param notificationId 
+     * @param notificationId
      */
     public markNotificationAsRead(notificationId: number, _options?: Configuration): Observable<number> {
         return this.markNotificationAsReadWithHttpInfo(notificationId, _options).pipe(map((apiResponse: HttpInfo<number>) => apiResponse.data));
@@ -3350,7 +3352,7 @@ export class ObservableUsersApi {
 
     /**
      * Update Audience
-     * @param updateUserRequest 
+     * @param updateUserRequest
      */
     public updateAudienceWithHttpInfo(updateUserRequest: UpdateUserRequest, _options?: Configuration): Observable<HttpInfo<GetMeResponse>> {
         const requestContextPromise = this.requestFactory.updateAudience(updateUserRequest, _options);
@@ -3373,7 +3375,7 @@ export class ObservableUsersApi {
 
     /**
      * Update Audience
-     * @param updateUserRequest 
+     * @param updateUserRequest
      */
     public updateAudience(updateUserRequest: UpdateUserRequest, _options?: Configuration): Observable<GetMeResponse> {
         return this.updateAudienceWithHttpInfo(updateUserRequest, _options).pipe(map((apiResponse: HttpInfo<GetMeResponse>) => apiResponse.data));
