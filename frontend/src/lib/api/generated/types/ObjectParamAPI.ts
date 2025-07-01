@@ -12,6 +12,7 @@ import type { AnalyzeEventTicketsResponse } from '../models/AnalyzeEventTicketsR
 import { AnswerItem } from '../models/AnswerItem';
 import { ApplicationTicket } from '../models/ApplicationTicket';
 import { AttendeeAppliedEvent } from '../models/AttendeeAppliedEvent';
+import { AttendeePurchasedTickets } from '../models/AttendeePurchasedTickets';
 import type { AttendeeSortByCode } from '../models/AttendeeSortByCode';
 import { AttendeeSurveyResponseResultItem } from '../models/AttendeeSurveyResponseResultItem';
 import { AttendeeTicketTransaction } from '../models/AttendeeTicketTransaction';
@@ -2050,6 +2051,18 @@ export interface OrganizationsApiGetTicketStatsRequest {
 
 export interface OrganizationsApiListingAttendeesRequest {
     /**
+     * Event slug
+     * @type string
+     * @memberof OrganizationsApilistingAttendees
+     */
+    slug?: string
+    /**
+     * Event ID
+     * @type number
+     * @memberof OrganizationsApilistingAttendees
+     */
+    eventId?: number
+    /**
      * user name | event name | phone | email
      * @type string
      * @memberof OrganizationsApilistingAttendees
@@ -2436,7 +2449,7 @@ export class ObjectOrganizationsApi {
      * @param param the request object
      */
     public listingAttendeesWithHttpInfo(param: OrganizationsApiListingAttendeesRequest = {}, options?: Configuration): Promise<HttpInfo<ListingAttendeesResponse>> {
-        return this.api.listingAttendeesWithHttpInfo(param.keyword, param.applyAtFrom, param.applyAtTo, param.isCheckedIn, param.jobTypeCode, param.industryCode, param.sortBy, param.perPage, param.page,  options).toPromise();
+        return this.api.listingAttendeesWithHttpInfo(param.slug, param.eventId, param.keyword, param.applyAtFrom, param.applyAtTo, param.isCheckedIn, param.jobTypeCode, param.industryCode, param.sortBy, param.perPage, param.page,  options).toPromise();
     }
 
     /**
@@ -2444,7 +2457,7 @@ export class ObjectOrganizationsApi {
      * @param param the request object
      */
     public listingAttendees(param: OrganizationsApiListingAttendeesRequest = {}, options?: Configuration): Promise<ListingAttendeesResponse> {
-        return this.api.listingAttendees(param.keyword, param.applyAtFrom, param.applyAtTo, param.isCheckedIn, param.jobTypeCode, param.industryCode, param.sortBy, param.perPage, param.page,  options).toPromise();
+        return this.api.listingAttendees(param.slug, param.eventId, param.keyword, param.applyAtFrom, param.applyAtTo, param.isCheckedIn, param.jobTypeCode, param.industryCode, param.sortBy, param.perPage, param.page,  options).toPromise();
     }
 
     /**

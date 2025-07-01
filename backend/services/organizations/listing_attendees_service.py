@@ -1,10 +1,12 @@
-from sqlmodel import Date, Session, String, func, or_, select
+from sqlmodel import Date, Session, String, case, func, or_, select
 
 from backend.core.constants import AttendeeSortByCode
 from backend.models.application import Application
 from backend.models.check_in import CheckIn
 from backend.models.event import Event
+from backend.models.ticket import Ticket
 from backend.models.transaction import Transaction
+from backend.models.transaction_item import TransactionItem
 from backend.models.user import User
 from backend.schemas.organization import ListingAttendeesQueryParams
 
@@ -38,6 +40,30 @@ async def _get_attendees(
     sort_by: AttendeeSortByCode,
     query_params: ListingAttendeesQueryParams,
 ):
+    PurchasedTickets = (
+        select(
+            TransactionItem.user_id,
+            func.json_agg(
+                func.json_build_object(
+                    "id",
+                    TransactionItem.id,
+                    "name",
+                    Ticket.name,
+                    "price",
+                    Ticket.price,
+                    "type",
+                    Ticket.type,
+                )
+            ).label("purchased_tickets"),
+        )
+        .select_from(TransactionItem)
+        .join(Ticket, Ticket.id == TransactionItem.ticket_id)
+        .join(Event, Event.id == Ticket.event_id)
+        .where(Event.slug == query_params.slug)
+        .group_by(TransactionItem.user_id)
+        .cte()
+    )
+
     query = (
         select(
             User.id,
@@ -57,6 +83,13 @@ async def _get_attendees(
             Application.id.label("application_id"),
             Transaction.status.label("transaction_status"),
             CheckIn.id.label("check_in_id"),
+            case(
+                (
+                    PurchasedTickets.c.purchased_tickets.isnot(None),
+                    PurchasedTickets.c.purchased_tickets,
+                ),
+                else_=func.json_build_array(),
+            ).label("purchased_tickets"),
         )
         .join(Application, Application.user_id == User.id)
         .outerjoin(CheckIn, CheckIn.application_id == Application.id)
@@ -64,6 +97,10 @@ async def _get_attendees(
         .outerjoin(
             Transaction,
             Transaction.application_id == Application.id,
+        )
+        .outerjoin(
+            PurchasedTickets,
+            PurchasedTickets.c.user_id == User.id,
         )
         .where(*filters)
         .order_by(sort_by)
@@ -79,7 +116,10 @@ async def _get_attendees(
 
 
 def _build_filters_sort(organizer: User, query_params: ListingAttendeesQueryParams):
-    filters = [Event.organization_id == organizer.organization_id]
+    filters = [
+        Event.organization_id == organizer.organization_id,
+        Event.slug == query_params.slug,
+    ]
     sort_by = Application.created_at.desc()
     if query_params.keyword:
         filters.append(

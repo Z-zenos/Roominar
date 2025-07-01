@@ -8,6 +8,7 @@ export * from '../models/AnalyzeEventTicketsResponse';
 export * from '../models/AnswerItem';
 export * from '../models/ApplicationTicket';
 export * from '../models/AttendeeAppliedEvent';
+export * from '../models/AttendeePurchasedTickets';
 export * from '../models/AttendeeSortByCode';
 export * from '../models/AttendeeSurveyResponseResultItem';
 export * from '../models/AttendeeTicketTransaction';
@@ -165,6 +166,7 @@ import { AnalyzeEventTicketsResponse } from '../models/AnalyzeEventTicketsRespon
 import { AnswerItem } from '../models/AnswerItem';
 import { ApplicationTicket } from '../models/ApplicationTicket';
 import { AttendeeAppliedEvent } from '../models/AttendeeAppliedEvent';
+import { AttendeePurchasedTickets     } from '../models/AttendeePurchasedTickets';
 import { AttendeeSortByCode } from '../models/AttendeeSortByCode';
 import { AttendeeSurveyResponseResultItem     } from '../models/AttendeeSurveyResponseResultItem';
 import { AttendeeTicketTransaction       } from '../models/AttendeeTicketTransaction';
@@ -212,7 +214,7 @@ import { GetTransactionStatusCountsResponse } from '../models/GetTransactionStat
 import { HTTPValidationError } from '../models/HTTPValidationError';
 import { IndustryCode } from '../models/IndustryCode';
 import { JobTypeCode } from '../models/JobTypeCode';
-import { ListingAttendeesItem                } from '../models/ListingAttendeesItem';
+import { ListingAttendeesItem                 } from '../models/ListingAttendeesItem';
 import { ListingAttendeesRankingItem         , ListingAttendeesRankingItemRankChangeEnum   } from '../models/ListingAttendeesRankingItem';
 import { ListingAttendeesResponse } from '../models/ListingAttendeesResponse';
 import { ListingCommentRepliesItem } from '../models/ListingCommentRepliesItem';
@@ -379,6 +381,7 @@ const typeMap: {[index: string]: any} = {
     "AnswerItem": AnswerItem,
     "ApplicationTicket": ApplicationTicket,
     "AttendeeAppliedEvent": AttendeeAppliedEvent,
+    "AttendeePurchasedTickets": AttendeePurchasedTickets,
     "AttendeeSurveyResponseResultItem": AttendeeSurveyResponseResultItem,
     "AttendeeTicketTransaction": AttendeeTicketTransaction,
     "AttendeeTicketTransactionItem": AttendeeTicketTransactionItem,

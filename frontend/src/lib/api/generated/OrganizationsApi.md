@@ -637,6 +637,10 @@ const configuration = .createConfiguration();
 const apiInstance = new .OrganizationsApi(configuration);
 
 let body:.OrganizationsApiListingAttendeesRequest = {
+  // string | Event slug (optional)
+  slug: "slug_example",
+  // number | Event ID (optional)
+  eventId: 1,
   // string | user name | event name | phone | email (optional)
   keyword: "keyword_example",
   // Date (optional)
@@ -667,6 +671,8 @@ apiInstance.listingAttendees(body).then((data:any) => {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
+ **slug** | [**string**] | Event slug | (optional) defaults to undefined
+ **eventId** | [**number**] | Event ID | (optional) defaults to undefined
  **keyword** | [**string**] | user name | event name | phone | email | (optional) defaults to undefined
  **applyAtFrom** | [**Date**] |  | (optional) defaults to undefined
  **applyAtTo** | [**Date**] |  | (optional) defaults to undefined

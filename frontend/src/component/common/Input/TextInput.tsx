@@ -37,7 +37,7 @@ function CustomInput(
       {leftIcon && (
         <span
           className={clsx(
-            '450px:w-1/6 w-[12%] mx-auto dark:text-dark-main ',
+            '450px:w-1/8 w-[5%] mx-auto dark:text-dark-main 450px:min-w-6',
             styles.center,
             leftIconClassName,
           )}
@@ -48,8 +48,8 @@ function CustomInput(
       <input
         className={clsx(
           'w-full border-none focus:ring-0 rounded-lg h-full outline-none px-0 transition-all text-sm dark:bg-white dark:text-darma',
-          (leftIcon || rightIcon) && '450px:w-5/6 w-[88%]',
-          leftIcon && rightIcon && 'w-2/3',
+          (leftIcon || rightIcon) && '450px:w-7/8 w-[90%]',
+          leftIcon && rightIcon && 'w-3/4',
           !leftIcon && !rightIcon && 'w-full px-2',
           rightIcon && '!px-2',
         )}
@@ -59,7 +59,7 @@ function CustomInput(
       {rightIcon && (
         <span
           className={clsx(
-            '450px:w-1/6 w-[12%] mx-auto 450px:min-w-[40px] h-full hover:bg-emerald-50 transition-all',
+            '450px:w-1/8 w-[5%] mx-auto 450px:min-w-6 h-full hover:bg-emerald-50 transition-all',
             styles.center,
           )}
         >
