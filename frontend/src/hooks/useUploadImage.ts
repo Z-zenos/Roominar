@@ -37,6 +37,9 @@ export const uploadFile = async ({
   onUploadProgress,
 }: UploadFileProps): Promise<CDNImage> => {
   try {
+    console.log('CDN_URL:', process.env.NEXT_PUBLIC_CLOUDINARY_URL);
+    console.log('CDN_UPLOAD_PRESET:', CDN_UPLOAD_PRESET);
+    console.log('FormData:', formData);
     const { data } = await axios.request<CDNImage>({
       method: 'POST',
       headers: { 'Content-Type': 'multipart/form-data' },
@@ -145,6 +148,8 @@ export const useUpload = (
             setProgressStatus(progress);
           },
         });
+
+        console.log('Upload data:', data);
 
         if (data) {
           setFormatImage(null);
