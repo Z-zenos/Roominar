@@ -2,7 +2,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { CDN_UPLOAD_PRESET } from '../constants/app.constant';
+import { CDN_UPLOAD_PRESET, CDN_UPLOAD_URL } from '../constants/app.constant';
 
 export type CDNImage = {
   public_id: string;
@@ -21,7 +21,7 @@ export const uploadMultipleFiles = async ({
   const { data } = await axios.request<CDNImage>({
     method: 'POST',
     headers: { 'Content-Type': 'multipart/form-data' },
-    url: process.env.NEXT_PUBLIC_CLOUDINARY_URL || '',
+    url: CDN_UPLOAD_URL,
     data: formData,
     onUploadProgress(progressEvent) {
       const completedPercent = Math.round(

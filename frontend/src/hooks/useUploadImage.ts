@@ -11,7 +11,11 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import type { Message } from 'react-hook-form';
 import crypto from 'crypto';
-import { CDN_UPLOAD_PRESET } from '../constants/app.constant';
+import {
+  CDN_DELETE_URL,
+  CDN_UPLOAD_PRESET,
+  CDN_UPLOAD_URL,
+} from '../constants/app.constant';
 
 export const DROPZONE_OPTIONS: DropzoneOptions = {
   accept: {
@@ -36,28 +40,22 @@ export const uploadFile = async ({
   formData,
   onUploadProgress,
 }: UploadFileProps): Promise<CDNImage> => {
-  try {
-    console.log('CDN_URL:', process.env.NEXT_PUBLIC_CLOUDINARY_URL);
-    console.log('CDN_UPLOAD_PRESET:', CDN_UPLOAD_PRESET);
-    console.log('FormData:', formData);
-    const { data } = await axios.request<CDNImage>({
-      method: 'POST',
-      headers: { 'Content-Type': 'multipart/form-data' },
-      url: process.env.NEXT_PUBLIC_CLOUDINARY_URL || '',
-      data: formData,
-      onUploadProgress(progressEvent) {
-        const completedPercent = Math.round(
-          (progressEvent.loaded * 100) / progressEvent.total!,
-        );
+  const { data } = await axios.request<CDNImage>({
+    method: 'POST',
+    headers: { 'Content-Type': 'multipart/form-data' },
+    url: CDN_UPLOAD_URL,
+    data: formData,
+    onUploadProgress(progressEvent) {
+      const completedPercent = Math.round(
+        (progressEvent.loaded * 100) / progressEvent.total!,
+      );
 
-        onUploadProgress(completedPercent);
-      },
-    });
-    return { ...data };
-  } catch (error) {
-    console.log('Upload error:', error);
-  }
+      onUploadProgress(completedPercent);
+    },
+  });
+  return { ...data };
 };
+
 export const useUpload = (
   formats: string[] = ['.png', '.jpg', '.jpeg'],
   maxFiles: number = 1,
@@ -82,7 +80,7 @@ export const useUpload = (
         .update(`public_id=${publicId}&timestamp=${timestamp}${apiSecret}`)
         .digest('hex');
 
-      await axios.post(process.env.NEXT_PUBLIC_CLOUDINARY_DELETE_URL, {
+      await axios.post(CDN_DELETE_URL, {
         public_id: publicId,
         api_key: apiKey,
         timestamp,
@@ -148,8 +146,6 @@ export const useUpload = (
             setProgressStatus(progress);
           },
         });
-
-        console.log('Upload data:', data);
 
         if (data) {
           setFormatImage(null);
