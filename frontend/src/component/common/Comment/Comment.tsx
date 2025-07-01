@@ -214,7 +214,7 @@ export default function Comment({ comment }: CommentProps) {
                       {comment.content}
                     </p>
                     <div className='flex space-x-4'>
-                      <div className='flex gap-4 items-center justify-around space-x-4 md:space-x-0 mr-5 px-2 rounded-md'>
+                      <div className='flex 450px:gap-4 gap-1 items-center justify-around space-x-4 md:space-x-0 mr-5 px-2 rounded-md'>
                         <PiArrowFatUpThin
                           className='cursor-pointer min-w-5 min-h-5 hover:text-green-500'
                           onClick={handleUpvote}

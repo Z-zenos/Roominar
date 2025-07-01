@@ -361,12 +361,12 @@ function EventDetail({ slug }: EventDetailProps) {
               <div>
                 <p className='font-light mb-2'>{event?.organizeAddress}</p>
                 <div className='border border-gray-400 rounded-md shadow-sm'>
-                  {/* {event.organizeAddress && event.lat && event.lng && (
+                  {event.organizeAddress && event.lat && event.lng && (
                     <LazyMap
                       defaultCoordinate={[event?.lat, event?.lng]}
                       className='w-full !h-[200px] rounded-md'
                     />
-                  )} */}
+                  )}
                 </div>
               </div>
             </div>
