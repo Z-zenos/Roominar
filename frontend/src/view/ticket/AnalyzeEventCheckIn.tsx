@@ -10,11 +10,11 @@ import {
 import Nodata from '@/src/component/common/Nodata';
 import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
 
-import './Ticket.css';
 import clsx from 'clsx';
 import { styles } from '@/src/constants/styles.constant';
-import { Dot } from 'lucide-react';
 import { CircularProgress } from '@nextui-org/react';
+import { BsDot } from 'react-icons/bs';
+import './Ticket.css';
 
 interface AnalyzeEventCheckInProps {
   slug: string;
@@ -95,7 +95,7 @@ function AnalyzeEventCheckIn({ slug }: AnalyzeEventCheckInProps) {
                   <div>
                     <p>Đã check-in:</p>
                     <p className={styles.flexStart}>
-                      <Dot className='text-green-500 w-10 h-10 inline-block' />{' '}
+                      <BsDot className='text-green-500 w-10 h-10 inline-block' />{' '}
                       <span className='text-green-500 font-semibold text-md'>
                         {data.totalCheckIns}
                       </span>{' '}
@@ -106,20 +106,20 @@ function AnalyzeEventCheckIn({ slug }: AnalyzeEventCheckInProps) {
                       vé đã bán
                     </p>
                   </div>
-                  <div>
-                    <CircularProgress
-                      color='success'
-                      label='Tỉ lệ check-in'
-                      showValueLabel={true}
-                      size='lg'
-                      value={data.checkInRate}
-                      classNames={{
-                        label: 'text-sm',
-                        svg: 'w-20 h-20 drop-shadow-md',
-                        value: 'text-md font-semibold text-green-500',
-                      }}
-                    />
-                  </div>
+                  <CircularProgress
+                    color='success'
+                    label='Tỉ lệ check-in'
+                    showValueLabel={true}
+                    size='lg'
+                    value={data.checkInRate}
+                    classNames={{
+                      label: 'text-sm',
+                      svg: 'w-20 h-20 drop-shadow-md motion-none',
+                      value: 'text-md font-semibold text-green-500',
+                    }}
+                    disableAnimation={true}
+                    maxValue={100}
+                  />
                 </div>
               </div>
             ) : (

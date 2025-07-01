@@ -10,6 +10,7 @@
  * Do not edit the class manually.
  */
 
+import type { AttendeePurchasedTickets } from '../models/AttendeePurchasedTickets';
 import type { IndustryCode } from '../models/IndustryCode';
 import type { JobTypeCode } from '../models/JobTypeCode';
 import type { TransactionStatusCode } from '../models/TransactionStatusCode';
@@ -31,6 +32,7 @@ export class ListingAttendeesItem {
     'applicationId': number;
     'transactionStatus'?: TransactionStatusCode | null;
     'checkInId'?: number | null;
+    'purchasedTickets'?: Array<AttendeePurchasedTickets>;
 
     static readonly discriminator: string | undefined = undefined;
 
@@ -123,6 +125,12 @@ export class ListingAttendeesItem {
             "name": "checkInId",
             "baseName": "check_in_id",
             "type": "number",
+            "format": ""
+        },
+        {
+            "name": "purchasedTickets",
+            "baseName": "purchased_tickets",
+            "type": "Array<AttendeePurchasedTickets>",
             "format": ""
         }    ];
 

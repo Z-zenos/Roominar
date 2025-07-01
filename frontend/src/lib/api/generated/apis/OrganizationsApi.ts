@@ -498,6 +498,8 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Listing Attendees
+            * @param slug Event slug
+            * @param eventId Event ID
             * @param keyword user name | event name | phone | email
             * @param applyAtFrom 
             * @param applyAtTo 
@@ -508,8 +510,10 @@ import type {SecurityAuthentication} from '../auth/auth';
             * @param perPage 
             * @param page 
         */
-        public async listingAttendees(keyword?: string, applyAtFrom?: Date, applyAtTo?: Date, isCheckedIn?: boolean, jobTypeCode?: JobTypeCode, industryCode?: IndustryCode, sortBy?: AttendeeSortByCode, perPage?: number, page?: number, _options?: Configuration): Promise<RequestContext> {
+        public async listingAttendees(slug?: string, eventId?: number, keyword?: string, applyAtFrom?: Date, applyAtTo?: Date, isCheckedIn?: boolean, jobTypeCode?: JobTypeCode, industryCode?: IndustryCode, sortBy?: AttendeeSortByCode, perPage?: number, page?: number, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
+
+
 
 
 
@@ -526,6 +530,16 @@ import type {SecurityAuthentication} from '../auth/auth';
             // Make Request Context
             const requestContext = _config.baseServer.makeRequestContext(localVarPath, HttpMethod.GET);
             requestContext.setHeaderParam("Accept", "application/json, */*;q=0.8")
+
+                // Query Params
+                if (slug !== undefined) {
+                requestContext.setQueryParam("slug", ObjectSerializer.serialize(slug, "string", ""));
+                }
+
+                // Query Params
+                if (eventId !== undefined) {
+                requestContext.setQueryParam("event_id", ObjectSerializer.serialize(eventId, "number", ""));
+                }
 
                 // Query Params
                 if (keyword !== undefined) {

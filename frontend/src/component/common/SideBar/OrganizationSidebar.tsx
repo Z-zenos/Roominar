@@ -25,7 +25,6 @@ import {
 import OverviewIcon from '@/public/icons/overview.svg';
 import EventPlanningIcon from '@/public/icons/event-planning.svg';
 import CreateEventIcon from '@/public/icons/create-event.svg';
-import AttendeesIcon from '@/public/icons/attendees.svg';
 import StaffIcon from '@/public/icons/staff.svg';
 import SurveyIcon from '@/public/icons/survey.svg';
 import TicketPaymentIcon from '@/public/icons/ticket-payment.svg';
@@ -56,16 +55,6 @@ const sidebarMenu = [
         icon: <CreateEventIcon />,
       },
     ],
-  },
-  {
-    title: 'Quản lý người tham dự',
-    icon: <AttendeesIcon />,
-    url: '/organization/attendees',
-  },
-  {
-    title: 'Vé & thanh toán',
-    icon: <TicketPaymentIcon />,
-    url: '/organization/ticket-payments',
   },
   {
     title: 'Khảo sát',

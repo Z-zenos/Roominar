@@ -12,6 +12,7 @@ import type { AnalyzeEventTicketsResponse } from '../models/AnalyzeEventTicketsR
 import { AnswerItem } from '../models/AnswerItem';
 import { ApplicationTicket } from '../models/ApplicationTicket';
 import { AttendeeAppliedEvent } from '../models/AttendeeAppliedEvent';
+import { AttendeePurchasedTickets } from '../models/AttendeePurchasedTickets';
 import type { AttendeeSortByCode } from '../models/AttendeeSortByCode';
 import { AttendeeSurveyResponseResultItem } from '../models/AttendeeSurveyResponseResultItem';
 import { AttendeeTicketTransaction } from '../models/AttendeeTicketTransaction';
@@ -1530,6 +1531,8 @@ export class PromiseOrganizationsApi {
 
     /**
      * Listing Attendees
+     * @param slug Event slug
+     * @param eventId Event ID
      * @param keyword user name | event name | phone | email
      * @param applyAtFrom 
      * @param applyAtTo 
@@ -1540,13 +1543,15 @@ export class PromiseOrganizationsApi {
      * @param perPage 
      * @param page 
      */
-    public listingAttendeesWithHttpInfo(keyword?: string, applyAtFrom?: Date, applyAtTo?: Date, isCheckedIn?: boolean, jobTypeCode?: JobTypeCode, industryCode?: IndustryCode, sortBy?: AttendeeSortByCode, perPage?: number, page?: number, _options?: Configuration): Promise<HttpInfo<ListingAttendeesResponse>> {
-        const result = this.api.listingAttendeesWithHttpInfo(keyword, applyAtFrom, applyAtTo, isCheckedIn, jobTypeCode, industryCode, sortBy, perPage, page, _options);
+    public listingAttendeesWithHttpInfo(slug?: string, eventId?: number, keyword?: string, applyAtFrom?: Date, applyAtTo?: Date, isCheckedIn?: boolean, jobTypeCode?: JobTypeCode, industryCode?: IndustryCode, sortBy?: AttendeeSortByCode, perPage?: number, page?: number, _options?: Configuration): Promise<HttpInfo<ListingAttendeesResponse>> {
+        const result = this.api.listingAttendeesWithHttpInfo(slug, eventId, keyword, applyAtFrom, applyAtTo, isCheckedIn, jobTypeCode, industryCode, sortBy, perPage, page, _options);
         return result.toPromise();
     }
 
     /**
      * Listing Attendees
+     * @param slug Event slug
+     * @param eventId Event ID
      * @param keyword user name | event name | phone | email
      * @param applyAtFrom 
      * @param applyAtTo 
@@ -1557,8 +1562,8 @@ export class PromiseOrganizationsApi {
      * @param perPage 
      * @param page 
      */
-    public listingAttendees(keyword?: string, applyAtFrom?: Date, applyAtTo?: Date, isCheckedIn?: boolean, jobTypeCode?: JobTypeCode, industryCode?: IndustryCode, sortBy?: AttendeeSortByCode, perPage?: number, page?: number, _options?: Configuration): Promise<ListingAttendeesResponse> {
-        const result = this.api.listingAttendees(keyword, applyAtFrom, applyAtTo, isCheckedIn, jobTypeCode, industryCode, sortBy, perPage, page, _options);
+    public listingAttendees(slug?: string, eventId?: number, keyword?: string, applyAtFrom?: Date, applyAtTo?: Date, isCheckedIn?: boolean, jobTypeCode?: JobTypeCode, industryCode?: IndustryCode, sortBy?: AttendeeSortByCode, perPage?: number, page?: number, _options?: Configuration): Promise<ListingAttendeesResponse> {
+        const result = this.api.listingAttendees(slug, eventId, keyword, applyAtFrom, applyAtTo, isCheckedIn, jobTypeCode, industryCode, sortBy, perPage, page, _options);
         return result.toPromise();
     }
 

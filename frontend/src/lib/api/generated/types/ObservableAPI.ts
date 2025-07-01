@@ -14,6 +14,7 @@ import type { AnalyzeEventTicketsResponse } from '../models/AnalyzeEventTicketsR
 import { AnswerItem } from '../models/AnswerItem';
 import { ApplicationTicket } from '../models/ApplicationTicket';
 import { AttendeeAppliedEvent } from '../models/AttendeeAppliedEvent';
+import { AttendeePurchasedTickets } from '../models/AttendeePurchasedTickets';
 import type { AttendeeSortByCode } from '../models/AttendeeSortByCode';
 import { AttendeeSurveyResponseResultItem } from '../models/AttendeeSurveyResponseResultItem';
 import { AttendeeTicketTransaction } from '../models/AttendeeTicketTransaction';
@@ -2309,6 +2310,8 @@ export class ObservableOrganizationsApi {
 
     /**
      * Listing Attendees
+     * @param slug Event slug
+     * @param eventId Event ID
      * @param keyword user name | event name | phone | email
      * @param applyAtFrom 
      * @param applyAtTo 
@@ -2319,8 +2322,8 @@ export class ObservableOrganizationsApi {
      * @param perPage 
      * @param page 
      */
-    public listingAttendeesWithHttpInfo(keyword?: string, applyAtFrom?: Date, applyAtTo?: Date, isCheckedIn?: boolean, jobTypeCode?: JobTypeCode, industryCode?: IndustryCode, sortBy?: AttendeeSortByCode, perPage?: number, page?: number, _options?: Configuration): Observable<HttpInfo<ListingAttendeesResponse>> {
-        const requestContextPromise = this.requestFactory.listingAttendees(keyword, applyAtFrom, applyAtTo, isCheckedIn, jobTypeCode, industryCode, sortBy, perPage, page, _options);
+    public listingAttendeesWithHttpInfo(slug?: string, eventId?: number, keyword?: string, applyAtFrom?: Date, applyAtTo?: Date, isCheckedIn?: boolean, jobTypeCode?: JobTypeCode, industryCode?: IndustryCode, sortBy?: AttendeeSortByCode, perPage?: number, page?: number, _options?: Configuration): Observable<HttpInfo<ListingAttendeesResponse>> {
+        const requestContextPromise = this.requestFactory.listingAttendees(slug, eventId, keyword, applyAtFrom, applyAtTo, isCheckedIn, jobTypeCode, industryCode, sortBy, perPage, page, _options);
 
         // build promise chain
         let middlewarePreObservable = from<RequestContext>(requestContextPromise);
@@ -2340,6 +2343,8 @@ export class ObservableOrganizationsApi {
 
     /**
      * Listing Attendees
+     * @param slug Event slug
+     * @param eventId Event ID
      * @param keyword user name | event name | phone | email
      * @param applyAtFrom 
      * @param applyAtTo 
@@ -2350,8 +2355,8 @@ export class ObservableOrganizationsApi {
      * @param perPage 
      * @param page 
      */
-    public listingAttendees(keyword?: string, applyAtFrom?: Date, applyAtTo?: Date, isCheckedIn?: boolean, jobTypeCode?: JobTypeCode, industryCode?: IndustryCode, sortBy?: AttendeeSortByCode, perPage?: number, page?: number, _options?: Configuration): Observable<ListingAttendeesResponse> {
-        return this.listingAttendeesWithHttpInfo(keyword, applyAtFrom, applyAtTo, isCheckedIn, jobTypeCode, industryCode, sortBy, perPage, page, _options).pipe(map((apiResponse: HttpInfo<ListingAttendeesResponse>) => apiResponse.data));
+    public listingAttendees(slug?: string, eventId?: number, keyword?: string, applyAtFrom?: Date, applyAtTo?: Date, isCheckedIn?: boolean, jobTypeCode?: JobTypeCode, industryCode?: IndustryCode, sortBy?: AttendeeSortByCode, perPage?: number, page?: number, _options?: Configuration): Observable<ListingAttendeesResponse> {
+        return this.listingAttendeesWithHttpInfo(slug, eventId, keyword, applyAtFrom, applyAtTo, isCheckedIn, jobTypeCode, industryCode, sortBy, perPage, page, _options).pipe(map((apiResponse: HttpInfo<ListingAttendeesResponse>) => apiResponse.data));
     }
 
     /**

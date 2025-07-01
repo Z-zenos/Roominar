@@ -43,6 +43,8 @@ class ListingRandomOrganizationsResponse(
 class ListingAttendeesQueryParams(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True)
 
+    slug: str | None = Field(Query(None, description="Event slug"))
+    event_id: int | None = Field(Query(None, description="Event ID"))
     keyword: str | None = Field(
         Query(None, description="user name | event name | phone | email")
     )
@@ -51,11 +53,19 @@ class ListingAttendeesQueryParams(BaseModel):
     is_checked_in: bool | None = Field(Query(None))
     job_type_code: JobTypeCode | None = Field(Query(None))
     industry_code: IndustryCode | None = Field(Query(None))
+    ticket_type_code: TicketTypeCode | None = Field(Query(None))
     sort_by: AttendeeSortByCode | None = Field(
         Query(default=AttendeeSortByCode.APPLY_AT)
     )
     per_page: int | None = Field(Query(default=10, le=100, ge=1))
     page: int | None = Field(Query(default=1, ge=1))
+
+
+class AttendeePurchasedTickets(BaseModel):
+    id: int
+    name: str
+    type: TicketTypeCode
+    price: float
 
 
 class ListingAttendeesItem(BaseModel):
@@ -74,6 +84,7 @@ class ListingAttendeesItem(BaseModel):
     application_id: int
     transaction_status: TransactionStatusCode | None = None
     check_in_id: int | None = None
+    purchased_tickets: list[AttendeePurchasedTickets] = Field([])
 
 
 class ListingAttendeesResponse(PaginationResponse[ListingAttendeesItem]):

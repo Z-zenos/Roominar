@@ -45,6 +45,7 @@ models/AnalyzeEventTicketsResponse.ts
 models/AnswerItem.ts
 models/ApplicationTicket.ts
 models/AttendeeAppliedEvent.ts
+models/AttendeePurchasedTickets.ts
 models/AttendeeSortByCode.ts
 models/AttendeeSurveyResponseResultItem.ts
 models/AttendeeTicketTransaction.ts

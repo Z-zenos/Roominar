@@ -11,7 +11,6 @@ import {
   TableCell,
   Button,
   User,
-  Link,
   Checkbox,
 } from '@nextui-org/react';
 
@@ -60,14 +59,17 @@ import { useRightSidebar } from '@/src/contexts/RightSidebarContext';
 const columns = [
   { name: 'Thời gian đăng ký', uid: 'apply_time', sortable: false },
   { name: 'Tên người dùng', uid: 'name', sortable: false },
-  { name: 'Tên sự kiện', uid: 'event_name', sortable: false },
   { name: 'Số điện thoại', uid: 'phone', sortable: false },
   { name: 'Ngành nghề / Công việc', uid: 'industry_job', sortable: false },
-  { name: 'Trạng thái checkin', uid: 'checkin', sortable: false },
+  { name: 'Vé đã mua', uid: 'purchased_tickets', sortable: false },
   { name: 'Hành động', uid: 'actions' },
 ];
 
-export default function AttendeeDataTable() {
+interface AttendeeDataTableProps {
+  slug?: string;
+}
+
+export default function AttendeeDataTable({ slug }: AttendeeDataTableProps) {
   const [isDownloadAttendeesCSVLoading, setIsDownloadAttendeesCSVLoading] =
     useState<boolean>(false);
   const searchParams = useSearchParams();
@@ -75,12 +77,16 @@ export default function AttendeeDataTable() {
   const router = useRouter();
   const { width } = useWindowDimensions();
   const t = useTranslations();
+  // const [checkedInAttendees, setCheckedInAttendees] = useState<Set<number>>(
+  //   new Set(),
+  // );
   const highlightMatchedText = useHighlightMatchedText();
 
   const [selectedKeys, setSelectedKeys] = useState<any>(new Set());
 
   const { data, isFetching } = useListingAttendeesQuery({
     ...queryString.parse(searchParams.toString(), { arrayFormat: 'bracket' }),
+    slug: slug,
   });
   const [page, setPage] = useState<number>(data?.page || 1);
   const pageCount = Math.ceil(data?.total / data?.perPage);
@@ -124,6 +130,16 @@ export default function AttendeeDataTable() {
     searchQuery(router, filters, searchParams, exclude_queries);
   }
 
+  // const { trigger: createCheckIn } = useManualCheckInMutation({
+  //   onSuccess() {},
+  //   onError: handleApiError,
+  // });
+
+  // const { trigger: deleteCheckIn } = useDeleteManualCheckInMutation({
+  //   onSuccess() {},
+  //   onError: handleApiError,
+  // });
+
   function handleDownloadAttendeesCSV() {
     setIsDownloadAttendeesCSVLoading(true);
     let params = {
@@ -160,6 +176,26 @@ export default function AttendeeDataTable() {
       });
   }
 
+  // const handleCheckIn = (attendee: ListingAttendeesItem) => {
+  //   setCheckedInAttendees((prev) => {
+  //     const newCheckedIn = new Set(prev);
+  //     if (newCheckedIn.has(attendee.applicationId)) {
+  //       newCheckedIn.delete(attendee.applicationId);
+  //       deleteCheckIn({
+  //         checkInId: attendee.checkInId,
+  //       });
+  //     } else {
+  //       newCheckedIn.add(attendee.applicationId);
+  //       createCheckIn({
+  //         manualCheckInRequest: {
+  //           transactionItemId: attendee.transactionItemId,
+  //         },
+  //       });
+  //     }
+  //     return newCheckedIn;
+  //   });
+  // };
+
   const renderCell = useCallback(
     (attendee: ListingAttendeesItem, columnKey: Key) => {
       const cellValue = attendee[columnKey as string];
@@ -194,20 +230,6 @@ export default function AttendeeDataTable() {
             />
           );
 
-        case 'event_name':
-          return (
-            <Link
-              underline='hover'
-              className='max-w-[300px] text-sm break-words'
-              href={`/organization/events/${attendee.eventId}`}
-            >
-              {highlightMatchedText(
-                attendee.eventName,
-                form.getValues('keyword'),
-              )}
-            </Link>
-          );
-
         case 'phone':
           return (
             <p>{highlightMatchedText(cellValue, form.getValues('keyword'))}</p>
@@ -226,6 +248,42 @@ export default function AttendeeDataTable() {
             </p>
           );
 
+        case 'purchased_tickets':
+          return (
+            <ul className=''>
+              {attendee.purchasedTickets.map((ticket) => (
+                <li
+                  key={ticket.id}
+                  className='block text-bold text-sm text-default-500'
+                >
+                  {highlightMatchedText(ticket.type, form.getValues('keyword'))}
+                </li>
+              ))}
+            </ul>
+          );
+
+        // case 'checkin':
+        //   return (
+        //     <Chip
+        //       content={
+        //         checkedInAttendees.has(attendee.checkInId)
+        //           ? 'Checked In'
+        //           : 'Uncheck'
+        //       }
+        //       leftIcon={
+        //         checkedInAttendees.has(attendee.checkInId) ? (
+        //           <IoCheckmarkDoneOutline className='text-sm' />
+        //         ) : null
+        //       }
+        //       type={
+        //         checkedInAttendees.has(attendee.checkInId)
+        //           ? 'success'
+        //           : 'default'
+        //       }
+        //       className='w-fit ml-2'
+        //     />
+        //   );
+
         case 'actions':
           return (
             <div
@@ -243,6 +301,35 @@ export default function AttendeeDataTable() {
               </SheetTrigger>
             </div>
           );
+
+        // case 'actions':
+        //   return (
+        //     <div
+        //       className='relative flex justify-center items-center gap-2'
+        //       onClick={(e) => {
+        //         e.preventDefault();
+        //         e.stopPropagation();
+        //       }}
+        //     >
+        //       <SheetTrigger
+        //         onClick={() => open('ATTENDEE_DETAIL', attendee.id)}
+        //         className={clsx(styles.between, 'gap-2')}
+        //       >
+        //         <AiOutlineEye className='w-5 h-5' />
+        //       </SheetTrigger>
+        //       <div
+        //         onClick={() => handleCheckIn(attendee)}
+        //         className={clsx(styles.between, 'gap-2 cursor-pointer')}
+        //       >
+        //         {checkedInAttendees.has(attendee.checkInId) ? (
+        //           <IoIosRemoveCircleOutline className='w-5 h-5' />
+        //         ) : (
+        //           <IoIosCheckboxOutline className='w-5 h-5' />
+        //         )}
+        //       </div>
+        //     </div>
+        //   );
+
         default:
           return cellValue;
       }
@@ -252,8 +339,11 @@ export default function AttendeeDataTable() {
   );
 
   return (
-    <>
+    <div className='p-4'>
       <Form {...form}>
+        <h3 className='text-primary font-semibold text-center text-lg'>
+          Danh sách người tham gia
+        </h3>
         <form onSubmit={form.handleSubmit(handleSearch)}>
           <div className='flex justify-between items-center flex-wrap gap-1'>
             <div className='flex items-center justify-start gap-4 flex-wrap'>
@@ -274,7 +364,7 @@ export default function AttendeeDataTable() {
                     applyAtFrom: undefined,
                     applyAtTo: undefined,
                   });
-                  router.push('/organization/attendees');
+                  router.push('/organization/events/hmf/overview');
                 }}
                 startContent={<GrPowerReset />}
               >
@@ -285,7 +375,7 @@ export default function AttendeeDataTable() {
                   name='keyword'
                   leftIcon={<IoSearchOutline size={20} />}
                   placeholder='Tìm kiếm người dùng, email, số điện thoại...'
-                  className='w-full'
+                  className='800px:w-[400px] w-full'
                   control={form.control}
                   onKeyDown={debounce(
                     () => handleSearch({ keyword: form.getValues('keyword') }),
@@ -411,6 +501,6 @@ export default function AttendeeDataTable() {
           />
         )}
       </div>
-    </>
+    </div>
   );
 }
