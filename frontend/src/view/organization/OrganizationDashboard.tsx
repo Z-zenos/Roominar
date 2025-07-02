@@ -103,7 +103,7 @@ export default function OrganizationDashboard() {
                   <div>
                     <p className='text-sm font-light'>Doanh thu</p>
                     <span className='text-md font-semibold text-pink-500'>
-                      {formatMoney(dashboardData.todayRevenueCount)}
+                      {formatMoney(dashboardData.totalRevenue)}
                     </span>
                     <p
                       className={clsx(

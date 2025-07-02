@@ -188,22 +188,43 @@ def _remind_upcoming_events(time_window: timedelta, type_code: NotificationTypeC
         )
 
         notification_count = 0
-        remind_time = None
+        rm_time = None
         match type_code:
             case NotificationTypeCode.REMIND_EVENT_START_TIME_BEFORE_7D:
-                remind_time = "remind_start_before_7d_at"
+                rm_time = "remind_start_before_7d_at"
             case NotificationTypeCode.REMIND_EVENT_START_TIME_BEFORE_3D:
-                remind_time = "remind_start_before_3d_at"
+                rm_time = "remind_start_before_3d_at"
             case NotificationTypeCode.REMIND_EVENT_START_TIME_BEFORE_1D:
-                remind_time = "remind_start_before_1d_at"
+                rm_time = "remind_start_before_1d_at"
             case NotificationTypeCode.REMIND_EVENT_START_TIME_BEFORE_10M:
-                remind_time = "remind_start_before_10m_at"
+                rm_time = "remind_start_before_10m_at"
 
         for user, event in transactions:
             try:
-                if event[remind_time] is None:
+                remind_time = None
+                match type_code:
+                    case NotificationTypeCode.REMIND_EVENT_START_TIME_BEFORE_7D:
+                        remind_time = event.remind_start_before_7d_at
+                    case NotificationTypeCode.REMIND_EVENT_START_TIME_BEFORE_3D:
+                        remind_time = event.remind_start_before_3d_at
+                    case NotificationTypeCode.REMIND_EVENT_START_TIME_BEFORE_1D:
+                        remind_time = event.remind_start_before_1d_at
+                    case NotificationTypeCode.REMIND_EVENT_START_TIME_BEFORE_10M:
+                        remind_time = event.remind_start_before_10m_at
+
+                if remind_time is None:
                     if event.id not in event_ids:
-                        event[remind_time] = now
+                        match type_code:
+                            case NotificationTypeCode.REMIND_EVENT_START_TIME_BEFORE_7D:
+                                event.remind_start_before_7d_at = now
+                            case NotificationTypeCode.REMIND_EVENT_START_TIME_BEFORE_3D:
+                                event.remind_start_before_3d_at = now
+                            case NotificationTypeCode.REMIND_EVENT_START_TIME_BEFORE_1D:
+                                event.remind_start_before_1d_at = now
+                            case (
+                                NotificationTypeCode.REMIND_EVENT_START_TIME_BEFORE_10M
+                            ):
+                                event.remind_start_before_10m_at = now
                         event_updates.append(event)
                         event_ids.add(event.id)
 
@@ -226,9 +247,7 @@ def _remind_upcoming_events(time_window: timedelta, type_code: NotificationTypeC
         if event_updates:
             db.bulk_update_mappings(
                 Event,
-                [e.dict(include={"id", remind_time}) for e in event_updates],
+                [e.dict(include={"id", rm_time}) for e in event_updates],
             )
             db.commit()
-            logger.info(
-                f"EventTask: Updated {len(event_updates)} events to {remind_time}."
-            )
+            logger.info(f"EventTask: Updated {len(event_updates)} events to {rm_time}.")
