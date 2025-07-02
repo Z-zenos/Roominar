@@ -14,6 +14,7 @@ async def update_audience(
     db: Session, current_user: User, request: UpdateUserRequest
 ) -> User:
     try:
+        current_user = db.get(User, current_user.id)
         for attr, value in request:
             if attr != "tags" and value is not None:
                 setattr(current_user, attr, value)
