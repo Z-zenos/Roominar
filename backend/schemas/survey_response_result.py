@@ -14,3 +14,7 @@ class AttendeeSurveyResponseResultItem(BaseModel):
     question_type: QuestionTypeCode
     answers: list[str] = Field([])
     answer_text: str | None = None
+
+
+class CreateSurveyResponseResultRequest(BaseModel):
+    survey_response_results: list[SurveyResponseResultItem] = Field([])

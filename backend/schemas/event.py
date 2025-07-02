@@ -461,3 +461,7 @@ class ListingEventOptionsResponse(BaseModel):
 
 class ListingTrendingEventsResponse(PaginationResponse[SearchEventsItem]):
     pass
+
+
+class GetEventSurveyResponse(SurveyDetail):
+    pass

@@ -11,11 +11,7 @@ import {
   Form,
   FormCheckBox,
   FormCombobox,
-  FormControl,
-  FormField,
   FormInput,
-  FormItem,
-  FormLabel,
   FormInstructions,
 } from '@/src/component/form/Form';
 import Button from '@/src/component/common/Button/Button';
@@ -46,16 +42,11 @@ import {
   ModalBody,
 } from '@nextui-org/react';
 import type {
-  AnswerItem,
-  QuestionAnswerItem,
   SurveyResponseResultItem,
   TicketItem,
 } from '@/src/lib/api/generated';
 import { JobTypeCode } from '@/src/lib/api/generated';
 import { IndustryCode } from '@/src/lib/api/generated';
-import { QuestionTypeCode } from '@/src/lib/api/generated';
-import { RadioGroup, RadioGroupItem } from '@/src/component/common/RadioGroup';
-import Checkbox from '@/src/component/common/Input/Checkbox';
 import toast from 'react-hot-toast';
 import { useSession } from 'next-auth/react';
 import { BiSolidSchool } from 'react-icons/bi';
@@ -623,162 +614,7 @@ export default function EventApplicationForm({
                 </div>
               </div>
             </div>
-            {event && event.survey && (
-              <div className='w-full shadow-[rgba(0,_0,_0,_0.16)_0px_1px_4px] border border-gray-200 px-10 py-6 rounded-md mt-6 bg-white'>
-                <h2 className='text-md font-semibold text-secondary'>
-                  Chúng tôi muốn xin ý kiến của bạn 📝
-                </h2>
-                <p className='font-light opacity-80 text-sm'>
-                  Ý kiến của bạn sẽ là nguồn thông tin vô cùng hữu ích và quý
-                  giá giúp chúng tôi khảo sát, phân tích và cải thiện chất lượng
-                  các sự kiện trong tương lai.
-                </p>
-                <FormField
-                  control={form.control}
-                  name='surveyResponseResults'
-                  render={({ field }) => (
-                    <FormItem>
-                      {event.survey.questionAnwers.map(
-                        (questionAnswer: QuestionAnswerItem) => (
-                          <div
-                            className='mt-4 bg-emerald-50 p-5'
-                            key={`qa-${questionAnswer.id}`}
-                          >
-                            <h3 className='text-nm font-semibold text-slate-800'>
-                              {questionAnswer.orderNumber}.
-                              {questionAnswer.question}
-                            </h3>
 
-                            {questionAnswer.typeCode ===
-                              QuestionTypeCode.Multiple &&
-                              questionAnswer.answers.map(
-                                (answer: AnswerItem) => (
-                                  <FormField
-                                    key={`qa-${questionAnswer.id}-${answer.id}`}
-                                    control={form.control}
-                                    name='surveyResponseResults'
-                                    render={({ field }) => {
-                                      return (
-                                        <FormItem
-                                          key={`ficb-${answer.id}`}
-                                          className='mt-3'
-                                        >
-                                          <FormControl>
-                                            <Checkbox
-                                              key={`qa-${questionAnswer.id}-${answer.id}`}
-                                              checked={field?.value.some((v) =>
-                                                v.answerIds.includes(answer.id),
-                                              )}
-                                              onCheckedChange={(checked) => {
-                                                let newItems = null;
-                                                const currentValue = [
-                                                  ...field.value,
-                                                ];
-
-                                                if (checked) {
-                                                  const qa = currentValue.find(
-                                                    (item) =>
-                                                      item.questionId ===
-                                                      questionAnswer.id,
-                                                  );
-                                                  if (!qa) {
-                                                    newItems = [
-                                                      ...currentValue,
-                                                      {
-                                                        questionId:
-                                                          questionAnswer.id,
-                                                        answerIds: [answer.id],
-                                                      },
-                                                    ];
-                                                  } else {
-                                                    qa.answerIds.push(
-                                                      answer.id,
-                                                    );
-                                                    newItems = currentValue;
-                                                  }
-                                                } else {
-                                                  const qa = currentValue.find(
-                                                    (item) =>
-                                                      item.questionId ===
-                                                      questionAnswer.id,
-                                                  );
-                                                  qa.answerIds =
-                                                    qa.answerIds.filter(
-                                                      (item) =>
-                                                        item !== answer.id,
-                                                    );
-                                                  newItems = currentValue;
-                                                }
-                                                field.onChange(newItems);
-                                              }}
-                                              title={answer.answer}
-                                            />
-                                          </FormControl>
-                                        </FormItem>
-                                      );
-                                    }}
-                                  />
-                                ),
-                              )}
-
-                            {questionAnswer.typeCode ===
-                              QuestionTypeCode.Single && (
-                              <FormControl>
-                                <RadioGroup
-                                  onValueChange={(value) => {
-                                    let newItems = null;
-                                    const currentValue = [...field.value];
-
-                                    const qa = currentValue.find(
-                                      (item) =>
-                                        item.questionId === questionAnswer.id &&
-                                        item.answerIds.includes(+value),
-                                    );
-                                    if (!qa) {
-                                      newItems = [
-                                        ...currentValue,
-                                        {
-                                          questionId: questionAnswer.id,
-                                          answerIds: [+value],
-                                        },
-                                      ];
-                                    } else {
-                                      qa.answerIds.push(+value);
-                                      newItems = currentValue;
-                                    }
-
-                                    field.onChange(newItems);
-                                  }}
-                                  className='flex flex-col space-y-1'
-                                >
-                                  {questionAnswer.answers.map(
-                                    (answer: AnswerItem) => (
-                                      <FormItem
-                                        key={`qa-${questionAnswer.id}-${answer.id}`}
-                                        className='flex items-center space-x-3 space-y-0 mt-2'
-                                      >
-                                        <FormControl>
-                                          <RadioGroupItem
-                                            value={answer.id + ''}
-                                          />
-                                        </FormControl>
-                                        <FormLabel className='font-normal'>
-                                          {answer.answer}
-                                        </FormLabel>
-                                      </FormItem>
-                                    ),
-                                  )}
-                                </RadioGroup>
-                              </FormControl>
-                            )}
-                          </div>
-                        ),
-                      )}
-                    </FormItem>
-                  )}
-                />
-              </div>
-            )}
             <div className={clsx(styles.center, 'mt-5')}>
               <FormCheckBox
                 control={form.control}

@@ -44,7 +44,6 @@ export const pathPermissionMaster = {
     '/organization/events/[slug]/check-in',
     '/organization/surveys',
     '/organization/surveys/create',
-    '/organization/attendees',
     '/events/[slug]',
     '/icon.ico',
   ],

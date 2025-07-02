@@ -58,6 +58,8 @@ import { ArrowRight } from 'lucide-react';
 import { EventDetailMenuBar } from '@/src/component/common/Navbar/EventDetailNavbar';
 import { CiViewTimeline } from 'react-icons/ci';
 import EventComment from './EventComment';
+import { FcSurvey } from 'react-icons/fc';
+import EventSurveyForm from '@/src/component/form/EventSurveyForm';
 
 const LazyMap = dynamic(() => import('../../component/common/Map/Map'), {
   ssr: false,
@@ -97,6 +99,14 @@ const menuItems = [
       'radial-gradient(circle, rgba(239,68,68,0.15) 0%, rgba(220,38,38,0.06) 50%, rgba(185,28,28,0) 100%)',
     iconColor: 'text-red-500',
   },
+  {
+    icon: FcSurvey,
+    label: 'Khảo sát',
+    href: 'survey',
+    gradient:
+      'radial-gradient(circle, rgba(239,68,68,0.15) 0%, rgba(220,38,38,0.06) 50%, rgba(185,28,28,0) 100%)',
+    iconColor: 'text-red-500',
+  },
 ];
 
 interface EventDetailProps {
@@ -127,6 +137,7 @@ function EventDetail({ slug }: EventDetailProps) {
   const [activeItem, setActiveItem] = useState<string>('timeline');
   const [showCommentsSection, setShowCommentsSection] =
     useState<boolean>(false);
+  const [showSurveySection, setShowSurveySection] = useState<boolean>(false);
 
   useEffect(() => {
     setTimeout(() => setIsCopied(false), 30000);
@@ -134,7 +145,7 @@ function EventDetail({ slug }: EventDetailProps) {
 
   useEffect(() => {
     handleScroll(activeItem.toLowerCase());
-  }, [showCommentsSection]);
+  }, [showCommentsSection, showSurveySection]);
 
   const handleScroll = (id: string) => {
     const el = document.getElementById(id);
@@ -180,7 +191,10 @@ function EventDetail({ slug }: EventDetailProps) {
         >
           <div className='flex justify-between flex-wrap gap-4 450px:w-[95%] w-full items-end'>
             <EventDetailMenuBar
-              items={menuItems.map((item) => {
+              items={(event.survey
+                ? menuItems
+                : menuItems.filter((item) => item.href != 'survey')
+              ).map((item) => {
                 if (item.label === 'Bình luận') {
                   return {
                     ...item,
@@ -194,8 +208,13 @@ function EventDetail({ slug }: EventDetailProps) {
                 setActiveItem(item);
                 if (item === 'comments') {
                   setShowCommentsSection(true);
+                  setShowSurveySection(false);
+                } else if (item === 'survey') {
+                  setShowSurveySection(true);
+                  setShowCommentsSection(false);
                 } else {
                   setShowCommentsSection(false);
+                  setShowSurveySection(false);
                   handleScroll(item.toLowerCase());
                 }
               }}
@@ -393,7 +412,21 @@ function EventDetail({ slug }: EventDetailProps) {
             <EventComment eventId={event?.id} />
           </div>
         )}
-        {!showCommentsSection && (
+        {showSurveySection && (
+          <div
+            id='comments'
+            className={clsx(
+              'flex flex-col gap-7',
+              width > 1200 ? 'w-[70%]' : 'w-full mb-8',
+            )}
+          >
+            <h3 className='font-semibold 450px:text-lg text-xm border-b border-b-gray-400'>
+              Khảo sát
+            </h3>
+            <EventSurveyForm eventId={event?.id} />
+          </div>
+        )}
+        {!showCommentsSection && !showSurveySection && (
           <div
             className={clsx(
               'flex flex-col gap-7',
