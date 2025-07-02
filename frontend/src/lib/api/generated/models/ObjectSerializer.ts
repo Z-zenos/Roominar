@@ -27,6 +27,7 @@ export * from '../models/CreateCommentReplyRequest';
 export * from '../models/CreateDraftEventRequest';
 export * from '../models/CreateQuestionAnswerRequest';
 export * from '../models/CreateSurveyRequest';
+export * from '../models/CreateSurveyResponseResultRequest';
 export * from '../models/CreateTargetRequest';
 export * from '../models/CreateTicketRequest';
 export * from '../models/CurrencyCode';
@@ -45,6 +46,7 @@ export * from '../models/GenerateEventAIResponse';
 export * from '../models/GetAttendeeDetailResponse';
 export * from '../models/GetDraftEventResponse';
 export * from '../models/GetEventDetailResponse';
+export * from '../models/GetEventSurveyResponse';
 export * from '../models/GetMeResponse';
 export * from '../models/GetOrganizationDashboardResponse';
 export * from '../models/GetOrganizationDetailResponse';
@@ -185,6 +187,7 @@ import { CreateCommentReplyRequest } from '../models/CreateCommentReplyRequest';
 import { CreateDraftEventRequest } from '../models/CreateDraftEventRequest';
 import { CreateQuestionAnswerRequest     } from '../models/CreateQuestionAnswerRequest';
 import { CreateSurveyRequest } from '../models/CreateSurveyRequest';
+import { CreateSurveyResponseResultRequest } from '../models/CreateSurveyResponseResultRequest';
 import { CreateTargetRequest } from '../models/CreateTargetRequest';
 import { CreateTicketRequest            } from '../models/CreateTicketRequest';
 import { CurrencyCode } from '../models/CurrencyCode';
@@ -203,6 +206,7 @@ import { GenerateEventAIResponse } from '../models/GenerateEventAIResponse';
 import { GetAttendeeDetailResponse            } from '../models/GetAttendeeDetailResponse';
 import { GetDraftEventResponse                           } from '../models/GetDraftEventResponse';
 import { GetEventDetailResponse                                          } from '../models/GetEventDetailResponse';
+import { GetEventSurveyResponse         } from '../models/GetEventSurveyResponse';
 import { GetMeResponse } from '../models/GetMeResponse';
 import { GetOrganizationDashboardResponse } from '../models/GetOrganizationDashboardResponse';
 import { GetOrganizationDetailResponse } from '../models/GetOrganizationDetailResponse';
@@ -397,6 +401,7 @@ const typeMap: {[index: string]: any} = {
     "CreateDraftEventRequest": CreateDraftEventRequest,
     "CreateQuestionAnswerRequest": CreateQuestionAnswerRequest,
     "CreateSurveyRequest": CreateSurveyRequest,
+    "CreateSurveyResponseResultRequest": CreateSurveyResponseResultRequest,
     "CreateTargetRequest": CreateTargetRequest,
     "CreateTicketRequest": CreateTicketRequest,
     "ErrorResponse400": ErrorResponse400,
@@ -409,6 +414,7 @@ const typeMap: {[index: string]: any} = {
     "GetAttendeeDetailResponse": GetAttendeeDetailResponse,
     "GetDraftEventResponse": GetDraftEventResponse,
     "GetEventDetailResponse": GetEventDetailResponse,
+    "GetEventSurveyResponse": GetEventSurveyResponse,
     "GetMeResponse": GetMeResponse,
     "GetOrganizationDashboardResponse": GetOrganizationDashboardResponse,
     "GetOrganizationDetailResponse": GetOrganizationDetailResponse,

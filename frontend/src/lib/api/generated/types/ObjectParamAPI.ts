@@ -31,6 +31,7 @@ import type { CreateCommentReplyRequest } from '../models/CreateCommentReplyRequ
 import type { CreateDraftEventRequest } from '../models/CreateDraftEventRequest';
 import { CreateQuestionAnswerRequest } from '../models/CreateQuestionAnswerRequest';
 import type { CreateSurveyRequest } from '../models/CreateSurveyRequest';
+import type { CreateSurveyResponseResultRequest } from '../models/CreateSurveyResponseResultRequest';
 import type { CreateTargetRequest } from '../models/CreateTargetRequest';
 import type { CreateTicketRequest } from '../models/CreateTicketRequest';
 import { CurrencyCode } from '../models/CurrencyCode';
@@ -49,6 +50,7 @@ import type { GenerateEventAIResponse } from '../models/GenerateEventAIResponse'
 import type { GetAttendeeDetailResponse } from '../models/GetAttendeeDetailResponse';
 import type { GetDraftEventResponse } from '../models/GetDraftEventResponse';
 import type { GetEventDetailResponse } from '../models/GetEventDetailResponse';
+import type { GetEventSurveyResponse } from '../models/GetEventSurveyResponse';
 import type { GetMeResponse } from '../models/GetMeResponse';
 import type { GetOrganizationDashboardResponse } from '../models/GetOrganizationDashboardResponse';
 import type { GetOrganizationDetailResponse } from '../models/GetOrganizationDetailResponse';
@@ -926,6 +928,21 @@ export interface EventsApiCreateEventBookmarkRequest {
     eventId: number
 }
 
+export interface EventsApiCreateSurveyResponseResultRequest {
+    /**
+     *
+     * @type number
+     * @memberof EventsApicreateSurveyResponseResult
+     */
+    eventId: number
+    /**
+     *
+     * @type CreateSurveyResponseResultRequest
+     * @memberof EventsApicreateSurveyResponseResult
+     */
+    createSurveyResponseResultRequest?: CreateSurveyResponseResultRequest
+}
+
 export interface EventsApiDeleteEventBookmarkRequest {
     /**
      *
@@ -963,6 +980,15 @@ export interface EventsApiGetEventDetailRequest {
      * @memberof EventsApigetEventDetail
      */
     slug: string
+}
+
+export interface EventsApiGetEventSurveyRequest {
+    /**
+     *
+     * @type number
+     * @memberof EventsApigetEventSurvey
+     */
+    eventId: number
 }
 
 export interface EventsApiListingEventCommentsRequest {
@@ -1513,6 +1539,22 @@ export class ObjectEventsApi {
     }
 
     /**
+     * Create Survey Response Result
+     * @param param the request object
+     */
+    public createSurveyResponseResultWithHttpInfo(param: EventsApiCreateSurveyResponseResultRequest, options?: Configuration): Promise<HttpInfo<number>> {
+        return this.api.createSurveyResponseResultWithHttpInfo(param.eventId, param.createSurveyResponseResultRequest,  options).toPromise();
+    }
+
+    /**
+     * Create Survey Response Result
+     * @param param the request object
+     */
+    public createSurveyResponseResult(param: EventsApiCreateSurveyResponseResultRequest, options?: Configuration): Promise<number> {
+        return this.api.createSurveyResponseResult(param.eventId, param.createSurveyResponseResultRequest,  options).toPromise();
+    }
+
+    /**
      * Delete Event Bookmark
      * @param param the request object
      */
@@ -1590,6 +1632,22 @@ export class ObjectEventsApi {
      */
     public getEventDetail(param: EventsApiGetEventDetailRequest, options?: Configuration): Promise<GetEventDetailResponse> {
         return this.api.getEventDetail(param.slug,  options).toPromise();
+    }
+
+    /**
+     * Get Event Survey
+     * @param param the request object
+     */
+    public getEventSurveyWithHttpInfo(param: EventsApiGetEventSurveyRequest, options?: Configuration): Promise<HttpInfo<GetEventSurveyResponse>> {
+        return this.api.getEventSurveyWithHttpInfo(param.eventId,  options).toPromise();
+    }
+
+    /**
+     * Get Event Survey
+     * @param param the request object
+     */
+    public getEventSurvey(param: EventsApiGetEventSurveyRequest, options?: Configuration): Promise<GetEventSurveyResponse> {
+        return this.api.getEventSurvey(param.eventId,  options).toPromise();
     }
 
     /**
@@ -2100,6 +2158,12 @@ export interface OrganizationsApiListingAttendeesRequest {
     industryCode?: IndustryCode
     /**
      *
+     * @type TicketTypeCode
+     * @memberof OrganizationsApilistingAttendees
+     */
+    ticketTypeCode?: TicketTypeCode
+    /**
+     *
      * @type AttendeeSortByCode
      * @memberof OrganizationsApilistingAttendees
      */
@@ -2449,7 +2513,7 @@ export class ObjectOrganizationsApi {
      * @param param the request object
      */
     public listingAttendeesWithHttpInfo(param: OrganizationsApiListingAttendeesRequest = {}, options?: Configuration): Promise<HttpInfo<ListingAttendeesResponse>> {
-        return this.api.listingAttendeesWithHttpInfo(param.slug, param.eventId, param.keyword, param.applyAtFrom, param.applyAtTo, param.isCheckedIn, param.jobTypeCode, param.industryCode, param.sortBy, param.perPage, param.page,  options).toPromise();
+        return this.api.listingAttendeesWithHttpInfo(param.slug, param.eventId, param.keyword, param.applyAtFrom, param.applyAtTo, param.isCheckedIn, param.jobTypeCode, param.industryCode, param.ticketTypeCode, param.sortBy, param.perPage, param.page,  options).toPromise();
     }
 
     /**
@@ -2457,7 +2521,7 @@ export class ObjectOrganizationsApi {
      * @param param the request object
      */
     public listingAttendees(param: OrganizationsApiListingAttendeesRequest = {}, options?: Configuration): Promise<ListingAttendeesResponse> {
-        return this.api.listingAttendees(param.slug, param.eventId, param.keyword, param.applyAtFrom, param.applyAtTo, param.isCheckedIn, param.jobTypeCode, param.industryCode, param.sortBy, param.perPage, param.page,  options).toPromise();
+        return this.api.listingAttendees(param.slug, param.eventId, param.keyword, param.applyAtFrom, param.applyAtTo, param.isCheckedIn, param.jobTypeCode, param.industryCode, param.ticketTypeCode, param.sortBy, param.perPage, param.page,  options).toPromise();
     }
 
     /**

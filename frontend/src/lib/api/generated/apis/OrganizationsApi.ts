@@ -506,12 +506,14 @@ import type {SecurityAuthentication} from '../auth/auth';
             * @param isCheckedIn
             * @param jobTypeCode
             * @param industryCode
+            * @param ticketTypeCode
             * @param sortBy
             * @param perPage
             * @param page
         */
-        public async listingAttendees(slug?: string, eventId?: number, keyword?: string, applyAtFrom?: Date, applyAtTo?: Date, isCheckedIn?: boolean, jobTypeCode?: JobTypeCode, industryCode?: IndustryCode, sortBy?: AttendeeSortByCode, perPage?: number, page?: number, _options?: Configuration): Promise<RequestContext> {
+        public async listingAttendees(slug?: string, eventId?: number, keyword?: string, applyAtFrom?: Date, applyAtTo?: Date, isCheckedIn?: boolean, jobTypeCode?: JobTypeCode, industryCode?: IndustryCode, ticketTypeCode?: TicketTypeCode, sortBy?: AttendeeSortByCode, perPage?: number, page?: number, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
+
 
 
 
@@ -569,6 +571,11 @@ import type {SecurityAuthentication} from '../auth/auth';
                 // Query Params
                 if (industryCode !== undefined) {
                 requestContext.setQueryParam("industry_code", ObjectSerializer.serialize(industryCode, "IndustryCode", ""));
+                }
+
+                // Query Params
+                if (ticketTypeCode !== undefined) {
+                requestContext.setQueryParam("ticket_type_code", ObjectSerializer.serialize(ticketTypeCode, "TicketTypeCode", ""));
                 }
 
                 // Query Params

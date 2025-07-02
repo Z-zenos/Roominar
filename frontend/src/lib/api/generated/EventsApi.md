@@ -7,11 +7,13 @@ Method | HTTP request | Description
 [**commentEvent**](EventsApi.md#commentEvent) | **POST** /api/v1/events/{event_id}/comments | Comment Event
 [**createDraftEvent**](EventsApi.md#createDraftEvent) | **POST** /api/v1/events/draft | Create Draft Event
 [**createEventBookmark**](EventsApi.md#createEventBookmark) | **POST** /api/v1/events/{event_id}/bookmark | Create Event Bookmark
+[**createSurveyResponseResult**](EventsApi.md#createSurveyResponseResult) | **POST** /api/v1/events/{event_id}/survey | Create Survey Response Result
 [**deleteEventBookmark**](EventsApi.md#deleteEventBookmark) | **DELETE** /api/v1/events/{event_id}/bookmark | Delete Event Bookmark
 [**deleteManualCheckIn**](EventsApi.md#deleteManualCheckIn) | **DELETE** /api/v1/events/check-in/manual/{check_in_id} | Delete Manual Check In
 [**generateEventAi**](EventsApi.md#generateEventAi) | **POST** /api/v1/events/ai/draft | Generate Event Ai
 [**getDraftEvent**](EventsApi.md#getDraftEvent) | **GET** /api/v1/events/draft | Get Draft Event
 [**getEventDetail**](EventsApi.md#getEventDetail) | **GET** /api/v1/events/{slug} | Get Event Detail
+[**getEventSurvey**](EventsApi.md#getEventSurvey) | **GET** /api/v1/events/{event_id}/survey | Get Event Survey
 [**listingEventComments**](EventsApi.md#listingEventComments) | **GET** /api/v1/events/{event_id}/comments | Listing Event Comments
 [**listingEventOptions**](EventsApi.md#listingEventOptions) | **GET** /api/v1/events/options | Listing Event Options
 [**listingEventPurchasedTickets**](EventsApi.md#listingEventPurchasedTickets) | **GET** /api/v1/events/{slug}/purchased-tickets | Listing Event Purchased Tickets
@@ -188,6 +190,66 @@ Name | Type | Description  | Notes
 ### HTTP request headers
 
  - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Successful Response |  -  |
+**400** | Bad Request |  -  |
+**401** | Unauthorized |  -  |
+**403** | Forbidden |  -  |
+**422** | Validation Error |  -  |
+
+[[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
+
+# **createSurveyResponseResult**
+> number createSurveyResponseResult()
+
+
+### Example
+
+
+```typescript
+import {  } from '';
+import * as fs from 'fs';
+
+const configuration = .createConfiguration();
+const apiInstance = new .EventsApi(configuration);
+
+let body:.EventsApiCreateSurveyResponseResultRequest = {
+  // number
+  eventId: 1,
+  // CreateSurveyResponseResultRequest (optional)
+  createSurveyResponseResultRequest: null,
+};
+
+apiInstance.createSurveyResponseResult(body).then((data:any) => {
+  console.log('API called successfully. Returned data: ' + data);
+}).catch((error:any) => console.error(error));
+```
+
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **createSurveyResponseResultRequest** | **CreateSurveyResponseResultRequest**|  |
+ **eventId** | [**number**] |  | defaults to undefined
+
+
+### Return type
+
+**number**
+
+### Authorization
+
+[OAuth2PasswordBearer](README.md#OAuth2PasswordBearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 
@@ -462,6 +524,63 @@ Name | Type | Description  | Notes
 ### Authorization
 
 [OAuth2PasswordBearer](README.md#OAuth2PasswordBearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Successful Response |  -  |
+**400** | Bad Request |  -  |
+**401** | Unauthorized |  -  |
+**403** | Forbidden |  -  |
+**422** | Validation Error |  -  |
+
+[[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
+
+# **getEventSurvey**
+> GetEventSurveyResponse getEventSurvey()
+
+
+### Example
+
+
+```typescript
+import {  } from '';
+import * as fs from 'fs';
+
+const configuration = .createConfiguration();
+const apiInstance = new .EventsApi(configuration);
+
+let body:.EventsApiGetEventSurveyRequest = {
+  // number
+  eventId: 1,
+};
+
+apiInstance.getEventSurvey(body).then((data:any) => {
+  console.log('API called successfully. Returned data: ' + data);
+}).catch((error:any) => console.error(error));
+```
+
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **eventId** | [**number**] |  | defaults to undefined
+
+
+### Return type
+
+**GetEventSurveyResponse**
+
+### Authorization
+
+No authorization required
 
 ### HTTP request headers
 

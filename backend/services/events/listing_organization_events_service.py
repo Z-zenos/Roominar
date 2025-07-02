@@ -3,6 +3,7 @@ from datetime import datetime
 from sqlmodel import Date, Session, and_, case, func, select, text
 
 from backend.core.constants import (
+    EventStatusCode,
     EventTimeStatusCode,
     ManageEventSortByCode,
     TagAssociationEntityCode,
@@ -108,7 +109,7 @@ async def _listing_events(
         .where(*filters)
         .limit(query_params.per_page)
         .offset(query_params.per_page * (query_params.page - 1))
-        .order_by(sort_by)
+        .order_by(*sort_by)
     )
 
     events = db.exec(query).mappings().all()
@@ -140,7 +141,7 @@ def _build_filters_sort(
     query_params: ListingOrganizationEventsQueryParams,
 ):
     filters = [Event.organization_id == organizer.organization_id]
-    sort_by = Event.created_at
+    sort_by = []
 
     if query_params.keyword:
         filters.append(Event.name.contains(query_params.keyword))
@@ -183,16 +184,33 @@ def _build_filters_sort(
     if query_params.time_status == EventTimeStatusCode.ALL_ENDED:
         filters.append(Event.end_at < datetime.now())
 
+    if query_params.sort_by == ManageEventSortByCode.CREATED_AT:
+        sort_by = [
+            case(
+                (Event.status == EventStatusCode.PUBLIC, 0),
+                (Event.status == EventStatusCode.DRAFT, 1),
+                (Event.status == EventStatusCode.ENDED, 2),
+                else_=3,
+            ),
+            (
+                Event.view_count * 1.0
+                + Event.bookmark_count * 2.0
+                + Event.sold_ticket_count * 3.0
+                + Event.share_count * 2.0
+            ).desc(),
+            Event.created_at.desc(),
+        ]
+
     if query_params.sort_by == ManageEventSortByCode.SOLD_TICKETS_NUMBER:
-        sort_by = text("sold_tickets_number.sold_tickets_number")
+        sort_by = [text("sold_tickets_number.sold_tickets_number")]
 
     if query_params.sort_by == ManageEventSortByCode.START_AT:
-        sort_by = Event.start_at
+        sort_by = [Event.start_at]
 
     if query_params.sort_by == ManageEventSortByCode.NAME:
-        sort_by = Event.name
+        sort_by = [Event.name]
 
     if query_params.sort_by == ManageEventSortByCode.VIEW_NUMBER:
-        sort_by = Event.view_count
+        sort_by = [Event.view_count]
 
     return filters, sort_by

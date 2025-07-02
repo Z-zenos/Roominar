@@ -33,6 +33,7 @@ import type { CreateCommentReplyRequest } from '../models/CreateCommentReplyRequ
 import type { CreateDraftEventRequest } from '../models/CreateDraftEventRequest';
 import { CreateQuestionAnswerRequest } from '../models/CreateQuestionAnswerRequest';
 import type { CreateSurveyRequest } from '../models/CreateSurveyRequest';
+import type { CreateSurveyResponseResultRequest } from '../models/CreateSurveyResponseResultRequest';
 import type { CreateTargetRequest } from '../models/CreateTargetRequest';
 import type { CreateTicketRequest } from '../models/CreateTicketRequest';
 import { CurrencyCode } from '../models/CurrencyCode';
@@ -51,6 +52,7 @@ import type { GenerateEventAIResponse } from '../models/GenerateEventAIResponse'
 import type { GetAttendeeDetailResponse } from '../models/GetAttendeeDetailResponse';
 import type { GetDraftEventResponse } from '../models/GetDraftEventResponse';
 import type { GetEventDetailResponse } from '../models/GetEventDetailResponse';
+import type { GetEventSurveyResponse } from '../models/GetEventSurveyResponse';
 import type { GetMeResponse } from '../models/GetMeResponse';
 import type { GetOrganizationDashboardResponse } from '../models/GetOrganizationDashboardResponse';
 import type { GetOrganizationDetailResponse } from '../models/GetOrganizationDetailResponse';
@@ -1164,6 +1166,39 @@ export class ObservableEventsApi {
     }
 
     /**
+     * Create Survey Response Result
+     * @param eventId
+     * @param createSurveyResponseResultRequest
+     */
+    public createSurveyResponseResultWithHttpInfo(eventId: number, createSurveyResponseResultRequest?: CreateSurveyResponseResultRequest, _options?: Configuration): Observable<HttpInfo<number>> {
+        const requestContextPromise = this.requestFactory.createSurveyResponseResult(eventId, createSurveyResponseResultRequest, _options);
+
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of this.configuration.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => this.configuration.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of this.configuration.middleware) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.createSurveyResponseResultWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * Create Survey Response Result
+     * @param eventId
+     * @param createSurveyResponseResultRequest
+     */
+    public createSurveyResponseResult(eventId: number, createSurveyResponseResultRequest?: CreateSurveyResponseResultRequest, _options?: Configuration): Observable<number> {
+        return this.createSurveyResponseResultWithHttpInfo(eventId, createSurveyResponseResultRequest, _options).pipe(map((apiResponse: HttpInfo<number>) => apiResponse.data));
+    }
+
+    /**
      * Delete Event Bookmark
      * @param eventId
      */
@@ -1314,6 +1349,37 @@ export class ObservableEventsApi {
      */
     public getEventDetail(slug: string, _options?: Configuration): Observable<GetEventDetailResponse> {
         return this.getEventDetailWithHttpInfo(slug, _options).pipe(map((apiResponse: HttpInfo<GetEventDetailResponse>) => apiResponse.data));
+    }
+
+    /**
+     * Get Event Survey
+     * @param eventId
+     */
+    public getEventSurveyWithHttpInfo(eventId: number, _options?: Configuration): Observable<HttpInfo<GetEventSurveyResponse>> {
+        const requestContextPromise = this.requestFactory.getEventSurvey(eventId, _options);
+
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of this.configuration.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => this.configuration.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of this.configuration.middleware) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.getEventSurveyWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * Get Event Survey
+     * @param eventId
+     */
+    public getEventSurvey(eventId: number, _options?: Configuration): Observable<GetEventSurveyResponse> {
+        return this.getEventSurveyWithHttpInfo(eventId, _options).pipe(map((apiResponse: HttpInfo<GetEventSurveyResponse>) => apiResponse.data));
     }
 
     /**
@@ -2318,12 +2384,13 @@ export class ObservableOrganizationsApi {
      * @param isCheckedIn
      * @param jobTypeCode
      * @param industryCode
+     * @param ticketTypeCode
      * @param sortBy
      * @param perPage
      * @param page
      */
-    public listingAttendeesWithHttpInfo(slug?: string, eventId?: number, keyword?: string, applyAtFrom?: Date, applyAtTo?: Date, isCheckedIn?: boolean, jobTypeCode?: JobTypeCode, industryCode?: IndustryCode, sortBy?: AttendeeSortByCode, perPage?: number, page?: number, _options?: Configuration): Observable<HttpInfo<ListingAttendeesResponse>> {
-        const requestContextPromise = this.requestFactory.listingAttendees(slug, eventId, keyword, applyAtFrom, applyAtTo, isCheckedIn, jobTypeCode, industryCode, sortBy, perPage, page, _options);
+    public listingAttendeesWithHttpInfo(slug?: string, eventId?: number, keyword?: string, applyAtFrom?: Date, applyAtTo?: Date, isCheckedIn?: boolean, jobTypeCode?: JobTypeCode, industryCode?: IndustryCode, ticketTypeCode?: TicketTypeCode, sortBy?: AttendeeSortByCode, perPage?: number, page?: number, _options?: Configuration): Observable<HttpInfo<ListingAttendeesResponse>> {
+        const requestContextPromise = this.requestFactory.listingAttendees(slug, eventId, keyword, applyAtFrom, applyAtTo, isCheckedIn, jobTypeCode, industryCode, ticketTypeCode, sortBy, perPage, page, _options);
 
         // build promise chain
         let middlewarePreObservable = from<RequestContext>(requestContextPromise);
@@ -2351,12 +2418,13 @@ export class ObservableOrganizationsApi {
      * @param isCheckedIn
      * @param jobTypeCode
      * @param industryCode
+     * @param ticketTypeCode
      * @param sortBy
      * @param perPage
      * @param page
      */
-    public listingAttendees(slug?: string, eventId?: number, keyword?: string, applyAtFrom?: Date, applyAtTo?: Date, isCheckedIn?: boolean, jobTypeCode?: JobTypeCode, industryCode?: IndustryCode, sortBy?: AttendeeSortByCode, perPage?: number, page?: number, _options?: Configuration): Observable<ListingAttendeesResponse> {
-        return this.listingAttendeesWithHttpInfo(slug, eventId, keyword, applyAtFrom, applyAtTo, isCheckedIn, jobTypeCode, industryCode, sortBy, perPage, page, _options).pipe(map((apiResponse: HttpInfo<ListingAttendeesResponse>) => apiResponse.data));
+    public listingAttendees(slug?: string, eventId?: number, keyword?: string, applyAtFrom?: Date, applyAtTo?: Date, isCheckedIn?: boolean, jobTypeCode?: JobTypeCode, industryCode?: IndustryCode, ticketTypeCode?: TicketTypeCode, sortBy?: AttendeeSortByCode, perPage?: number, page?: number, _options?: Configuration): Observable<ListingAttendeesResponse> {
+        return this.listingAttendeesWithHttpInfo(slug, eventId, keyword, applyAtFrom, applyAtTo, isCheckedIn, jobTypeCode, industryCode, ticketTypeCode, sortBy, perPage, page, _options).pipe(map((apiResponse: HttpInfo<ListingAttendeesResponse>) => apiResponse.data));
     }
 
     /**

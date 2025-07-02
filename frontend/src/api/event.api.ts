@@ -1,10 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import type {
   EventsApiCreateEventBookmarkRequest,
+  EventsApiCreateSurveyResponseResultRequest,
   EventsApiDeleteEventBookmarkRequest,
   EventsApiDeleteManualCheckInRequest,
   EventsApiGenerateEventAiRequest,
   EventsApiGetEventDetailRequest,
+  EventsApiGetEventSurveyRequest,
   EventsApiListingMyEventsRequest,
   EventsApiListingRecommendationEventsRequest,
   EventsApiListingRelatedEventsRequest,
@@ -266,4 +268,32 @@ export const useListingTrendingEventsQuery = (
     queryFn: async () => await api.events.listingTrendingEvents(params),
     enabled,
   });
+};
+
+export const useGetEventSurveyQuery = (
+  params?: EventsApiGetEventSurveyRequest,
+) => {
+  const api = useApi();
+  return useQuery({
+    queryKey: ['get-event-survey'],
+    queryFn: async () => await api.events.getEventSurvey(params),
+  });
+};
+
+export const useCreateSurveyResponseResultMutation = <T>(
+  options?: SWRMutationConfiguration<number, T>,
+) => {
+  const api = useApi();
+  const key = 'create-survey-response-result';
+  return useSWRMutation<
+    number,
+    T,
+    typeof key,
+    EventsApiCreateSurveyResponseResultRequest
+  >(
+    key,
+    async (_: string, { arg }) =>
+      await api.events.createSurveyResponseResult(arg),
+    options,
+  );
 };

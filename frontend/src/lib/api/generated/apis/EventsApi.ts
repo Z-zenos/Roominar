@@ -11,6 +11,7 @@ import type {SecurityAuthentication} from '../auth/auth';
 
     import type { CommentEventRequest } from '../models/CommentEventRequest';
     import type { CreateDraftEventRequest } from '../models/CreateDraftEventRequest';
+    import type { CreateSurveyResponseResultRequest } from '../models/CreateSurveyResponseResultRequest';
     import type { ErrorResponse400 } from '../models/ErrorResponse400';
     import type { ErrorResponse401 } from '../models/ErrorResponse401';
     import type { ErrorResponse403 } from '../models/ErrorResponse403';
@@ -19,6 +20,7 @@ import type {SecurityAuthentication} from '../auth/auth';
     import type { GenerateEventAIResponse } from '../models/GenerateEventAIResponse';
     import type { GetDraftEventResponse } from '../models/GetDraftEventResponse';
     import type { GetEventDetailResponse } from '../models/GetEventDetailResponse';
+    import type { GetEventSurveyResponse } from '../models/GetEventSurveyResponse';
     import type { HTTPValidationError } from '../models/HTTPValidationError';
     import type { IndustryCode } from '../models/IndustryCode';
     import type { JobTypeCode } from '../models/JobTypeCode';
@@ -156,6 +158,56 @@ import type {SecurityAuthentication} from '../auth/auth';
             const requestContext = _config.baseServer.makeRequestContext(localVarPath, HttpMethod.POST);
             requestContext.setHeaderParam("Accept", "application/json, */*;q=0.8")
 
+
+                let authMethod: SecurityAuthentication | undefined;
+                // Apply auth methods
+                authMethod = _config.authMethods["OAuth2PasswordBearer"]
+                if (authMethod?.applySecurityAuthentication) {
+                await authMethod?.applySecurityAuthentication(requestContext);
+                }
+
+                const defaultAuth: SecurityAuthentication | undefined = _options?.authMethods?.default || this.configuration?.authMethods?.default
+                if (defaultAuth?.applySecurityAuthentication) {
+                await defaultAuth?.applySecurityAuthentication(requestContext);
+                }
+
+            return requestContext;
+            }
+
+        /**
+            * Create Survey Response Result
+            * @param eventId
+            * @param createSurveyResponseResultRequest
+        */
+        public async createSurveyResponseResult(eventId: number, createSurveyResponseResultRequest?: CreateSurveyResponseResultRequest, _options?: Configuration): Promise<RequestContext> {
+            const _config = _options || this.configuration;
+
+                    // verify required parameter 'eventId' is not null or undefined
+                    if (eventId === null || eventId === undefined) {
+                    throw new RequiredError("EventsApi", "createSurveyResponseResult", "eventId");
+                    }
+
+
+
+            // Path Params
+            const localVarPath = '/api/v1/events/{event_id}/survey'
+                .replace('{' + 'event_id' + '}', encodeURIComponent(String(eventId)));
+
+            // Make Request Context
+            const requestContext = _config.baseServer.makeRequestContext(localVarPath, HttpMethod.POST);
+            requestContext.setHeaderParam("Accept", "application/json, */*;q=0.8")
+
+
+                // Body Params
+                const contentType = ObjectSerializer.getPreferredMediaType([
+                    "application/json"
+            ]);
+                requestContext.setHeaderParam("Content-Type", contentType);
+                const serializedBody = ObjectSerializer.stringify(
+                ObjectSerializer.serialize(createSurveyResponseResultRequest, "CreateSurveyResponseResultRequest", ""),
+                contentType
+                );
+                requestContext.setBody(serializedBody);
 
                 let authMethod: SecurityAuthentication | undefined;
                 // Apply auth methods
@@ -345,6 +397,37 @@ import type {SecurityAuthentication} from '../auth/auth';
                 if (authMethod?.applySecurityAuthentication) {
                 await authMethod?.applySecurityAuthentication(requestContext);
                 }
+
+                const defaultAuth: SecurityAuthentication | undefined = _options?.authMethods?.default || this.configuration?.authMethods?.default
+                if (defaultAuth?.applySecurityAuthentication) {
+                await defaultAuth?.applySecurityAuthentication(requestContext);
+                }
+
+            return requestContext;
+            }
+
+        /**
+            * Get Event Survey
+            * @param eventId
+        */
+        public async getEventSurvey(eventId: number, _options?: Configuration): Promise<RequestContext> {
+            const _config = _options || this.configuration;
+
+                    // verify required parameter 'eventId' is not null or undefined
+                    if (eventId === null || eventId === undefined) {
+                    throw new RequiredError("EventsApi", "getEventSurvey", "eventId");
+                    }
+
+
+            // Path Params
+            const localVarPath = '/api/v1/events/{event_id}/survey'
+                .replace('{' + 'event_id' + '}', encodeURIComponent(String(eventId)));
+
+            // Make Request Context
+            const requestContext = _config.baseServer.makeRequestContext(localVarPath, HttpMethod.GET);
+            requestContext.setHeaderParam("Accept", "application/json, */*;q=0.8")
+
+
 
                 const defaultAuth: SecurityAuthentication | undefined = _options?.authMethods?.default || this.configuration?.authMethods?.default
                 if (defaultAuth?.applySecurityAuthentication) {
@@ -1483,6 +1566,63 @@ import type {SecurityAuthentication} from '../auth/auth';
             * Unwraps the actual response sent by the server from the response context and deserializes the response content
             * to the expected objects
             *
+            * @params response Response returned by the server for a request to createSurveyResponseResult
+            * @throws ApiException if the response code was not in [200, 299]
+            */
+            public async createSurveyResponseResultWithHttpInfo(response: ResponseContext): Promise<HttpInfo<number >> {
+            const contentType = ObjectSerializer.normalizeMediaType(response.headers["content-type"]);
+                if (isCodeInRange("200", response.httpStatusCode)) {
+                        const body: number = ObjectSerializer.deserialize(
+                        ObjectSerializer.parse(await response.body.text(), contentType),
+                        "number", ""
+                        ) as number;
+                        return new HttpInfo(response.httpStatusCode, response.headers, response.body, body);
+                }
+                if (isCodeInRange("400", response.httpStatusCode)) {
+                        const body: ErrorResponse400 = ObjectSerializer.deserialize(
+                        ObjectSerializer.parse(await response.body.text(), contentType),
+                        "ErrorResponse400", ""
+                        ) as ErrorResponse400;
+                        throw new ApiException<ErrorResponse400>(response.httpStatusCode, "Bad Request", body, response.headers);
+                }
+                if (isCodeInRange("401", response.httpStatusCode)) {
+                        const body: ErrorResponse401 = ObjectSerializer.deserialize(
+                        ObjectSerializer.parse(await response.body.text(), contentType),
+                        "ErrorResponse401", ""
+                        ) as ErrorResponse401;
+                        throw new ApiException<ErrorResponse401>(response.httpStatusCode, "Unauthorized", body, response.headers);
+                }
+                if (isCodeInRange("403", response.httpStatusCode)) {
+                        const body: ErrorResponse403 = ObjectSerializer.deserialize(
+                        ObjectSerializer.parse(await response.body.text(), contentType),
+                        "ErrorResponse403", ""
+                        ) as ErrorResponse403;
+                        throw new ApiException<ErrorResponse403>(response.httpStatusCode, "Forbidden", body, response.headers);
+                }
+                if (isCodeInRange("422", response.httpStatusCode)) {
+                        const body: HTTPValidationError = ObjectSerializer.deserialize(
+                        ObjectSerializer.parse(await response.body.text(), contentType),
+                        "HTTPValidationError", ""
+                        ) as HTTPValidationError;
+                        throw new ApiException<HTTPValidationError>(response.httpStatusCode, "Validation Error", body, response.headers);
+                }
+
+            // Work around for missing responses in specification, e.g. for petstore.yaml
+            if (response.httpStatusCode >= 200 && response.httpStatusCode <= 299) {
+                    const body: number = ObjectSerializer.deserialize(
+                    ObjectSerializer.parse(await response.body.text(), contentType),
+                    "number", ""
+                    ) as number;
+                return new HttpInfo(response.httpStatusCode, response.headers, response.body, body);
+            }
+
+            throw new ApiException<string | Blob | undefined>(response.httpStatusCode, "Unknown API Status Code!", await response.getBodyAsAny(), response.headers);
+            }
+
+            /**
+            * Unwraps the actual response sent by the server from the response context and deserializes the response content
+            * to the expected objects
+            *
             * @params response Response returned by the server for a request to deleteEventBookmark
             * @throws ApiException if the response code was not in [200, 299]
             */
@@ -1743,6 +1883,63 @@ import type {SecurityAuthentication} from '../auth/auth';
                     ObjectSerializer.parse(await response.body.text(), contentType),
                     "GetEventDetailResponse", ""
                     ) as GetEventDetailResponse;
+                return new HttpInfo(response.httpStatusCode, response.headers, response.body, body);
+            }
+
+            throw new ApiException<string | Blob | undefined>(response.httpStatusCode, "Unknown API Status Code!", await response.getBodyAsAny(), response.headers);
+            }
+
+            /**
+            * Unwraps the actual response sent by the server from the response context and deserializes the response content
+            * to the expected objects
+            *
+            * @params response Response returned by the server for a request to getEventSurvey
+            * @throws ApiException if the response code was not in [200, 299]
+            */
+            public async getEventSurveyWithHttpInfo(response: ResponseContext): Promise<HttpInfo<GetEventSurveyResponse >> {
+            const contentType = ObjectSerializer.normalizeMediaType(response.headers["content-type"]);
+                if (isCodeInRange("200", response.httpStatusCode)) {
+                        const body: GetEventSurveyResponse = ObjectSerializer.deserialize(
+                        ObjectSerializer.parse(await response.body.text(), contentType),
+                        "GetEventSurveyResponse", ""
+                        ) as GetEventSurveyResponse;
+                        return new HttpInfo(response.httpStatusCode, response.headers, response.body, body);
+                }
+                if (isCodeInRange("400", response.httpStatusCode)) {
+                        const body: ErrorResponse400 = ObjectSerializer.deserialize(
+                        ObjectSerializer.parse(await response.body.text(), contentType),
+                        "ErrorResponse400", ""
+                        ) as ErrorResponse400;
+                        throw new ApiException<ErrorResponse400>(response.httpStatusCode, "Bad Request", body, response.headers);
+                }
+                if (isCodeInRange("401", response.httpStatusCode)) {
+                        const body: ErrorResponse401 = ObjectSerializer.deserialize(
+                        ObjectSerializer.parse(await response.body.text(), contentType),
+                        "ErrorResponse401", ""
+                        ) as ErrorResponse401;
+                        throw new ApiException<ErrorResponse401>(response.httpStatusCode, "Unauthorized", body, response.headers);
+                }
+                if (isCodeInRange("403", response.httpStatusCode)) {
+                        const body: ErrorResponse403 = ObjectSerializer.deserialize(
+                        ObjectSerializer.parse(await response.body.text(), contentType),
+                        "ErrorResponse403", ""
+                        ) as ErrorResponse403;
+                        throw new ApiException<ErrorResponse403>(response.httpStatusCode, "Forbidden", body, response.headers);
+                }
+                if (isCodeInRange("422", response.httpStatusCode)) {
+                        const body: HTTPValidationError = ObjectSerializer.deserialize(
+                        ObjectSerializer.parse(await response.body.text(), contentType),
+                        "HTTPValidationError", ""
+                        ) as HTTPValidationError;
+                        throw new ApiException<HTTPValidationError>(response.httpStatusCode, "Validation Error", body, response.headers);
+                }
+
+            // Work around for missing responses in specification, e.g. for petstore.yaml
+            if (response.httpStatusCode >= 200 && response.httpStatusCode <= 299) {
+                    const body: GetEventSurveyResponse = ObjectSerializer.deserialize(
+                    ObjectSerializer.parse(await response.body.text(), contentType),
+                    "GetEventSurveyResponse", ""
+                    ) as GetEventSurveyResponse;
                 return new HttpInfo(response.httpStatusCode, response.headers, response.body, body);
             }
 

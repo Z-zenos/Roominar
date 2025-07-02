@@ -27,6 +27,7 @@ from backend.schemas.event import (
     GenerateEventAIResponse,
     GetDraftEventResponse,
     GetEventDetailResponse,
+    GetEventSurveyResponse,
     ListingEventOptionsResponse,
     ListingEventRankResponse,
     ListingMyEventsQueryParams,
@@ -39,6 +40,7 @@ from backend.schemas.event import (
     SearchEventsQueryParams,
     SearchEventsResponse,
 )
+from backend.schemas.survey_response_result import CreateSurveyResponseResultRequest
 from backend.schemas.ticket import (
     ListingEventPurchasedTicketsQueryParams,
     ListingEventPurchasedTicketsResponse,
@@ -196,9 +198,25 @@ async def listing_event_purchased_tickets(
     response_model=ListingRelatedEventsResponse,
     responses=public_api_responses,
 )
-async def listing_related_events(slug: str = None, db: Session = Depends(get_read_db)):
+async def listing_related_events(db: Session = Depends(get_read_db), slug: str = None):
     events = await events_service.listing_related_events(db, slug)
     return ListingRelatedEventsResponse(events=events)
+
+
+@router.post(
+    "/{event_id}/survey",
+    response_model=int,
+    responses=authenticated_api_responses,
+)
+async def create_survey_response_result(
+    db: Session = Depends(get_read_db),
+    user: User = Depends(get_current_user),
+    event_id: int = None,
+    request: CreateSurveyResponseResultRequest = None,
+):
+    return await events_service.create_survey_response_result(
+        db, user, event_id, request
+    )
 
 
 @router.post(
@@ -269,6 +287,15 @@ async def publish_event(
     event_id: int = None,
 ):
     return await events_service.publish_event(db, organizer, request, event_id)
+
+
+@router.get(
+    "/{event_id}/survey",
+    response_model=GetEventSurveyResponse,
+    responses=public_api_responses,
+)
+async def get_event_survey(db: Session = Depends(get_read_db), event_id: int = None):
+    return await events_service.get_event_survey(db, event_id)
 
 
 @router.get(

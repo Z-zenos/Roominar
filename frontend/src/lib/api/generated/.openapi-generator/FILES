@@ -64,6 +64,7 @@ models/CreateCommentReplyRequest.ts
 models/CreateDraftEventRequest.ts
 models/CreateQuestionAnswerRequest.ts
 models/CreateSurveyRequest.ts
+models/CreateSurveyResponseResultRequest.ts
 models/CreateTargetRequest.ts
 models/CreateTicketRequest.ts
 models/CurrencyCode.ts
@@ -82,6 +83,7 @@ models/GenerateEventAIResponse.ts
 models/GetAttendeeDetailResponse.ts
 models/GetDraftEventResponse.ts
 models/GetEventDetailResponse.ts
+models/GetEventSurveyResponse.ts
 models/GetMeResponse.ts
 models/GetOrganizationDashboardResponse.ts
 models/GetOrganizationDetailResponse.ts
