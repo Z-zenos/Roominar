@@ -86,7 +86,7 @@ function SearchEvent() {
   });
 
   function handleSearch(data: any = {}) {
-    if (form.getValues('startAtRange')) {
+    if (form.getValues('startAtRange')?.from) {
       const startAtRange = form.getValues('startAtRange');
       data.startAtFrom = dayjs(startAtRange.from).format('YYYY-MM-DD');
       data.startAtTo = dayjs(startAtRange.to).format('YYYY-MM-DD');
