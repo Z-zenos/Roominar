@@ -17,6 +17,7 @@ from backend.models.ticket import Ticket
 from backend.models.ticket_inventory import TicketInventory
 from backend.models.transaction import Transaction
 from backend.models.transaction_item import TransactionItem
+from backend.models.user import User
 from backend.models.user_action import UserAction
 from backend.services.qrcode.qrcode_service import QrcodeService
 from backend.utils.database import save
@@ -42,6 +43,9 @@ def process_transaction(
     try:
         organization_id = db.exec(
             select(Event.organization_id).where(Event.id == event_id)
+        ).one_or_none()
+        receiver = db.exec(
+            select(User).where(User.organization_id == organization_id)
         ).one_or_none()
 
         tickets = tickets = (
@@ -151,7 +155,7 @@ def process_transaction(
         push_apply_event_notification.delay(
             event_id=event_id,
             sender_id=user_id,
-            receiver_id=organization_id,
+            receiver_id=receiver.id,
             ticket_id=tickets[0].id,
         )
 
