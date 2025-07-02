@@ -88,7 +88,7 @@ export default function OrganizationDashboard() {
                         'gap-1 text-xs font-bold text-green-500',
                       )}
                     >
-                      {dashboardData.todayTicketCount} vé đã bán hôm nay
+                      {dashboardData.todayRevenueCount} vé đã bán hôm nay
                     </p>
                   </div>
                 </div>
