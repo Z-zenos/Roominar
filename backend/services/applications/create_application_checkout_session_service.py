@@ -41,7 +41,7 @@ async def create_application_checkout_session(
                         "currency": "usd",
                         "product_data": {
                             "name": ticket["name"],
-                            "description": ticket["description"],
+                            "description": ticket["description"] or ticket["type"],
                         },
                         "unit_amount": int(ticket["price"] * 100),
                     },
