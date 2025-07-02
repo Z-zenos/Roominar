@@ -67,7 +67,7 @@ async def get_organization_dashboard(db: Session, organizer: User):
         FROM event_counts ec
         JOIN ticket_counts tc ON true
         JOIN revenue_counts rc ON true
-        JOIN actual_attendees aa ON true
+        LEFT JOIN actual_attendees aa ON true
         """
     )
 
