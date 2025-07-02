@@ -364,7 +364,7 @@ export default function AttendeeDataTable({ slug }: AttendeeDataTableProps) {
                     applyAtFrom: undefined,
                     applyAtTo: undefined,
                   });
-                  router.push('/organization/events/hmf/overview');
+                  router.push(`/organization/events/${slug}/overview`);
                 }}
                 startContent={<GrPowerReset />}
               >
