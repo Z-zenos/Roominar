@@ -202,7 +202,7 @@ import { GenerateEventAIRequest } from '../models/GenerateEventAIRequest';
 import { GenerateEventAIResponse } from '../models/GenerateEventAIResponse';
 import { GetAttendeeDetailResponse            } from '../models/GetAttendeeDetailResponse';
 import { GetDraftEventResponse                           } from '../models/GetDraftEventResponse';
-import { GetEventDetailResponse                                          } from '../models/GetEventDetailResponse';
+import { GetEventDetailResponse                                           } from '../models/GetEventDetailResponse';
 import { GetMeResponse } from '../models/GetMeResponse';
 import { GetOrganizationDashboardResponse } from '../models/GetOrganizationDashboardResponse';
 import { GetOrganizationDetailResponse } from '../models/GetOrganizationDetailResponse';

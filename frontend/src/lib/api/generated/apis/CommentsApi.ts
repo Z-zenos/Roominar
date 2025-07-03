@@ -26,7 +26,7 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Delete Comment
-            * @param commentId 
+            * @param commentId
         */
         public async deleteComment(commentId: number, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -63,7 +63,7 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Delete Comment Reply
-            * @param replyId 
+            * @param replyId
         */
         public async deleteCommentReply(replyId: number, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -94,15 +94,19 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Listing Comment Replies
-            * @param commentId 
+            * @param commentId
+            * @param perPage
+            * @param page
         */
-        public async listingCommentReplies(commentId: number, _options?: Configuration): Promise<RequestContext> {
+        public async listingCommentReplies(commentId: number, perPage?: number, page?: number, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
 
                     // verify required parameter 'commentId' is not null or undefined
                     if (commentId === null || commentId === undefined) {
                     throw new RequiredError("CommentsApi", "listingCommentReplies", "commentId");
                     }
+
+
 
 
             // Path Params
@@ -112,6 +116,16 @@ import type {SecurityAuthentication} from '../auth/auth';
             // Make Request Context
             const requestContext = _config.baseServer.makeRequestContext(localVarPath, HttpMethod.GET);
             requestContext.setHeaderParam("Accept", "application/json, */*;q=0.8")
+
+                // Query Params
+                if (perPage !== undefined) {
+                requestContext.setQueryParam("per_page", ObjectSerializer.serialize(perPage, "number", ""));
+                }
+
+                // Query Params
+                if (page !== undefined) {
+                requestContext.setQueryParam("page", ObjectSerializer.serialize(page, "number", ""));
+                }
 
 
 
@@ -125,7 +139,7 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Pin Comment
-            * @param commentId 
+            * @param commentId
         */
         public async pinComment(commentId: number, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -162,8 +176,8 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Reply Comment
-            * @param commentId 
-            * @param createCommentReplyRequest 
+            * @param commentId
+            * @param createCommentReplyRequest
         */
         public async replyComment(commentId: number, createCommentReplyRequest?: CreateCommentReplyRequest, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -212,7 +226,7 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Unpin Comment
-            * @param commentId 
+            * @param commentId
         */
         public async unpinComment(commentId: number, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -249,8 +263,8 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Update Comment
-            * @param commentId 
-            * @param updateEventCommentRequest 
+            * @param commentId
+            * @param updateEventCommentRequest
         */
         public async updateComment(commentId: number, updateEventCommentRequest?: UpdateEventCommentRequest, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -299,8 +313,8 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Update Comment Reply
-            * @param replyId 
-            * @param updateCommentReplyRequest 
+            * @param replyId
+            * @param updateCommentReplyRequest
         */
         public async updateCommentReply(replyId: number, updateCommentReplyRequest?: UpdateCommentReplyRequest, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -349,8 +363,8 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Vote Comment
-            * @param commentId 
-            * @param voteCommentRequest 
+            * @param commentId
+            * @param voteCommentRequest
         */
         public async voteComment(commentId: number, voteCommentRequest?: VoteCommentRequest, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;

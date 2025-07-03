@@ -146,6 +146,10 @@ const apiInstance = new .CommentsApi(configuration);
 let body:.CommentsApiListingCommentRepliesRequest = {
   // number
   commentId: 1,
+  // number (optional)
+  perPage: 1,
+  // number (optional)
+  page: 1,
 };
 
 apiInstance.listingCommentReplies(body).then((data:any) => {
@@ -159,6 +163,8 @@ apiInstance.listingCommentReplies(body).then((data:any) => {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **commentId** | [**number**] |  | defaults to undefined
+ **perPage** | [**number**] |  | (optional) defaults to undefined
+ **page** | [**number**] |  | (optional) defaults to undefined
 
 
 ### Return type
@@ -539,5 +545,3 @@ Name | Type | Description  | Notes
 **422** | Validation Error |  -  |
 
 [[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
-
-

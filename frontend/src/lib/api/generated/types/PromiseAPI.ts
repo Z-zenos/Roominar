@@ -174,24 +174,6 @@ export class PromiseApplicationsApi {
     }
 
     /**
-     * Cancel Application
-     * @param applicationId
-     */
-    public cancelApplicationWithHttpInfo(applicationId: number, _options?: Configuration): Promise<HttpInfo<void>> {
-        const result = this.api.cancelApplicationWithHttpInfo(applicationId, _options);
-        return result.toPromise();
-    }
-
-    /**
-     * Cancel Application
-     * @param applicationId
-     */
-    public cancelApplication(applicationId: number, _options?: Configuration): Promise<void> {
-        const result = this.api.cancelApplication(applicationId, _options);
-        return result.toPromise();
-    }
-
-    /**
      * Create Application Checkout Session
      * @param createApplicationRequest
      */
@@ -544,18 +526,22 @@ export class PromiseCommentsApi {
     /**
      * Listing Comment Replies
      * @param commentId
+     * @param perPage
+     * @param page
      */
-    public listingCommentRepliesWithHttpInfo(commentId: number, _options?: Configuration): Promise<HttpInfo<ListingCommentRepliesResponse>> {
-        const result = this.api.listingCommentRepliesWithHttpInfo(commentId, _options);
+    public listingCommentRepliesWithHttpInfo(commentId: number, perPage?: number, page?: number, _options?: Configuration): Promise<HttpInfo<ListingCommentRepliesResponse>> {
+        const result = this.api.listingCommentRepliesWithHttpInfo(commentId, perPage, page, _options);
         return result.toPromise();
     }
 
     /**
      * Listing Comment Replies
      * @param commentId
+     * @param perPage
+     * @param page
      */
-    public listingCommentReplies(commentId: number, _options?: Configuration): Promise<ListingCommentRepliesResponse> {
-        const result = this.api.listingCommentReplies(commentId, _options);
+    public listingCommentReplies(commentId: number, perPage?: number, page?: number, _options?: Configuration): Promise<ListingCommentRepliesResponse> {
+        const result = this.api.listingCommentReplies(commentId, perPage, page, _options);
         return result.toPromise();
     }
 

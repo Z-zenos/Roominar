@@ -163,15 +163,6 @@ import { VoteTypeCode } from '../models/VoteTypeCode';
 import { ObservableApplicationsApi } from "./ObservableAPI";
 import type { ApplicationsApiRequestFactory, ApplicationsApiResponseProcessor} from "../apis/ApplicationsApi";
 
-export interface ApplicationsApiCancelApplicationRequest {
-    /**
-     *
-     * @type number
-     * @memberof ApplicationsApicancelApplication
-     */
-    applicationId: number
-}
-
 export interface ApplicationsApiCreateApplicationCheckoutSessionRequest {
     /**
      *
@@ -195,22 +186,6 @@ export class ObjectApplicationsApi {
 
     public constructor(configuration: Configuration, requestFactory?: ApplicationsApiRequestFactory, responseProcessor?: ApplicationsApiResponseProcessor) {
         this.api = new ObservableApplicationsApi(configuration, requestFactory, responseProcessor);
-    }
-
-    /**
-     * Cancel Application
-     * @param param the request object
-     */
-    public cancelApplicationWithHttpInfo(param: ApplicationsApiCancelApplicationRequest, options?: Configuration): Promise<HttpInfo<void>> {
-        return this.api.cancelApplicationWithHttpInfo(param.applicationId,  options).toPromise();
-    }
-
-    /**
-     * Cancel Application
-     * @param param the request object
-     */
-    public cancelApplication(param: ApplicationsApiCancelApplicationRequest, options?: Configuration): Promise<void> {
-        return this.api.cancelApplication(param.applicationId,  options).toPromise();
     }
 
     /**
@@ -626,6 +601,18 @@ export interface CommentsApiListingCommentRepliesRequest {
      * @memberof CommentsApilistingCommentReplies
      */
     commentId: number
+    /**
+     *
+     * @type number
+     * @memberof CommentsApilistingCommentReplies
+     */
+    perPage?: number
+    /**
+     *
+     * @type number
+     * @memberof CommentsApilistingCommentReplies
+     */
+    page?: number
 }
 
 export interface CommentsApiPinCommentRequest {
@@ -750,7 +737,7 @@ export class ObjectCommentsApi {
      * @param param the request object
      */
     public listingCommentRepliesWithHttpInfo(param: CommentsApiListingCommentRepliesRequest, options?: Configuration): Promise<HttpInfo<ListingCommentRepliesResponse>> {
-        return this.api.listingCommentRepliesWithHttpInfo(param.commentId,  options).toPromise();
+        return this.api.listingCommentRepliesWithHttpInfo(param.commentId, param.perPage, param.page,  options).toPromise();
     }
 
     /**
@@ -758,7 +745,7 @@ export class ObjectCommentsApi {
      * @param param the request object
      */
     public listingCommentReplies(param: CommentsApiListingCommentRepliesRequest, options?: Configuration): Promise<ListingCommentRepliesResponse> {
-        return this.api.listingCommentReplies(param.commentId,  options).toPromise();
+        return this.api.listingCommentReplies(param.commentId, param.perPage, param.page,  options).toPromise();
     }
 
     /**

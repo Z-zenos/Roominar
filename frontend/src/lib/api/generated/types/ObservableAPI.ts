@@ -179,37 +179,6 @@ export class ObservableApplicationsApi {
     }
 
     /**
-     * Cancel Application
-     * @param applicationId
-     */
-    public cancelApplicationWithHttpInfo(applicationId: number, _options?: Configuration): Observable<HttpInfo<void>> {
-        const requestContextPromise = this.requestFactory.cancelApplication(applicationId, _options);
-
-        // build promise chain
-        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
-        for (const middleware of this.configuration.middleware) {
-            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
-        }
-
-        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => this.configuration.httpApi.send(ctx))).
-            pipe(mergeMap((response: ResponseContext) => {
-                let middlewarePostObservable = of(response);
-                for (const middleware of this.configuration.middleware) {
-                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
-                }
-                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.cancelApplicationWithHttpInfo(rsp)));
-            }));
-    }
-
-    /**
-     * Cancel Application
-     * @param applicationId
-     */
-    public cancelApplication(applicationId: number, _options?: Configuration): Observable<void> {
-        return this.cancelApplicationWithHttpInfo(applicationId, _options).pipe(map((apiResponse: HttpInfo<void>) => apiResponse.data));
-    }
-
-    /**
      * Create Application Checkout Session
      * @param createApplicationRequest
      */
@@ -781,9 +750,11 @@ export class ObservableCommentsApi {
     /**
      * Listing Comment Replies
      * @param commentId
+     * @param perPage
+     * @param page
      */
-    public listingCommentRepliesWithHttpInfo(commentId: number, _options?: Configuration): Observable<HttpInfo<ListingCommentRepliesResponse>> {
-        const requestContextPromise = this.requestFactory.listingCommentReplies(commentId, _options);
+    public listingCommentRepliesWithHttpInfo(commentId: number, perPage?: number, page?: number, _options?: Configuration): Observable<HttpInfo<ListingCommentRepliesResponse>> {
+        const requestContextPromise = this.requestFactory.listingCommentReplies(commentId, perPage, page, _options);
 
         // build promise chain
         let middlewarePreObservable = from<RequestContext>(requestContextPromise);
@@ -804,9 +775,11 @@ export class ObservableCommentsApi {
     /**
      * Listing Comment Replies
      * @param commentId
+     * @param perPage
+     * @param page
      */
-    public listingCommentReplies(commentId: number, _options?: Configuration): Observable<ListingCommentRepliesResponse> {
-        return this.listingCommentRepliesWithHttpInfo(commentId, _options).pipe(map((apiResponse: HttpInfo<ListingCommentRepliesResponse>) => apiResponse.data));
+    public listingCommentReplies(commentId: number, perPage?: number, page?: number, _options?: Configuration): Observable<ListingCommentRepliesResponse> {
+        return this.listingCommentRepliesWithHttpInfo(commentId, perPage, page, _options).pipe(map((apiResponse: HttpInfo<ListingCommentRepliesResponse>) => apiResponse.data));
     }
 
     /**
