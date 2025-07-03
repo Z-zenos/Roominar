@@ -48,16 +48,6 @@ async def get_event_detail(db: Session, user: User, slug: str):
             .subquery()
         )
 
-        SoldTicketsNumber = (
-            select(
-                Event.id,
-                func.sum(TicketInventory.sold_quantity).label("sold_tickets_number"),
-            )
-            .join(TicketInventory, TicketInventory.event_id == Event.id)
-            .group_by(Event.id)
-            .subquery()
-        )
-
         query = (
             select(
                 *Event.__table__.columns,
@@ -71,7 +61,6 @@ async def get_event_detail(db: Session, user: User, slug: str):
                 Organization.slug.label("organization_slug"),
                 OrganizationEventFollowCount.c.organization_event_number,
                 OrganizationEventFollowCount.c.organization_follower_number,
-                SoldTicketsNumber.c.sold_tickets_number,
             )
             .where(
                 Event.slug == slug,
@@ -82,7 +71,6 @@ async def get_event_detail(db: Session, user: User, slug: str):
                 OrganizationEventFollowCount,
                 OrganizationEventFollowCount.c.id == Organization.id,
             )
-            .outerjoin(SoldTicketsNumber, SoldTicketsNumber.c.id == Event.id)
         )
 
         if user:
@@ -107,6 +95,10 @@ async def get_event_detail(db: Session, user: User, slug: str):
 
         event.update(
             {
+                "sold_tickets_number": event["sold_ticket_count"],
+                "remaining_tickets_number": (
+                    event["total_ticket_number"] - event["sold_ticket_count"]
+                ),
                 "survey": (
                     get_survey_detail(db, event["survey_id"])
                     if event["survey_id"]
@@ -117,7 +109,7 @@ async def get_event_detail(db: Session, user: User, slug: str):
                 "tags": get_event_tags(db, event["id"]),
             }
         )
-
+        user_id = None
         if user and user.role_code == RoleCode.AUDIENCE:
             is_bookmarked = db.exec(
                 select(
@@ -128,22 +120,23 @@ async def get_event_detail(db: Session, user: User, slug: str):
                 )
             ).one_or_none()
             event["is_bookmarked"] = is_bookmarked
+            user_id = user.id
 
-            db.exec(
-                update(Event)
-                .where(Event.id == event["id"])
-                .values(view_count=event["view_count"] + 1)
+        db.exec(
+            update(Event)
+            .where(Event.id == event["id"])
+            .values(view_count=event["view_count"] + 1)
+        )
+        db.add(
+            UserAction(
+                user_id=user_id,
+                event_id=event["id"],
+                organization_id=event["organization_id"],
+                action_type=UserActionTypeCode.VIEW,
             )
-            db.add(
-                UserAction(
-                    user_id=user.id,
-                    event_id=event["id"],
-                    organization_id=event["organization_id"],
-                    action_type=UserActionTypeCode.VIEW,
-                )
-            )
-            db.commit()
-            event["view_count"] += 1
+        )
+        db.commit()
+        event["view_count"] += 1
         return event
 
     except Exception as e:

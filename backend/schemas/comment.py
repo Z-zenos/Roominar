@@ -35,6 +35,11 @@ class CommentEventRequest(BaseModel):
     content: str
 
 
+class ListingCommentRepliesQueryParams(BaseModel):
+    per_page: int | None = Field(Query(default=10, le=100, ge=1))
+    page: int | None = Field(Query(default=1, ge=1))
+
+
 class ListingCommentRepliesItem(BaseModel):
     id: int
     content: str

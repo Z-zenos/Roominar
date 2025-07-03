@@ -143,7 +143,7 @@ def _build_filters_sort(
     sort_by = Event.created_at
 
     if query_params.keyword:
-        filters.append(Event.name.contains(query_params.keyword))
+        filters.append(Event.name.icontains(query_params.keyword))
 
     if query_params.tags:
         filters.append(TagAssociation.tag_id.in_(query_params.tags))

@@ -9,18 +9,24 @@ import { commentEventRequestSchema } from '@/src/schemas/event/CommentEventFormS
 import { handleApiError } from '@/src/utils/app.util';
 import CommentInput from '@/src/component/common/Input/CommentInput';
 import Comment from '@/src/component/common/Comment/Comment';
-import { Spinner } from '@nextui-org/react';
+import { Button, Spinner } from '@nextui-org/react';
+import { useState, useEffect } from 'react';
 
 interface EventCommentProps {
   eventId: number;
 }
 
 export default function EventComment({ eventId }: EventCommentProps) {
+  const [page, setPage] = useState(1);
+  const [comments, setComments] = useState([]);
+  const [isLoadAllComments, setIsLoadAllComments] = useState(false);
+
   const {
     data: commentsData,
     isLoading: isLoadingComments,
+    isPending: isFetchingComments,
     refetch: refetchListingEventComments,
-  } = useListingEventCommentsQuery({ eventId });
+  } = useListingEventCommentsQuery({ eventId, page });
 
   const { trigger: commentEvent, isMutating: isCommenting } =
     useCommentEventMutation({
@@ -38,6 +44,17 @@ export default function EventComment({ eventId }: EventCommentProps) {
     },
   });
 
+  useEffect(() => {
+    if (commentsData?.data) {
+      setComments((prevComments) => [...prevComments, ...commentsData.data]);
+    }
+    if (commentsData?.data?.length === 0) {
+      setIsLoadAllComments(true);
+    } else {
+      setIsLoadAllComments(false);
+    }
+  }, [commentsData]);
+
   function handleCommentEvent(data: CommentEventRequestSchema) {
     commentEvent({
       eventId,
@@ -45,6 +62,10 @@ export default function EventComment({ eventId }: EventCommentProps) {
         content: data.content,
       },
     });
+  }
+
+  function handleLoadMoreComments() {
+    setPage((prevPage) => prevPage + 1);
   }
 
   return (
@@ -60,11 +81,24 @@ export default function EventComment({ eventId }: EventCommentProps) {
           </div>
         )}
         {!isLoadingComments &&
-          commentsData?.data.map((comment) => (
+          comments.map((comment) => (
             <Comment
               key={comment.id}
               comment={comment}
             />
+          ))}
+
+        {!isLoadAllComments ||
+          (comments.length >= 10 && (
+            <Button
+              isLoading={isFetchingComments}
+              color='primary'
+              className='mx-auto'
+              onClick={handleLoadMoreComments}
+              disabled={isFetchingComments}
+            >
+              Tải thêm bình luận
+            </Button>
           ))}
       </section>
     </main>
