@@ -4,13 +4,14 @@ import {
   useCreateEventBookmarkMutation,
   useDeleteEventBookmarkMutation,
 } from '@/src/api/event.api';
+import { RoleCode } from '@/src/constants/role_code.constant';
 import { styles } from '@/src/constants/styles.constant';
 import { handleApiError } from '@/src/utils/app.util';
 
 import { Button } from '@nextui-org/button';
 import clsx from 'clsx';
 import { useSession } from 'next-auth/react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { IoMdLogIn } from 'react-icons/io';
 import { IoBookmarkOutline, IoBookmark } from 'react-icons/io5';
@@ -26,8 +27,9 @@ function EventBookmarkButton({
   isBookmarked,
   isDisabled = false,
 }: EventBookmarkButtonProps) {
-  const { status } = useSession();
+  const { data: auth, status } = useSession();
   const [bookmark, setBookmark] = useState<boolean>(isBookmarked);
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
   const { trigger: createEventBookmark } = useCreateEventBookmarkMutation({
     onSuccess() {
@@ -43,6 +45,23 @@ function EventBookmarkButton({
     onError: handleApiError,
   });
 
+  const handleBookmarkClick = () => {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+
+    debounceRef.current = setTimeout(() => {
+      if (
+        status === 'authenticated' &&
+        auth?.user?.roleCode === RoleCode.AUDIENCE
+      ) {
+        bookmark
+          ? deleteEventBookmark({ eventId })
+          : createEventBookmark({ eventId });
+      }
+    }, 300); // 300ms debounce delay
+  };
+
   return (
     <Button
       isIconOnly
@@ -54,7 +73,7 @@ function EventBookmarkButton({
             () => (
               <span className={clsx(styles.between, 'gap-2')}>
                 <span>
-                  You need to <b>login</b> for bookmark
+                  Bạn cần <b>đăng nhập</b> để bookmark sự kiện này.
                 </span>
                 <IoMdLogIn size={16} />
               </span>
@@ -63,11 +82,8 @@ function EventBookmarkButton({
               icon: '⚠️',
             },
           );
-        }
-        if (status === 'authenticated') {
-          bookmark
-            ? deleteEventBookmark({ eventId })
-            : createEventBookmark({ eventId });
+        } else {
+          handleBookmarkClick();
         }
       }}
       isDisabled={isDisabled}

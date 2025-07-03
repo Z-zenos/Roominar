@@ -202,12 +202,12 @@ def _build_filters(user: User, query_params: ListingMyTransactionsQueryParams):
     if query_params.keyword:
         filters.append(
             or_(
-                Event.name.contains(query_params.keyword),
-                Ticket.name.contains(query_params.keyword),
+                Event.name.icontains(query_params.keyword),
+                Ticket.name.icontains(query_params.keyword),
             )
         )
 
     if query_params.status:
-        filters.append(Transaction.status == query_params.status)
+        filters.append(TransactionItem.status == query_params.status)
 
     return filters

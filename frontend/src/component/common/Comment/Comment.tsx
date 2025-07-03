@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ConfirmDialog from '../Dialog/ConfirmDialog';
 import { Image, Spinner, useDisclosure } from '@nextui-org/react';
+import type { ListingCommentRepliesItem } from '@/src/lib/api/generated';
 import {
   VoteTypeCode,
   type ListingEventCommentsItem,
@@ -43,17 +44,38 @@ export default function Comment({ comment }: CommentProps) {
   const [userVote, setUserVote] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [isViewingReplies, setIsViewingReplies] = useState(false);
+
+  const [page, setPage] = useState(1);
+  const [isLoadAllReplies, setIsLoadAllReplies] = useState(false);
+  const [replies, setReplies] = useState<ListingCommentRepliesItem[]>([]);
 
   const {
     data: listingCommentRepliesData,
     isLoading: isLoadingListingCommentReplies,
+    isFetching: isFetchingListingCommentReplies,
     refetch: refetchListingCommentReplies,
   } = useListingCommentRepliesQuery(
     {
       commentId: comment.id,
+      page: page,
     },
-    false,
+    page > 1,
   );
+
+  useEffect(() => {
+    if (listingCommentRepliesData?.data) {
+      setReplies((prevReplies) => [
+        ...prevReplies,
+        ...listingCommentRepliesData.data,
+      ]);
+    }
+    if (listingCommentRepliesData?.data?.length === 0) {
+      setIsLoadAllReplies(true);
+    } else {
+      setIsLoadAllReplies(false);
+    }
+  }, [listingCommentRepliesData]);
 
   const { trigger: replyComment, isMutating: isReplyingComment } =
     useReplyCommentMutation({
@@ -154,7 +176,10 @@ export default function Comment({ comment }: CommentProps) {
   };
 
   const handleReplyComment = () => {
-    refetchListingCommentReplies();
+    setIsViewingReplies(!isViewingReplies);
+    if (!isViewingReplies) {
+      refetchListingCommentReplies();
+    }
   };
 
   const handleOpenReplyInput = () => {
@@ -277,7 +302,8 @@ export default function Comment({ comment }: CommentProps) {
             )}
 
             {!isLoadingListingCommentReplies &&
-              listingCommentRepliesData?.data.map((reply) => (
+              isViewingReplies &&
+              replies?.map((reply) => (
                 <CommentReply
                   key={reply.id}
                   commentId={comment.id}
@@ -285,6 +311,22 @@ export default function Comment({ comment }: CommentProps) {
                   refetch={refetchListingCommentReplies}
                 />
               ))}
+
+            {!isLoadAllReplies && isViewingReplies && replies.length > 10 && (
+              <p
+                className='ml-4 underline font-light text-sm cursor-pointer'
+                onClick={() => {
+                  setPage((prevPage) => prevPage + 1);
+                }}
+              >
+                Tải thêm
+              </p>
+            )}
+            {isFetchingListingCommentReplies && (
+              <div className='flex justify-center items-center'>
+                <Spinner />
+              </div>
+            )}
           </div>
           {isReplying && (
             <CommentInput

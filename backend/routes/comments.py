@@ -12,6 +12,7 @@ from backend.models.comment import Comment
 from backend.models.user import RoleCode, User
 from backend.schemas.comment import (
     CreateCommentReplyRequest,
+    ListingCommentRepliesQueryParams,
     ListingCommentRepliesResponse,
     UpdateCommentReplyRequest,
     UpdateEventCommentRequest,
@@ -29,8 +30,13 @@ router = APIRouter()
 async def listing_comment_replies(
     db: Session = Depends(get_read_db),
     comment_id: int = None,
+    query_params: ListingCommentRepliesQueryParams = Depends(
+        ListingCommentRepliesQueryParams
+    ),
 ):
-    replies, total = await comments_service.listing_comment_replies(db, comment_id)
+    replies, total = await comments_service.listing_comment_replies(
+        db, comment_id, query_params
+    )
     return ListingCommentRepliesResponse(
         data=replies,
         page=1,

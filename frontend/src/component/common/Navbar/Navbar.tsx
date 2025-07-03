@@ -40,6 +40,7 @@ import {
   SheetTrigger,
 } from '../Sheet';
 import { NotificationIcon, NotificationList } from '../Notification';
+import { RoleCode } from '@/src/constants/role_code.constant';
 
 const menuItems = [
   {
@@ -176,12 +177,20 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
               key={`nbi-${i}`}
             >
               <Link
-                href={ni.pathname}
+                href={
+                  ni.label === 'hostMyEvent' &&
+                  auth?.user?.roleCode === RoleCode.ORGANIZER
+                    ? '/organization/overview'
+                    : ni.pathname
+                }
                 color={
                   pathname.includes(ni.pathname) ? 'primary' : 'foreground'
                 }
               >
-                {t(ni.label)}
+                {ni.label === 'hostMyEvent' &&
+                auth?.user?.roleCode === RoleCode.ORGANIZER
+                  ? 'Trang chủ nhà tổ chức'
+                  : t(ni.label)}
               </Link>
             </NavbarItem>
           ))}

@@ -56,3 +56,5 @@ class User(BaseModel, table=True):
     email_changed_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
     deleted_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
     login_method_code: Optional[LoginMethodCode] = Field(sa_type=Enum(LoginMethodCode))
+
+    # point: Optional[int] = Field(default=1    0000000, sa_type=Integer)

@@ -41,11 +41,9 @@ def process_transaction(
     qr_service = QrcodeService()
 
     try:
-        organization_id = db.exec(
-            select(Event.organization_id).where(Event.id == event_id)
-        ).one_or_none()
-        receiver = db.exec(
-            select(User).where(User.organization_id == organization_id)
+        event = db.get(Event, event_id)
+        organzer = db.exec(
+            select(User).where(User.id == event.organization_id)
         ).one_or_none()
 
         tickets = tickets = (
@@ -132,7 +130,7 @@ def process_transaction(
         user_action = UserAction(
             user_id=user_id,
             event_id=event_id,
-            organization_id=organization_id,
+            organization_id=organzer.id,
             action_type=UserActionTypeCode.PURCHASE_TICKET,
         )
 
@@ -155,7 +153,7 @@ def process_transaction(
         push_apply_event_notification.delay(
             event_id=event_id,
             sender_id=user_id,
-            receiver_id=receiver.id,
+            receiver_id=organzer.id,
             ticket_id=tickets[0].id,
         )
 

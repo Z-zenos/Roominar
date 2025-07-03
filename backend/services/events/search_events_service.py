@@ -14,7 +14,6 @@ from backend.models.organization import Organization
 from backend.models.tag import Tag
 from backend.models.tag_association import TagAssociation
 from backend.models.target import Target
-from backend.models.ticket_inventory import TicketInventory
 from backend.models.user import User
 from backend.schemas.event import SearchEventsQueryParams
 
@@ -40,16 +39,6 @@ async def search_events(
         .join(Tag, Tag.id == TagAssociation.tag_id)
         .where(TagAssociation.entity_code == TagAssociationEntityCode.EVENT)
         .group_by(Event.id)
-        .cte()
-    )
-
-    SoldTicketsNumber = (
-        select(
-            TicketInventory.event_id,
-            func.sum(TicketInventory.sold_quantity).label("sold_tickets_number"),
-        )
-        .select_from(TicketInventory)
-        .group_by(TicketInventory.event_id)
         .cte()
     )
 
@@ -82,6 +71,7 @@ async def search_events(
             Event.meeting_tool_code,
             Event.published_at,
             Event.min_ticket_price,
+            Event.sold_ticket_count.label("sold_tickets_number"),
             case(
                 (
                     EventTag.c.tags.isnot(None),
@@ -89,13 +79,11 @@ async def search_events(
                 ),
                 else_=func.json_build_array(),
             ).label("tags"),
-            SoldTicketsNumber.c.sold_tickets_number,
             BookmarkCount.c.bookmark_count,
         )
         .join(Organization, Event.organization_id == Organization.id)
         .outerjoin(Target, Event.target_id == Target.id)
         .outerjoin(EventTag, Event.id == EventTag.c.event_id)
-        .outerjoin(SoldTicketsNumber, Event.id == SoldTicketsNumber.c.event_id)
         .outerjoin(BookmarkCount, Event.id == BookmarkCount.c.event_id)
     )
 
@@ -154,7 +142,7 @@ def _build_filters_sort(query_params: SearchEventsQueryParams):
     sort_by = Event.published_at
 
     if query_params.keyword:
-        filters.append(Event.name.contains(query_params.keyword))
+        filters.append(Event.name.icontains(query_params.keyword))
 
     if query_params.is_online is True and query_params.is_offline is False:
         filters.append(Event.is_online == query_params.is_online)

@@ -162,7 +162,7 @@ export default function Home() {
               <CiSearch className='w-5 h-5 pointer-events-none flex-shrink-0' />
             }
             onKeyUp={(e: React.KeyboardEvent<HTMLInputElement>) =>
-              e.key === 'Enter' && router.push(`/search?name=${value}`)
+              e.key === 'Enter' && router.push(`/search?keyword=${value}`)
             }
             value={value}
             onValueChange={setValue}
