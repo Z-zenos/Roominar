@@ -26,6 +26,8 @@ import { FaPhone } from 'react-icons/fa6';
 import { GrLocationPin } from 'react-icons/gr';
 import { CiMail } from 'react-icons/ci';
 import { useTranslations } from 'next-intl';
+import { RoleCode } from '@/src/constants/role_code.constant';
+import { useSession } from 'next-auth/react';
 
 interface OrganizationProfileProps {
   slug: string;
@@ -33,6 +35,7 @@ interface OrganizationProfileProps {
 
 function OrganizationProfile({ slug }: OrganizationProfileProps) {
   const t = useTranslations('code');
+  const { data: auth } = useSession();
   const { data: organization, isLoading: isGetOrganizationDetailLoading } =
     useGetOrganizationDetailQuery({ organizationSlug: slug });
   const { width } = useWindowDimensions();
@@ -96,10 +99,12 @@ function OrganizationProfile({ slug }: OrganizationProfileProps) {
             </div>
             <div className='1000px:col-span-2 col-span-7 '>
               <div className='flex justify-end items-start'>
-                <OrganizationFollowButton
-                  organizationId={organization.id}
-                  isFollowed={organization.isFollowed}
-                />
+                {auth?.user?.roleCode === RoleCode.AUDIENCE && (
+                  <OrganizationFollowButton
+                    organizationId={organization.id}
+                    isFollowed={organization.isFollowed}
+                  />
+                )}
               </div>
 
               <div className='mt-4 flex justify-end gap-4 text-[15px] text-gray-500 dark:text-dark-text'>

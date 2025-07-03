@@ -174,7 +174,7 @@ function SearchHeader({
           {filters['keyword'] && (
             <>
               <Text
-                content='find for'
+                content='cho'
                 className='font-light text-gray-500'
               />
               <Text

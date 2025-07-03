@@ -84,13 +84,13 @@ def _build_filters_sort(organizer: User, query_params: ListingAttendeesQueryPara
     if query_params.keyword:
         filters.append(
             or_(
-                func.concat(User.first_name, " ", User.last_name).contains(
+                func.concat(User.first_name, " ", User.last_name).icontains(
                     f"%{query_params.keyword}%"
                 ),
-                Event.name.contains(query_params.keyword),
-                Application.phone.contains(query_params.keyword),
-                Application.email.contains(query_params.keyword),
-                Event.id.cast(String).contains(query_params.keyword),
+                Event.name.icontains(query_params.keyword),
+                Application.phone.icontains(query_params.keyword),
+                Application.email.icontains(query_params.keyword),
+                Event.id.cast(String).icontains(query_params.keyword),
             )
         )
 

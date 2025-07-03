@@ -15,6 +15,8 @@ import {
 import clsx from 'clsx';
 import OrganizationFollowButton from '../Button/OrganizationFollowButton';
 import { useTranslations } from 'next-intl';
+import { RoleCode } from '@/src/constants/role_code.constant';
+import { useSession } from 'next-auth/react';
 
 export interface Organization extends ListingRandomOrganizationsItem {}
 
@@ -25,6 +27,7 @@ interface OrganizationCardProps {
 
 function OrganizationCard({ organization, className }: OrganizationCardProps) {
   const t = useTranslations('code');
+  const { data: auth } = useSession();
   return (
     <Card className={clsx('', className)}>
       <CardHeader className='justify-between'>
@@ -47,10 +50,12 @@ function OrganizationCard({ organization, className }: OrganizationCardProps) {
             </h5> */}
           </div>
         </Link>
-        <OrganizationFollowButton
-          organizationId={organization.id}
-          isFollowed={organization.isFollowed}
-        />
+        {auth?.user?.roleCode === RoleCode.AUDIENCE && (
+          <OrganizationFollowButton
+            organizationId={organization.id}
+            isFollowed={organization.isFollowed}
+          />
+        )}
       </CardHeader>
       <CardBody className='px-3 py-0 text-small text-default-400'>
         <p className='line-clamp-2 min-h-10 max-h-10'>
