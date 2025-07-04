@@ -15,6 +15,7 @@ class Comment(BaseModel, table=True):
     is_pinned: bool = Field(default=False)
     deleted_at: Optional[datetime] = Field(sa_type=DateTime(timezone=True))
     deletion_reason: Optional[str] = Field(sa_type=String(255))
+    is_anonymous: Optional[bool] = Field(default=False)
 
     vote_count: int = Field(default=0)
     reply_count: int = Field(default=0)

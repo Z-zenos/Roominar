@@ -362,6 +362,7 @@ class UserActionTypeCode(str, Enum):
     INVITE_FRIEND = "INVITE_FRIEND"
     ANSWER_APPLICATION_SURVEY = "ANSWER_APPLICATION_SURVEY"
     UNBOOKMARK = "UNBOOKMARK"
+    FEEDBACK = "FEEDBACK"
 
 
 class TrackingTimeRangeCode(str, Enum):

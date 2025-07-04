@@ -17,6 +17,7 @@ from backend.core.constants import (
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.schemas.common import PaginationResponse
+from backend.schemas.feedback import FeedbackRating
 from backend.schemas.survey import SurveyDetail
 from backend.schemas.tag import TagItem
 from backend.schemas.target import ListingTargetOptionsItem
@@ -461,3 +462,12 @@ class ListingEventOptionsResponse(BaseModel):
 
 class ListingTrendingEventsResponse(PaginationResponse[SearchEventsItem]):
     pass
+
+
+class FeedbackEventRequest(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    positive_feedback: str | None = Field(max_length=2048, default=None)
+    negative_feedback: str | None = Field(max_length=2048, default=None)
+    ratings: list[FeedbackRating] = Field([])
+    is_anonymous: bool = Field(default=False)

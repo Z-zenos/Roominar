@@ -11,7 +11,12 @@ import {
   FaRegCopy,
   FaRegEye,
 } from 'react-icons/fa';
-import { FaArrowRight, FaRegCommentDots, FaXTwitter } from 'react-icons/fa6';
+import {
+  FaArrowRight,
+  FaRegCommentDots,
+  FaStar,
+  FaXTwitter,
+} from 'react-icons/fa6';
 import { MdOutlineMail } from 'react-icons/md';
 import { GoOrganization } from 'react-icons/go';
 import { GiMicrophone, GiPartyPopper } from 'react-icons/gi';
@@ -58,6 +63,8 @@ import { ArrowRight } from 'lucide-react';
 import { EventDetailMenuBar } from '@/src/component/common/Navbar/EventDetailNavbar';
 import { CiViewTimeline } from 'react-icons/ci';
 import EventComment from './EventComment';
+import FeedbackEventForm from '../../component/form/FeedbackEventForm';
+import FeedbackList from './FeedbackList';
 
 const LazyMap = dynamic(() => import('../../component/common/Map/Map'), {
   ssr: false,
@@ -97,6 +104,14 @@ const menuItems = [
       'radial-gradient(circle, rgba(239,68,68,0.15) 0%, rgba(220,38,38,0.06) 50%, rgba(185,28,28,0) 100%)',
     iconColor: 'text-red-500',
   },
+  {
+    icon: FaStar,
+    label: 'Đánh giá',
+    href: 'feedbacks',
+    gradient:
+      'radial-gradient(circle, rgba(234,179,8,0.15) 0%, rgba(202,138,4,0.06) 50%, rgba(161,98,7,0) 100%)',
+    iconColor: 'text-yellow-500',
+  },
 ];
 
 interface EventDetailProps {
@@ -126,6 +141,8 @@ function EventDetail({ slug }: EventDetailProps) {
   const { data: auth } = useSession();
   const [activeItem, setActiveItem] = useState<string>('timeline');
   const [showCommentsSection, setShowCommentsSection] =
+    useState<boolean>(false);
+  const [showFeedbackSection, setShowFeedbackSection] =
     useState<boolean>(false);
 
   useEffect(() => {
@@ -158,7 +175,7 @@ function EventDetail({ slug }: EventDetailProps) {
           styles.between,
         )}
       >
-        {!showCommentsSection && (
+        {!showCommentsSection && !showFeedbackSection && (
           <div className='bg-transparent h-[200px] w-full flex items-center justify-center absolute top-0 left-0'>
             <div className='relative w-full '>
               <div className='my-8 relative space-y-4 opacity-15'>
@@ -180,57 +197,94 @@ function EventDetail({ slug }: EventDetailProps) {
         >
           <div className='flex justify-between flex-wrap gap-4 450px:w-[95%] w-full items-end'>
             <EventDetailMenuBar
-              items={menuItems.map((item) => {
-                if (item.label === 'Bình luận') {
-                  return {
-                    ...item,
-                    label: `Bình luận (${event?.commentCount})`,
-                  };
-                }
-                return item;
-              })}
+              items={menuItems
+                .filter((item) => {
+                  if (event.endAt < new Date()) {
+                    return item.href != 'feedbacks';
+                  }
+                  return item;
+                })
+                .map((item) => {
+                  if (item.label === 'Bình luận') {
+                    return {
+                      ...item,
+                      label: `Bình luận (${event?.commentCount})`,
+                    };
+                  }
+                  return item;
+                })}
               activeItem={activeItem}
               onItemClick={(item) => {
                 setActiveItem(item);
                 if (item === 'comments') {
                   setShowCommentsSection(true);
+                  setShowFeedbackSection(false);
+                } else if (item === 'feedbacks') {
+                  setShowFeedbackSection(true);
+                  setShowCommentsSection(false);
                 } else {
                   setShowCommentsSection(false);
+                  setShowFeedbackSection(false);
                   handleScroll(item.toLowerCase());
                 }
               }}
             />
-            <Chip
-              content={event?.viewCount + ''}
-              leftIcon={<FaRegEye className='text-sm' />}
-              type='info'
-              className='border border-primary-500 !max-h-[40px]'
-            />
-          </div>
-          <Image
-            src={event?.coverImageUrl}
-            alt='Event banner image'
-            width={1024}
-            className={clsx(
-              'w-full max-w-screen-xl aspect-video object-cover rounded-xl max-h-[576px]',
-              width > 1200 ? 'mx-auto' : '',
-            )}
-            classNames={{ wrapper: '!max-w-full' }}
-            loading='lazy'
-          />
-          <h2 className='text-primary font-bold 450px:text-xl text-xm'>
-            {event?.name}
-          </h2>
-          <div className={clsx(styles.flexStart, 'gap-2 flex-wrap')}>
-            {event?.tags.map((tag: TagItem) => (
-              <Badge
-                title={t(`tag.${tag.name}`)}
-                key={`badge-tag-${tag.id}`}
-                className='cursor-pointer hover:underline'
-                onClick={() => router.push(`/search?tags[]=${tag.id}`)}
+            {!showFeedbackSection && (
+              <Chip
+                content={event?.viewCount + ''}
+                leftIcon={<FaRegEye className='text-sm' />}
+                type='info'
+                className='border border-primary-500 !max-h-[40px]'
               />
-            ))}
+            )}
           </div>
+          {!showFeedbackSection && (
+            <>
+              <Image
+                src={event?.coverImageUrl}
+                alt='Event banner image'
+                width={1024}
+                className={clsx(
+                  'w-full max-w-screen-xl aspect-video object-cover rounded-xl max-h-[576px]',
+                  width > 1200 ? 'mx-auto' : '',
+                )}
+                classNames={{ wrapper: '!max-w-full' }}
+                loading='lazy'
+              />
+              <h2 className='text-primary font-bold 450px:text-xl text-xm'>
+                {event?.name}
+              </h2>
+              <div className={clsx(styles.flexStart, 'gap-2 flex-wrap')}>
+                {event?.tags.map((tag: TagItem) => (
+                  <Badge
+                    title={t(`tag.${tag.name}`)}
+                    key={`badge-tag-${tag.id}`}
+                    className='cursor-pointer hover:underline'
+                    onClick={() => router.push(`/search?tags[]=${tag.id}`)}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+          {showFeedbackSection && (
+            <FeedbackEventForm
+              eventId={event?.id}
+              criteriaList={[
+                {
+                  id: 1,
+                  name: 'Không gian',
+                },
+                {
+                  id: 2,
+                  name: 'Nội dung',
+                },
+                {
+                  id: 3,
+                  name: 'Giá cả',
+                },
+              ]}
+            />
+          )}
         </div>
         <div className={clsx(width > 1200 ? 'w-[25%]' : 'w-full')}>
           <div
@@ -393,7 +447,15 @@ function EventDetail({ slug }: EventDetailProps) {
             <EventComment eventId={event?.id} />
           </div>
         )}
-        {!showCommentsSection && (
+        {showFeedbackSection && (
+          <div className='w-full'>
+            <h3 className='font-semibold 450px:text-lg text-xm border-b border-b-gray-400'>
+              Đánh giá
+            </h3>
+            <FeedbackList />
+          </div>
+        )}
+        {!showCommentsSection && !showFeedbackSection && (
           <div
             className={clsx(
               'flex flex-col gap-7',
