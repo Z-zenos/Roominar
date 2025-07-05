@@ -4,13 +4,14 @@ import {
   useCreateOrganizationFollowMutation,
   useDeleteOrganizationFollowMutation,
 } from '@/src/api/organization.api';
+import { RoleCode } from '@/src/constants/role_code.constant';
 import { styles } from '@/src/constants/styles.constant';
 import { handleApiError } from '@/src/utils/app.util';
 
 import { Button } from '@nextui-org/react';
 import clsx from 'clsx';
 import { useSession } from 'next-auth/react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { IoMdLogIn } from 'react-icons/io';
 
@@ -18,20 +19,27 @@ interface OrganizationFollowButtonProps {
   organizationId: number;
   isFollowed: boolean;
   isDisabled?: boolean;
+  onFollowChange?: (isFollowed: boolean) => void;
 }
 
 export default function OrganizationFollowButton({
   organizationId,
   isFollowed,
   isDisabled = false,
+  onFollowChange,
 }: OrganizationFollowButtonProps) {
-  const { status } = useSession();
+  const { data: auth, status } = useSession();
+
   const [follow, setFollow] = useState<boolean>(isFollowed);
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
   const { trigger: createOrganizationFollow } =
     useCreateOrganizationFollowMutation({
       onSuccess() {
         setFollow(true);
+        if (onFollowChange) {
+          onFollowChange(true);
+        }
       },
       onError: handleApiError,
     });
@@ -40,9 +48,29 @@ export default function OrganizationFollowButton({
     useDeleteOrganizationFollowMutation({
       onSuccess() {
         setFollow(false);
+        if (onFollowChange) {
+          onFollowChange(false);
+        }
       },
       onError: handleApiError,
     });
+
+  const handleFollowClick = () => {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+
+    debounceRef.current = setTimeout(() => {
+      if (
+        status === 'authenticated' &&
+        auth?.user?.roleCode === RoleCode.AUDIENCE
+      ) {
+        follow
+          ? deleteOrganizationFollow({ organizationId })
+          : createOrganizationFollow({ organizationId });
+      }
+    }, 300); // 300ms debounce delay
+  };
 
   return (
     <Button
@@ -68,11 +96,8 @@ export default function OrganizationFollowButton({
               icon: '⚠️',
             },
           );
-        }
-        if (status === 'authenticated') {
-          follow
-            ? deleteOrganizationFollow({ organizationId })
-            : createOrganizationFollow({ organizationId });
+        } else {
+          handleFollowClick();
         }
       }}
       isDisabled={isDisabled}

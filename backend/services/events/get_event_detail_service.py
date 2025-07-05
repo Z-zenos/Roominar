@@ -1,3 +1,6 @@
+from datetime import datetime
+
+import pytz
 from sqlmodel import Session, and_, case, exists, func, select, update
 
 from backend.core.constants import (
@@ -8,8 +11,17 @@ from backend.core.constants import (
 )
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
-from backend.models import Bookmark, Event, Organization, Ticket, User
-from backend.models.follow import Follow
+from backend.models import (
+    Bookmark,
+    Event,
+    Feedback,
+    FeedbackCriteria,
+    FeedbackScore,
+    Follow,
+    Organization,
+    Ticket,
+    User,
+)
 from backend.models.ticket_inventory import TicketInventory
 from backend.models.transaction_item import TransactionItem
 from backend.models.user_action import UserAction
@@ -96,6 +108,9 @@ async def get_event_detail(db: Session, user: User, slug: str):
         event.update(
             {
                 "sold_tickets_number": event["sold_ticket_count"],
+                "remaining_tickets_number": (
+                    event["total_ticket_number"] - event["sold_ticket_count"]
+                ),
                 "survey": (
                     get_survey_detail(db, event["survey_id"])
                     if event["survey_id"]
@@ -106,7 +121,7 @@ async def get_event_detail(db: Session, user: User, slug: str):
                 "tags": get_event_tags(db, event["id"]),
             }
         )
-
+        user_id = None
         if user and user.role_code == RoleCode.AUDIENCE:
             is_bookmarked = db.exec(
                 select(
@@ -117,22 +132,51 @@ async def get_event_detail(db: Session, user: User, slug: str):
                 )
             ).one_or_none()
             event["is_bookmarked"] = is_bookmarked
+            user_id = user.id
 
-            db.exec(
-                update(Event)
-                .where(Event.id == event["id"])
-                .values(view_count=event["view_count"] + 1)
+            if event["end_at"] < datetime.now(pytz.utc):
+                user_feedback = db.exec(
+                    select(
+                        Feedback,
+                        func.json_agg(
+                            func.json_build_object(
+                                "criteria_id",
+                                FeedbackCriteria.id,
+                                "name",
+                                FeedbackCriteria.name,
+                                "score",
+                                FeedbackScore.score,
+                            )
+                        ),
+                    )
+                    .select_from(Feedback)
+                    .join(FeedbackScore, FeedbackScore.feedback_id == Feedback.id)
+                    .join(
+                        FeedbackCriteria,
+                        FeedbackCriteria.id == FeedbackScore.criteria_id,
+                    )
+                    .where(
+                        Feedback.user_id == user.id,
+                        Feedback.event_id == event["id"],
+                    )
+                    .group_by(Feedback.id)
+                ).one_or_none()
+                event["user_feedback"] = user_feedback
+        db.exec(
+            update(Event)
+            .where(Event.id == event["id"])
+            .values(view_count=event["view_count"] + 1)
+        )
+        db.add(
+            UserAction(
+                user_id=user_id,
+                event_id=event["id"],
+                organization_id=event["organization_id"],
+                action_type=UserActionTypeCode.VIEW,
             )
-            db.add(
-                UserAction(
-                    user_id=user.id,
-                    event_id=event["id"],
-                    organization_id=event["organization_id"],
-                    action_type=UserActionTypeCode.VIEW,
-                )
-            )
-            db.commit()
-            event["view_count"] += 1
+        )
+        db.commit()
+        event["view_count"] += 1
         return event
 
     except Exception as e:

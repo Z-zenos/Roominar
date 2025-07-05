@@ -345,9 +345,13 @@ class TagStatsCategoryCode(str, Enum):
 class UserActionTypeCode(str, Enum):
     VIEW = "VIEW"
     BOOKMARK = "BOOKMARK"
+    UNBOOKMARK = "UNBOOKMARK"
+
     SHARE = "SHARE"
     COMMENT = "COMMENT"
     FOLLOW = "FOLLOW"
+    UNFOLLOW = "UNFOLLOW"
+
     RATE = "RATE"
     CHECK_IN = "CHECK_IN"
     CHECK_OUT = "CHECK_OUT"
@@ -361,7 +365,6 @@ class UserActionTypeCode(str, Enum):
     ADD_TO_CALENDAR = "ADD_TO_CALENDAR"
     INVITE_FRIEND = "INVITE_FRIEND"
     ANSWER_APPLICATION_SURVEY = "ANSWER_APPLICATION_SURVEY"
-    UNBOOKMARK = "UNBOOKMARK"
     FEEDBACK = "FEEDBACK"
 
 

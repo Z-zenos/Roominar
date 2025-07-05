@@ -114,6 +114,23 @@ class SearchEventsResponse(PaginationResponse[SearchEventsItem]):
     pass
 
 
+class UserFeedbackRating(BaseModel):
+    id: int
+    name: str
+    score: int
+
+
+class GetUserFeedback(BaseModel):
+    id: int
+    positive_feedback: str | None = None
+    negative_feedback: str | None = None
+    is_anonymous: bool = False
+    created_at: datetime
+    updated_at: datetime
+    deleted_at: datetime | None = None
+    ratings: list[UserFeedbackRating] = Field([])
+
+
 class GetEventDetailResponse(BaseModel):
     id: int
     slug: str
@@ -144,7 +161,8 @@ class GetEventDetailResponse(BaseModel):
     organization_contact_url: str | None = None
     organization_slug: str | None = None
     total_ticket_number: int
-    sold_tickets_number: int | None = None
+    sold_tickets_number: int | None = 0
+    remaining_tickets_number: int | None = 0
     status: EventStatusCode
     application_form_url: str | None = None
     tags: list[TagItem] = Field([])
@@ -154,9 +172,10 @@ class GetEventDetailResponse(BaseModel):
     organization_event_number: int | None = None
     organization_follower_number: int | None = None
     max_ticket_number_per_account: int | None = None
-    comment_count: int | None = None
-    feedback_count: int | None = None
-    rating_count: int | None = None
+    comment_count: int | None = 0
+    feedback_count: int | None = 0
+    rating_count: int | None = 0
+    user_feedback: GetUserFeedback | None = None
 
 
 class ListingTopOrganizationEventsItem(BaseModel):

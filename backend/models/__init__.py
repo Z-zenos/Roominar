@@ -7,6 +7,8 @@ from .comment_reply import CommentReply
 from .comment_vote import CommentVote
 from .event import Event
 from .feedback import Feedback
+from .feedback_criteria import FeedbackCriteria
+from .feedback_score import FeedbackScore
 from .follow import Follow
 from .notification import Notification
 from .organization import Organization
@@ -56,4 +58,6 @@ all = (
     CommentReply,
     CommentVote,
     Feedback,
+    FeedbackCriteria,
+    FeedbackScore,
 )

@@ -6,6 +6,7 @@ import { toCamelCase } from '../utils/app.util';
 import { useQuery } from '@tanstack/react-query';
 import type {
   EventsApiFeedbackEventRequest,
+  EventsApiListingFeedbackCriteriaRequest,
   EventsApiListingFeedbacksRequest,
   FeedbacksApiUpdateFeedbackRequest,
 } from '../lib/api/generated/types/ObjectParamAPI';
@@ -61,4 +62,15 @@ export const useDeleteFeedbackMutation = <T>(
     async (_: string, { arg }) => await api.feedbacks.deleteFeedback(arg),
     options,
   );
+};
+
+export const useListingFeedbackCriteriaQuery = (
+  params?: EventsApiListingFeedbackCriteriaRequest,
+) => {
+  const api = useApi();
+  const key = 'listing-feedback-criteria';
+  return useQuery({
+    queryKey: [key, params],
+    queryFn: async () => await api.events.listingFeedbackCriteria(params),
+  });
 };

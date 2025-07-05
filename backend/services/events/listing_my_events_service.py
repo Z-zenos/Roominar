@@ -180,7 +180,7 @@ def _build_filters(user: User, query_params: ListingMyEventsQueryParams):
     ]
 
     if query_params.keyword:
-        filters.append(Event.name.contains(query_params.keyword))
+        filters.append(Event.name.icontains(query_params.keyword))
 
     if query_params.status == MyEventStatusCode.BOOKMARKED:
         filters.append(Bookmark.user_id == user.id)

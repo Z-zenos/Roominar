@@ -3,7 +3,7 @@
 import clsx from 'clsx';
 
 import { useEffect, useState } from 'react';
-import { Button, Checkbox, Image, Link } from '@nextui-org/react';
+import { Button, Checkbox, Image } from '@nextui-org/react';
 import {
   FaFacebookSquare,
   FaInstagram,
@@ -65,6 +65,7 @@ import { CiViewTimeline } from 'react-icons/ci';
 import EventComment from './EventComment';
 import FeedbackEventForm from '../../component/form/FeedbackEventForm';
 import FeedbackList from './FeedbackList';
+import { RoleCode } from '@/src/constants/role_code.constant';
 
 const LazyMap = dynamic(() => import('../../component/common/Map/Map'), {
   ssr: false,
@@ -144,6 +145,13 @@ function EventDetail({ slug }: EventDetailProps) {
     useState<boolean>(false);
   const [showFeedbackSection, setShowFeedbackSection] =
     useState<boolean>(false);
+  const [followCount, setFollowCount] = useState<number>(
+    event?.organizationFollowerNumber ?? 0,
+  );
+
+  useEffect(() => {
+    setFollowCount(event?.organizationFollowerNumber ?? 0);
+  }, [event?.organizationFollowerNumber]);
 
   useEffect(() => {
     setTimeout(() => setIsCopied(false), 30000);
@@ -152,6 +160,12 @@ function EventDetail({ slug }: EventDetailProps) {
   useEffect(() => {
     handleScroll(activeItem.toLowerCase());
   }, [showCommentsSection]);
+
+  useEffect(() => {
+    if (event) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [event]);
 
   const handleScroll = (id: string) => {
     const el = document.getElementById(id);
@@ -326,84 +340,89 @@ function EventDetail({ slug }: EventDetailProps) {
                 >
                   <FaRegCopy /> {isCopied ? 'Copied' : 'Copy'} URL
                 </Button>
-                <EventBookmark
-                  isBookmarked={event?.isBookmarked}
-                  eventId={event?.id}
-                />
+                {auth?.user.roleCode === RoleCode.AUDIENCE && (
+                  <EventBookmark
+                    isBookmarked={event?.isBookmarked}
+                    eventId={event?.id}
+                  />
+                )}
               </div>
             </div>
 
             <div>
-              <div
-                className={clsx(
-                  styles.flexStart,
-                  'border-y border-y-gray-500 py-4',
-                )}
-              >
-                <HiOutlineTicket className='text-primary w-6 h-6 rotate-45' />
-                <span className='font-light'>
-                  {event?.soldTicketsNumber ?? 0} vé đã bán /{' '}
-                  {event?.totalTicketNumber}
-                </span>
-              </div>
-              <Button
-                color='primary'
-                className='450px:my-3 mt-3 mx-auto w-[160px] font-semibold block'
-                radius='none'
-                onClick={() => {
-                  if (
-                    event?.applicationEndAt < new Date() ||
-                    event?.applicationStartAt > new Date()
-                  ) {
-                    toast.custom(() => (
-                      <div
-                        className={clsx(
-                          'bg-white dark:bg-dark-sub dark:text-white',
-                          'flex items-center justify-between',
-                          'max-w-[400px] p-4 rounded-lg shadow-lg',
-                        )}
-                      >
-                        <div className='flex items-center gap-4'>
-                          <div className='p-3 bg-red-500 rounded-full'>
-                            <TbClockExclamation className='text-white' />
-                          </div>
-                          <div>
-                            <p className='text-sm'>
-                              Không thể đăng ký sự kiện trong khoảng thời gian
-                              này vì thời gian đăng ký đã kết thúc hoặc chưa bắt
-                              đầu.
-                            </p>
+              {((event?.remainingTicketsNumber ?? 0) /
+                event?.totalTicketNumber) *
+                100 <
+              10 ? (
+                <div className='bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded-lg animate-pulse shadow-md inline-block font-semibold text-sm sm:text-base'>
+                  🔥 Nhanh tay! Chỉ còn{' '}
+                  <span className='text-red-900 font-bold'>5 vé</span>
+                </div>
+              ) : (
+                <div
+                  className={clsx(
+                    styles.flexStart,
+                    'border-y border-y-gray-500 py-4',
+                  )}
+                >
+                  <HiOutlineTicket className='text-primary w-6 h-6 rotate-45' />
+                  <span className='font-light'>
+                    Còn {event?.remainingTicketsNumber ?? 0} vé /{' '}
+                    {event?.totalTicketNumber ?? 0}
+                  </span>
+                </div>
+              )}
+              {auth?.user?.roleCode !== RoleCode.ORGANIZER && (
+                <Button
+                  color='primary'
+                  className='450px:my-3 mt-3 mx-auto w-[160px] font-semibold block'
+                  radius='none'
+                  onClick={() => {
+                    if (
+                      event?.applicationEndAt < new Date() ||
+                      event?.applicationStartAt > new Date()
+                    ) {
+                      toast.custom(() => (
+                        <div
+                          className={clsx(
+                            'bg-white dark:bg-dark-sub dark:text-white',
+                            'flex items-center justify-between',
+                            'max-w-[400px] p-4 rounded-lg shadow-lg',
+                          )}
+                        >
+                          <div className='flex items-center gap-4'>
+                            <div className='p-3 bg-red-500 rounded-full'>
+                              <TbClockExclamation className='text-white' />
+                            </div>
+                            <div>
+                              <p className='text-sm'>
+                                Không thể đăng ký sự kiện trong khoảng thời gian
+                                này vì thời gian đăng ký đã kết thúc hoặc chưa
+                                bắt đầu.
+                              </p>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ));
-                  } else {
-                    router.push(
-                      auth?.user
-                        ? `${pathname}/apply`
-                        : `/login?callbackUrl=/events/${event?.slug}/apply`,
-                    );
-                  }
-                }}
-                isDisabled={event?.applicationEndAt < new Date()}
-              >
-                Đăng ký ngay
-              </Button>
+                      ));
+                    } else {
+                      router.push(
+                        auth?.user
+                          ? `${pathname}/apply`
+                          : `/login?callbackUrl=/events/${event?.slug}/apply`,
+                      );
+                    }
+                  }}
+                  isDisabled={event?.applicationEndAt < new Date()}
+                >
+                  Đăng ký ngay
+                </Button>
+              )}
               {event?.applicationEndAt < new Date() && (
                 <p className='opacity-60 text-ss'>
                   Thời gian đăng ký sự kiện đã kết thúc.
                 </p>
               )}
             </div>
-
-            <Link
-              className={clsx(styles.between, 'text-primary gap-2')}
-              href='#'
-              underline='hover'
-            >
-              <MdOutlineMail size={20} />
-              Hỏi vể sự kiện này.
-            </Link>
           </div>
 
           {/* === LOCATION === */}
@@ -539,32 +558,44 @@ function EventDetail({ slug }: EventDetailProps) {
                                   </>
                                 )}
                               </span>
-                              <button
-                                className='group relative flex items-center gap-1 overflow-hidden rounded-md border-[1.5px] border-[#333333]/40 bg-transparent px-8 py-2 text-sm font-semibold text-[#111111] cursor-pointer transition-all duration-[600ms] ease-[cubic-bezier(0.23,1,0.32,1)] hover:border-transparent hover:text-white hover:rounded-[12px] active:scale-[0.95] !pointer-events-auto'
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  router.push(`/events/${event.slug}/apply`);
-                                }}
-                              >
-                                {/* Left arrow (arr-2) */}
-                                <ArrowRight className='absolute w-4 h-4 left-[-25%] stroke-[#111111] fill-none z-[9] group-hover:left-4 group-hover:stroke-white transition-all duration-[800ms] ease-[cubic-bezier(0.34,1.56,0.64,1)]' />
+                              {auth?.user?.roleCode !== RoleCode.ORGANIZER &&
+                              event?.applicationEndAt > new Date() &&
+                              event?.applicationStartAt < new Date() ? (
+                                <button
+                                  className='group relative flex items-center gap-1 overflow-hidden rounded-md border-[1.5px] border-[#333333]/40 bg-transparent px-8 py-2 text-sm font-semibold text-[#111111] cursor-pointer transition-all duration-[600ms] ease-[cubic-bezier(0.23,1,0.32,1)] hover:border-transparent hover:text-white hover:rounded-[12px] active:scale-[0.95] !pointer-events-auto'
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    router.push(`/events/${event.slug}/apply`);
+                                  }}
+                                >
+                                  {/* Left arrow (arr-2) */}
+                                  <ArrowRight className='absolute w-4 h-4 left-[-25%] stroke-[#111111] fill-none z-[9] group-hover:left-4 group-hover:stroke-white transition-all duration-[800ms] ease-[cubic-bezier(0.34,1.56,0.64,1)]' />
 
-                                {/* Text */}
-                                <span className='relative z-[1] -translate-x-3 group-hover:translate-x-3 transition-all duration-[800ms] ease-out'>
-                                  Mua vé ngay
-                                </span>
+                                  {/* Text */}
+                                  <span className='relative z-[1] -translate-x-3 group-hover:translate-x-3 transition-all duration-[800ms] ease-out'>
+                                    Mua vé ngay
+                                  </span>
 
-                                {/* Circle */}
-                                <span className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-[#111111] rounded-[50%] opacity-0 group-hover:w-[220px] group-hover:h-[220px] group-hover:opacity-100 transition-all duration-[800ms] ease-[cubic-bezier(0.19,1,0.22,1)]'></span>
+                                  {/* Circle */}
+                                  <span className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-[#111111] rounded-[50%] opacity-0 group-hover:w-[220px] group-hover:h-[220px] group-hover:opacity-100 transition-all duration-[800ms] ease-[cubic-bezier(0.19,1,0.22,1)]'></span>
 
-                                {/* Right arrow (arr-1) */}
-                                <ArrowRight className='absolute w-4 h-4 right-4 stroke-[#111111] fill-none z-[9] group-hover:right-[-25%] group-hover:stroke-white transition-all duration-[800ms] ease-[cubic-bezier(0.34,1.56,0.64,1)]' />
-                              </button>
+                                  {/* Right arrow (arr-1) */}
+                                  <ArrowRight className='absolute w-4 h-4 right-4 stroke-[#111111] fill-none z-[9] group-hover:right-[-25%] group-hover:stroke-white transition-all duration-[800ms] ease-[cubic-bezier(0.34,1.56,0.64,1)]' />
+                                </button>
+                              ) : (
+                                <p className='text-sm text-gray-600'>
+                                  Không phải thời điểm mua vé
+                                </p>
+                              )}
                             </h4>
-                            <p className='font-light opacity-80 leading-5 text-ss mt-1'>
-                              {ticket.description}
-                            </p>
-                            <div className={clsx(styles.between, 'w-full')}>
+                            <Chip
+                              className='w-fit font-bold'
+                              type={ticket.price > 0 ? 'warning' : 'info'}
+                              content={t(`ticket.type.${ticket.type}`)}
+                            />
+                            <div
+                              className={clsx(styles.between, 'w-full mt-1')}
+                            >
                               {ticket.price ? (
                                 <div className='text-sm w-full'>
                                   <span>Giá: </span>
@@ -573,11 +604,12 @@ function EventDetail({ slug }: EventDetailProps) {
                                   </span>
                                 </div>
                               ) : (
-                                <span>Miễn phí</span>
+                                <span>&nbsp;</span>
                               )}
                               <p className='text-nm'>
-                                <span className='text-orange-500 font-bold mr-1'>
-                                  {ticket.quantity}
+                                Còn
+                                <span className='text-orange-500 font-bold mx-1'>
+                                  {ticket.quantity - ticket.soldQuantity}
                                 </span>
                                 vé
                               </p>
@@ -650,13 +682,20 @@ function EventDetail({ slug }: EventDetailProps) {
                   {event?.organizationName}
                 </h3>
                 <div className='text-right mt-3'>
-                  <OrganizationFollowButton
-                    organizationId={event.organizationId}
-                    isFollowed={event.isOrganizationFollowed}
-                  />
+                  {auth?.user?.roleCode === RoleCode.AUDIENCE && (
+                    <OrganizationFollowButton
+                      organizationId={event.organizationId}
+                      isFollowed={event.isOrganizationFollowed}
+                      onFollowChange={(isFollowed) => {
+                        setFollowCount((prev) =>
+                          isFollowed ? prev + 1 : prev - 1,
+                        );
+                      }}
+                    />
+                  )}
                   <p className='mt-2'>
                     <span className='underline font-medium text-sm text-red-500 mr-2'>
-                      {event.organizationFollowerNumber ?? 0}
+                      {followCount ?? 0}
                     </span>
                     <span className='font-light opacity-80 text-sm'>
                       người theo dõi
@@ -701,12 +740,9 @@ function EventDetail({ slug }: EventDetailProps) {
                   )}
                 <button
                   className='w-full px-3 py-2 border border-transparent transition-all font-light bg-green-sub border-t border-t-green-sub text-green-main hover:border hover:border-green-main'
-                  // TODO: List events of profiel organization
-                  // onClick={() =>
-                  //   router.push(
-                  //     `/organizations/?keyword=${event.organizationName}`,
-                  //   )
-                  // }
+                  onClick={() =>
+                    router.push(`/organization/${event?.organizationSlug}`)
+                  }
                 >
                   Nhiều sự kiện hơn +
                 </button>
