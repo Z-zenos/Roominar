@@ -6,24 +6,16 @@ import { Card, CardContent } from '@/src/component/common/Card/Card';
 import { Textarea } from '@/src/component/common/Input/Textarea';
 import { Label } from '@/src/component/common/Label';
 import { RadioGroup, RadioGroupItem } from '@/src/component/common/RadioGroup';
+import { handleApiError } from '@/src/utils/app.util';
 import { Switch } from '@nextui-org/react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 
-type FeedbackCriteria = {
-  id: number;
-  name: string;
-};
-
 type FeedbackEventFormProps = {
   eventId: number;
-  criteriaList: FeedbackCriteria[];
 };
 
-export default function FeedbackEventForm({
-  eventId,
-  criteriaList,
-}: FeedbackEventFormProps) {
+export default function FeedbackEventForm({ eventId }: FeedbackEventFormProps) {
   const [positiveFeedback, setPositiveFeedback] = useState('');
   const [negativeFeedback, setNegativeFeedback] = useState('');
   const [isAnonymous, setIsAnonymous] = useState(false);
@@ -31,11 +23,9 @@ export default function FeedbackEventForm({
 
   const { trigger: submitFeedback, isMutating } = useFeedbackEventMutation({
     onSuccess: () => {
-      toast.success('Thank you for your feedback!');
+      toast.success('Cảm ơn bạn đã gửi feedback!');
     },
-    onError: () => {
-      toast.error('Submission error');
-    },
+    onError: handleApiError,
   });
 
   const handleScoreChange = (criteriaId: number, score: number) => {
@@ -43,11 +33,6 @@ export default function FeedbackEventForm({
   };
 
   const handleSubmit = async () => {
-    if (criteriaList.some((c) => !scores[c.id])) {
-      toast.error('Please rate all criteria');
-      return;
-    }
-
     await submitFeedback({
       eventId,
       feedbackEventRequest: {
@@ -120,7 +105,7 @@ export default function FeedbackEventForm({
             checked={isAnonymous}
             onValueChange={setIsAnonymous}
           />
-          <Label htmlFor='anonymous'>Submit anonymously</Label>
+          <Label htmlFor='anonymous'>Gửi ẩn danh</Label>
         </div>
 
         <Button
@@ -128,7 +113,7 @@ export default function FeedbackEventForm({
           disabled={isMutating}
           isLoading={isMutating}
         >
-          {isMutating ? 'Submitting...' : 'Submit Feedback'}
+          {isMutating ? 'Đang gửi...' : 'Gửi feedback'}
         </Button>
       </CardContent>
     </Card>

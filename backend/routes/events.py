@@ -41,6 +41,7 @@ from backend.schemas.event import (
     SearchEventsResponse,
 )
 from backend.schemas.feedback import (
+    ListingFeedbackCriteriaResponse,
     ListingFeedbacksQueryParams,
     ListingFeedbacksResponse,
 )
@@ -332,6 +333,21 @@ async def listing_feedbacks(
         per_page=query_params.per_page,
         total=total,
         data=feedbacks,
+    )
+
+
+@router.get(
+    "/{event_id}/feedbacks/criteria",
+    response_model=ListingFeedbackCriteriaResponse,
+    responses=public_api_responses,
+)
+async def listing_feedback_criteria(
+    db: Session = Depends(get_read_db),
+    event_id: int = None,
+):
+    criteria = await events_service.get_event_feedback_criteria(db, event_id)
+    return ListingFeedbackCriteriaResponse(
+        data=criteria,
     )
 
 

@@ -38,3 +38,12 @@ class UpdateFeedbackRequest(BaseModel):
     negative_feedback: str | None = None
     ratings: list[FeedbackRating] = Field([])
     is_anonymous: bool = False
+
+
+class ListingFeedbackCriteriaItem(BaseModel):
+    id: int
+    name: str
+
+
+class ListingFeedbackCriteriaResponse(BaseModel):
+    data: list[ListingFeedbackCriteriaItem] = Field([])
