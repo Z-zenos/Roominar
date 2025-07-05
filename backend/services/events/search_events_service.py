@@ -1,7 +1,7 @@
 from datetime import datetime
 
 import pytz
-from sqlmodel import Date, Session, and_, asc, case, desc, func, or_, select
+from sqlmodel import Date, Session, and_, asc, case, desc, exists, func, or_, select
 
 from backend.core.constants import (
     EventSortByCode,
@@ -14,6 +14,7 @@ from backend.models.organization import Organization
 from backend.models.tag import Tag
 from backend.models.tag_association import TagAssociation
 from backend.models.target import Target
+from backend.models.ticket import Ticket
 from backend.models.user import User
 from backend.schemas.event import SearchEventsQueryParams
 
@@ -99,6 +100,7 @@ async def search_events(
         ).outerjoin(
             Bookmark, and_(Event.id == Bookmark.event_id, Bookmark.user_id == user.id)
         )
+
     query = (
         query.where(and_(*filters["conditions"]))
         .order_by(
@@ -211,8 +213,18 @@ def _build_filters_sort(query_params: SearchEventsQueryParams):
     if query_params.organization_id:
         filters.append(Event.organization_id == query_params.organization_id)
 
+    if query_params.is_free:
+        filters.append(
+            exists(Ticket.id).where(Ticket.event_id == Event.id, Ticket.price == 0)
+        )
+
+    if query_params.is_paid:
+        filters.append(
+            exists(Ticket.id).where(Ticket.event_id == Event.id, Ticket.price > 0)
+        )
+
     if query_params.sort_by == EventSortByCode.PUBLISHED_AT:
-        filters.append(Event.end_at > datetime.now(pytz.utc))
+        filters.append(Event.status == EventStatusCode.PUBLIC)
 
     if query_params.sort_by == EventSortByCode.START_AT:
         filters.append(Event.start_at >= datetime.now(pytz.utc))

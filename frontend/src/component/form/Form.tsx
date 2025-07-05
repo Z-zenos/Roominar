@@ -986,12 +986,15 @@ FormRadioBoxList.displayName = 'FormRadioBoxList';
 // FormSlider.displayName = 'FormSlider';
 
 interface FormDateRangePickerProps
-  extends Omit<FormItemProps & DateRangePickerProps, null> {}
+  extends Omit<FormItemProps & DateRangePickerProps, null> {
+  showTimePicker?: boolean;
+}
 
 const FormDateRangePicker = ({
   name,
   control,
   className,
+  showTimePicker = true,
   ...props
 }: FormDateRangePickerProps) => {
   return (
@@ -1021,6 +1024,7 @@ const FormDateRangePicker = ({
                 field.onChange(daterange);
               }}
               onDateRangeSelect={props.onValueChange}
+              showTimePicker={showTimePicker}
             />
           </FormControl>
           {props.showError && <FormMessage label={props.label} />}

@@ -19,6 +19,7 @@ export interface DateRangePickerProps extends HTMLAttributes<HTMLDivElement> {
   daterange?: DateRange;
   onDateRangeChange?: SelectRangeEventHandler;
   onDateRangeSelect?: () => void;
+  showTimePicker?: boolean;
 }
 
 export function DateRangePicker({
@@ -26,6 +27,7 @@ export function DateRangePicker({
   className,
   onDateRangeChange,
   onDateRangeSelect,
+  showTimePicker = true,
 }: DateRangePickerProps) {
   const { width } = useWindowDimensions();
   const fromHourRef = React.useRef<HTMLInputElement>(null);
@@ -53,7 +55,9 @@ export function DateRangePicker({
               daterange.to ? (
                 <span className='flex 1000px:flex-row flex-col 1000px:text-sm text-xs'>
                   <span className='block'>
-                    {dayjs(daterange.from).format('HH:mm DD/MM/YYYY')}
+                    {dayjs(daterange.from).format(
+                      showTimePicker ? 'HH:mm DD/MM' : 'DD/MM',
+                    )}
                   </span>
                   {width < 1000 ? (
                     <IoArrowDownOutline className='inline w-3 h-3 mx-auto' />
@@ -62,11 +66,15 @@ export function DateRangePicker({
                   )}
 
                   <span className='block'>
-                    {dayjs(daterange.to).format('HH:mm DD/MM/YYYY')}
+                    {dayjs(daterange.to).format(
+                      showTimePicker ? 'HH:mm DD/MM' : 'DD/MM',
+                    )}
                   </span>
                 </span>
               ) : (
-                dayjs(daterange.from).format('HH:mm DD/MM/YYYY')
+                dayjs(daterange.from).format(
+                  showTimePicker ? 'HH:mm DD/MM' : 'DD/MM',
+                )
               )
             ) : (
               <span>Chọn ngày</span>
@@ -86,102 +94,104 @@ export function DateRangePicker({
             numberOfMonths={2}
           />
 
-          <div className='flex items-center justify-center gap-2 ml-3 mb-3'>
-            From:
-            <TimePickerInput
-              picker='hours'
-              date={fromTime}
-              setDate={(date) => {
-                setFromTime(date);
-                const updatedFrom = dayjs(daterange.from)
-                  .hour(dayjs(date).hour())
-                  .minute(dayjs(date).minute())
-                  .second(dayjs(date).second())
-                  .millisecond(dayjs(date).millisecond())
-                  .toDate();
+          {showTimePicker && (
+            <div className='flex items-center justify-center gap-2 ml-3 mb-3'>
+              From:
+              <TimePickerInput
+                picker='hours'
+                date={fromTime}
+                setDate={(date) => {
+                  setFromTime(date);
+                  const updatedFrom = dayjs(daterange.from)
+                    .hour(dayjs(date).hour())
+                    .minute(dayjs(date).minute())
+                    .second(dayjs(date).second())
+                    .millisecond(dayjs(date).millisecond())
+                    .toDate();
 
-                onDateRangeChange(
-                  { ...daterange, from: updatedFrom },
-                  undefined,
-                  undefined,
-                  undefined,
-                );
-              }}
-              ref={fromHourRef}
-              onRightFocus={() => fromMinuteRef.current?.focus()}
-            />
-            <TimePickerInput
-              picker='minutes'
-              date={fromTime}
-              setDate={(date) => {
-                setFromTime(date);
-                const updatedFrom = dayjs(daterange.from)
-                  .hour(dayjs(date).hour())
-                  .minute(dayjs(date).minute())
-                  .second(dayjs(date).second())
-                  .millisecond(dayjs(date).millisecond())
-                  .toDate();
+                  onDateRangeChange(
+                    { ...daterange, from: updatedFrom },
+                    undefined,
+                    undefined,
+                    undefined,
+                  );
+                }}
+                ref={fromHourRef}
+                onRightFocus={() => fromMinuteRef.current?.focus()}
+              />
+              <TimePickerInput
+                picker='minutes'
+                date={fromTime}
+                setDate={(date) => {
+                  setFromTime(date);
+                  const updatedFrom = dayjs(daterange.from)
+                    .hour(dayjs(date).hour())
+                    .minute(dayjs(date).minute())
+                    .second(dayjs(date).second())
+                    .millisecond(dayjs(date).millisecond())
+                    .toDate();
 
-                onDateRangeChange(
-                  { ...daterange, from: updatedFrom },
-                  undefined,
-                  undefined,
-                  undefined,
-                );
-              }}
-              ref={fromMinuteRef}
-              onLeftFocus={() => fromHourRef.current?.focus()}
-              onRightFocus={() => toHourRef.current?.focus()}
-            />
-            To:
-            <TimePickerInput
-              picker='hours'
-              date={toTime}
-              setDate={(date) => {
-                setToTime(date);
-                const updatedTo = dayjs(daterange.to)
-                  .hour(dayjs(date).hour())
-                  .minute(dayjs(date).minute())
-                  .second(dayjs(date).second())
-                  .millisecond(dayjs(date).millisecond())
-                  .toDate();
+                  onDateRangeChange(
+                    { ...daterange, from: updatedFrom },
+                    undefined,
+                    undefined,
+                    undefined,
+                  );
+                }}
+                ref={fromMinuteRef}
+                onLeftFocus={() => fromHourRef.current?.focus()}
+                onRightFocus={() => toHourRef.current?.focus()}
+              />
+              To:
+              <TimePickerInput
+                picker='hours'
+                date={toTime}
+                setDate={(date) => {
+                  setToTime(date);
+                  const updatedTo = dayjs(daterange.to)
+                    .hour(dayjs(date).hour())
+                    .minute(dayjs(date).minute())
+                    .second(dayjs(date).second())
+                    .millisecond(dayjs(date).millisecond())
+                    .toDate();
 
-                onDateRangeChange(
-                  { ...daterange, to: updatedTo },
-                  undefined,
-                  undefined,
-                  undefined,
-                );
-              }}
-              ref={toHourRef}
-              onRightFocus={() => toMinuteRef.current?.focus()}
-            />
-            <TimePickerInput
-              picker='minutes'
-              date={toTime}
-              setDate={(date) => {
-                setToTime(date);
-                const updatedTo = dayjs(daterange.to)
-                  .hour(dayjs(date).hour())
-                  .minute(dayjs(date).minute())
-                  .second(dayjs(date).second())
-                  .millisecond(dayjs(date).millisecond())
-                  .toDate();
+                  onDateRangeChange(
+                    { ...daterange, to: updatedTo },
+                    undefined,
+                    undefined,
+                    undefined,
+                  );
+                }}
+                ref={toHourRef}
+                onRightFocus={() => toMinuteRef.current?.focus()}
+              />
+              <TimePickerInput
+                picker='minutes'
+                date={toTime}
+                setDate={(date) => {
+                  setToTime(date);
+                  const updatedTo = dayjs(daterange.to)
+                    .hour(dayjs(date).hour())
+                    .minute(dayjs(date).minute())
+                    .second(dayjs(date).second())
+                    .millisecond(dayjs(date).millisecond())
+                    .toDate();
 
-                onDateRangeChange(
-                  { ...daterange, to: updatedTo },
-                  undefined,
-                  undefined,
-                  undefined,
-                );
-              }}
-              ref={toMinuteRef}
-              onLeftFocus={() => toHourRef.current?.focus()}
-            />
-            <div className='flex h-10 items-center'>
-              <BsClock className='ml-2 h-4 w-4' />
+                  onDateRangeChange(
+                    { ...daterange, to: updatedTo },
+                    undefined,
+                    undefined,
+                    undefined,
+                  );
+                }}
+                ref={toMinuteRef}
+                onLeftFocus={() => toHourRef.current?.focus()}
+              />
+              <div className='flex h-10 items-center'>
+                <BsClock className='ml-2 h-4 w-4' />
+              </div>
             </div>
-          </div>
+          )}
 
           {onDateRangeSelect && (
             <Button
