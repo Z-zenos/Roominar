@@ -88,26 +88,26 @@ export function getValidArrowMinuteOrSecond(value: string, step: number) {
 
 export function setMinutes(date: Date, value: string) {
   const minutes = getValidMinuteOrSecond(value);
-  date.setMinutes(parseInt(minutes, 10));
+  date?.setMinutes(parseInt(minutes, 10));
   return date;
 }
 
 export function setSeconds(date: Date, value: string) {
   const seconds = getValidMinuteOrSecond(value);
-  date.setSeconds(parseInt(seconds, 10));
+  date?.setSeconds(parseInt(seconds, 10));
   return date;
 }
 
 export function setHours(date: Date, value: string) {
   const hours = getValidHour(value);
-  date.setHours(parseInt(hours, 10));
+  date?.setHours(parseInt(hours, 10));
   return date;
 }
 
 export function set12Hours(date: Date, value: string, period: Period) {
   const hours = parseInt(getValid12Hour(value), 10);
   const convertedHours = convert12HourTo24Hour(hours, period);
-  date.setHours(convertedHours);
+  date?.setHours(convertedHours);
   return date;
 }
 
@@ -139,13 +139,13 @@ export function setDateByType(
 export function getDateByType(date: Date, type: TimePickerType) {
   switch (type) {
     case 'minutes':
-      return getValidMinuteOrSecond(String(date.getMinutes()));
+      return getValidMinuteOrSecond(String(date?.getMinutes()));
     case 'seconds':
-      return getValidMinuteOrSecond(String(date.getSeconds()));
+      return getValidMinuteOrSecond(String(date?.getSeconds()));
     case 'hours':
-      return getValidHour(String(date.getHours()));
+      return getValidHour(String(date?.getHours()));
     case '12hours':
-      return getValid12Hour(String(display12HourValue(date.getHours())));
+      return getValid12Hour(String(display12HourValue(date?.getHours())));
     default:
       return '00';
   }

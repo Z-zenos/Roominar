@@ -120,18 +120,13 @@ function SearchFilter({
           onValueChange={onValueChange}
           label='isApplyOngoing'
         />
-        <FormCheckBox
-          name='isApplyEnded'
-          control={control}
-          onValueChange={onValueChange}
-          label='isApplyEnded'
-        />
         <Label className='mt-3'>Ngày bắt đầu</Label>
         <FormDateRangePicker
           name='startAtRange'
           control={control}
           className='w-full'
           onValueChange={onValueChange}
+          showTimePicker={false}
         />
       </FilterBox>
 

@@ -65,24 +65,36 @@ function SearchHeader({
             radius='sm'
             size={width > 450 ? 'md' : 'sm'}
             onClick={() => {
-              reset({
-                jobTypeCodes: [],
-                industryCodes: [],
-                tags: [],
-                cityCodes: [],
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-expect-error
-                start_at_range: {
-                  from: null,
-                  to: null,
+              reset(
+                {
+                  jobTypeCodes: [],
+                  industryCodes: [],
+                  tags: [],
+                  cityCodes: [],
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-expect-error
+                  start_at_range: {
+                    from: null,
+                    to: null,
+                  },
+                  startAtRange: {
+                    from: null,
+                    to: null,
+                  },
+                  startAtFrom: undefined,
+                  startAtTo: undefined,
+                  isFree: false,
+                  isPaid: false,
+                  isOnline: false,
+                  isOffline: false,
+                  isApplyOngoing: false,
+                  isApplyEnded: false,
+                  isToday: false,
                 },
-                startAtRange: {
-                  from: null,
-                  to: null,
+                {
+                  shouldDirty: true,
                 },
-                startAtFrom: undefined,
-                startAtTo: undefined,
-              });
+              );
               router.push('/search');
             }}
             startContent={<GrPowerReset />}
