@@ -2,8 +2,12 @@
 
 import clsx from 'clsx';
 import Chip from '../Chip';
-import { MdOutlineAccessTime, MdOutlineOnlinePrediction } from 'react-icons/md';
-import { FaTags, FaUserFriends } from 'react-icons/fa';
+import {
+  MdOutlineAccessTime,
+  MdOutlineOnlinePrediction,
+  MdOutlineSelectAll,
+} from 'react-icons/md';
+import { FaGlobe, FaMapMarkerAlt, FaTags, FaUserFriends } from 'react-icons/fa';
 import { Image, Link } from '@nextui-org/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { styles } from '@/src/constants/styles.constant';
@@ -173,6 +177,26 @@ function EventCard({
                       content={`${event['soldTicketsNumber'] || 0} / ${event?.totalTicketNumber}`}
                       leftIcon={<FaUserFriends className='text-sm' />}
                       type='info'
+                    />
+
+                    <Chip
+                      content={`${event.isOnline && event.isOffline ? 'Online & Offline' : event.isOnline ? 'Online' : 'Offline'}`}
+                      leftIcon={
+                        event.isOnline && event.isOffline ? (
+                          <MdOutlineSelectAll className='text-sm' />
+                        ) : event.isOnline ? (
+                          <FaGlobe className='text-sm' />
+                        ) : (
+                          <FaMapMarkerAlt className='text-sm' />
+                        )
+                      }
+                      type={
+                        event.isOnline && event.isOffline
+                          ? 'error'
+                          : event.isOnline
+                            ? 'success'
+                            : 'warning'
+                      }
                     />
                   </div>
                 </div>

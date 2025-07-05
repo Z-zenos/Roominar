@@ -116,7 +116,9 @@ export default function EventDataTable() {
     if (form.getValues('startAtRange')?.from) {
       const startAtRange = form.getValues('startAtRange');
       data.startAtFrom = dayjs(startAtRange.from).format('YYYY-MM-DD');
-      data.startAtTo = dayjs(startAtRange.to).format('YYYY-MM-DD');
+      data.startAtTo = form.getValues('startAtRange')?.to
+        ? dayjs(startAtRange.to).format('YYYY-MM-DD')
+        : data.startAtFrom;
     }
     const filters: OrganizationsApiListingOrganizationEventsRequest = {
       ...form.getValues(),

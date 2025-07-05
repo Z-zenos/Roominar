@@ -2,7 +2,7 @@
 
 import clsx from 'clsx';
 import { useRouter, useSearchParams } from 'next/navigation';
-import React, { Fragment, useMemo, useState } from 'react';
+import React, { Fragment, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import Drawer from '../../component/common/Drawer';
 import SearchHeader from './SearchHeader';
@@ -31,7 +31,6 @@ function SearchEvent() {
     ...queryString.parse(searchParams.toString(), { arrayFormat: 'bracket' }),
   });
 
-  const [page, setPage] = useState<number>(data?.page || 1);
   const { width } = useWindowDimensions();
   const FilterContainer = useMemo(
     () => (width > 1000 ? Fragment : Drawer),
@@ -55,8 +54,11 @@ function SearchEvent() {
     mode: 'all',
     defaultValues: {
       keyword: searchParams.get('keyword') || '',
-      isOnline: Boolean(searchParams.get('is_online')) ?? undefined,
-      isOffline: Boolean(searchParams.get('is_offline')) ?? undefined,
+      isFree: Boolean(searchParams.get('is_free')) ?? false,
+      isPaid: Boolean(searchParams.get('is_paid')) ?? false,
+      isOnline: Boolean(searchParams.get('is_online')) ?? false,
+      isOffline: Boolean(searchParams.get('is_offline')) ?? false,
+      isToday: Boolean(searchParams.get('is_today')) ?? false,
       isApplyOngoing:
         Boolean(searchParams.get('is_apply_ongoing')) ?? undefined,
       isApplyEnded: Boolean(searchParams.get('is_apply_ended')) ?? undefined,
@@ -74,6 +76,7 @@ function SearchEvent() {
         ? dayjs(searchParams.get('start_at_to')).format('YYYY-MM-DD')
         : null,
       sortBy: (searchParams.get('sort_by') as EventSortByCode) ?? undefined,
+      page: searchParams.get('page') ? Number(searchParams.get('page')) : 1,
       startAtRange: {
         from: searchParams.get('start_at_from')
           ? dayjs(searchParams.get('start_at_from')).toDate()
@@ -89,7 +92,9 @@ function SearchEvent() {
     if (form.getValues('startAtRange')?.from) {
       const startAtRange = form.getValues('startAtRange');
       data.startAtFrom = dayjs(startAtRange.from).format('YYYY-MM-DD');
-      data.startAtTo = dayjs(startAtRange.to).format('YYYY-MM-DD');
+      data.startAtTo = form.getValues('startAtRange')?.to
+        ? dayjs(startAtRange.to).format('YYYY-MM-DD')
+        : data.startAtFrom;
     }
     const filters: EventsApiSearchEventsRequest = {
       ...form.getValues(),
@@ -133,8 +138,7 @@ function SearchEvent() {
                 total={data?.total}
                 perPage={data?.perPage}
                 isLoading={isLoading}
-                onPageChange={setPage}
-                page={page}
+                onPageChange={(page) => router.push(`/search?page=${page}`)}
                 className='flex 800px:justify-start justify-center flex-wrap lg:w-4/5 w-full h-fit gap-7 1000px:px-5 px-0'
               />
             </>
