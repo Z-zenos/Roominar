@@ -1,6 +1,8 @@
 from sqlmodel import Session, func, select
 
 from backend.models.feedback import Feedback
+from backend.models.feedback_criteria import FeedbackCriteria
+from backend.models.feedback_score import FeedbackScore
 from backend.models.user import User
 from backend.schemas.feedback import ListingFeedbacksQueryParams
 
@@ -35,9 +37,22 @@ async def _get_all_feedbacks(
             func.concat(User.first_name, " ", User.last_name).label("user_name"),
             User.avatar_url.label("user_avatar"),
             Feedback.deleted_at,
+            func.json_agg(
+                func.json_build_object(
+                    "criteria_id",
+                    FeedbackCriteria.id,
+                    "criteria_name",
+                    FeedbackCriteria.name,
+                    "score",
+                    FeedbackScore.score,
+                )
+            ).label("ratings"),
         )
         .outerjoin(User, User.id == Feedback.user_id)
+        .outerjoin(FeedbackScore, FeedbackScore.feedback_id == Feedback.id)
+        .outerjoin(FeedbackCriteria, FeedbackCriteria.id == FeedbackScore.criteria_id)
         .where(Feedback.event_id == event_id)
+        .group_by(Feedback.id, User.id)
         .order_by(Feedback.created_at.desc())
         .offset((query_params.page - 1) * query_params.per_page)
         .limit(query_params.per_page)

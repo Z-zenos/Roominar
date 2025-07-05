@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent } from '@/src/component/common/Card/Card';
 import { Star } from 'lucide-react';
 import {
@@ -9,47 +9,32 @@ import {
   AvatarImage,
 } from '@/src/component/common/Avatar';
 import { Separator } from '@/src/component/common/Separator';
-import { Button } from '@/src/component/common/Button/ShardButton';
+import { useListingFeedbacksQuery } from '@/src/api/feedback.api';
+import type { ListingFeedbacksItem } from '@/src/lib/api/generated';
+import Spinner from '@/src/component/common/Loader/Spinner';
+import { Button } from '@nextui-org/react';
 
-const initialFeedbacks = [
-  {
-    id: 1,
-    user: {
-      name: 'Nguyễn Văn A',
-      avatar_url: 'https://i.pravatar.cc/150?u=123',
-    },
-    is_anonymous: false,
-    positive_feedback: 'Sự kiện tổ chức rất chuyên nghiệp!',
-    negative_feedback: 'Âm thanh hơi nhỏ.',
-    scores: [
-      { criteria_id: 1, criteria_name: 'Nội dung', score: 5 },
-      { criteria_id: 2, criteria_name: 'Diễn giả', score: 4 },
-    ],
-  },
-];
+export default function FeedbackList({ eventId }: { eventId: number }) {
+  const [feedbacks, setFeedbacks] = useState<ListingFeedbacksItem[]>([]);
 
-export default function FeedbackList() {
-  const [feedbacks, setFeedbacks] = useState(initialFeedbacks);
-  const [hasMore, setHasMore] = useState(true);
+  const {
+    data: feedbacksData,
+    isLoading: isLoadingFeedbacks,
+    isFetching: isFetchingFeedbacks,
+    refetch: refetchFeedbacks,
+  } = useListingFeedbacksQuery({
+    eventId,
+  });
 
-  const loadMore = async () => {
-    // Simulate loading more
-    const more = [
-      {
-        id: 2,
-        user: null,
-        is_anonymous: true,
-        positive_feedback: 'Mình rất thích phần hỏi đáp.',
-        negative_feedback: null,
-        scores: [
-          { criteria_id: 1, criteria_name: 'Nội dung', score: 4 },
-          { criteria_id: 2, criteria_name: 'Diễn giả', score: 5 },
-        ],
-      },
-    ];
-    setFeedbacks((prev) => [...prev, ...more]);
-    setHasMore(false); // giả định hết dữ liệu
-  };
+  useEffect(() => {
+    if (feedbacksData) {
+      setFeedbacks((prev) => [...prev, ...feedbacksData.data]);
+    }
+  }, [feedbacksData]);
+
+  if (isLoadingFeedbacks) {
+    return <Spinner />;
+  }
 
   return (
     <div className='grid 800px:grid-cols-2 grid-cols-1 w-full gap-3 mt-4 mb-12 items-start'>
@@ -63,37 +48,33 @@ export default function FeedbackList() {
             <div className='flex items-center gap-4'>
               <Avatar>
                 <AvatarImage
-                  src={
-                    feedback.is_anonymous
-                      ? undefined
-                      : feedback.user?.avatar_url
-                  }
-                  alt={feedback.is_anonymous ? 'Ẩn danh' : feedback.user?.name}
+                  src={feedback.isAnonymous ? undefined : feedback.userAvatar}
+                  alt={feedback.isAnonymous ? 'Ẩn danh' : feedback.userName}
                 />
                 <AvatarFallback>
-                  {feedback.is_anonymous
+                  {feedback.isAnonymous
                     ? 'Ẩ'
-                    : feedback.user?.name?.[0]?.toUpperCase() || '?'}
+                    : feedback.userName?.[0]?.toUpperCase() || '?'}
                 </AvatarFallback>
               </Avatar>
               <div>
                 <p className='font-semibold text-base'>
-                  {feedback.is_anonymous
+                  {feedback.isAnonymous
                     ? 'Người dùng ẩn danh'
-                    : feedback.user?.name}
+                    : feedback.userName}
                 </p>
               </div>
             </div>
 
             {/* Scores */}
             <div className='space-y-1'>
-              {feedback.scores.map((score) => (
+              {feedback?.ratings.map((score) => (
                 <div
-                  key={score.criteria_id}
+                  key={score.criteriaId}
                   className='flex justify-between items-center'
                 >
                   <span className='text-sm text-muted-foreground'>
-                    {score.criteria_name}
+                    {score.criteriaName}
                   </span>
                   <div className='flex items-center gap-1'>
                     {[...Array(score.score)].map((_, i) => (
@@ -110,25 +91,25 @@ export default function FeedbackList() {
             <Separator />
 
             {/* Positive Feedback */}
-            {feedback.positive_feedback && (
+            {feedback.positiveFeedback && (
               <div>
                 <p className='text-sm font-semibold text-green-700 mb-1'>
                   Điểm tích cực:
                 </p>
                 <p className='text-sm text-gray-700'>
-                  {feedback.positive_feedback}
+                  {feedback.positiveFeedback}
                 </p>
               </div>
             )}
 
             {/* Negative Feedback */}
-            {feedback.negative_feedback && (
+            {feedback.negativeFeedback && (
               <div>
                 <p className='text-sm font-semibold text-red-700 mb-1'>
                   Điểm cần cải thiện:
                 </p>
                 <p className='text-sm text-gray-700'>
-                  {feedback.negative_feedback}
+                  {feedback.negativeFeedback}
                 </p>
               </div>
             )}
@@ -136,11 +117,11 @@ export default function FeedbackList() {
         </Card>
       ))}
 
-      {hasMore && (
-        <div className='flex justify-center'>
+      {feedbacksData?.total == 10 && (
+        <div className='flex justify-center col-span-2'>
           <Button
-            variant='outline'
-            onClick={loadMore}
+            onClick={() => refetchFeedbacks()}
+            isLoading={isFetchingFeedbacks}
           >
             Xem thêm
           </Button>

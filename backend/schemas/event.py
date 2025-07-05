@@ -17,7 +17,7 @@ from backend.core.constants import (
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.schemas.common import PaginationResponse
-from backend.schemas.feedback import FeedbackRating
+from backend.schemas.feedback import FeedbackRating, UserFeedbackRating
 from backend.schemas.survey import SurveyDetail
 from backend.schemas.tag import TagItem
 from backend.schemas.target import ListingTargetOptionsItem
@@ -112,12 +112,6 @@ class SearchEventsQueryParams(BaseModel):
 
 class SearchEventsResponse(PaginationResponse[SearchEventsItem]):
     pass
-
-
-class UserFeedbackRating(BaseModel):
-    id: int
-    name: str
-    score: int
 
 
 class GetUserFeedback(BaseModel):

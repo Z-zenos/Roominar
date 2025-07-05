@@ -17,7 +17,6 @@ import {
   FaStar,
   FaXTwitter,
 } from 'react-icons/fa6';
-import { MdOutlineMail } from 'react-icons/md';
 import { GoOrganization } from 'react-icons/go';
 import { GiMicrophone, GiPartyPopper } from 'react-icons/gi';
 
@@ -159,7 +158,7 @@ function EventDetail({ slug }: EventDetailProps) {
 
   useEffect(() => {
     handleScroll(activeItem.toLowerCase());
-  }, [showCommentsSection]);
+  }, [showCommentsSection, showFeedbackSection]);
 
   useEffect(() => {
     if (event) {
@@ -211,29 +210,33 @@ function EventDetail({ slug }: EventDetailProps) {
         >
           <div className='flex justify-between flex-wrap gap-4 450px:w-[95%] w-full items-end'>
             <EventDetailMenuBar
-              items={menuItems
-                .filter((item) => {
-                  if (event.endAt < new Date()) {
-                    return item.href != 'feedbacks';
-                  }
-                  return item;
-                })
-                .map((item) => {
-                  if (item.label === 'Bình luận') {
-                    return {
-                      ...item,
-                      label: `Bình luận (${event?.commentCount})`,
-                    };
-                  }
-                  return item;
-                })}
+              items={menuItems.map((item) => {
+                if (item.href === 'comments') {
+                  return {
+                    ...item,
+                    label: `Q & A (${event?.commentCount})`,
+                  };
+                }
+                if (item.href === 'feedbacks') {
+                  return {
+                    ...item,
+                    label:
+                      event?.endAt > new Date()
+                        ? `Đánh giá (Mở sau khi sự kiện kết thúc)`
+                        : `Đánh giá (${event?.feedbackCount})`,
+                  };
+                }
+                return item;
+              })}
               activeItem={activeItem}
               onItemClick={(item) => {
-                setActiveItem(item);
                 if (item === 'comments') {
                   setShowCommentsSection(true);
                   setShowFeedbackSection(false);
                 } else if (item === 'feedbacks') {
+                  if (event?.endAt > new Date()) {
+                    return;
+                  }
                   setShowFeedbackSection(true);
                   setShowCommentsSection(false);
                 } else {
@@ -241,6 +244,7 @@ function EventDetail({ slug }: EventDetailProps) {
                   setShowFeedbackSection(false);
                   handleScroll(item.toLowerCase());
                 }
+                setActiveItem(item);
               }}
             />
             {!showFeedbackSection && (
@@ -280,25 +284,7 @@ function EventDetail({ slug }: EventDetailProps) {
               </div>
             </>
           )}
-          {showFeedbackSection && (
-            <FeedbackEventForm
-              eventId={event?.id}
-              criteriaList={[
-                {
-                  id: 1,
-                  name: 'Không gian',
-                },
-                {
-                  id: 2,
-                  name: 'Nội dung',
-                },
-                {
-                  id: 3,
-                  name: 'Giá cả',
-                },
-              ]}
-            />
-          )}
+          {showFeedbackSection && <FeedbackEventForm eventId={event?.id} />}
         </div>
         <div className={clsx(width > 1200 ? 'w-[25%]' : 'w-full')}>
           <div
@@ -467,11 +453,16 @@ function EventDetail({ slug }: EventDetailProps) {
           </div>
         )}
         {showFeedbackSection && (
-          <div className='w-full'>
+          <div
+            className={clsx(
+              'flex flex-col gap-7',
+              width > 1200 ? 'w-[70%]' : 'w-full mb-8',
+            )}
+          >
             <h3 className='font-semibold 450px:text-lg text-xm border-b border-b-gray-400'>
               Đánh giá
             </h3>
-            <FeedbackList />
+            <FeedbackList eventId={event?.id} />
           </div>
         )}
         {!showCommentsSection && !showFeedbackSection && (

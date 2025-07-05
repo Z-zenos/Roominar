@@ -12,14 +12,16 @@ import type {
 } from '../lib/api/generated/types/ObjectParamAPI';
 import type { FeedbacksApiDeleteFeedbackRequest } from '../lib/api/generated/types/ObjectParamAPI';
 
-export const useListingFeedbackQuery = (
+export const useListingFeedbacksQuery = (
   params?: EventsApiListingFeedbacksRequest,
+  enabled: boolean = true,
 ) => {
   params = toCamelCase(params);
   const api = useApi();
   return useQuery({
     queryKey: ['listing-feedbacks', params],
     queryFn: async () => await api.events.listingFeedbacks(params),
+    enabled,
   });
 };
 

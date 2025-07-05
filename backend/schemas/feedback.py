@@ -6,6 +6,12 @@ from pydantic import BaseModel, Field
 from backend.schemas.common import PaginationResponse
 
 
+class UserFeedbackRating(BaseModel):
+    criteria_id: int
+    criteria_name: str
+    score: int
+
+
 class FeedbackRating(BaseModel):
     criteria_id: int
     score: int
@@ -22,6 +28,7 @@ class ListingFeedbacksItem(BaseModel):
     user_name: str | None = None
     user_avatar: str | None = None
     deleted_at: datetime | None = None
+    ratings: list[UserFeedbackRating] = Field([])
 
 
 class ListingFeedbacksResponse(PaginationResponse[ListingFeedbacksItem]):

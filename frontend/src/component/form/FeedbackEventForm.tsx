@@ -1,6 +1,10 @@
 'use client';
 
-import { useFeedbackEventMutation } from '@/src/api/feedback.api';
+import {
+  useFeedbackEventMutation,
+  useListingFeedbackCriteriaQuery,
+  useListingFeedbacksQuery,
+} from '@/src/api/feedback.api';
 import Button from '@/src/component/common/Button/Button';
 import { Card, CardContent } from '@/src/component/common/Card/Card';
 import { Textarea } from '@/src/component/common/Input/Textarea';
@@ -21,9 +25,21 @@ export default function FeedbackEventForm({ eventId }: FeedbackEventFormProps) {
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [scores, setScores] = useState<Record<number, number>>({});
 
+  const { data: criteriaList } = useListingFeedbackCriteriaQuery({
+    eventId,
+  });
+
+  const { refetch: refetchListingFeedbacks } = useListingFeedbacksQuery(
+    {
+      eventId,
+    },
+    false,
+  );
+
   const { trigger: submitFeedback, isMutating } = useFeedbackEventMutation({
     onSuccess: () => {
       toast.success('Cảm ơn bạn đã gửi feedback!');
+      refetchListingFeedbacks();
     },
     onError: handleApiError,
   });
@@ -39,7 +55,7 @@ export default function FeedbackEventForm({ eventId }: FeedbackEventFormProps) {
         positiveFeedback: positiveFeedback || null,
         negativeFeedback: negativeFeedback || null,
         isAnonymous: isAnonymous,
-        ratings: criteriaList.map((c) => ({
+        ratings: criteriaList?.data.map((c) => ({
           criteriaId: c.id,
           score: scores[c.id],
         })),
@@ -53,7 +69,7 @@ export default function FeedbackEventForm({ eventId }: FeedbackEventFormProps) {
         <div>
           <Label>Positive Feedback</Label>
           <Textarea
-            placeholder='What did you like?'
+            placeholder='Bạn thích điều gì?'
             value={positiveFeedback}
             onChange={(e) => setPositiveFeedback(e.target.value)}
           />
@@ -62,19 +78,19 @@ export default function FeedbackEventForm({ eventId }: FeedbackEventFormProps) {
         <div>
           <Label>Negative Feedback</Label>
           <Textarea
-            placeholder='What could be improved?'
+            placeholder='Chúng tôi có thể cải thiện điều gì?'
             value={negativeFeedback}
             onChange={(e) => setNegativeFeedback(e.target.value)}
           />
         </div>
 
         <div className='space-y-4'>
-          {criteriaList.map((criteria) => (
+          {criteriaList?.data.map((criteria) => (
             <div
               key={criteria.id}
               className='space-y-1'
             >
-              <Label className='block'>{criteria.name}</Label>
+              <Label className='block mb-2'>{criteria.name}</Label>
               <RadioGroup
                 value={String(scores[criteria.id] || '')}
                 onValueChange={(val) =>
