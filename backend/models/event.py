@@ -92,6 +92,7 @@ class Event(BaseModel, table=True):
     comment_count: Optional[int] = Field(default=0)
     feedback_count: Optional[int] = Field(default=0)
     rating_count: Optional[int] = Field(default=0)
+    average_rating: Optional[float] = Field(default=0.0)
 
     @model_validator(mode="before")
     @classmethod

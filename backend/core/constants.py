@@ -365,6 +365,7 @@ class UserActionTypeCode(str, Enum):
     ADD_TO_CALENDAR = "ADD_TO_CALENDAR"
     INVITE_FRIEND = "INVITE_FRIEND"
     ANSWER_APPLICATION_SURVEY = "ANSWER_APPLICATION_SURVEY"
+    FEEDBACK = "FEEDBACK"
 
 
 class TrackingTimeRangeCode(str, Enum):

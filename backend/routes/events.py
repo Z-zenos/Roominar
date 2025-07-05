@@ -23,6 +23,7 @@ from backend.schemas.comment import (
 )
 from backend.schemas.event import (
     CreateDraftEventRequest,
+    FeedbackEventRequest,
     GenerateEventAIRequest,
     GenerateEventAIResponse,
     GetDraftEventResponse,
@@ -38,6 +39,11 @@ from backend.schemas.event import (
     SaveDraftEventRequest,
     SearchEventsQueryParams,
     SearchEventsResponse,
+)
+from backend.schemas.feedback import (
+    ListingFeedbackCriteriaResponse,
+    ListingFeedbacksQueryParams,
+    ListingFeedbacksResponse,
 )
 from backend.schemas.ticket import (
     ListingEventPurchasedTicketsQueryParams,
@@ -308,6 +314,43 @@ async def listing_event_comments(
     )
 
 
+@router.get(
+    "/{event_id}/feedbacks",
+    response_model=ListingFeedbacksResponse,
+    responses=public_api_responses,
+)
+async def listing_feedbacks(
+    db: Session = Depends(get_read_db),
+    user: User = Depends(get_user_if_logged_in),
+    query_params: ListingFeedbacksQueryParams = Depends(ListingFeedbacksQueryParams),
+    event_id: int = None,
+):
+    feedbacks, total = await events_service.listing_feedbacks(
+        db, user, query_params, event_id
+    )
+    return ListingFeedbacksResponse(
+        page=query_params.page,
+        per_page=query_params.per_page,
+        total=total,
+        data=feedbacks,
+    )
+
+
+@router.get(
+    "/{event_id}/feedbacks/criteria",
+    response_model=ListingFeedbackCriteriaResponse,
+    responses=public_api_responses,
+)
+async def listing_feedback_criteria(
+    db: Session = Depends(get_read_db),
+    event_id: int = None,
+):
+    criteria = await events_service.get_event_feedback_criteria(db, event_id)
+    return ListingFeedbackCriteriaResponse(
+        data=criteria,
+    )
+
+
 @router.post(
     "/{event_id}/comments",
     response_model=int,
@@ -320,6 +363,20 @@ async def comment_event(
     event_id: int = None,
 ):
     return await events_service.comment_event(db, user, request, event_id)
+
+
+@router.post(
+    "/{event_id}/feedback",
+    response_model=int,
+    responses=authenticated_api_responses,
+)
+async def feedback_event(
+    db: Session = Depends(get_read_db),
+    user: User = Depends(authorize_role(RoleCode.AUDIENCE)),
+    request: FeedbackEventRequest = None,
+    event_id: int = None,
+):
+    return await events_service.feedback_event(db, user, request, event_id)
 
 
 @router.post(
