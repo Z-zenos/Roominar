@@ -62,6 +62,11 @@ class ErrorCode:
     ERR_CANT_VOTE_COMMENT = "ERR_CANT_VOTE_COMMENT"
     ERR_CANT_SELF_VOTE_COMMENT = "ERR_CANT_SELF_VOTE_COMMENT"
     ERR_CANT_VOTE_COMMENT_TWICE = "ERR_CANT_VOTE_COMMENT_TWICE"
+    ERR_FEEDBACK_ALREADY_EXISTS = "ERR_FEEDBACK_ALREADY_EXISTS"
+    ERR_USER_HAVENT_PURCHASEED_TICKET_YET = "ERR_USER_HAVENT_PURCHASEED_TICKET_YET"
+    ERR_EVENT_NOT_ENDED = "ERR_EVENT_NOT_ENDED"
+    ERR_FEEDBACK_NOT_FOUND = "ERR_FEEDBACK_NOT_FOUND"
+    ERR_CANT_DELETE_FEEDBACK = "ERR_CANT_DELETE_FEEDBACK"
 
 
 class ErrorMessage:
@@ -130,3 +135,10 @@ class ErrorMessage:
     ERR_CANT_VOTE_COMMENT = "You can't vote a comment because it's deleted."
     ERR_CANT_SELF_VOTE_COMMENT = "You can't vote your own comment."
     ERR_CANT_VOTE_COMMENT_TWICE = "You can't vote a comment twice."
+    ERR_FEEDBACK_ALREADY_EXISTS = "Feedback for this event already exists."
+    ERR_USER_HAVENT_PURCHASEED_TICKET_YET = (
+        "You haven't purchased a ticket for this event yet."
+    )
+    ERR_EVENT_NOT_ENDED = "The event has not ended yet."
+    ERR_FEEDBACK_NOT_FOUND = "The feedback doesn't exist."
+    ERR_CANT_DELETE_FEEDBACK = "You can't delete a feedback that is older than 7 days."
