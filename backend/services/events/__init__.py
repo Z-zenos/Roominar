@@ -1,5 +1,4 @@
 from .comment_event_service import comment_event
-from .create_draft_event_service import create_draft_event
 from .create_event_bookmark_service import create_event_bookmark
 from .delete_event_bookmark_service import delete_event_bookmark
 from .feedback_event_service import feedback_event
@@ -30,7 +29,6 @@ __all__ = [
     "delete_event_bookmark",
     "listing_my_events",
     "listing_recommendation_events",
-    "create_draft_event",
     "get_draft_event",
     "save_draft_event",
     "publish_event",

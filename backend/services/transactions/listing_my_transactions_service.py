@@ -188,7 +188,11 @@ async def _count_my_transactions(db: Session, filters: list):
     query = (
         select(func.count(Transaction.id))
         .select_from(Transaction)
+        .join(Application, Application.id == Transaction.application_id)
         .join(TransactionItem, TransactionItem.transaction_id == Transaction.id)
+        .join(Ticket, Ticket.id == TransactionItem.ticket_id)
+        .join(Event, Event.id == Ticket.event_id)
+        .outerjoin(CheckIn, CheckIn.transaction_item_id == TransactionItem.id)
         .where(*filters)
     )
     total = db.scalar(query) or 0

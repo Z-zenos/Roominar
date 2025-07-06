@@ -31,6 +31,8 @@ class Transaction(BaseModel, table=True):
     )  # Stripe payment intent ID
     stripe_checkout_session_id: Optional[str] = Field(default=None)  # Stripe session ID
 
+    stripe_refund_id: Optional[str] = Field(default=None)  # Stripe refund ID
+
     # Metadata and tracking
     reference: Optional[str]
 

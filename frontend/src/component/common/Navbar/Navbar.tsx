@@ -260,7 +260,12 @@ export default function Navbar({ className, hasLogo = true }: NavbarProps) {
                     key='profile'
                     className='h-14 gap-2'
                   >
-                    <p className='font-semibold'>Đăng nhập với</p>
+                    <p className='font-light'>
+                      Số dư hiện tại:{' '}
+                      <span className='font-semibold text-primary'>
+                        {auth?.user?.point}
+                      </span>
+                    </p>
                     <p className='font-semibold'>
                       {maskEmail(auth?.user?.email)}
                     </p>

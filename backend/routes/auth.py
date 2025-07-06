@@ -134,6 +134,7 @@ async def me(
             ),
             organization_name=current_user.organization_name,
             organization_avatar_url=current_user.organization_avatar_url,
+            point=current_user.point,
         )
     )
 

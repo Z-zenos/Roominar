@@ -11,7 +11,10 @@ import type {
   ListingMyTransactionTicketItem,
   TransactionsApiListingMyTransactionsRequest,
 } from '@/src/lib/api/generated';
-import { TransactionStatusCode } from '@/src/lib/api/generated';
+import {
+  TicketCancellationPolicyCode,
+  TransactionStatusCode,
+} from '@/src/lib/api/generated';
 import {
   cn,
   formatEventDate,
@@ -102,21 +105,18 @@ function TicketsNPayment() {
     data: myTransactionsData,
     isLoading: isListingMyTransactionsLoading,
     isFetching: isListingMyTransactionsFetching,
-    refetch: refetchListingMyTransactions,
   } = useListingMyTransactionsQuery({
     ...queryString.parse(searchParams.toString(), { arrayFormat: 'bracket' }),
   });
 
-  const { data: statusCounts, refetch: refetchStatusCounts } =
-    useGetTransactionStatusCountsQuery();
+  const { data: statusCounts } = useGetTransactionStatusCountsQuery();
 
   const { trigger: cancelTickets, isMutating: isCanceling } =
     useCancelTicketsMutation({
       onSuccess() {
         toast.success('Đã huỷ vé thành công 🎉');
 
-        refetchListingMyTransactions();
-        refetchStatusCounts();
+        window.location.reload();
       },
       onError: handleApiError,
     });
@@ -361,24 +361,53 @@ function TicketsNPayment() {
                                 </div>
 
                                 <div className='px-3 py-2'>
-                                  {!ticket.checkInAt ? (
-                                    <div className='text-nm underline font-semibold'>
-                                      Mã QR:{' '}
-                                      <p className='flex items-center justify-center'>
-                                        <Image
-                                          src={ticket.qrCodeUrl}
-                                          alt='Ticket QR Code'
-                                          className='w-[200px] h-[200px] rounded-md'
-                                        />
-                                      </p>
-                                    </div>
-                                  ) : (
+                                  {!ticket.checkInAt &&
+                                    ticket.transactionStatus ===
+                                      TransactionStatusCode.Success && (
+                                      <div className='text-nm underline font-semibold'>
+                                        Mã QR:{' '}
+                                        <p className='flex items-center justify-center'>
+                                          <Image
+                                            src={ticket.qrCodeUrl}
+                                            alt='Ticket QR Code'
+                                            className='w-[200px] h-[200px] rounded-md'
+                                          />
+                                        </p>
+                                      </div>
+                                    )}
+                                  {ticket.checkInAt && (
                                     <Chip
                                       content='Đã check-in'
                                       type='success'
                                       leftIcon={<FaCheck className='text-sm' />}
                                       className='font-semibold text-xs'
                                     />
+                                  )}
+                                  {ticket.transactionStatus ===
+                                    TransactionStatusCode.Canceled && (
+                                    <p className='text-red-500 font-semibold text-xs'>
+                                      Đã huỷ vào lúc{' '}
+                                      {formatEventDate(ticket.canceledAt)}
+                                      với lý do:{' '}
+                                      {t(
+                                        `ticket.cancelReason.${ticket.cancelReasonCode}`,
+                                      )}
+                                    </p>
+                                  )}
+                                  {ticket.transactionStatus ===
+                                    TransactionStatusCode.Refunded && (
+                                    <p className='text-green-500 font-semibold text-xs'>
+                                      Đã hoàn trả vào lúc{' '}
+                                      {formatEventDate(ticket.refundedAt)} theo
+                                      chính sách:{' '}
+                                      {t(
+                                        `ticket.cancellationPolicy.${ticket.cancellationPolicyCode}`,
+                                      )}{' '}
+                                      vì{' '}
+                                      {t(
+                                        `ticket.cancelReason.${ticket.cancelReasonCode}`,
+                                      )}
+                                    </p>
                                   )}
                                 </div>
                               </SwiperSlide>
@@ -526,7 +555,10 @@ function TicketsNPayment() {
                       </div>
                     ),
                   },
-                  {
+                  [
+                    TransactionStatusCode.Success,
+                    TransactionStatusCode.Pending,
+                  ].includes(selectedTransaction.status) && {
                     value: 'Huỷ vé',
                     content: (
                       <div className='mb-4 p-4 bg-gray-50 rounded-md'>
@@ -639,10 +671,34 @@ function TicketsNPayment() {
                           <p>Tổng số tiền hoàn trả</p>
                           <p className='text-md font-semibold text-green-500'>
                             {formatMoney(
-                              selectedTickets.reduce(
-                                (acc, ticket) => acc + ticket.price,
-                                0,
-                              ),
+                              selectedTickets.reduce((acc, ticket) => {
+                                if (
+                                  ticket.cancellationPolicyCode ===
+                                  TicketCancellationPolicyCode.NoRefund
+                                ) {
+                                  return acc;
+                                }
+
+                                if (
+                                  ticket.cancellationPolicyCode ===
+                                  TicketCancellationPolicyCode.FullRefund
+                                ) {
+                                  return acc + ticket.price;
+                                }
+
+                                if (
+                                  ticket.cancellationPolicyCode ===
+                                  TicketCancellationPolicyCode.PartialRefund
+                                ) {
+                                  return (
+                                    acc +
+                                    ticket.price *
+                                      (ticket.refundPercentage / 100)
+                                  );
+                                }
+
+                                return acc + ticket.price;
+                              }, 0),
                             )}
                           </p>
                         </div>

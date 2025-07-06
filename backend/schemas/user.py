@@ -21,6 +21,7 @@ class UserBase(BaseModel):
     tags: list[TagItem] = Field([])
     organization_name: str | None = None
     organization_avatar_url: str | None = None
+    point: int | None = None
 
 
 class UpdateUserRequest(BaseModel):

@@ -109,7 +109,7 @@ def validate_application_tickets(
             .where(
                 Application.event_id == event_id,
                 Application.user_id == user_id,
-                Transaction.status == TransactionStatusCode.SUCCESS,
+                TransactionItem.status == TransactionStatusCode.SUCCESS,
             )
             .group_by(Application.id)
         ).one_or_none()

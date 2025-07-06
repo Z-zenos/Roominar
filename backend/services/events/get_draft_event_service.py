@@ -37,7 +37,7 @@ async def get_draft_event(db: Session, organizer: User):
         )
 
         if len(event["tickets"]) == 0:
-            ticket = await ticket_service.create_default_ticket(db, event["id"])
+            ticket = await ticket_service.create_default_ticket(db, event)
             ticket = dict(ticket)
             event["tickets"] = [ticket]
 
