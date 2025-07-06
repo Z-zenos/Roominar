@@ -24,7 +24,6 @@ export * from '../models/CreateAnswerItem';
 export * from '../models/CreateApplicationCheckoutSessionResponse';
 export * from '../models/CreateApplicationRequest';
 export * from '../models/CreateCommentReplyRequest';
-export * from '../models/CreateDraftEventRequest';
 export * from '../models/CreateQuestionAnswerRequest';
 export * from '../models/CreateSurveyRequest';
 export * from '../models/CreateTargetRequest';
@@ -38,6 +37,8 @@ export * from '../models/EventMeetingToolCode';
 export * from '../models/EventSortByCode';
 export * from '../models/EventStatusCode';
 export * from '../models/EventTimeStatusCode';
+export * from '../models/FeedbackEventRequest';
+export * from '../models/FeedbackRating';
 export * from '../models/ForgotPasswordRequest';
 export * from '../models/ForgotPasswordResponse';
 export * from '../models/GenerateEventAIRequest';
@@ -53,6 +54,7 @@ export * from '../models/GetSpeakerDetailResponse';
 export * from '../models/GetTagStatsResponse';
 export * from '../models/GetTicketStatsResponse';
 export * from '../models/GetTransactionStatusCountsResponse';
+export * from '../models/GetUserFeedback';
 export * from '../models/HTTPValidationError';
 export * from '../models/IndustryCode';
 export * from '../models/JobTypeCode';
@@ -69,6 +71,10 @@ export * from '../models/ListingEventPurchasedTicketsItem';
 export * from '../models/ListingEventPurchasedTicketsResponse';
 export * from '../models/ListingEventRankItem';
 export * from '../models/ListingEventRankResponse';
+export * from '../models/ListingFeedbackCriteriaItem';
+export * from '../models/ListingFeedbackCriteriaResponse';
+export * from '../models/ListingFeedbacksItem';
+export * from '../models/ListingFeedbacksResponse';
 export * from '../models/ListingMyEventsResponse';
 export * from '../models/ListingMyTransactionTicketItem';
 export * from '../models/ListingMyTransactionsItem';
@@ -147,9 +153,11 @@ export * from '../models/TrackingTimeRangeCode';
 export * from '../models/TransactionStatusCode';
 export * from '../models/UpdateCommentReplyRequest';
 export * from '../models/UpdateEventCommentRequest';
+export * from '../models/UpdateFeedbackRequest';
 export * from '../models/UpdateTicketRequest';
 export * from '../models/UpdateUserRequest';
 export * from '../models/UserActionTypeCode';
+export * from '../models/UserFeedbackRating';
 export * from '../models/ValidationError';
 export * from '../models/ValidationErrorLocInner';
 export * from '../models/VerifyAudienceRequest';
@@ -182,7 +190,6 @@ import { CreateAnswerItem } from '../models/CreateAnswerItem';
 import { CreateApplicationCheckoutSessionResponse } from '../models/CreateApplicationCheckoutSessionResponse';
 import { CreateApplicationRequest            } from '../models/CreateApplicationRequest';
 import { CreateCommentReplyRequest } from '../models/CreateCommentReplyRequest';
-import { CreateDraftEventRequest } from '../models/CreateDraftEventRequest';
 import { CreateQuestionAnswerRequest     } from '../models/CreateQuestionAnswerRequest';
 import { CreateSurveyRequest } from '../models/CreateSurveyRequest';
 import { CreateTargetRequest } from '../models/CreateTargetRequest';
@@ -196,13 +203,15 @@ import { EventMeetingToolCode } from '../models/EventMeetingToolCode';
 import { EventSortByCode } from '../models/EventSortByCode';
 import { EventStatusCode } from '../models/EventStatusCode';
 import { EventTimeStatusCode } from '../models/EventTimeStatusCode';
+import { FeedbackEventRequest } from '../models/FeedbackEventRequest';
+import { FeedbackRating } from '../models/FeedbackRating';
 import { ForgotPasswordRequest } from '../models/ForgotPasswordRequest';
 import { ForgotPasswordResponse } from '../models/ForgotPasswordResponse';
 import { GenerateEventAIRequest } from '../models/GenerateEventAIRequest';
 import { GenerateEventAIResponse } from '../models/GenerateEventAIResponse';
 import { GetAttendeeDetailResponse            } from '../models/GetAttendeeDetailResponse';
 import { GetDraftEventResponse                           } from '../models/GetDraftEventResponse';
-import { GetEventDetailResponse                                           } from '../models/GetEventDetailResponse';
+import { GetEventDetailResponse                                            } from '../models/GetEventDetailResponse';
 import { GetMeResponse } from '../models/GetMeResponse';
 import { GetOrganizationDashboardResponse } from '../models/GetOrganizationDashboardResponse';
 import { GetOrganizationDetailResponse } from '../models/GetOrganizationDetailResponse';
@@ -211,6 +220,7 @@ import { GetSpeakerDetailResponse } from '../models/GetSpeakerDetailResponse';
 import { GetTagStatsResponse } from '../models/GetTagStatsResponse';
 import { GetTicketStatsResponse } from '../models/GetTicketStatsResponse';
 import { GetTransactionStatusCountsResponse } from '../models/GetTransactionStatusCountsResponse';
+import { GetUserFeedback } from '../models/GetUserFeedback';
 import { HTTPValidationError } from '../models/HTTPValidationError';
 import { IndustryCode } from '../models/IndustryCode';
 import { JobTypeCode } from '../models/JobTypeCode';
@@ -227,9 +237,13 @@ import { ListingEventPurchasedTicketsItem } from '../models/ListingEventPurchase
 import { ListingEventPurchasedTicketsResponse } from '../models/ListingEventPurchasedTicketsResponse';
 import { ListingEventRankItem } from '../models/ListingEventRankItem';
 import { ListingEventRankResponse } from '../models/ListingEventRankResponse';
+import { ListingFeedbackCriteriaItem } from '../models/ListingFeedbackCriteriaItem';
+import { ListingFeedbackCriteriaResponse } from '../models/ListingFeedbackCriteriaResponse';
+import { ListingFeedbacksItem } from '../models/ListingFeedbacksItem';
+import { ListingFeedbacksResponse } from '../models/ListingFeedbacksResponse';
 import { ListingMyEventsResponse } from '../models/ListingMyEventsResponse';
 import { ListingMyTransactionTicketItem                      } from '../models/ListingMyTransactionTicketItem';
-import { ListingMyTransactionsItem                    } from '../models/ListingMyTransactionsItem';
+import { ListingMyTransactionsItem                          } from '../models/ListingMyTransactionsItem';
 import { ListingMyTransactionsResponse } from '../models/ListingMyTransactionsResponse';
 import { ListingNotificationsResponse } from '../models/ListingNotificationsResponse';
 import { ListingOrganizationEventsItem                    } from '../models/ListingOrganizationEventsItem';
@@ -305,9 +319,11 @@ import { TrackingTimeRangeCode } from '../models/TrackingTimeRangeCode';
 import { TransactionStatusCode } from '../models/TransactionStatusCode';
 import { UpdateCommentReplyRequest } from '../models/UpdateCommentReplyRequest';
 import { UpdateEventCommentRequest } from '../models/UpdateEventCommentRequest';
+import { UpdateFeedbackRequest } from '../models/UpdateFeedbackRequest';
 import { UpdateTicketRequest           } from '../models/UpdateTicketRequest';
 import { UpdateUserRequest           } from '../models/UpdateUserRequest';
 import { UserActionTypeCode } from '../models/UserActionTypeCode';
+import { UserFeedbackRating } from '../models/UserFeedbackRating';
 import { ValidationError } from '../models/ValidationError';
 import { ValidationErrorLocInner } from '../models/ValidationErrorLocInner';
 import { VerifyAudienceRequest    } from '../models/VerifyAudienceRequest';
@@ -394,7 +410,6 @@ const typeMap: {[index: string]: any} = {
     "CreateApplicationCheckoutSessionResponse": CreateApplicationCheckoutSessionResponse,
     "CreateApplicationRequest": CreateApplicationRequest,
     "CreateCommentReplyRequest": CreateCommentReplyRequest,
-    "CreateDraftEventRequest": CreateDraftEventRequest,
     "CreateQuestionAnswerRequest": CreateQuestionAnswerRequest,
     "CreateSurveyRequest": CreateSurveyRequest,
     "CreateTargetRequest": CreateTargetRequest,
@@ -402,6 +417,8 @@ const typeMap: {[index: string]: any} = {
     "ErrorResponse400": ErrorResponse400,
     "ErrorResponse401": ErrorResponse401,
     "ErrorResponse403": ErrorResponse403,
+    "FeedbackEventRequest": FeedbackEventRequest,
+    "FeedbackRating": FeedbackRating,
     "ForgotPasswordRequest": ForgotPasswordRequest,
     "ForgotPasswordResponse": ForgotPasswordResponse,
     "GenerateEventAIRequest": GenerateEventAIRequest,
@@ -417,6 +434,7 @@ const typeMap: {[index: string]: any} = {
     "GetTagStatsResponse": GetTagStatsResponse,
     "GetTicketStatsResponse": GetTicketStatsResponse,
     "GetTransactionStatusCountsResponse": GetTransactionStatusCountsResponse,
+    "GetUserFeedback": GetUserFeedback,
     "HTTPValidationError": HTTPValidationError,
     "ListingAttendeesItem": ListingAttendeesItem,
     "ListingAttendeesRankingItem": ListingAttendeesRankingItem,
@@ -431,6 +449,10 @@ const typeMap: {[index: string]: any} = {
     "ListingEventPurchasedTicketsResponse": ListingEventPurchasedTicketsResponse,
     "ListingEventRankItem": ListingEventRankItem,
     "ListingEventRankResponse": ListingEventRankResponse,
+    "ListingFeedbackCriteriaItem": ListingFeedbackCriteriaItem,
+    "ListingFeedbackCriteriaResponse": ListingFeedbackCriteriaResponse,
+    "ListingFeedbacksItem": ListingFeedbacksItem,
+    "ListingFeedbacksResponse": ListingFeedbacksResponse,
     "ListingMyEventsResponse": ListingMyEventsResponse,
     "ListingMyTransactionTicketItem": ListingMyTransactionTicketItem,
     "ListingMyTransactionsItem": ListingMyTransactionsItem,
@@ -494,8 +516,10 @@ const typeMap: {[index: string]: any} = {
     "TrackUserActionsResponse": TrackUserActionsResponse,
     "UpdateCommentReplyRequest": UpdateCommentReplyRequest,
     "UpdateEventCommentRequest": UpdateEventCommentRequest,
+    "UpdateFeedbackRequest": UpdateFeedbackRequest,
     "UpdateTicketRequest": UpdateTicketRequest,
     "UpdateUserRequest": UpdateUserRequest,
+    "UserFeedbackRating": UserFeedbackRating,
     "ValidationError": ValidationError,
     "ValidationErrorLocInner": ValidationErrorLocInner,
     "VerifyAudienceRequest": VerifyAudienceRequest,

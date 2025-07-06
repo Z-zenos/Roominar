@@ -52,9 +52,9 @@ import type {SecurityAuthentication} from '../auth/auth';
             }
 
         /**
-            * Handle Application Transaction
+            * Handle Transaction
         */
-        public async handleApplicationTransaction(_options?: Configuration): Promise<RequestContext> {
+        public async handleTransaction(_options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
 
             // Path Params
@@ -76,13 +76,15 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Listing My Transactions
-            * @param keyword 
-            * @param status 
-            * @param page 
-            * @param perPage 
+            * @param keyword
+            * @param status
+            * @param transactionId
+            * @param page
+            * @param perPage
         */
-        public async listingMyTransactions(keyword?: string, status?: TransactionStatusCode, page?: number, perPage?: number, _options?: Configuration): Promise<RequestContext> {
+        public async listingMyTransactions(keyword?: string, status?: TransactionStatusCode, transactionId?: number, page?: number, perPage?: number, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
+
 
 
 
@@ -106,6 +108,11 @@ import type {SecurityAuthentication} from '../auth/auth';
                 }
 
                 // Query Params
+                if (transactionId !== undefined) {
+                requestContext.setQueryParam("transaction_id", ObjectSerializer.serialize(transactionId, "number", ""));
+                }
+
+                // Query Params
                 if (page !== undefined) {
                 requestContext.setQueryParam("page", ObjectSerializer.serialize(page, "number", ""));
                 }
@@ -122,29 +129,6 @@ import type {SecurityAuthentication} from '../auth/auth';
                 if (authMethod?.applySecurityAuthentication) {
                 await authMethod?.applySecurityAuthentication(requestContext);
                 }
-
-                const defaultAuth: SecurityAuthentication | undefined = _options?.authMethods?.default || this.configuration?.authMethods?.default
-                if (defaultAuth?.applySecurityAuthentication) {
-                await defaultAuth?.applySecurityAuthentication(requestContext);
-                }
-
-            return requestContext;
-            }
-
-        /**
-            * Payment Webhook
-        */
-        public async paymentWebhook(_options?: Configuration): Promise<RequestContext> {
-            const _config = _options || this.configuration;
-
-            // Path Params
-            const localVarPath = '/api/v1/transactions/webhook/payment';
-
-            // Make Request Context
-            const requestContext = _config.baseServer.makeRequestContext(localVarPath, HttpMethod.POST);
-            requestContext.setHeaderParam("Accept", "application/json, */*;q=0.8")
-
-
 
                 const defaultAuth: SecurityAuthentication | undefined = _options?.authMethods?.default || this.configuration?.authMethods?.default
                 if (defaultAuth?.applySecurityAuthentication) {
@@ -212,10 +196,10 @@ import type {SecurityAuthentication} from '../auth/auth';
             * Unwraps the actual response sent by the server from the response context and deserializes the response content
             * to the expected objects
             *
-            * @params response Response returned by the server for a request to handleApplicationTransaction
+            * @params response Response returned by the server for a request to handleTransaction
             * @throws ApiException if the response code was not in [200, 299]
             */
-            public async handleApplicationTransactionWithHttpInfo(response: ResponseContext): Promise<HttpInfo<void >> {
+            public async handleTransactionWithHttpInfo(response: ResponseContext): Promise<HttpInfo<void >> {
             const contentType = ObjectSerializer.normalizeMediaType(response.headers["content-type"]);
                 if (isCodeInRange("204", response.httpStatusCode)) {
                         return new HttpInfo(response.httpStatusCode, response.headers, response.body, undefined);
@@ -305,31 +289,6 @@ import type {SecurityAuthentication} from '../auth/auth';
                     ObjectSerializer.parse(await response.body.text(), contentType),
                     "ListingMyTransactionsResponse", ""
                     ) as ListingMyTransactionsResponse;
-                return new HttpInfo(response.httpStatusCode, response.headers, response.body, body);
-            }
-
-            throw new ApiException<string | Blob | undefined>(response.httpStatusCode, "Unknown API Status Code!", await response.getBodyAsAny(), response.headers);
-            }
-
-            /**
-            * Unwraps the actual response sent by the server from the response context and deserializes the response content
-            * to the expected objects
-            *
-            * @params response Response returned by the server for a request to paymentWebhook
-            * @throws ApiException if the response code was not in [200, 299]
-            */
-            public async paymentWebhookWithHttpInfo(response: ResponseContext): Promise<HttpInfo<void >> {
-            const contentType = ObjectSerializer.normalizeMediaType(response.headers["content-type"]);
-                if (isCodeInRange("200", response.httpStatusCode)) {
-                        return new HttpInfo(response.httpStatusCode, response.headers, response.body, undefined);
-                }
-
-            // Work around for missing responses in specification, e.g. for petstore.yaml
-            if (response.httpStatusCode >= 200 && response.httpStatusCode <= 299) {
-                    const body: void = ObjectSerializer.deserialize(
-                    ObjectSerializer.parse(await response.body.text(), contentType),
-                    "void", ""
-                    ) as void;
                 return new HttpInfo(response.httpStatusCode, response.headers, response.body, body);
             }
 

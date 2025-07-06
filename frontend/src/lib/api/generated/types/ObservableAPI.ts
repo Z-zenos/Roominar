@@ -30,7 +30,6 @@ import { CreateAnswerItem } from '../models/CreateAnswerItem';
 import type { CreateApplicationCheckoutSessionResponse } from '../models/CreateApplicationCheckoutSessionResponse';
 import type { CreateApplicationRequest } from '../models/CreateApplicationRequest';
 import type { CreateCommentReplyRequest } from '../models/CreateCommentReplyRequest';
-import type { CreateDraftEventRequest } from '../models/CreateDraftEventRequest';
 import { CreateQuestionAnswerRequest } from '../models/CreateQuestionAnswerRequest';
 import type { CreateSurveyRequest } from '../models/CreateSurveyRequest';
 import type { CreateTargetRequest } from '../models/CreateTargetRequest';
@@ -44,6 +43,8 @@ import type { EventMeetingToolCode } from '../models/EventMeetingToolCode';
 import type { EventSortByCode } from '../models/EventSortByCode';
 import type { EventStatusCode } from '../models/EventStatusCode';
 import type { EventTimeStatusCode } from '../models/EventTimeStatusCode';
+import type { FeedbackEventRequest } from '../models/FeedbackEventRequest';
+import { FeedbackRating } from '../models/FeedbackRating';
 import type { ForgotPasswordRequest } from '../models/ForgotPasswordRequest';
 import type { ForgotPasswordResponse } from '../models/ForgotPasswordResponse';
 import type { GenerateEventAIRequest } from '../models/GenerateEventAIRequest';
@@ -59,6 +60,7 @@ import type { GetSpeakerDetailResponse } from '../models/GetSpeakerDetailRespons
 import type { GetTagStatsResponse } from '../models/GetTagStatsResponse';
 import type { GetTicketStatsResponse } from '../models/GetTicketStatsResponse';
 import type { GetTransactionStatusCountsResponse } from '../models/GetTransactionStatusCountsResponse';
+import { GetUserFeedback } from '../models/GetUserFeedback';
 import { HTTPValidationError } from '../models/HTTPValidationError';
 import type { IndustryCode } from '../models/IndustryCode';
 import type { JobTypeCode } from '../models/JobTypeCode';
@@ -75,6 +77,10 @@ import { ListingEventPurchasedTicketsItem } from '../models/ListingEventPurchase
 import type { ListingEventPurchasedTicketsResponse } from '../models/ListingEventPurchasedTicketsResponse';
 import { ListingEventRankItem } from '../models/ListingEventRankItem';
 import type { ListingEventRankResponse } from '../models/ListingEventRankResponse';
+import { ListingFeedbackCriteriaItem } from '../models/ListingFeedbackCriteriaItem';
+import type { ListingFeedbackCriteriaResponse } from '../models/ListingFeedbackCriteriaResponse';
+import { ListingFeedbacksItem } from '../models/ListingFeedbacksItem';
+import type { ListingFeedbacksResponse } from '../models/ListingFeedbacksResponse';
 import type { ListingMyEventsResponse } from '../models/ListingMyEventsResponse';
 import { ListingMyTransactionTicketItem } from '../models/ListingMyTransactionTicketItem';
 import { ListingMyTransactionsItem } from '../models/ListingMyTransactionsItem';
@@ -153,9 +159,11 @@ import type { TrackingTimeRangeCode } from '../models/TrackingTimeRangeCode';
 import type { TransactionStatusCode } from '../models/TransactionStatusCode';
 import type { UpdateCommentReplyRequest } from '../models/UpdateCommentReplyRequest';
 import type { UpdateEventCommentRequest } from '../models/UpdateEventCommentRequest';
+import type { UpdateFeedbackRequest } from '../models/UpdateFeedbackRequest';
 import type { UpdateTicketRequest } from '../models/UpdateTicketRequest';
 import type { UpdateUserRequest } from '../models/UpdateUserRequest';
 import type { UserActionTypeCode } from '../models/UserActionTypeCode';
+import { UserFeedbackRating } from '../models/UserFeedbackRating';
 import { ValidationError } from '../models/ValidationError';
 import { ValidationErrorLocInner } from '../models/ValidationErrorLocInner';
 import type { VerifyAudienceRequest } from '../models/VerifyAudienceRequest';
@@ -179,11 +187,11 @@ export class ObservableApplicationsApi {
     }
 
     /**
-     * Create Application Checkout Session
+     * Create Checkout Session
      * @param createApplicationRequest
      */
-    public createApplicationCheckoutSessionWithHttpInfo(createApplicationRequest?: CreateApplicationRequest, _options?: Configuration): Observable<HttpInfo<CreateApplicationCheckoutSessionResponse>> {
-        const requestContextPromise = this.requestFactory.createApplicationCheckoutSession(createApplicationRequest, _options);
+    public createCheckoutSessionWithHttpInfo(createApplicationRequest?: CreateApplicationRequest, _options?: Configuration): Observable<HttpInfo<CreateApplicationCheckoutSessionResponse>> {
+        const requestContextPromise = this.requestFactory.createCheckoutSession(createApplicationRequest, _options);
 
         // build promise chain
         let middlewarePreObservable = from<RequestContext>(requestContextPromise);
@@ -197,23 +205,23 @@ export class ObservableApplicationsApi {
                 for (const middleware of this.configuration.middleware) {
                     middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
                 }
-                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.createApplicationCheckoutSessionWithHttpInfo(rsp)));
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.createCheckoutSessionWithHttpInfo(rsp)));
             }));
     }
 
     /**
-     * Create Application Checkout Session
+     * Create Checkout Session
      * @param createApplicationRequest
      */
-    public createApplicationCheckoutSession(createApplicationRequest?: CreateApplicationRequest, _options?: Configuration): Observable<CreateApplicationCheckoutSessionResponse> {
-        return this.createApplicationCheckoutSessionWithHttpInfo(createApplicationRequest, _options).pipe(map((apiResponse: HttpInfo<CreateApplicationCheckoutSessionResponse>) => apiResponse.data));
+    public createCheckoutSession(createApplicationRequest?: CreateApplicationRequest, _options?: Configuration): Observable<CreateApplicationCheckoutSessionResponse> {
+        return this.createCheckoutSessionWithHttpInfo(createApplicationRequest, _options).pipe(map((apiResponse: HttpInfo<CreateApplicationCheckoutSessionResponse>) => apiResponse.data));
     }
 
     /**
      * Create Free Application
      * @param createApplicationRequest
      */
-    public createFreeApplicationWithHttpInfo(createApplicationRequest?: CreateApplicationRequest, _options?: Configuration): Observable<HttpInfo<string>> {
+    public createFreeApplicationWithHttpInfo(createApplicationRequest?: CreateApplicationRequest, _options?: Configuration): Observable<HttpInfo<number>> {
         const requestContextPromise = this.requestFactory.createFreeApplication(createApplicationRequest, _options);
 
         // build promise chain
@@ -236,8 +244,8 @@ export class ObservableApplicationsApi {
      * Create Free Application
      * @param createApplicationRequest
      */
-    public createFreeApplication(createApplicationRequest?: CreateApplicationRequest, _options?: Configuration): Observable<string> {
-        return this.createFreeApplicationWithHttpInfo(createApplicationRequest, _options).pipe(map((apiResponse: HttpInfo<string>) => apiResponse.data));
+    public createFreeApplication(createApplicationRequest?: CreateApplicationRequest, _options?: Configuration): Observable<number> {
+        return this.createFreeApplicationWithHttpInfo(createApplicationRequest, _options).pipe(map((apiResponse: HttpInfo<number>) => apiResponse.data));
     }
 
 }
@@ -1075,37 +1083,6 @@ export class ObservableEventsApi {
     }
 
     /**
-     * Create Draft Event
-     * @param createDraftEventRequest
-     */
-    public createDraftEventWithHttpInfo(createDraftEventRequest?: CreateDraftEventRequest, _options?: Configuration): Observable<HttpInfo<number>> {
-        const requestContextPromise = this.requestFactory.createDraftEvent(createDraftEventRequest, _options);
-
-        // build promise chain
-        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
-        for (const middleware of this.configuration.middleware) {
-            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
-        }
-
-        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => this.configuration.httpApi.send(ctx))).
-            pipe(mergeMap((response: ResponseContext) => {
-                let middlewarePostObservable = of(response);
-                for (const middleware of this.configuration.middleware) {
-                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
-                }
-                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.createDraftEventWithHttpInfo(rsp)));
-            }));
-    }
-
-    /**
-     * Create Draft Event
-     * @param createDraftEventRequest
-     */
-    public createDraftEvent(createDraftEventRequest?: CreateDraftEventRequest, _options?: Configuration): Observable<number> {
-        return this.createDraftEventWithHttpInfo(createDraftEventRequest, _options).pipe(map((apiResponse: HttpInfo<number>) => apiResponse.data));
-    }
-
-    /**
      * Create Event Bookmark
      * @param eventId
      */
@@ -1196,6 +1173,39 @@ export class ObservableEventsApi {
      */
     public deleteManualCheckIn(checkInId: number, _options?: Configuration): Observable<void> {
         return this.deleteManualCheckInWithHttpInfo(checkInId, _options).pipe(map((apiResponse: HttpInfo<void>) => apiResponse.data));
+    }
+
+    /**
+     * Feedback Event
+     * @param eventId
+     * @param feedbackEventRequest
+     */
+    public feedbackEventWithHttpInfo(eventId: number, feedbackEventRequest?: FeedbackEventRequest, _options?: Configuration): Observable<HttpInfo<number>> {
+        const requestContextPromise = this.requestFactory.feedbackEvent(eventId, feedbackEventRequest, _options);
+
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of this.configuration.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => this.configuration.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of this.configuration.middleware) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.feedbackEventWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * Feedback Event
+     * @param eventId
+     * @param feedbackEventRequest
+     */
+    public feedbackEvent(eventId: number, feedbackEventRequest?: FeedbackEventRequest, _options?: Configuration): Observable<number> {
+        return this.feedbackEventWithHttpInfo(eventId, feedbackEventRequest, _options).pipe(map((apiResponse: HttpInfo<number>) => apiResponse.data));
     }
 
     /**
@@ -1419,6 +1429,72 @@ export class ObservableEventsApi {
      */
     public listingEventRank(_options?: Configuration): Observable<ListingEventRankResponse> {
         return this.listingEventRankWithHttpInfo(_options).pipe(map((apiResponse: HttpInfo<ListingEventRankResponse>) => apiResponse.data));
+    }
+
+    /**
+     * Listing Feedback Criteria
+     * @param eventId
+     */
+    public listingFeedbackCriteriaWithHttpInfo(eventId: number, _options?: Configuration): Observable<HttpInfo<ListingFeedbackCriteriaResponse>> {
+        const requestContextPromise = this.requestFactory.listingFeedbackCriteria(eventId, _options);
+
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of this.configuration.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => this.configuration.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of this.configuration.middleware) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.listingFeedbackCriteriaWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * Listing Feedback Criteria
+     * @param eventId
+     */
+    public listingFeedbackCriteria(eventId: number, _options?: Configuration): Observable<ListingFeedbackCriteriaResponse> {
+        return this.listingFeedbackCriteriaWithHttpInfo(eventId, _options).pipe(map((apiResponse: HttpInfo<ListingFeedbackCriteriaResponse>) => apiResponse.data));
+    }
+
+    /**
+     * Listing Feedbacks
+     * @param eventId
+     * @param perPage
+     * @param page
+     */
+    public listingFeedbacksWithHttpInfo(eventId: number, perPage?: number, page?: number, _options?: Configuration): Observable<HttpInfo<ListingFeedbacksResponse>> {
+        const requestContextPromise = this.requestFactory.listingFeedbacks(eventId, perPage, page, _options);
+
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of this.configuration.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => this.configuration.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of this.configuration.middleware) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.listingFeedbacksWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * Listing Feedbacks
+     * @param eventId
+     * @param perPage
+     * @param page
+     */
+    public listingFeedbacks(eventId: number, perPage?: number, page?: number, _options?: Configuration): Observable<ListingFeedbacksResponse> {
+        return this.listingFeedbacksWithHttpInfo(eventId, perPage, page, _options).pipe(map((apiResponse: HttpInfo<ListingFeedbacksResponse>) => apiResponse.data));
     }
 
     /**
@@ -1843,6 +1919,88 @@ export class ObservableEventsApi {
      */
     public searchEvents(keyword?: string, isOnline?: boolean, isOffline?: boolean, isApplyOngoing?: boolean, isApplyEnded?: boolean, isToday?: boolean, isFree?: boolean, isPaid?: boolean, jobTypeCodes?: Array<JobTypeCode>, industryCodes?: Array<IndustryCode>, cityCodes?: Array<string>, tags?: Array<number>, startAtFrom?: string, startAtTo?: string, organizationId?: number, sortBy?: EventSortByCode, perPage?: number, page?: number, _options?: Configuration): Observable<SearchEventsResponse> {
         return this.searchEventsWithHttpInfo(keyword, isOnline, isOffline, isApplyOngoing, isApplyEnded, isToday, isFree, isPaid, jobTypeCodes, industryCodes, cityCodes, tags, startAtFrom, startAtTo, organizationId, sortBy, perPage, page, _options).pipe(map((apiResponse: HttpInfo<SearchEventsResponse>) => apiResponse.data));
+    }
+
+}
+
+import { FeedbacksApiRequestFactory, FeedbacksApiResponseProcessor} from "../apis/FeedbacksApi";
+export class ObservableFeedbacksApi {
+    private requestFactory: FeedbacksApiRequestFactory;
+    private responseProcessor: FeedbacksApiResponseProcessor;
+    private configuration: Configuration;
+
+    public constructor(
+        configuration: Configuration,
+        requestFactory?: FeedbacksApiRequestFactory,
+        responseProcessor?: FeedbacksApiResponseProcessor
+    ) {
+        this.configuration = configuration;
+        this.requestFactory = requestFactory || new FeedbacksApiRequestFactory(configuration);
+        this.responseProcessor = responseProcessor || new FeedbacksApiResponseProcessor();
+    }
+
+    /**
+     * Delete Feedback
+     * @param feedbackId
+     */
+    public deleteFeedbackWithHttpInfo(feedbackId: number, _options?: Configuration): Observable<HttpInfo<void>> {
+        const requestContextPromise = this.requestFactory.deleteFeedback(feedbackId, _options);
+
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of this.configuration.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => this.configuration.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of this.configuration.middleware) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.deleteFeedbackWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * Delete Feedback
+     * @param feedbackId
+     */
+    public deleteFeedback(feedbackId: number, _options?: Configuration): Observable<void> {
+        return this.deleteFeedbackWithHttpInfo(feedbackId, _options).pipe(map((apiResponse: HttpInfo<void>) => apiResponse.data));
+    }
+
+    /**
+     * Update Feedback
+     * @param feedbackId
+     * @param updateFeedbackRequest
+     */
+    public updateFeedbackWithHttpInfo(feedbackId: number, updateFeedbackRequest?: UpdateFeedbackRequest, _options?: Configuration): Observable<HttpInfo<number>> {
+        const requestContextPromise = this.requestFactory.updateFeedback(feedbackId, updateFeedbackRequest, _options);
+
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of this.configuration.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => this.configuration.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of this.configuration.middleware) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.updateFeedbackWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * Update Feedback
+     * @param feedbackId
+     * @param updateFeedbackRequest
+     */
+    public updateFeedback(feedbackId: number, updateFeedbackRequest?: UpdateFeedbackRequest, _options?: Configuration): Observable<number> {
+        return this.updateFeedbackWithHttpInfo(feedbackId, updateFeedbackRequest, _options).pipe(map((apiResponse: HttpInfo<number>) => apiResponse.data));
     }
 
 }
@@ -3116,10 +3274,10 @@ export class ObservableTransactionsApi {
     }
 
     /**
-     * Handle Application Transaction
+     * Handle Transaction
      */
-    public handleApplicationTransactionWithHttpInfo(_options?: Configuration): Observable<HttpInfo<void>> {
-        const requestContextPromise = this.requestFactory.handleApplicationTransaction(_options);
+    public handleTransactionWithHttpInfo(_options?: Configuration): Observable<HttpInfo<void>> {
+        const requestContextPromise = this.requestFactory.handleTransaction(_options);
 
         // build promise chain
         let middlewarePreObservable = from<RequestContext>(requestContextPromise);
@@ -3133,26 +3291,27 @@ export class ObservableTransactionsApi {
                 for (const middleware of this.configuration.middleware) {
                     middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
                 }
-                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.handleApplicationTransactionWithHttpInfo(rsp)));
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.handleTransactionWithHttpInfo(rsp)));
             }));
     }
 
     /**
-     * Handle Application Transaction
+     * Handle Transaction
      */
-    public handleApplicationTransaction(_options?: Configuration): Observable<void> {
-        return this.handleApplicationTransactionWithHttpInfo(_options).pipe(map((apiResponse: HttpInfo<void>) => apiResponse.data));
+    public handleTransaction(_options?: Configuration): Observable<void> {
+        return this.handleTransactionWithHttpInfo(_options).pipe(map((apiResponse: HttpInfo<void>) => apiResponse.data));
     }
 
     /**
      * Listing My Transactions
      * @param keyword
      * @param status
+     * @param transactionId
      * @param page
      * @param perPage
      */
-    public listingMyTransactionsWithHttpInfo(keyword?: string, status?: TransactionStatusCode, page?: number, perPage?: number, _options?: Configuration): Observable<HttpInfo<ListingMyTransactionsResponse>> {
-        const requestContextPromise = this.requestFactory.listingMyTransactions(keyword, status, page, perPage, _options);
+    public listingMyTransactionsWithHttpInfo(keyword?: string, status?: TransactionStatusCode, transactionId?: number, page?: number, perPage?: number, _options?: Configuration): Observable<HttpInfo<ListingMyTransactionsResponse>> {
+        const requestContextPromise = this.requestFactory.listingMyTransactions(keyword, status, transactionId, page, perPage, _options);
 
         // build promise chain
         let middlewarePreObservable = from<RequestContext>(requestContextPromise);
@@ -3174,40 +3333,12 @@ export class ObservableTransactionsApi {
      * Listing My Transactions
      * @param keyword
      * @param status
+     * @param transactionId
      * @param page
      * @param perPage
      */
-    public listingMyTransactions(keyword?: string, status?: TransactionStatusCode, page?: number, perPage?: number, _options?: Configuration): Observable<ListingMyTransactionsResponse> {
-        return this.listingMyTransactionsWithHttpInfo(keyword, status, page, perPage, _options).pipe(map((apiResponse: HttpInfo<ListingMyTransactionsResponse>) => apiResponse.data));
-    }
-
-    /**
-     * Payment Webhook
-     */
-    public paymentWebhookWithHttpInfo(_options?: Configuration): Observable<HttpInfo<void>> {
-        const requestContextPromise = this.requestFactory.paymentWebhook(_options);
-
-        // build promise chain
-        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
-        for (const middleware of this.configuration.middleware) {
-            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
-        }
-
-        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => this.configuration.httpApi.send(ctx))).
-            pipe(mergeMap((response: ResponseContext) => {
-                let middlewarePostObservable = of(response);
-                for (const middleware of this.configuration.middleware) {
-                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
-                }
-                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.paymentWebhookWithHttpInfo(rsp)));
-            }));
-    }
-
-    /**
-     * Payment Webhook
-     */
-    public paymentWebhook(_options?: Configuration): Observable<void> {
-        return this.paymentWebhookWithHttpInfo(_options).pipe(map((apiResponse: HttpInfo<void>) => apiResponse.data));
+    public listingMyTransactions(keyword?: string, status?: TransactionStatusCode, transactionId?: number, page?: number, perPage?: number, _options?: Configuration): Observable<ListingMyTransactionsResponse> {
+        return this.listingMyTransactionsWithHttpInfo(keyword, status, transactionId, page, perPage, _options).pipe(map((apiResponse: HttpInfo<ListingMyTransactionsResponse>) => apiResponse.data));
     }
 
 }

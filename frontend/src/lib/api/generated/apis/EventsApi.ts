@@ -10,11 +10,11 @@ import type {SecurityAuthentication} from '../auth/auth';
 
 
     import type { CommentEventRequest } from '../models/CommentEventRequest';
-    import type { CreateDraftEventRequest } from '../models/CreateDraftEventRequest';
     import type { ErrorResponse400 } from '../models/ErrorResponse400';
     import type { ErrorResponse401 } from '../models/ErrorResponse401';
     import type { ErrorResponse403 } from '../models/ErrorResponse403';
     import type { EventSortByCode } from '../models/EventSortByCode';
+    import type { FeedbackEventRequest } from '../models/FeedbackEventRequest';
     import type { GenerateEventAIRequest } from '../models/GenerateEventAIRequest';
     import type { GenerateEventAIResponse } from '../models/GenerateEventAIResponse';
     import type { GetDraftEventResponse } from '../models/GetDraftEventResponse';
@@ -26,6 +26,8 @@ import type {SecurityAuthentication} from '../auth/auth';
     import type { ListingEventOptionsResponse } from '../models/ListingEventOptionsResponse';
     import type { ListingEventPurchasedTicketsResponse } from '../models/ListingEventPurchasedTicketsResponse';
     import type { ListingEventRankResponse } from '../models/ListingEventRankResponse';
+    import type { ListingFeedbackCriteriaResponse } from '../models/ListingFeedbackCriteriaResponse';
+    import type { ListingFeedbacksResponse } from '../models/ListingFeedbacksResponse';
     import type { ListingMyEventsResponse } from '../models/ListingMyEventsResponse';
     import type { ListingRecommendationEventsResponse } from '../models/ListingRecommendationEventsResponse';
     import type { ListingRelatedEventsResponse } from '../models/ListingRelatedEventsResponse';
@@ -45,8 +47,8 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Comment Event
-            * @param eventId 
-            * @param commentEventRequest 
+            * @param eventId
+            * @param commentEventRequest
         */
         public async commentEvent(eventId: number, commentEventRequest?: CommentEventRequest, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -94,50 +96,8 @@ import type {SecurityAuthentication} from '../auth/auth';
             }
 
         /**
-            * Create Draft Event
-            * @param createDraftEventRequest 
-        */
-        public async createDraftEvent(createDraftEventRequest?: CreateDraftEventRequest, _options?: Configuration): Promise<RequestContext> {
-            const _config = _options || this.configuration;
-
-
-            // Path Params
-            const localVarPath = '/api/v1/events/draft';
-
-            // Make Request Context
-            const requestContext = _config.baseServer.makeRequestContext(localVarPath, HttpMethod.POST);
-            requestContext.setHeaderParam("Accept", "application/json, */*;q=0.8")
-
-
-                // Body Params
-                const contentType = ObjectSerializer.getPreferredMediaType([
-                    "application/json"
-            ]);
-                requestContext.setHeaderParam("Content-Type", contentType);
-                const serializedBody = ObjectSerializer.stringify(
-                ObjectSerializer.serialize(createDraftEventRequest, "CreateDraftEventRequest", ""),
-                contentType
-                );
-                requestContext.setBody(serializedBody);
-
-                let authMethod: SecurityAuthentication | undefined;
-                // Apply auth methods
-                authMethod = _config.authMethods["OAuth2PasswordBearer"]
-                if (authMethod?.applySecurityAuthentication) {
-                await authMethod?.applySecurityAuthentication(requestContext);
-                }
-
-                const defaultAuth: SecurityAuthentication | undefined = _options?.authMethods?.default || this.configuration?.authMethods?.default
-                if (defaultAuth?.applySecurityAuthentication) {
-                await defaultAuth?.applySecurityAuthentication(requestContext);
-                }
-
-            return requestContext;
-            }
-
-        /**
             * Create Event Bookmark
-            * @param eventId 
+            * @param eventId
         */
         public async createEventBookmark(eventId: number, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -174,7 +134,7 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Delete Event Bookmark
-            * @param eventId 
+            * @param eventId
         */
         public async deleteEventBookmark(eventId: number, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -211,7 +171,7 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Delete Manual Check In
-            * @param checkInId 
+            * @param checkInId
         */
         public async deleteManualCheckIn(checkInId: number, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -247,8 +207,58 @@ import type {SecurityAuthentication} from '../auth/auth';
             }
 
         /**
+            * Feedback Event
+            * @param eventId
+            * @param feedbackEventRequest
+        */
+        public async feedbackEvent(eventId: number, feedbackEventRequest?: FeedbackEventRequest, _options?: Configuration): Promise<RequestContext> {
+            const _config = _options || this.configuration;
+
+                    // verify required parameter 'eventId' is not null or undefined
+                    if (eventId === null || eventId === undefined) {
+                    throw new RequiredError("EventsApi", "feedbackEvent", "eventId");
+                    }
+
+
+
+            // Path Params
+            const localVarPath = '/api/v1/events/{event_id}/feedback'
+                .replace('{' + 'event_id' + '}', encodeURIComponent(String(eventId)));
+
+            // Make Request Context
+            const requestContext = _config.baseServer.makeRequestContext(localVarPath, HttpMethod.POST);
+            requestContext.setHeaderParam("Accept", "application/json, */*;q=0.8")
+
+
+                // Body Params
+                const contentType = ObjectSerializer.getPreferredMediaType([
+                    "application/json"
+            ]);
+                requestContext.setHeaderParam("Content-Type", contentType);
+                const serializedBody = ObjectSerializer.stringify(
+                ObjectSerializer.serialize(feedbackEventRequest, "FeedbackEventRequest", ""),
+                contentType
+                );
+                requestContext.setBody(serializedBody);
+
+                let authMethod: SecurityAuthentication | undefined;
+                // Apply auth methods
+                authMethod = _config.authMethods["OAuth2PasswordBearer"]
+                if (authMethod?.applySecurityAuthentication) {
+                await authMethod?.applySecurityAuthentication(requestContext);
+                }
+
+                const defaultAuth: SecurityAuthentication | undefined = _options?.authMethods?.default || this.configuration?.authMethods?.default
+                if (defaultAuth?.applySecurityAuthentication) {
+                await defaultAuth?.applySecurityAuthentication(requestContext);
+                }
+
+            return requestContext;
+            }
+
+        /**
             * Generate Event Ai
-            * @param generateEventAIRequest 
+            * @param generateEventAIRequest
         */
         public async generateEventAi(generateEventAIRequest?: GenerateEventAIRequest, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -319,7 +329,7 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Get Event Detail
-            * @param slug 
+            * @param slug
         */
         public async getEventDetail(slug: string, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -356,9 +366,9 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Listing Event Comments
-            * @param eventId 
-            * @param perPage 
-            * @param page 
+            * @param eventId
+            * @param perPage
+            * @param page
         */
         public async listingEventComments(eventId: number, perPage?: number, page?: number, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -436,11 +446,11 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Listing Event Purchased Tickets
-            * @param slug 
-            * @param keyword 
-            * @param isCheckedIn 
-            * @param perPage 
-            * @param page 
+            * @param slug
+            * @param keyword
+            * @param isCheckedIn
+            * @param perPage
+            * @param page
         */
         public async listingEventPurchasedTickets(slug: string, keyword?: string, isCheckedIn?: boolean, perPage?: number, page?: number, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -523,11 +533,93 @@ import type {SecurityAuthentication} from '../auth/auth';
             }
 
         /**
+            * Listing Feedback Criteria
+            * @param eventId
+        */
+        public async listingFeedbackCriteria(eventId: number, _options?: Configuration): Promise<RequestContext> {
+            const _config = _options || this.configuration;
+
+                    // verify required parameter 'eventId' is not null or undefined
+                    if (eventId === null || eventId === undefined) {
+                    throw new RequiredError("EventsApi", "listingFeedbackCriteria", "eventId");
+                    }
+
+
+            // Path Params
+            const localVarPath = '/api/v1/events/{event_id}/feedbacks/criteria'
+                .replace('{' + 'event_id' + '}', encodeURIComponent(String(eventId)));
+
+            // Make Request Context
+            const requestContext = _config.baseServer.makeRequestContext(localVarPath, HttpMethod.GET);
+            requestContext.setHeaderParam("Accept", "application/json, */*;q=0.8")
+
+
+
+                const defaultAuth: SecurityAuthentication | undefined = _options?.authMethods?.default || this.configuration?.authMethods?.default
+                if (defaultAuth?.applySecurityAuthentication) {
+                await defaultAuth?.applySecurityAuthentication(requestContext);
+                }
+
+            return requestContext;
+            }
+
+        /**
+            * Listing Feedbacks
+            * @param eventId
+            * @param perPage
+            * @param page
+        */
+        public async listingFeedbacks(eventId: number, perPage?: number, page?: number, _options?: Configuration): Promise<RequestContext> {
+            const _config = _options || this.configuration;
+
+                    // verify required parameter 'eventId' is not null or undefined
+                    if (eventId === null || eventId === undefined) {
+                    throw new RequiredError("EventsApi", "listingFeedbacks", "eventId");
+                    }
+
+
+
+
+            // Path Params
+            const localVarPath = '/api/v1/events/{event_id}/feedbacks'
+                .replace('{' + 'event_id' + '}', encodeURIComponent(String(eventId)));
+
+            // Make Request Context
+            const requestContext = _config.baseServer.makeRequestContext(localVarPath, HttpMethod.GET);
+            requestContext.setHeaderParam("Accept", "application/json, */*;q=0.8")
+
+                // Query Params
+                if (perPage !== undefined) {
+                requestContext.setQueryParam("per_page", ObjectSerializer.serialize(perPage, "number", ""));
+                }
+
+                // Query Params
+                if (page !== undefined) {
+                requestContext.setQueryParam("page", ObjectSerializer.serialize(page, "number", ""));
+                }
+
+
+                let authMethod: SecurityAuthentication | undefined;
+                // Apply auth methods
+                authMethod = _config.authMethods["OAuth2PasswordBearer"]
+                if (authMethod?.applySecurityAuthentication) {
+                await authMethod?.applySecurityAuthentication(requestContext);
+                }
+
+                const defaultAuth: SecurityAuthentication | undefined = _options?.authMethods?.default || this.configuration?.authMethods?.default
+                if (defaultAuth?.applySecurityAuthentication) {
+                await defaultAuth?.applySecurityAuthentication(requestContext);
+                }
+
+            return requestContext;
+            }
+
+        /**
             * Listing My Events
-            * @param keyword 
-            * @param status 
-            * @param perPage 
-            * @param page 
+            * @param keyword
+            * @param status
+            * @param perPage
+            * @param page
         */
         public async listingMyEvents(keyword?: string, status?: MyEventStatusCode, perPage?: number, page?: number, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -581,24 +673,24 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Listing Recommendation Events
-            * @param keyword 
-            * @param isOnline 
-            * @param isOffline 
-            * @param isApplyOngoing 
-            * @param isApplyEnded 
-            * @param isToday 
-            * @param isFree 
-            * @param isPaid 
-            * @param jobTypeCodes 
-            * @param industryCodes 
-            * @param cityCodes 
-            * @param tags 
-            * @param startAtFrom 
-            * @param startAtTo 
-            * @param organizationId 
-            * @param sortBy 
-            * @param perPage 
-            * @param page 
+            * @param keyword
+            * @param isOnline
+            * @param isOffline
+            * @param isApplyOngoing
+            * @param isApplyEnded
+            * @param isToday
+            * @param isFree
+            * @param isPaid
+            * @param jobTypeCodes
+            * @param industryCodes
+            * @param cityCodes
+            * @param tags
+            * @param startAtFrom
+            * @param startAtTo
+            * @param organizationId
+            * @param sortBy
+            * @param perPage
+            * @param page
         */
         public async listingRecommendationEvents(keyword?: string, isOnline?: boolean, isOffline?: boolean, isApplyOngoing?: boolean, isApplyEnded?: boolean, isToday?: boolean, isFree?: boolean, isPaid?: boolean, jobTypeCodes?: Array<JobTypeCode>, industryCodes?: Array<IndustryCode>, cityCodes?: Array<string>, tags?: Array<number>, startAtFrom?: string, startAtTo?: string, organizationId?: number, sortBy?: EventSortByCode, perPage?: number, page?: number, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -736,7 +828,7 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Listing Related Events
-            * @param slug 
+            * @param slug
         */
         public async listingRelatedEvents(slug: string, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -767,7 +859,7 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Listing Tickets Of Event
-            * @param eventId 
+            * @param eventId
         */
         public async listingTicketsOfEvent(eventId: number, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -804,24 +896,24 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Listing Trending Events
-            * @param keyword 
-            * @param isOnline 
-            * @param isOffline 
-            * @param isApplyOngoing 
-            * @param isApplyEnded 
-            * @param isToday 
-            * @param isFree 
-            * @param isPaid 
-            * @param jobTypeCodes 
-            * @param industryCodes 
-            * @param cityCodes 
-            * @param tags 
-            * @param startAtFrom 
-            * @param startAtTo 
-            * @param organizationId 
-            * @param sortBy 
-            * @param perPage 
-            * @param page 
+            * @param keyword
+            * @param isOnline
+            * @param isOffline
+            * @param isApplyOngoing
+            * @param isApplyEnded
+            * @param isToday
+            * @param isFree
+            * @param isPaid
+            * @param jobTypeCodes
+            * @param industryCodes
+            * @param cityCodes
+            * @param tags
+            * @param startAtFrom
+            * @param startAtTo
+            * @param organizationId
+            * @param sortBy
+            * @param perPage
+            * @param page
         */
         public async listingTrendingEvents(keyword?: string, isOnline?: boolean, isOffline?: boolean, isApplyOngoing?: boolean, isApplyEnded?: boolean, isToday?: boolean, isFree?: boolean, isPaid?: boolean, jobTypeCodes?: Array<JobTypeCode>, industryCodes?: Array<IndustryCode>, cityCodes?: Array<string>, tags?: Array<number>, startAtFrom?: string, startAtTo?: string, organizationId?: number, sortBy?: EventSortByCode, perPage?: number, page?: number, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -959,7 +1051,7 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Manual Check In
-            * @param manualCheckInRequest 
+            * @param manualCheckInRequest
         */
         public async manualCheckIn(manualCheckInRequest?: ManualCheckInRequest, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -1001,8 +1093,8 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Publish Event
-            * @param eventId 
-            * @param publishEventRequest 
+            * @param eventId
+            * @param publishEventRequest
         */
         public async publishEvent(eventId: number, publishEventRequest?: PublishEventRequest, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -1051,8 +1143,8 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Qr Check In
-            * @param eventId 
-            * @param qRCheckInRequest 
+            * @param eventId
+            * @param qRCheckInRequest
         */
         public async qrCheckIn(eventId: number, qRCheckInRequest?: QRCheckInRequest, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -1101,8 +1193,8 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Save Draft Event
-            * @param eventId 
-            * @param saveDraftEventRequest 
+            * @param eventId
+            * @param saveDraftEventRequest
         */
         public async saveDraftEvent(eventId: number, saveDraftEventRequest?: SaveDraftEventRequest, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -1151,24 +1243,24 @@ import type {SecurityAuthentication} from '../auth/auth';
 
         /**
             * Search Events
-            * @param keyword 
-            * @param isOnline 
-            * @param isOffline 
-            * @param isApplyOngoing 
-            * @param isApplyEnded 
-            * @param isToday 
-            * @param isFree 
-            * @param isPaid 
-            * @param jobTypeCodes 
-            * @param industryCodes 
-            * @param cityCodes 
-            * @param tags 
-            * @param startAtFrom 
-            * @param startAtTo 
-            * @param organizationId 
-            * @param sortBy 
-            * @param perPage 
-            * @param page 
+            * @param keyword
+            * @param isOnline
+            * @param isOffline
+            * @param isApplyOngoing
+            * @param isApplyEnded
+            * @param isToday
+            * @param isFree
+            * @param isPaid
+            * @param jobTypeCodes
+            * @param industryCodes
+            * @param cityCodes
+            * @param tags
+            * @param startAtFrom
+            * @param startAtTo
+            * @param organizationId
+            * @param sortBy
+            * @param perPage
+            * @param page
         */
         public async searchEvents(keyword?: string, isOnline?: boolean, isOffline?: boolean, isApplyOngoing?: boolean, isApplyEnded?: boolean, isToday?: boolean, isFree?: boolean, isPaid?: boolean, jobTypeCodes?: Array<JobTypeCode>, industryCodes?: Array<IndustryCode>, cityCodes?: Array<string>, tags?: Array<number>, startAtFrom?: string, startAtTo?: string, organizationId?: number, sortBy?: EventSortByCode, perPage?: number, page?: number, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
@@ -1316,63 +1408,6 @@ import type {SecurityAuthentication} from '../auth/auth';
             * @throws ApiException if the response code was not in [200, 299]
             */
             public async commentEventWithHttpInfo(response: ResponseContext): Promise<HttpInfo<number >> {
-            const contentType = ObjectSerializer.normalizeMediaType(response.headers["content-type"]);
-                if (isCodeInRange("200", response.httpStatusCode)) {
-                        const body: number = ObjectSerializer.deserialize(
-                        ObjectSerializer.parse(await response.body.text(), contentType),
-                        "number", ""
-                        ) as number;
-                        return new HttpInfo(response.httpStatusCode, response.headers, response.body, body);
-                }
-                if (isCodeInRange("400", response.httpStatusCode)) {
-                        const body: ErrorResponse400 = ObjectSerializer.deserialize(
-                        ObjectSerializer.parse(await response.body.text(), contentType),
-                        "ErrorResponse400", ""
-                        ) as ErrorResponse400;
-                        throw new ApiException<ErrorResponse400>(response.httpStatusCode, "Bad Request", body, response.headers);
-                }
-                if (isCodeInRange("401", response.httpStatusCode)) {
-                        const body: ErrorResponse401 = ObjectSerializer.deserialize(
-                        ObjectSerializer.parse(await response.body.text(), contentType),
-                        "ErrorResponse401", ""
-                        ) as ErrorResponse401;
-                        throw new ApiException<ErrorResponse401>(response.httpStatusCode, "Unauthorized", body, response.headers);
-                }
-                if (isCodeInRange("403", response.httpStatusCode)) {
-                        const body: ErrorResponse403 = ObjectSerializer.deserialize(
-                        ObjectSerializer.parse(await response.body.text(), contentType),
-                        "ErrorResponse403", ""
-                        ) as ErrorResponse403;
-                        throw new ApiException<ErrorResponse403>(response.httpStatusCode, "Forbidden", body, response.headers);
-                }
-                if (isCodeInRange("422", response.httpStatusCode)) {
-                        const body: HTTPValidationError = ObjectSerializer.deserialize(
-                        ObjectSerializer.parse(await response.body.text(), contentType),
-                        "HTTPValidationError", ""
-                        ) as HTTPValidationError;
-                        throw new ApiException<HTTPValidationError>(response.httpStatusCode, "Validation Error", body, response.headers);
-                }
-
-            // Work around for missing responses in specification, e.g. for petstore.yaml
-            if (response.httpStatusCode >= 200 && response.httpStatusCode <= 299) {
-                    const body: number = ObjectSerializer.deserialize(
-                    ObjectSerializer.parse(await response.body.text(), contentType),
-                    "number", ""
-                    ) as number;
-                return new HttpInfo(response.httpStatusCode, response.headers, response.body, body);
-            }
-
-            throw new ApiException<string | Blob | undefined>(response.httpStatusCode, "Unknown API Status Code!", await response.getBodyAsAny(), response.headers);
-            }
-
-            /**
-            * Unwraps the actual response sent by the server from the response context and deserializes the response content
-            * to the expected objects
-            *
-            * @params response Response returned by the server for a request to createDraftEvent
-            * @throws ApiException if the response code was not in [200, 299]
-            */
-            public async createDraftEventWithHttpInfo(response: ResponseContext): Promise<HttpInfo<number >> {
             const contentType = ObjectSerializer.normalizeMediaType(response.headers["content-type"]);
                 if (isCodeInRange("200", response.httpStatusCode)) {
                         const body: number = ObjectSerializer.deserialize(
@@ -1579,6 +1614,63 @@ import type {SecurityAuthentication} from '../auth/auth';
                     ObjectSerializer.parse(await response.body.text(), contentType),
                     "void", ""
                     ) as void;
+                return new HttpInfo(response.httpStatusCode, response.headers, response.body, body);
+            }
+
+            throw new ApiException<string | Blob | undefined>(response.httpStatusCode, "Unknown API Status Code!", await response.getBodyAsAny(), response.headers);
+            }
+
+            /**
+            * Unwraps the actual response sent by the server from the response context and deserializes the response content
+            * to the expected objects
+            *
+            * @params response Response returned by the server for a request to feedbackEvent
+            * @throws ApiException if the response code was not in [200, 299]
+            */
+            public async feedbackEventWithHttpInfo(response: ResponseContext): Promise<HttpInfo<number >> {
+            const contentType = ObjectSerializer.normalizeMediaType(response.headers["content-type"]);
+                if (isCodeInRange("200", response.httpStatusCode)) {
+                        const body: number = ObjectSerializer.deserialize(
+                        ObjectSerializer.parse(await response.body.text(), contentType),
+                        "number", ""
+                        ) as number;
+                        return new HttpInfo(response.httpStatusCode, response.headers, response.body, body);
+                }
+                if (isCodeInRange("400", response.httpStatusCode)) {
+                        const body: ErrorResponse400 = ObjectSerializer.deserialize(
+                        ObjectSerializer.parse(await response.body.text(), contentType),
+                        "ErrorResponse400", ""
+                        ) as ErrorResponse400;
+                        throw new ApiException<ErrorResponse400>(response.httpStatusCode, "Bad Request", body, response.headers);
+                }
+                if (isCodeInRange("401", response.httpStatusCode)) {
+                        const body: ErrorResponse401 = ObjectSerializer.deserialize(
+                        ObjectSerializer.parse(await response.body.text(), contentType),
+                        "ErrorResponse401", ""
+                        ) as ErrorResponse401;
+                        throw new ApiException<ErrorResponse401>(response.httpStatusCode, "Unauthorized", body, response.headers);
+                }
+                if (isCodeInRange("403", response.httpStatusCode)) {
+                        const body: ErrorResponse403 = ObjectSerializer.deserialize(
+                        ObjectSerializer.parse(await response.body.text(), contentType),
+                        "ErrorResponse403", ""
+                        ) as ErrorResponse403;
+                        throw new ApiException<ErrorResponse403>(response.httpStatusCode, "Forbidden", body, response.headers);
+                }
+                if (isCodeInRange("422", response.httpStatusCode)) {
+                        const body: HTTPValidationError = ObjectSerializer.deserialize(
+                        ObjectSerializer.parse(await response.body.text(), contentType),
+                        "HTTPValidationError", ""
+                        ) as HTTPValidationError;
+                        throw new ApiException<HTTPValidationError>(response.httpStatusCode, "Validation Error", body, response.headers);
+                }
+
+            // Work around for missing responses in specification, e.g. for petstore.yaml
+            if (response.httpStatusCode >= 200 && response.httpStatusCode <= 299) {
+                    const body: number = ObjectSerializer.deserialize(
+                    ObjectSerializer.parse(await response.body.text(), contentType),
+                    "number", ""
+                    ) as number;
                 return new HttpInfo(response.httpStatusCode, response.headers, response.body, body);
             }
 
@@ -1957,6 +2049,120 @@ import type {SecurityAuthentication} from '../auth/auth';
                     ObjectSerializer.parse(await response.body.text(), contentType),
                     "ListingEventRankResponse", ""
                     ) as ListingEventRankResponse;
+                return new HttpInfo(response.httpStatusCode, response.headers, response.body, body);
+            }
+
+            throw new ApiException<string | Blob | undefined>(response.httpStatusCode, "Unknown API Status Code!", await response.getBodyAsAny(), response.headers);
+            }
+
+            /**
+            * Unwraps the actual response sent by the server from the response context and deserializes the response content
+            * to the expected objects
+            *
+            * @params response Response returned by the server for a request to listingFeedbackCriteria
+            * @throws ApiException if the response code was not in [200, 299]
+            */
+            public async listingFeedbackCriteriaWithHttpInfo(response: ResponseContext): Promise<HttpInfo<ListingFeedbackCriteriaResponse >> {
+            const contentType = ObjectSerializer.normalizeMediaType(response.headers["content-type"]);
+                if (isCodeInRange("200", response.httpStatusCode)) {
+                        const body: ListingFeedbackCriteriaResponse = ObjectSerializer.deserialize(
+                        ObjectSerializer.parse(await response.body.text(), contentType),
+                        "ListingFeedbackCriteriaResponse", ""
+                        ) as ListingFeedbackCriteriaResponse;
+                        return new HttpInfo(response.httpStatusCode, response.headers, response.body, body);
+                }
+                if (isCodeInRange("400", response.httpStatusCode)) {
+                        const body: ErrorResponse400 = ObjectSerializer.deserialize(
+                        ObjectSerializer.parse(await response.body.text(), contentType),
+                        "ErrorResponse400", ""
+                        ) as ErrorResponse400;
+                        throw new ApiException<ErrorResponse400>(response.httpStatusCode, "Bad Request", body, response.headers);
+                }
+                if (isCodeInRange("401", response.httpStatusCode)) {
+                        const body: ErrorResponse401 = ObjectSerializer.deserialize(
+                        ObjectSerializer.parse(await response.body.text(), contentType),
+                        "ErrorResponse401", ""
+                        ) as ErrorResponse401;
+                        throw new ApiException<ErrorResponse401>(response.httpStatusCode, "Unauthorized", body, response.headers);
+                }
+                if (isCodeInRange("403", response.httpStatusCode)) {
+                        const body: ErrorResponse403 = ObjectSerializer.deserialize(
+                        ObjectSerializer.parse(await response.body.text(), contentType),
+                        "ErrorResponse403", ""
+                        ) as ErrorResponse403;
+                        throw new ApiException<ErrorResponse403>(response.httpStatusCode, "Forbidden", body, response.headers);
+                }
+                if (isCodeInRange("422", response.httpStatusCode)) {
+                        const body: HTTPValidationError = ObjectSerializer.deserialize(
+                        ObjectSerializer.parse(await response.body.text(), contentType),
+                        "HTTPValidationError", ""
+                        ) as HTTPValidationError;
+                        throw new ApiException<HTTPValidationError>(response.httpStatusCode, "Validation Error", body, response.headers);
+                }
+
+            // Work around for missing responses in specification, e.g. for petstore.yaml
+            if (response.httpStatusCode >= 200 && response.httpStatusCode <= 299) {
+                    const body: ListingFeedbackCriteriaResponse = ObjectSerializer.deserialize(
+                    ObjectSerializer.parse(await response.body.text(), contentType),
+                    "ListingFeedbackCriteriaResponse", ""
+                    ) as ListingFeedbackCriteriaResponse;
+                return new HttpInfo(response.httpStatusCode, response.headers, response.body, body);
+            }
+
+            throw new ApiException<string | Blob | undefined>(response.httpStatusCode, "Unknown API Status Code!", await response.getBodyAsAny(), response.headers);
+            }
+
+            /**
+            * Unwraps the actual response sent by the server from the response context and deserializes the response content
+            * to the expected objects
+            *
+            * @params response Response returned by the server for a request to listingFeedbacks
+            * @throws ApiException if the response code was not in [200, 299]
+            */
+            public async listingFeedbacksWithHttpInfo(response: ResponseContext): Promise<HttpInfo<ListingFeedbacksResponse >> {
+            const contentType = ObjectSerializer.normalizeMediaType(response.headers["content-type"]);
+                if (isCodeInRange("200", response.httpStatusCode)) {
+                        const body: ListingFeedbacksResponse = ObjectSerializer.deserialize(
+                        ObjectSerializer.parse(await response.body.text(), contentType),
+                        "ListingFeedbacksResponse", ""
+                        ) as ListingFeedbacksResponse;
+                        return new HttpInfo(response.httpStatusCode, response.headers, response.body, body);
+                }
+                if (isCodeInRange("400", response.httpStatusCode)) {
+                        const body: ErrorResponse400 = ObjectSerializer.deserialize(
+                        ObjectSerializer.parse(await response.body.text(), contentType),
+                        "ErrorResponse400", ""
+                        ) as ErrorResponse400;
+                        throw new ApiException<ErrorResponse400>(response.httpStatusCode, "Bad Request", body, response.headers);
+                }
+                if (isCodeInRange("401", response.httpStatusCode)) {
+                        const body: ErrorResponse401 = ObjectSerializer.deserialize(
+                        ObjectSerializer.parse(await response.body.text(), contentType),
+                        "ErrorResponse401", ""
+                        ) as ErrorResponse401;
+                        throw new ApiException<ErrorResponse401>(response.httpStatusCode, "Unauthorized", body, response.headers);
+                }
+                if (isCodeInRange("403", response.httpStatusCode)) {
+                        const body: ErrorResponse403 = ObjectSerializer.deserialize(
+                        ObjectSerializer.parse(await response.body.text(), contentType),
+                        "ErrorResponse403", ""
+                        ) as ErrorResponse403;
+                        throw new ApiException<ErrorResponse403>(response.httpStatusCode, "Forbidden", body, response.headers);
+                }
+                if (isCodeInRange("422", response.httpStatusCode)) {
+                        const body: HTTPValidationError = ObjectSerializer.deserialize(
+                        ObjectSerializer.parse(await response.body.text(), contentType),
+                        "HTTPValidationError", ""
+                        ) as HTTPValidationError;
+                        throw new ApiException<HTTPValidationError>(response.httpStatusCode, "Validation Error", body, response.headers);
+                }
+
+            // Work around for missing responses in specification, e.g. for petstore.yaml
+            if (response.httpStatusCode >= 200 && response.httpStatusCode <= 299) {
+                    const body: ListingFeedbacksResponse = ObjectSerializer.deserialize(
+                    ObjectSerializer.parse(await response.body.text(), contentType),
+                    "ListingFeedbacksResponse", ""
+                    ) as ListingFeedbacksResponse;
                 return new HttpInfo(response.httpStatusCode, response.headers, response.body, body);
             }
 

@@ -4,12 +4,12 @@ All URIs are relative to *http://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**createApplicationCheckoutSession**](ApplicationsApi.md#createApplicationCheckoutSession) | **POST** /api/v1/applications/checkout-session | Create Application Checkout Session
+[**createCheckoutSession**](ApplicationsApi.md#createCheckoutSession) | **POST** /api/v1/applications/checkout-session | Create Checkout Session
 [**createFreeApplication**](ApplicationsApi.md#createFreeApplication) | **POST** /api/v1/applications/free-application | Create Free Application
 
 
-# **createApplicationCheckoutSession**
-> CreateApplicationCheckoutSessionResponse createApplicationCheckoutSession()
+# **createCheckoutSession**
+> CreateApplicationCheckoutSessionResponse createCheckoutSession()
 
 
 ### Example
@@ -22,12 +22,12 @@ import * as fs from 'fs';
 const configuration = .createConfiguration();
 const apiInstance = new .ApplicationsApi(configuration);
 
-let body:.ApplicationsApiCreateApplicationCheckoutSessionRequest = {
+let body:.ApplicationsApiCreateCheckoutSessionRequest = {
   // CreateApplicationRequest (optional)
   createApplicationRequest: null,
 };
 
-apiInstance.createApplicationCheckoutSession(body).then((data:any) => {
+apiInstance.createCheckoutSession(body).then((data:any) => {
   console.log('API called successfully. Returned data: ' + data);
 }).catch((error:any) => console.error(error));
 ```
@@ -66,7 +66,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
 
 # **createFreeApplication**
-> string createFreeApplication()
+> number createFreeApplication()
 
 
 ### Example
@@ -99,7 +99,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-**string**
+**number**
 
 ### Authorization
 

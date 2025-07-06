@@ -3,6 +3,7 @@ AuthApi.md
 CommentsApi.md
 DefaultApi.md
 EventsApi.md
+FeedbacksApi.md
 NotificationsApi.md
 OrganizationsApi.md
 README.md
@@ -18,6 +19,7 @@ apis/AuthApi.ts
 apis/CommentsApi.ts
 apis/DefaultApi.ts
 apis/EventsApi.ts
+apis/FeedbacksApi.ts
 apis/NotificationsApi.ts
 apis/OrganizationsApi.ts
 apis/SpeakersApi.ts
@@ -61,7 +63,6 @@ models/CreateAnswerItem.ts
 models/CreateApplicationCheckoutSessionResponse.ts
 models/CreateApplicationRequest.ts
 models/CreateCommentReplyRequest.ts
-models/CreateDraftEventRequest.ts
 models/CreateQuestionAnswerRequest.ts
 models/CreateSurveyRequest.ts
 models/CreateTargetRequest.ts
@@ -75,6 +76,8 @@ models/EventMeetingToolCode.ts
 models/EventSortByCode.ts
 models/EventStatusCode.ts
 models/EventTimeStatusCode.ts
+models/FeedbackEventRequest.ts
+models/FeedbackRating.ts
 models/ForgotPasswordRequest.ts
 models/ForgotPasswordResponse.ts
 models/GenerateEventAIRequest.ts
@@ -90,6 +93,7 @@ models/GetSpeakerDetailResponse.ts
 models/GetTagStatsResponse.ts
 models/GetTicketStatsResponse.ts
 models/GetTransactionStatusCountsResponse.ts
+models/GetUserFeedback.ts
 models/HTTPValidationError.ts
 models/IndustryCode.ts
 models/JobTypeCode.ts
@@ -106,6 +110,10 @@ models/ListingEventPurchasedTicketsItem.ts
 models/ListingEventPurchasedTicketsResponse.ts
 models/ListingEventRankItem.ts
 models/ListingEventRankResponse.ts
+models/ListingFeedbackCriteriaItem.ts
+models/ListingFeedbackCriteriaResponse.ts
+models/ListingFeedbacksItem.ts
+models/ListingFeedbacksResponse.ts
 models/ListingMyEventsResponse.ts
 models/ListingMyTransactionTicketItem.ts
 models/ListingMyTransactionsItem.ts
@@ -185,9 +193,11 @@ models/TrackingTimeRangeCode.ts
 models/TransactionStatusCode.ts
 models/UpdateCommentReplyRequest.ts
 models/UpdateEventCommentRequest.ts
+models/UpdateFeedbackRequest.ts
 models/UpdateTicketRequest.ts
 models/UpdateUserRequest.ts
 models/UserActionTypeCode.ts
+models/UserFeedbackRating.ts
 models/ValidationError.ts
 models/ValidationErrorLocInner.ts
 models/VerifyAudienceRequest.ts

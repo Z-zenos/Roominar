@@ -12,6 +12,7 @@
 
 import type { EventMeetingToolCode } from '../models/EventMeetingToolCode';
 import type { EventStatusCode } from '../models/EventStatusCode';
+import type { GetUserFeedback } from '../models/GetUserFeedback';
 import type { SurveyDetail } from '../models/SurveyDetail';
 import type { TagItem } from '../models/TagItem';
 import type { TicketItem } from '../models/TicketItem';
@@ -60,6 +61,7 @@ export class GetEventDetailResponse {
     'commentCount'?: number | null;
     'feedbackCount'?: number | null;
     'ratingCount'?: number | null;
+    'userFeedback'?: GetUserFeedback | null;
 
     static readonly discriminator: string | undefined = undefined;
 
@@ -314,6 +316,12 @@ export class GetEventDetailResponse {
             "name": "ratingCount",
             "baseName": "rating_count",
             "type": "number",
+            "format": ""
+        },
+        {
+            "name": "userFeedback",
+            "baseName": "user_feedback",
+            "type": "GetUserFeedback",
             "format": ""
         }    ];
 

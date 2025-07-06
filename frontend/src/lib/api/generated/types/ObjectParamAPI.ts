@@ -28,7 +28,6 @@ import { CreateAnswerItem } from '../models/CreateAnswerItem';
 import type { CreateApplicationCheckoutSessionResponse } from '../models/CreateApplicationCheckoutSessionResponse';
 import type { CreateApplicationRequest } from '../models/CreateApplicationRequest';
 import type { CreateCommentReplyRequest } from '../models/CreateCommentReplyRequest';
-import type { CreateDraftEventRequest } from '../models/CreateDraftEventRequest';
 import { CreateQuestionAnswerRequest } from '../models/CreateQuestionAnswerRequest';
 import type { CreateSurveyRequest } from '../models/CreateSurveyRequest';
 import type { CreateTargetRequest } from '../models/CreateTargetRequest';
@@ -42,6 +41,8 @@ import type { EventMeetingToolCode } from '../models/EventMeetingToolCode';
 import type { EventSortByCode } from '../models/EventSortByCode';
 import type { EventStatusCode } from '../models/EventStatusCode';
 import type { EventTimeStatusCode } from '../models/EventTimeStatusCode';
+import type { FeedbackEventRequest } from '../models/FeedbackEventRequest';
+import { FeedbackRating } from '../models/FeedbackRating';
 import type { ForgotPasswordRequest } from '../models/ForgotPasswordRequest';
 import type { ForgotPasswordResponse } from '../models/ForgotPasswordResponse';
 import type { GenerateEventAIRequest } from '../models/GenerateEventAIRequest';
@@ -57,6 +58,7 @@ import type { GetSpeakerDetailResponse } from '../models/GetSpeakerDetailRespons
 import type { GetTagStatsResponse } from '../models/GetTagStatsResponse';
 import type { GetTicketStatsResponse } from '../models/GetTicketStatsResponse';
 import type { GetTransactionStatusCountsResponse } from '../models/GetTransactionStatusCountsResponse';
+import { GetUserFeedback } from '../models/GetUserFeedback';
 import { HTTPValidationError } from '../models/HTTPValidationError';
 import type { IndustryCode } from '../models/IndustryCode';
 import type { JobTypeCode } from '../models/JobTypeCode';
@@ -73,6 +75,10 @@ import { ListingEventPurchasedTicketsItem } from '../models/ListingEventPurchase
 import type { ListingEventPurchasedTicketsResponse } from '../models/ListingEventPurchasedTicketsResponse';
 import { ListingEventRankItem } from '../models/ListingEventRankItem';
 import type { ListingEventRankResponse } from '../models/ListingEventRankResponse';
+import { ListingFeedbackCriteriaItem } from '../models/ListingFeedbackCriteriaItem';
+import type { ListingFeedbackCriteriaResponse } from '../models/ListingFeedbackCriteriaResponse';
+import { ListingFeedbacksItem } from '../models/ListingFeedbacksItem';
+import type { ListingFeedbacksResponse } from '../models/ListingFeedbacksResponse';
 import type { ListingMyEventsResponse } from '../models/ListingMyEventsResponse';
 import { ListingMyTransactionTicketItem } from '../models/ListingMyTransactionTicketItem';
 import { ListingMyTransactionsItem } from '../models/ListingMyTransactionsItem';
@@ -151,9 +157,11 @@ import type { TrackingTimeRangeCode } from '../models/TrackingTimeRangeCode';
 import type { TransactionStatusCode } from '../models/TransactionStatusCode';
 import type { UpdateCommentReplyRequest } from '../models/UpdateCommentReplyRequest';
 import type { UpdateEventCommentRequest } from '../models/UpdateEventCommentRequest';
+import type { UpdateFeedbackRequest } from '../models/UpdateFeedbackRequest';
 import type { UpdateTicketRequest } from '../models/UpdateTicketRequest';
 import type { UpdateUserRequest } from '../models/UpdateUserRequest';
 import type { UserActionTypeCode } from '../models/UserActionTypeCode';
+import { UserFeedbackRating } from '../models/UserFeedbackRating';
 import { ValidationError } from '../models/ValidationError';
 import { ValidationErrorLocInner } from '../models/ValidationErrorLocInner';
 import type { VerifyAudienceRequest } from '../models/VerifyAudienceRequest';
@@ -163,11 +171,11 @@ import { VoteTypeCode } from '../models/VoteTypeCode';
 import { ObservableApplicationsApi } from "./ObservableAPI";
 import type { ApplicationsApiRequestFactory, ApplicationsApiResponseProcessor} from "../apis/ApplicationsApi";
 
-export interface ApplicationsApiCreateApplicationCheckoutSessionRequest {
+export interface ApplicationsApiCreateCheckoutSessionRequest {
     /**
      *
      * @type CreateApplicationRequest
-     * @memberof ApplicationsApicreateApplicationCheckoutSession
+     * @memberof ApplicationsApicreateCheckoutSession
      */
     createApplicationRequest?: CreateApplicationRequest
 }
@@ -189,26 +197,26 @@ export class ObjectApplicationsApi {
     }
 
     /**
-     * Create Application Checkout Session
+     * Create Checkout Session
      * @param param the request object
      */
-    public createApplicationCheckoutSessionWithHttpInfo(param: ApplicationsApiCreateApplicationCheckoutSessionRequest = {}, options?: Configuration): Promise<HttpInfo<CreateApplicationCheckoutSessionResponse>> {
-        return this.api.createApplicationCheckoutSessionWithHttpInfo(param.createApplicationRequest,  options).toPromise();
+    public createCheckoutSessionWithHttpInfo(param: ApplicationsApiCreateCheckoutSessionRequest = {}, options?: Configuration): Promise<HttpInfo<CreateApplicationCheckoutSessionResponse>> {
+        return this.api.createCheckoutSessionWithHttpInfo(param.createApplicationRequest,  options).toPromise();
     }
 
     /**
-     * Create Application Checkout Session
+     * Create Checkout Session
      * @param param the request object
      */
-    public createApplicationCheckoutSession(param: ApplicationsApiCreateApplicationCheckoutSessionRequest = {}, options?: Configuration): Promise<CreateApplicationCheckoutSessionResponse> {
-        return this.api.createApplicationCheckoutSession(param.createApplicationRequest,  options).toPromise();
+    public createCheckoutSession(param: ApplicationsApiCreateCheckoutSessionRequest = {}, options?: Configuration): Promise<CreateApplicationCheckoutSessionResponse> {
+        return this.api.createCheckoutSession(param.createApplicationRequest,  options).toPromise();
     }
 
     /**
      * Create Free Application
      * @param param the request object
      */
-    public createFreeApplicationWithHttpInfo(param: ApplicationsApiCreateFreeApplicationRequest = {}, options?: Configuration): Promise<HttpInfo<string>> {
+    public createFreeApplicationWithHttpInfo(param: ApplicationsApiCreateFreeApplicationRequest = {}, options?: Configuration): Promise<HttpInfo<number>> {
         return this.api.createFreeApplicationWithHttpInfo(param.createApplicationRequest,  options).toPromise();
     }
 
@@ -216,7 +224,7 @@ export class ObjectApplicationsApi {
      * Create Free Application
      * @param param the request object
      */
-    public createFreeApplication(param: ApplicationsApiCreateFreeApplicationRequest = {}, options?: Configuration): Promise<string> {
+    public createFreeApplication(param: ApplicationsApiCreateFreeApplicationRequest = {}, options?: Configuration): Promise<number> {
         return this.api.createFreeApplication(param.createApplicationRequest,  options).toPromise();
     }
 
@@ -895,15 +903,6 @@ export interface EventsApiCommentEventRequest {
     commentEventRequest?: CommentEventRequest
 }
 
-export interface EventsApiCreateDraftEventRequest {
-    /**
-     *
-     * @type CreateDraftEventRequest
-     * @memberof EventsApicreateDraftEvent
-     */
-    createDraftEventRequest?: CreateDraftEventRequest
-}
-
 export interface EventsApiCreateEventBookmarkRequest {
     /**
      *
@@ -929,6 +928,21 @@ export interface EventsApiDeleteManualCheckInRequest {
      * @memberof EventsApideleteManualCheckIn
      */
     checkInId: number
+}
+
+export interface EventsApiFeedbackEventRequest {
+    /**
+     *
+     * @type number
+     * @memberof EventsApifeedbackEvent
+     */
+    eventId: number
+    /**
+     *
+     * @type FeedbackEventRequest
+     * @memberof EventsApifeedbackEvent
+     */
+    feedbackEventRequest?: FeedbackEventRequest
 }
 
 export interface EventsApiGenerateEventAiRequest {
@@ -1010,6 +1024,36 @@ export interface EventsApiListingEventPurchasedTicketsRequest {
 }
 
 export interface EventsApiListingEventRankRequest {
+}
+
+export interface EventsApiListingFeedbackCriteriaRequest {
+    /**
+     *
+     * @type number
+     * @memberof EventsApilistingFeedbackCriteria
+     */
+    eventId: number
+}
+
+export interface EventsApiListingFeedbacksRequest {
+    /**
+     *
+     * @type number
+     * @memberof EventsApilistingFeedbacks
+     */
+    eventId: number
+    /**
+     *
+     * @type number
+     * @memberof EventsApilistingFeedbacks
+     */
+    perPage?: number
+    /**
+     *
+     * @type number
+     * @memberof EventsApilistingFeedbacks
+     */
+    page?: number
 }
 
 export interface EventsApiListingMyEventsRequest {
@@ -1468,22 +1512,6 @@ export class ObjectEventsApi {
     }
 
     /**
-     * Create Draft Event
-     * @param param the request object
-     */
-    public createDraftEventWithHttpInfo(param: EventsApiCreateDraftEventRequest = {}, options?: Configuration): Promise<HttpInfo<number>> {
-        return this.api.createDraftEventWithHttpInfo(param.createDraftEventRequest,  options).toPromise();
-    }
-
-    /**
-     * Create Draft Event
-     * @param param the request object
-     */
-    public createDraftEvent(param: EventsApiCreateDraftEventRequest = {}, options?: Configuration): Promise<number> {
-        return this.api.createDraftEvent(param.createDraftEventRequest,  options).toPromise();
-    }
-
-    /**
      * Create Event Bookmark
      * @param param the request object
      */
@@ -1529,6 +1557,22 @@ export class ObjectEventsApi {
      */
     public deleteManualCheckIn(param: EventsApiDeleteManualCheckInRequest, options?: Configuration): Promise<void> {
         return this.api.deleteManualCheckIn(param.checkInId,  options).toPromise();
+    }
+
+    /**
+     * Feedback Event
+     * @param param the request object
+     */
+    public feedbackEventWithHttpInfo(param: EventsApiFeedbackEventRequest, options?: Configuration): Promise<HttpInfo<number>> {
+        return this.api.feedbackEventWithHttpInfo(param.eventId, param.feedbackEventRequest,  options).toPromise();
+    }
+
+    /**
+     * Feedback Event
+     * @param param the request object
+     */
+    public feedbackEvent(param: EventsApiFeedbackEventRequest, options?: Configuration): Promise<number> {
+        return this.api.feedbackEvent(param.eventId, param.feedbackEventRequest,  options).toPromise();
     }
 
     /**
@@ -1641,6 +1685,38 @@ export class ObjectEventsApi {
      */
     public listingEventRank(param: EventsApiListingEventRankRequest = {}, options?: Configuration): Promise<ListingEventRankResponse> {
         return this.api.listingEventRank( options).toPromise();
+    }
+
+    /**
+     * Listing Feedback Criteria
+     * @param param the request object
+     */
+    public listingFeedbackCriteriaWithHttpInfo(param: EventsApiListingFeedbackCriteriaRequest, options?: Configuration): Promise<HttpInfo<ListingFeedbackCriteriaResponse>> {
+        return this.api.listingFeedbackCriteriaWithHttpInfo(param.eventId,  options).toPromise();
+    }
+
+    /**
+     * Listing Feedback Criteria
+     * @param param the request object
+     */
+    public listingFeedbackCriteria(param: EventsApiListingFeedbackCriteriaRequest, options?: Configuration): Promise<ListingFeedbackCriteriaResponse> {
+        return this.api.listingFeedbackCriteria(param.eventId,  options).toPromise();
+    }
+
+    /**
+     * Listing Feedbacks
+     * @param param the request object
+     */
+    public listingFeedbacksWithHttpInfo(param: EventsApiListingFeedbacksRequest, options?: Configuration): Promise<HttpInfo<ListingFeedbacksResponse>> {
+        return this.api.listingFeedbacksWithHttpInfo(param.eventId, param.perPage, param.page,  options).toPromise();
+    }
+
+    /**
+     * Listing Feedbacks
+     * @param param the request object
+     */
+    public listingFeedbacks(param: EventsApiListingFeedbacksRequest, options?: Configuration): Promise<ListingFeedbacksResponse> {
+        return this.api.listingFeedbacks(param.eventId, param.perPage, param.page,  options).toPromise();
     }
 
     /**
@@ -1801,6 +1877,74 @@ export class ObjectEventsApi {
      */
     public searchEvents(param: EventsApiSearchEventsRequest = {}, options?: Configuration): Promise<SearchEventsResponse> {
         return this.api.searchEvents(param.keyword, param.isOnline, param.isOffline, param.isApplyOngoing, param.isApplyEnded, param.isToday, param.isFree, param.isPaid, param.jobTypeCodes, param.industryCodes, param.cityCodes, param.tags, param.startAtFrom, param.startAtTo, param.organizationId, param.sortBy, param.perPage, param.page,  options).toPromise();
+    }
+
+}
+
+import { ObservableFeedbacksApi } from "./ObservableAPI";
+import type { FeedbacksApiRequestFactory, FeedbacksApiResponseProcessor} from "../apis/FeedbacksApi";
+
+export interface FeedbacksApiDeleteFeedbackRequest {
+    /**
+     *
+     * @type number
+     * @memberof FeedbacksApideleteFeedback
+     */
+    feedbackId: number
+}
+
+export interface FeedbacksApiUpdateFeedbackRequest {
+    /**
+     *
+     * @type number
+     * @memberof FeedbacksApiupdateFeedback
+     */
+    feedbackId: number
+    /**
+     *
+     * @type UpdateFeedbackRequest
+     * @memberof FeedbacksApiupdateFeedback
+     */
+    updateFeedbackRequest?: UpdateFeedbackRequest
+}
+
+export class ObjectFeedbacksApi {
+    private api: ObservableFeedbacksApi
+
+    public constructor(configuration: Configuration, requestFactory?: FeedbacksApiRequestFactory, responseProcessor?: FeedbacksApiResponseProcessor) {
+        this.api = new ObservableFeedbacksApi(configuration, requestFactory, responseProcessor);
+    }
+
+    /**
+     * Delete Feedback
+     * @param param the request object
+     */
+    public deleteFeedbackWithHttpInfo(param: FeedbacksApiDeleteFeedbackRequest, options?: Configuration): Promise<HttpInfo<void>> {
+        return this.api.deleteFeedbackWithHttpInfo(param.feedbackId,  options).toPromise();
+    }
+
+    /**
+     * Delete Feedback
+     * @param param the request object
+     */
+    public deleteFeedback(param: FeedbacksApiDeleteFeedbackRequest, options?: Configuration): Promise<void> {
+        return this.api.deleteFeedback(param.feedbackId,  options).toPromise();
+    }
+
+    /**
+     * Update Feedback
+     * @param param the request object
+     */
+    public updateFeedbackWithHttpInfo(param: FeedbacksApiUpdateFeedbackRequest, options?: Configuration): Promise<HttpInfo<number>> {
+        return this.api.updateFeedbackWithHttpInfo(param.feedbackId, param.updateFeedbackRequest,  options).toPromise();
+    }
+
+    /**
+     * Update Feedback
+     * @param param the request object
+     */
+    public updateFeedback(param: FeedbacksApiUpdateFeedbackRequest, options?: Configuration): Promise<number> {
+        return this.api.updateFeedback(param.feedbackId, param.updateFeedbackRequest,  options).toPromise();
     }
 
 }
@@ -2934,7 +3078,7 @@ import type { TransactionsApiRequestFactory, TransactionsApiResponseProcessor} f
 export interface TransactionsApiGetTransactionStatusCountsRequest {
 }
 
-export interface TransactionsApiHandleApplicationTransactionRequest {
+export interface TransactionsApiHandleTransactionRequest {
 }
 
 export interface TransactionsApiListingMyTransactionsRequest {
@@ -2955,6 +3099,12 @@ export interface TransactionsApiListingMyTransactionsRequest {
      * @type number
      * @memberof TransactionsApilistingMyTransactions
      */
+    transactionId?: number
+    /**
+     *
+     * @type number
+     * @memberof TransactionsApilistingMyTransactions
+     */
     page?: number
     /**
      *
@@ -2962,9 +3112,6 @@ export interface TransactionsApiListingMyTransactionsRequest {
      * @memberof TransactionsApilistingMyTransactions
      */
     perPage?: number
-}
-
-export interface TransactionsApiPaymentWebhookRequest {
 }
 
 export class ObjectTransactionsApi {
@@ -2991,19 +3138,19 @@ export class ObjectTransactionsApi {
     }
 
     /**
-     * Handle Application Transaction
+     * Handle Transaction
      * @param param the request object
      */
-    public handleApplicationTransactionWithHttpInfo(param: TransactionsApiHandleApplicationTransactionRequest = {}, options?: Configuration): Promise<HttpInfo<void>> {
-        return this.api.handleApplicationTransactionWithHttpInfo( options).toPromise();
+    public handleTransactionWithHttpInfo(param: TransactionsApiHandleTransactionRequest = {}, options?: Configuration): Promise<HttpInfo<void>> {
+        return this.api.handleTransactionWithHttpInfo( options).toPromise();
     }
 
     /**
-     * Handle Application Transaction
+     * Handle Transaction
      * @param param the request object
      */
-    public handleApplicationTransaction(param: TransactionsApiHandleApplicationTransactionRequest = {}, options?: Configuration): Promise<void> {
-        return this.api.handleApplicationTransaction( options).toPromise();
+    public handleTransaction(param: TransactionsApiHandleTransactionRequest = {}, options?: Configuration): Promise<void> {
+        return this.api.handleTransaction( options).toPromise();
     }
 
     /**
@@ -3011,7 +3158,7 @@ export class ObjectTransactionsApi {
      * @param param the request object
      */
     public listingMyTransactionsWithHttpInfo(param: TransactionsApiListingMyTransactionsRequest = {}, options?: Configuration): Promise<HttpInfo<ListingMyTransactionsResponse>> {
-        return this.api.listingMyTransactionsWithHttpInfo(param.keyword, param.status, param.page, param.perPage,  options).toPromise();
+        return this.api.listingMyTransactionsWithHttpInfo(param.keyword, param.status, param.transactionId, param.page, param.perPage,  options).toPromise();
     }
 
     /**
@@ -3019,23 +3166,7 @@ export class ObjectTransactionsApi {
      * @param param the request object
      */
     public listingMyTransactions(param: TransactionsApiListingMyTransactionsRequest = {}, options?: Configuration): Promise<ListingMyTransactionsResponse> {
-        return this.api.listingMyTransactions(param.keyword, param.status, param.page, param.perPage,  options).toPromise();
-    }
-
-    /**
-     * Payment Webhook
-     * @param param the request object
-     */
-    public paymentWebhookWithHttpInfo(param: TransactionsApiPaymentWebhookRequest = {}, options?: Configuration): Promise<HttpInfo<void>> {
-        return this.api.paymentWebhookWithHttpInfo( options).toPromise();
-    }
-
-    /**
-     * Payment Webhook
-     * @param param the request object
-     */
-    public paymentWebhook(param: TransactionsApiPaymentWebhookRequest = {}, options?: Configuration): Promise<void> {
-        return this.api.paymentWebhook( options).toPromise();
+        return this.api.listingMyTransactions(param.keyword, param.status, param.transactionId, param.page, param.perPage,  options).toPromise();
     }
 
 }

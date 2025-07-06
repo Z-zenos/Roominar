@@ -5,10 +5,10 @@ All URIs are relative to *http://localhost*
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**commentEvent**](EventsApi.md#commentEvent) | **POST** /api/v1/events/{event_id}/comments | Comment Event
-[**createDraftEvent**](EventsApi.md#createDraftEvent) | **POST** /api/v1/events/draft | Create Draft Event
 [**createEventBookmark**](EventsApi.md#createEventBookmark) | **POST** /api/v1/events/{event_id}/bookmark | Create Event Bookmark
 [**deleteEventBookmark**](EventsApi.md#deleteEventBookmark) | **DELETE** /api/v1/events/{event_id}/bookmark | Delete Event Bookmark
 [**deleteManualCheckIn**](EventsApi.md#deleteManualCheckIn) | **DELETE** /api/v1/events/check-in/manual/{check_in_id} | Delete Manual Check In
+[**feedbackEvent**](EventsApi.md#feedbackEvent) | **POST** /api/v1/events/{event_id}/feedback | Feedback Event
 [**generateEventAi**](EventsApi.md#generateEventAi) | **POST** /api/v1/events/ai/draft | Generate Event Ai
 [**getDraftEvent**](EventsApi.md#getDraftEvent) | **GET** /api/v1/events/draft | Get Draft Event
 [**getEventDetail**](EventsApi.md#getEventDetail) | **GET** /api/v1/events/{slug} | Get Event Detail
@@ -16,6 +16,8 @@ Method | HTTP request | Description
 [**listingEventOptions**](EventsApi.md#listingEventOptions) | **GET** /api/v1/events/options | Listing Event Options
 [**listingEventPurchasedTickets**](EventsApi.md#listingEventPurchasedTickets) | **GET** /api/v1/events/{slug}/purchased-tickets | Listing Event Purchased Tickets
 [**listingEventRank**](EventsApi.md#listingEventRank) | **GET** /api/v1/events/rank | Listing Event Rank
+[**listingFeedbackCriteria**](EventsApi.md#listingFeedbackCriteria) | **GET** /api/v1/events/{event_id}/feedbacks/criteria | Listing Feedback Criteria
+[**listingFeedbacks**](EventsApi.md#listingFeedbacks) | **GET** /api/v1/events/{event_id}/feedbacks | Listing Feedbacks
 [**listingMyEvents**](EventsApi.md#listingMyEvents) | **GET** /api/v1/events/my-events | Listing My Events
 [**listingRecommendationEvents**](EventsApi.md#listingRecommendationEvents) | **GET** /api/v1/events/recommendation | Listing Recommendation Events
 [**listingRelatedEvents**](EventsApi.md#listingRelatedEvents) | **GET** /api/v1/events/{slug}/related-events | Listing Related Events
@@ -61,63 +63,6 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **commentEventRequest** | **CommentEventRequest**|  |
  **eventId** | [**number**] |  | defaults to undefined
-
-
-### Return type
-
-**number**
-
-### Authorization
-
-[OAuth2PasswordBearer](README.md#OAuth2PasswordBearer)
-
-### HTTP request headers
-
- - **Content-Type**: application/json
- - **Accept**: application/json
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-**200** | Successful Response |  -  |
-**400** | Bad Request |  -  |
-**401** | Unauthorized |  -  |
-**403** | Forbidden |  -  |
-**422** | Validation Error |  -  |
-
-[[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
-
-# **createDraftEvent**
-> number createDraftEvent()
-
-
-### Example
-
-
-```typescript
-import {  } from '';
-import * as fs from 'fs';
-
-const configuration = .createConfiguration();
-const apiInstance = new .EventsApi(configuration);
-
-let body:.EventsApiCreateDraftEventRequest = {
-  // CreateDraftEventRequest (optional)
-  createDraftEventRequest: null,
-};
-
-apiInstance.createDraftEvent(body).then((data:any) => {
-  console.log('API called successfully. Returned data: ' + data);
-}).catch((error:any) => console.error(error));
-```
-
-
-### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **createDraftEventRequest** | **CreateDraftEventRequest**|  |
 
 
 ### Return type
@@ -309,6 +254,66 @@ Name | Type | Description  | Notes
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **204** | Successful Response |  -  |
+**400** | Bad Request |  -  |
+**401** | Unauthorized |  -  |
+**403** | Forbidden |  -  |
+**422** | Validation Error |  -  |
+
+[[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
+
+# **feedbackEvent**
+> number feedbackEvent()
+
+
+### Example
+
+
+```typescript
+import {  } from '';
+import * as fs from 'fs';
+
+const configuration = .createConfiguration();
+const apiInstance = new .EventsApi(configuration);
+
+let body:.EventsApiFeedbackEventRequest = {
+  // number
+  eventId: 1,
+  // FeedbackEventRequest (optional)
+  feedbackEventRequest: null,
+};
+
+apiInstance.feedbackEvent(body).then((data:any) => {
+  console.log('API called successfully. Returned data: ' + data);
+}).catch((error:any) => console.error(error));
+```
+
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **feedbackEventRequest** | **FeedbackEventRequest**|  |
+ **eventId** | [**number**] |  | defaults to undefined
+
+
+### Return type
+
+**number**
+
+### Authorization
+
+[OAuth2PasswordBearer](README.md#OAuth2PasswordBearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Successful Response |  -  |
 **400** | Bad Request |  -  |
 **401** | Unauthorized |  -  |
 **403** | Forbidden |  -  |
@@ -709,6 +714,126 @@ No authorization required
 **400** | Bad Request |  -  |
 **401** | Unauthorized |  -  |
 **403** | Forbidden |  -  |
+
+[[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
+
+# **listingFeedbackCriteria**
+> ListingFeedbackCriteriaResponse listingFeedbackCriteria()
+
+
+### Example
+
+
+```typescript
+import {  } from '';
+import * as fs from 'fs';
+
+const configuration = .createConfiguration();
+const apiInstance = new .EventsApi(configuration);
+
+let body:.EventsApiListingFeedbackCriteriaRequest = {
+  // number
+  eventId: 1,
+};
+
+apiInstance.listingFeedbackCriteria(body).then((data:any) => {
+  console.log('API called successfully. Returned data: ' + data);
+}).catch((error:any) => console.error(error));
+```
+
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **eventId** | [**number**] |  | defaults to undefined
+
+
+### Return type
+
+**ListingFeedbackCriteriaResponse**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Successful Response |  -  |
+**400** | Bad Request |  -  |
+**401** | Unauthorized |  -  |
+**403** | Forbidden |  -  |
+**422** | Validation Error |  -  |
+
+[[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
+
+# **listingFeedbacks**
+> ListingFeedbacksResponse listingFeedbacks()
+
+
+### Example
+
+
+```typescript
+import {  } from '';
+import * as fs from 'fs';
+
+const configuration = .createConfiguration();
+const apiInstance = new .EventsApi(configuration);
+
+let body:.EventsApiListingFeedbacksRequest = {
+  // number
+  eventId: 1,
+  // number (optional)
+  perPage: 1,
+  // number (optional)
+  page: 1,
+};
+
+apiInstance.listingFeedbacks(body).then((data:any) => {
+  console.log('API called successfully. Returned data: ' + data);
+}).catch((error:any) => console.error(error));
+```
+
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **eventId** | [**number**] |  | defaults to undefined
+ **perPage** | [**number**] |  | (optional) defaults to undefined
+ **page** | [**number**] |  | (optional) defaults to undefined
+
+
+### Return type
+
+**ListingFeedbacksResponse**
+
+### Authorization
+
+[OAuth2PasswordBearer](README.md#OAuth2PasswordBearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Successful Response |  -  |
+**400** | Bad Request |  -  |
+**401** | Unauthorized |  -  |
+**403** | Forbidden |  -  |
+**422** | Validation Error |  -  |
 
 [[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
 
@@ -1476,5 +1601,3 @@ Name | Type | Description  | Notes
 **422** | Validation Error |  -  |
 
 [[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
-
-

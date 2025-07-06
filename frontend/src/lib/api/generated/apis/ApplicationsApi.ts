@@ -22,10 +22,10 @@ import type {SecurityAuthentication} from '../auth/auth';
     export class ApplicationsApiRequestFactory extends BaseAPIRequestFactory {
 
         /**
-            * Create Application Checkout Session
+            * Create Checkout Session
             * @param createApplicationRequest
         */
-        public async createApplicationCheckoutSession(createApplicationRequest?: CreateApplicationRequest, _options?: Configuration): Promise<RequestContext> {
+        public async createCheckoutSession(createApplicationRequest?: CreateApplicationRequest, _options?: Configuration): Promise<RequestContext> {
             const _config = _options || this.configuration;
 
 
@@ -113,10 +113,10 @@ import type {SecurityAuthentication} from '../auth/auth';
             * Unwraps the actual response sent by the server from the response context and deserializes the response content
             * to the expected objects
             *
-            * @params response Response returned by the server for a request to createApplicationCheckoutSession
+            * @params response Response returned by the server for a request to createCheckoutSession
             * @throws ApiException if the response code was not in [200, 299]
             */
-            public async createApplicationCheckoutSessionWithHttpInfo(response: ResponseContext): Promise<HttpInfo<CreateApplicationCheckoutSessionResponse >> {
+            public async createCheckoutSessionWithHttpInfo(response: ResponseContext): Promise<HttpInfo<CreateApplicationCheckoutSessionResponse >> {
             const contentType = ObjectSerializer.normalizeMediaType(response.headers["content-type"]);
                 if (isCodeInRange("200", response.httpStatusCode)) {
                         const body: CreateApplicationCheckoutSessionResponse = ObjectSerializer.deserialize(
@@ -173,13 +173,13 @@ import type {SecurityAuthentication} from '../auth/auth';
             * @params response Response returned by the server for a request to createFreeApplication
             * @throws ApiException if the response code was not in [200, 299]
             */
-            public async createFreeApplicationWithHttpInfo(response: ResponseContext): Promise<HttpInfo<string >> {
+            public async createFreeApplicationWithHttpInfo(response: ResponseContext): Promise<HttpInfo<number >> {
             const contentType = ObjectSerializer.normalizeMediaType(response.headers["content-type"]);
                 if (isCodeInRange("200", response.httpStatusCode)) {
-                        const body: string = ObjectSerializer.deserialize(
+                        const body: number = ObjectSerializer.deserialize(
                         ObjectSerializer.parse(await response.body.text(), contentType),
-                        "string", ""
-                        ) as string;
+                        "number", ""
+                        ) as number;
                         return new HttpInfo(response.httpStatusCode, response.headers, response.body, body);
                 }
                 if (isCodeInRange("400", response.httpStatusCode)) {
@@ -213,10 +213,10 @@ import type {SecurityAuthentication} from '../auth/auth';
 
             // Work around for missing responses in specification, e.g. for petstore.yaml
             if (response.httpStatusCode >= 200 && response.httpStatusCode <= 299) {
-                    const body: string = ObjectSerializer.deserialize(
+                    const body: number = ObjectSerializer.deserialize(
                     ObjectSerializer.parse(await response.body.text(), contentType),
-                    "string", ""
-                    ) as string;
+                    "number", ""
+                    ) as number;
                 return new HttpInfo(response.httpStatusCode, response.headers, response.body, body);
             }
 

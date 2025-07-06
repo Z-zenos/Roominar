@@ -32,5 +32,6 @@ export enum UserActionTypeCode {
     CancelTicket = 'CANCEL_TICKET',
     AddToCalendar = 'ADD_TO_CALENDAR',
     InviteFriend = 'INVITE_FRIEND',
-    AnswerApplicationSurvey = 'ANSWER_APPLICATION_SURVEY'
+    AnswerApplicationSurvey = 'ANSWER_APPLICATION_SURVEY',
+    Feedback = 'FEEDBACK'
 }
