@@ -16,7 +16,7 @@ import { CartesianGrid, Line, LineChart, Pie, PieChart, XAxis } from 'recharts';
 
 import './Ticket.css';
 import EventTicketsTable from './EventTicketsTable';
-import TicketSalesSpeedChart from './TicketSalesSpeedChart';
+// import TicketSalesSpeedChart from './TicketSalesSpeedChart';
 import dayjs from '@/src/utils/dayjs';
 
 interface AnalyzeEventTicketProps {
@@ -323,14 +323,14 @@ function AnalyzeEventTicket({ slug }: AnalyzeEventTicketProps) {
           )}
         </div>
 
-        <div className='col-span-2'>
+        {/* <div className='col-span-2'>
           {data.analyzeAdvanced && (
             <TicketSalesSpeedChart
               data={data.analyzeAdvanced.salesSpeed}
               tickets={data.overview.tickets}
             />
           )}
-        </div>
+        </div> */}
       </div>
     )
   );

@@ -14,7 +14,7 @@ from backend.schemas.application import CreateApplicationRequest
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
-async def create_application_checkout_session(
+async def create_checkout_session(
     db: Session,
     current_user: User,
     create_application_request: CreateApplicationRequest,
@@ -84,7 +84,7 @@ async def create_application_checkout_session(
             client_reference_id=transaction_reference,
             mode="payment",
             ui_mode="embedded",
-            return_url=f"{settings.WEB_URL}/tickets-n-payments",
+            return_url=f"{settings.WEB_URL}/tickets-n-payments?transaction_id={transaction_reference}",
         )
 
         return session.client_secret

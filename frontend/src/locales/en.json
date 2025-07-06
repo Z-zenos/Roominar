@@ -411,7 +411,9 @@
       "ADD_TO_CALENDAR": "add to calendar",
       "INVITE_FRIEND": "invite friend",
       "ANSWER_APPLICATION_SURVEY": "answer application survey",
-      "UNBOOKMARK": "unbookmark"
+      "UNBOOKMARK": "unbookmark",
+      "FEEDBACK": "feedback",
+      "UNFOLLOW": "unfollow"
     },
     "trackingTimeRange": {
       "TODAY": "today",

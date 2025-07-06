@@ -1,17 +1,18 @@
 from uuid import uuid4
 
-from sqlmodel import select, update
+from sqlmodel import delete, select, update
 
 from backend.background_tasks.notification_tasks import push_apply_event_notification
 from backend.celery import app
 from backend.core.constants import (
-    CurrencyCode,
     PaymentMethodCode,
+    RoleCode,
     TransactionStatusCode,
     UserActionTypeCode,
 )
 from backend.core.firebase import get_firebase_app
 from backend.db.database import SessionLocal
+from backend.models.application import Application
 from backend.models.event import Event
 from backend.models.ticket import Ticket
 from backend.models.ticket_inventory import TicketInventory
@@ -20,7 +21,6 @@ from backend.models.transaction_item import TransactionItem
 from backend.models.user import User
 from backend.models.user_action import UserAction
 from backend.services.qrcode.qrcode_service import QrcodeService
-from backend.utils.database import save
 from backend.utils.logger import logger
 
 
@@ -30,9 +30,9 @@ def process_transaction(
     event_id: int,
     user_id: int,
     application_id: int,
+    transaction_id: int,
     ticket_ids: list[int],
     total_requested_quantity: int,
-    total_amount: float,
     payment_method_code: PaymentMethodCode,
     payment_extra: dict = None,
 ):
@@ -42,11 +42,16 @@ def process_transaction(
 
     try:
         event = db.get(Event, event_id)
-        organzer = db.exec(
-            select(User).where(User.id == event.organization_id)
+        organizer = db.exec(
+            select(User).where(
+                User.organization_id == event.organization_id,
+                User.role_code == RoleCode.ORGANIZER,
+            )
         ).one_or_none()
 
-        tickets = tickets = (
+        user = db.get(User, user_id)
+
+        tickets = (
             db.exec(
                 select(
                     Ticket.__table__.columns,
@@ -64,33 +69,54 @@ def process_transaction(
             .mappings()
             .all()
         )
+
+        transaction = db.get(Transaction, transaction_id)
         if payment_method_code == PaymentMethodCode.FREE:
-            transaction = Transaction(
-                event_id=event_id,
-                application_id=application_id,
-                quantity=total_requested_quantity,
-                total_amount=total_amount,
-                status=TransactionStatusCode.SUCCESS,
-                payment_method_code=payment_method_code,
-                currency=CurrencyCode.VND,
-                exchange_rate=1.0,
+            db.exec(
+                update(Transaction)
+                .where(Transaction.id == transaction_id)
+                .values(
+                    status=TransactionStatusCode.SUCCESS,
+                )
             )
         else:
-            transaction = Transaction(
-                event_id=event_id,
-                application_id=application_id,
-                quantity=total_requested_quantity,
-                total_amount=total_amount,
-                status=TransactionStatusCode.SUCCESS,
-                payment_method_code=payment_method_code,
-                currency=CurrencyCode.VND,
-                exchange_rate=1.0,
-                **payment_extra,  # type: ignore
+            db.exec(
+                update(Transaction)
+                .where(Transaction.id == transaction_id)
+                .values(
+                    status=TransactionStatusCode.SUCCESS,
+                    stripe_payment_intent_id=payment_extra["stripe_payment_intent_id"],  # type: ignore
+                )
             )
-        transaction = save(db, transaction)
 
-        new_transaction_items = []
         update_ticket_inventories = []
+        total_purchase_amount = 0
+
+        transaction_items = db.exec(
+            select(TransactionItem).where(
+                TransactionItem.transaction_id == transaction_id
+            )
+        ).all()
+
+        update_transaction_items = []
+        for transaction_item in transaction_items:
+            qr_code_id = str(uuid4())
+            qr_data = qr_service.generate_qr_data(
+                qr_code_id=qr_code_id,
+                user_id=user_id,
+                event_id=event_id,
+            )
+            qr_img = qr_service.generate_qr_image(qr_data)
+            filename = f"qr_{qr_code_id}"
+            qr_url = qr_service.upload_qr_to_cloudinary(qr_img, filename)
+            update_transaction_items.append(
+                {
+                    "id": transaction_item.id,
+                    "status": TransactionStatusCode.SUCCESS,
+                    "qr_code_id": qr_code_id,
+                    "qr_code_url": qr_url,
+                }
+            )
 
         for ticket in tickets:
             ticket = dict(ticket)
@@ -104,44 +130,30 @@ def process_transaction(
                     "event_id": event_id,
                 }
             )
-
-            for _ in range(total_requested_quantity):
-                qr_code_id = str(uuid4())
-                qr_data = qr_service.generate_qr_data(
-                    qr_code_id=qr_code_id,
-                    user_id=user_id,
-                    event_id=event_id,
-                )
-                qr_img = qr_service.generate_qr_image(qr_data)
-                filename = f"qr_{qr_code_id}"
-                qr_url = qr_service.upload_qr_to_cloudinary(qr_img, filename)
-
-                item = TransactionItem(
-                    transaction_id=transaction.id,
-                    ticket_id=ticket["id"],
-                    amount=ticket["price"],
-                    status=TransactionStatusCode.SUCCESS,
-                    user_id=user_id,
-                    qr_code_id=qr_code_id,
-                    qr_code_url=qr_url,
-                )
-                new_transaction_items.append(item)
+            total_purchase_amount += ticket["price"]
 
         user_action = UserAction(
             user_id=user_id,
             event_id=event_id,
-            organization_id=organzer.id,
+            organization_id=organizer.id,
             action_type=UserActionTypeCode.PURCHASE_TICKET,
         )
 
         db.add(user_action)
         db.bulk_update_mappings(TicketInventory, update_ticket_inventories)
-        db.bulk_save_objects(new_transaction_items)
+        db.bulk_update_mappings(TransactionItem, update_transaction_items)
         db.exec(
             update(Event)
             .where(Event.id == event_id)
             .values(
                 sold_ticket_count=Event.sold_ticket_count + total_requested_quantity
+            )
+        )
+        db.exec(
+            update(User)
+            .where(User.id == user_id)
+            .values(
+                point=user.point - total_purchase_amount,
             )
         )
         db.commit()
@@ -153,7 +165,7 @@ def process_transaction(
         push_apply_event_notification.delay(
             event_id=event_id,
             sender_id=user_id,
-            receiver_id=organzer.id,
+            receiver_id=organizer.id,
             ticket_id=tickets[0].id,
         )
 
@@ -166,6 +178,15 @@ def process_transaction(
     except Exception as e:
         print(e)
         db.rollback()
+        db.exec(
+            delete(TransactionItem).where(
+                TransactionItem.transaction_id == transaction_id
+            )
+        )
+        db.exec(delete(Transaction).where(Transaction.id == transaction_id))
+        db.exec(delete(Application).where(Application.id == application_id))
+        db.commit()
+
         self.retry(exc=e)
         raise e
     finally:

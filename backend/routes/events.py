@@ -22,7 +22,6 @@ from backend.schemas.comment import (
     ListingEventCommentsResponse,
 )
 from backend.schemas.event import (
-    CreateDraftEventRequest,
     FeedbackEventRequest,
     GenerateEventAIRequest,
     GenerateEventAIResponse,
@@ -231,15 +230,6 @@ async def delete_event_bookmark(
     current_user: User = Depends(get_current_user),
 ):
     return await events_service.delete_event_bookmark(db, current_user, event_id)
-
-
-@router.post("/draft", response_model=int, responses=authenticated_api_responses)
-async def create_draft_event(
-    db: Session = Depends(get_read_db),
-    organizer: User = Depends(authorize_role(RoleCode.ORGANIZER)),
-    request: CreateDraftEventRequest = None,
-):
-    return await events_service.create_draft_event(db, organizer, request)
 
 
 @router.patch(
