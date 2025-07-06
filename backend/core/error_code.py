@@ -67,6 +67,9 @@ class ErrorCode:
     ERR_EVENT_NOT_ENDED = "ERR_EVENT_NOT_ENDED"
     ERR_FEEDBACK_NOT_FOUND = "ERR_FEEDBACK_NOT_FOUND"
     ERR_CANT_DELETE_FEEDBACK = "ERR_CANT_DELETE_FEEDBACK"
+    ERR_STRIPE_REFUND_FAILED = "ERR_STRIPE_REFUND_FAILED"
+    ERR_TICKET_ALREADY_REFUNDED = "ERR_TICKET_ALREADY_REFUNDED"
+    ERR_TICKET_NOT_REFUNDABLE = "ERR_TICKET_NOT_REFUNDABLE"
 
 
 class ErrorMessage:
@@ -142,3 +145,6 @@ class ErrorMessage:
     ERR_EVENT_NOT_ENDED = "The event has not ended yet."
     ERR_FEEDBACK_NOT_FOUND = "The feedback doesn't exist."
     ERR_CANT_DELETE_FEEDBACK = "You can't delete a feedback that is older than 7 days."
+    ERR_STRIPE_REFUND_FAILED = "Stripe refund failed."
+    ERR_TICKET_ALREADY_REFUNDED = "Ticket already refunded."
+    ERR_TICKET_NOT_REFUNDABLE = "Ticket not refundable."

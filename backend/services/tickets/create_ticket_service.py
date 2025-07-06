@@ -36,7 +36,7 @@ async def create_ticket(db: Session, organizer: User, request: CreateTicketReque
         sales_end_at=request.sales_end_at,
         sales_start_at=request.sales_start_at,
         description=request.description,
-        cancelable_before_at=request.sales_end_at,
+        cancelable_before_at=request.sales_end_at or event["start_at"],
     )
     try:
         ticket = save(db, ticket)

@@ -58,6 +58,7 @@ class AttendeeTicketTransaction(BaseModel):
 class ListingMyTransactionsQueryParams(BaseModel):
     keyword: str | None = Field(Query(None))
     status: TransactionStatusCode = Field(Query(default=TransactionStatusCode.SUCCESS))
+    transaction_id: int | None = Field(Query(None))
 
     page: int | None = Field(Query(default=1, le=100, ge=1))
     per_page: int | None = Field(Query(default=10, ge=1))
@@ -76,7 +77,7 @@ class ListingMyTransactionTicketItem(BaseModel):
     refund_percentage: float | None = None
     description: str | None = None
     canceled_at: datetime | None = None
-    canceled_reason_code: CancelTicketReasonCode | None = None
+    cancel_reason_code: CancelTicketReasonCode | None = None
     refunded_at: datetime | None = None
     refunded_amount: float | None = None
     note: str | None = None
@@ -96,6 +97,12 @@ class ListingMyTransactionsItem(BaseModel):
     total_amount: float
     quantity: int
     purchased_at: datetime
+    refunded_at: datetime | None = None
+    refunded_amount: float | None = None
+    refund_percentage: float | None = None
+    canceled_at: datetime | None = None
+    cancel_reason_code: CancelTicketReasonCode | None = None
+    cancellation_policy_code: TicketCancellationPolicyCode | None = None
 
     application_email: str | None = None
     application_phone_number: str | None = None

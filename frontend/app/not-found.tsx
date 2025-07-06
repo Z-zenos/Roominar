@@ -1,7 +1,16 @@
+'use client';
+
 import Logo from '@/src/component/common/Logo';
 // import { Image } from '@nextui-org/react';
+import { useEffect } from 'react';
 
-export default async function NotFound() {
+export default function NotFound() {
+  useEffect(() => {
+    setTimeout(() => {
+      window.location.href = '/home';
+    }, 2000);
+  }, []);
+
   return (
     <main className='grid min-h-full place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8'>
       <div className='text-center'>

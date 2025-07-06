@@ -215,7 +215,12 @@ def _get_tickets(db: Session, user: User, event_id: int):
             case(
                 (
                     user.id
-                    and TransactionItem.status == TransactionStatusCode.CANCELED,
+                    and TransactionItem.status.in_(
+                        [
+                            TransactionStatusCode.CANCELED,
+                            TransactionStatusCode.REFUNDED,
+                        ]
+                    ),
                     False,
                 ),
                 else_=True,

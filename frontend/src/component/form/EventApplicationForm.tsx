@@ -129,11 +129,11 @@ export default function EventApplicationForm({
   }, [JSON.stringify(form.getValues('tickets'))]);
 
   const { trigger, isMutating: isCreating } = useCreateFreeApplicationMutation({
-    onSuccess() {
+    onSuccess(transactionId) {
       toast.success('Mua vé thành công! 🎉');
       setTimeout(() => {
-        router.push('/tickets-n-payments');
-      }, 2000);
+        router.push(`/tickets-n-payments?transaction_id=${transactionId}`);
+      }, 1000);
     },
     onError: handleApiError,
   });

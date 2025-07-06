@@ -411,7 +411,9 @@
       "ADD_TO_CALENDAR": "thêm vào lịch",
       "INVITE_FRIEND": "mời bạn bè",
       "ANSWER_APPLICATION_SURVEY": "trả lời khảo sát đăng ký",
-      "UNBOOKMARK": "bỏ lưu sự kiện"
+      "UNBOOKMARK": "bỏ lưu sự kiện",
+      "FEEDBACK": "feedback",
+      "UNFOLLOW": "bỏ theo dõi"
     },
     "trackingTimeRange": {
       "TODAY": "hôm nay",

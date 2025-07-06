@@ -20,12 +20,12 @@ router = APIRouter()
     responses=authenticated_api_responses,
     response_model=CreateApplicationCheckoutSessionResponse,
 )
-async def create_application_checkout_session(
+async def create_checkout_session(
     db: Session = Depends(get_read_db),
     current_user: User = Depends(authorize_role(RoleCode.AUDIENCE)),
     create_application_request: CreateApplicationRequest = None,
 ):
-    client_secret = await application_service.create_application_checkout_session(
+    client_secret = await application_service.create_checkout_session(
         db, current_user, create_application_request
     )
     return CreateApplicationCheckoutSessionResponse(client_secret=client_secret)
@@ -34,7 +34,7 @@ async def create_application_checkout_session(
 @router.post(
     "/free-application",
     responses=authenticated_api_responses,
-    response_model=str,
+    response_model=int,
 )
 async def create_free_application(
     db: Session = Depends(get_read_db),

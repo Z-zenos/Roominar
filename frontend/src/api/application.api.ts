@@ -1,5 +1,5 @@
 import type {
-  ApplicationsApiCreateApplicationCheckoutSessionRequest,
+  ApplicationsApiCreateCheckoutSessionRequest,
   ApplicationsApiCreateFreeApplicationRequest,
   CreateApplicationCheckoutSessionResponse,
 } from '../lib/api/generated';
@@ -19,22 +19,22 @@ export const useCreateApplicationCheckoutSessionMutation = <T>(
     CreateApplicationCheckoutSessionResponse,
     T,
     typeof key,
-    ApplicationsApiCreateApplicationCheckoutSessionRequest
+    ApplicationsApiCreateCheckoutSessionRequest
   >(
     key,
     async (_: string, { arg }) =>
-      await api.applications.createApplicationCheckoutSession(arg),
+      await api.applications.createCheckoutSession(arg),
     options,
   );
 };
 
 export const useCreateFreeApplicationMutation = <T>(
-  options?: SWRMutationConfiguration<string, T>,
+  options?: SWRMutationConfiguration<number, T>,
 ) => {
   const api = useApi();
   const key = 'create-free-application';
   return useSWRMutation<
-    string,
+    number,
     T,
     typeof key,
     ApplicationsApiCreateFreeApplicationRequest
