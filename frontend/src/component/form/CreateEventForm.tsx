@@ -95,7 +95,9 @@ const CreateTicketForm = dynamic(() => import('./CreateTicketForm'), {
 
 const CreateTargetForm = dynamic(() => import('./CreateTargetForm'), {
   ssr: false,
-  loading: () => <ElementLoader title='Đang tạo form khoanh vùng mục tiêu' />,
+  loading: () => (
+    <ElementLoader title='Đang tạo form thiết lập đối tượng hướng tới' />
+  ),
 });
 
 const DraftTicketDataTable = dynamic(
@@ -880,7 +882,7 @@ export default function CreateEventForm() {
                   name='targetId'
                   control={form.control}
                   label='target'
-                  placeholder='Chọn đối tượng mục tiêu hiện có'
+                  placeholder='Chọn đối tượng hướng tới hiện có'
                   options={targetOptions?.map((to) => ({
                     value: to.id + '',
                     label: to.name,
@@ -896,7 +898,7 @@ export default function CreateEventForm() {
                 className='hover:text-primary mt-3 hover:bg-white border border-primary py-1 px-4 bg-primary text-white transition-all text-sm'
                 onClick={() => setRightSidebarContent('CREATE_TARGET')}
               >
-                Thiết lập mục tiêu mới +
+                Thiết lập đối tượng hướng tới
               </SheetTrigger>
             </div>
 

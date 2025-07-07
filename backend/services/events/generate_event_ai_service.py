@@ -16,6 +16,7 @@ genai.configure(api_key=settings.GEMINI_API_KEY)
 
 async def generate_event_content(
     db: Session,
+    organizer: User,
     request: GenerateEventAIRequest,
 ) -> dict[str, Any]:
     """
@@ -52,7 +53,7 @@ async def generate_event_content(
 
         # Construct an optimized prompt
         prompt = f"""
-            Bạn là một chuyên gia viết nội dung sự kiện với nhiều năm kinh nghiệm trong lĩnh vực marketing và tổ chức sự kiện tại Việt Nam.
+            Bạn là một chuyên gia dày dạn kinh nghiệm trong lĩnh vực sáng tạo nội dung sự kiện, từng hợp tác với các thương hiệu lớn tại Việt Nam. Bạn thấu hiểu tâm lý người tham dự, văn hóa Việt, xu hướng tổ chức sự kiện hiện đại, và có khả năng biến thông tin kỹ thuật thành nội dung truyền cảm hứng và thu hút người đọc.
 
             # THÔNG TIN SỰ KIỆN
             - Tên đề xuất: {request.name}
@@ -61,7 +62,7 @@ async def generate_event_content(
             - Thời gian diễn ra: {request.start_at.strftime('%d/%m/%Y %H:%M')} → {request.end_at.strftime('%d/%m/%Y %H:%M')} ({duration_text})
             - Đăng ký từ: {request.application_start_at.strftime('%d/%m/%Y %H:%M')} đến {request.application_end_at.strftime('%d/%m/%Y %H:%M')}
             - Giá vé: {"Miễn phí" if request.price == 0 else f"{request.price:,} VND"}
-            - Tag liên quan: {tags_text}
+            - Tag liên quan: {tags_text} (văn phong phần mô tả phải phù hợp với tag nếu có)
             - Prompt của người dùng: {request.prompt}
 
             # YÊU CẦU NỘI DUNG
@@ -74,32 +75,20 @@ async def generate_event_content(
                - Đối tượng nên tham gia
                - Lợi ích khi tham gia sự kiện
                - Nội dung chính và điểm nổi bật
-               - Thông tin đăng ký và liên hệ
+               - Lịch trình khuyến nghị - Chi tiết các hoạt động chính theo khung giờ (dạng bảng html)
+               - Thông tin đăng ký và liên hệ:
+                 - Email liên hệ: {organizer.email}
+                 - Số điện thoại: {organizer.phone}
 
-               *Định dạng: Sử dụng HTML đơn giản (thẻ <p>, <strong>, <ul>, <li>, <h3>, v.v.) và emoji phù hợp để tăng tính sinh động*
 
-            3. **Lịch trình khuyến nghị** - Chi tiết các hoạt động chính theo khung giờ
-               (Chỉ cần nếu sự kiện kéo dài trên 2 giờ)
-
-            4. **5 hashtag gợi ý** - Các hashtag phổ biến, phù hợp với chủ đề sự kiện
+               *Định dạng: Sử dụng HTML (thẻ <p>, <strong>, <ul>, <li>, <h3>, v.v.) và emoji phù hợp để tăng tính sinh động*
 
             # YÊU CẦU ĐỊNH DẠNG
             Phản hồi dưới dạng JSON với cấu trúc chính xác như sau:
             ```json
             {{
                 "title": "Tên sự kiện đầy đủ",
-                "description": "<p>Nội dung mô tả sự kiện với HTML đơn giản</p>",
-                "recommended_schedule": [
-                    {{
-                        "time": "09:00 - 09:30",
-                        "activity": "Đón tiếp khách mời và đăng ký 📋"
-                    }},
-                    {{
-                        "time": "09:30 - 10:00",
-                        "activity": "Khai mạc và giới thiệu 🎤"
-                    }}
-                ],
-                "suggested_tags": ["#TagVíDụ1", "#TagVíDụ2", "#TagVíDụ3", "#TagVíDụ4", "#TagVíDụ5"]
+                "description": "<div>Nội dung mô tả sự kiện với HTML</div>"
             }}
             ```
 
@@ -156,7 +145,7 @@ async def generate_event_ai(
     """
     try:
         # Generate AI description
-        event_data = await generate_event_content(db, request)
+        event_data = await generate_event_content(db, organizer, request)
 
         # Create a new event with AI-generated content
         # You can implement this part based on your application needs
