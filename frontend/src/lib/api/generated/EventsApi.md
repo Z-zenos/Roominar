@@ -12,6 +12,7 @@ Method | HTTP request | Description
 [**generateEventAi**](EventsApi.md#generateEventAi) | **POST** /api/v1/events/ai/draft | Generate Event Ai
 [**getDraftEvent**](EventsApi.md#getDraftEvent) | **GET** /api/v1/events/draft | Get Draft Event
 [**getEventDetail**](EventsApi.md#getEventDetail) | **GET** /api/v1/events/{slug} | Get Event Detail
+[**getEventIdBySlug**](EventsApi.md#getEventIdBySlug) | **GET** /api/v1/events/{slug}/id | Get Event Id By Slug
 [**listingEventComments**](EventsApi.md#listingEventComments) | **GET** /api/v1/events/{event_id}/comments | Listing Event Comments
 [**listingEventOptions**](EventsApi.md#listingEventOptions) | **GET** /api/v1/events/options | Listing Event Options
 [**listingEventPurchasedTickets**](EventsApi.md#listingEventPurchasedTickets) | **GET** /api/v1/events/{slug}/purchased-tickets | Listing Event Purchased Tickets
@@ -463,6 +464,63 @@ Name | Type | Description  | Notes
 ### Return type
 
 **GetEventDetailResponse**
+
+### Authorization
+
+[OAuth2PasswordBearer](README.md#OAuth2PasswordBearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Successful Response |  -  |
+**400** | Bad Request |  -  |
+**401** | Unauthorized |  -  |
+**403** | Forbidden |  -  |
+**422** | Validation Error |  -  |
+
+[[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
+
+# **getEventIdBySlug**
+> number getEventIdBySlug()
+
+
+### Example
+
+
+```typescript
+import {  } from '';
+import * as fs from 'fs';
+
+const configuration = .createConfiguration();
+const apiInstance = new .EventsApi(configuration);
+
+let body:.EventsApiGetEventIdBySlugRequest = {
+  // string
+  slug: "slug_example",
+};
+
+apiInstance.getEventIdBySlug(body).then((data:any) => {
+  console.log('API called successfully. Returned data: ' + data);
+}).catch((error:any) => console.error(error));
+```
+
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **slug** | [**string**] |  | defaults to undefined
+
+
+### Return type
+
+**number**
 
 ### Authorization
 

@@ -870,6 +870,24 @@ export class PromiseEventsApi {
     }
 
     /**
+     * Get Event Id By Slug
+     * @param slug
+     */
+    public getEventIdBySlugWithHttpInfo(slug: string, _options?: Configuration): Promise<HttpInfo<number>> {
+        const result = this.api.getEventIdBySlugWithHttpInfo(slug, _options);
+        return result.toPromise();
+    }
+
+    /**
+     * Get Event Id By Slug
+     * @param slug
+     */
+    public getEventIdBySlug(slug: string, _options?: Configuration): Promise<number> {
+        const result = this.api.getEventIdBySlug(slug, _options);
+        return result.toPromise();
+    }
+
+    /**
      * Listing Event Comments
      * @param eventId
      * @param perPage

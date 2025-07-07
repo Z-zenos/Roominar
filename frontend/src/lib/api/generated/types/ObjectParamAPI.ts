@@ -966,6 +966,15 @@ export interface EventsApiGetEventDetailRequest {
     slug: string
 }
 
+export interface EventsApiGetEventIdBySlugRequest {
+    /**
+     *
+     * @type string
+     * @memberof EventsApigetEventIdBySlug
+     */
+    slug: string
+}
+
 export interface EventsApiListingEventCommentsRequest {
     /**
      *
@@ -1621,6 +1630,22 @@ export class ObjectEventsApi {
      */
     public getEventDetail(param: EventsApiGetEventDetailRequest, options?: Configuration): Promise<GetEventDetailResponse> {
         return this.api.getEventDetail(param.slug,  options).toPromise();
+    }
+
+    /**
+     * Get Event Id By Slug
+     * @param param the request object
+     */
+    public getEventIdBySlugWithHttpInfo(param: EventsApiGetEventIdBySlugRequest, options?: Configuration): Promise<HttpInfo<number>> {
+        return this.api.getEventIdBySlugWithHttpInfo(param.slug,  options).toPromise();
+    }
+
+    /**
+     * Get Event Id By Slug
+     * @param param the request object
+     */
+    public getEventIdBySlug(param: EventsApiGetEventIdBySlugRequest, options?: Configuration): Promise<number> {
+        return this.api.getEventIdBySlug(param.slug,  options).toPromise();
     }
 
     /**

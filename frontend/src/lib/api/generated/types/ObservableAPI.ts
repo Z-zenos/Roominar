@@ -1300,6 +1300,37 @@ export class ObservableEventsApi {
     }
 
     /**
+     * Get Event Id By Slug
+     * @param slug
+     */
+    public getEventIdBySlugWithHttpInfo(slug: string, _options?: Configuration): Observable<HttpInfo<number>> {
+        const requestContextPromise = this.requestFactory.getEventIdBySlug(slug, _options);
+
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of this.configuration.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => this.configuration.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of this.configuration.middleware) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.getEventIdBySlugWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * Get Event Id By Slug
+     * @param slug
+     */
+    public getEventIdBySlug(slug: string, _options?: Configuration): Observable<number> {
+        return this.getEventIdBySlugWithHttpInfo(slug, _options).pipe(map((apiResponse: HttpInfo<number>) => apiResponse.data));
+    }
+
+    /**
      * Listing Event Comments
      * @param eventId
      * @param perPage
