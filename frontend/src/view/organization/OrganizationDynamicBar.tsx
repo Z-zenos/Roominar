@@ -30,6 +30,12 @@ const ORGANIZATION_ROUTE = [
     description: '',
     url: '/organization/events/[slug]/checkin',
   },
+  {
+    key: 'EVENT_FEEDBACK',
+    title: '',
+    description: '',
+    url: '/organization/events/[slug]/feedback',
+  },
 ];
 
 export default function OrganizationDynamicBar() {
@@ -59,7 +65,12 @@ export default function OrganizationDynamicBar() {
 
   return (
     <div>
-      {['EVENT_OVERVIEW', 'EVENT_HOME'].includes(currentRoute?.key) && (
+      {[
+        'EVENT_OVERVIEW',
+        'EVENT_HOME',
+        'EVENT_FEEDBACK',
+        'EVENT_CHECKIN',
+      ].includes(currentRoute?.key) && (
         <div
           className={clsx(styles.flexStart, 'gap-4 font-light cursor-pointer')}
         >
@@ -92,6 +103,17 @@ export default function OrganizationDynamicBar() {
             onClick={() => goToSubPage('check-in')}
           >
             Check-in
+          </div>
+
+          <div
+            className={clsx(
+              'hover:underline',
+              currentRoute.url.includes('feedback') &&
+                'text-primary font-semibold',
+            )}
+            onClick={() => goToSubPage('feedback')}
+          >
+            Feedbacks
           </div>
         </div>
       )}

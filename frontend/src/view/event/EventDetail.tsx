@@ -614,14 +614,14 @@ function EventDetail({ slug }: EventDetailProps) {
             </div>
 
             {/* === Refund Policy === */}
-            <div>
+            {/* <div>
               <h3 className='font-semibold 450px:text-lg text-xm'>
                 Chính sách hoàn tiền
               </h3>
               <div className='mt-3'>
                 <p className='font-light'>Không có chính sách hoàn tiền nào.</p>
               </div>
-            </div>
+            </div> */}
 
             {/* === Speaker === */}
             <div id='speakers'>
