@@ -13,9 +13,12 @@ import { useListingFeedbacksQuery } from '@/src/api/feedback.api';
 import type { ListingFeedbacksItem } from '@/src/lib/api/generated';
 import Spinner from '@/src/component/common/Loader/Spinner';
 import { Button } from '@nextui-org/react';
+import { usePathname } from 'next/navigation';
+import clsx from 'clsx';
 
 export default function FeedbackList({ eventId }: { eventId: number }) {
   const [feedbacks, setFeedbacks] = useState<ListingFeedbacksItem[]>([]);
+  const pathname = usePathname();
 
   const {
     data: feedbacksData,
@@ -37,7 +40,14 @@ export default function FeedbackList({ eventId }: { eventId: number }) {
   }
 
   return (
-    <div className='grid 800px:grid-cols-2 grid-cols-1 w-full gap-3 mt-4 mb-12 items-start'>
+    <div
+      className={clsx(
+        'grid w-full gap-3 mt-4 mb-12 items-start grid-cols-1',
+        pathname.includes('organization')
+          ? '800px:grid-cols-3 450px:grid-cols-2'
+          : '800px:grid-cols-2',
+      )}
+    >
       {feedbacks.map((feedback) => (
         <Card
           key={feedback.id}

@@ -172,6 +172,15 @@ async def get_event_detail(
     return await events_service.get_event_detail(db, user, slug)
 
 
+@router.get("/{slug}/id", response_model=int, responses=authenticated_api_responses)
+async def get_event_id_by_slug(
+    db: Session = Depends(get_read_db),
+    _: User = Depends(authorize_role(RoleCode.ORGANIZER)),
+    slug: str = None,
+):
+    return await events_service.get_event_id_by_slug(db, slug)
+
+
 @router.get(
     "/{slug}/purchased-tickets",
     response_model=ListingEventPurchasedTicketsResponse,
