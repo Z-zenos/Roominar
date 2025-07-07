@@ -1,7 +1,7 @@
 """update: feedback model
 
 Revision ID: 5beb679ab998
-Revises: 0e69c6562f51
+Revises: 959464705202
 Create Date: 2025-07-04 16:01:16.084363
 
 """
