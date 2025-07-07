@@ -267,3 +267,11 @@ export const useListingTrendingEventsQuery = (
     enabled,
   });
 };
+
+export const useGetEventIdBySlugQuery = (slug: string) => {
+  const api = useApi();
+  return useQuery({
+    queryKey: ['get-event-id-by-slug', slug],
+    queryFn: async () => await api.events.getEventIdBySlug({ slug }),
+  });
+};
