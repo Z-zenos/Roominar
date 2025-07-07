@@ -357,7 +357,7 @@ async def listing_feedback_criteria(
 )
 async def comment_event(
     db: Session = Depends(get_read_db),
-    user: User = Depends(authorize_role(RoleCode.AUDIENCE)),
+    user: User = Depends(get_current_user),
     request: CommentEventRequest = None,
     event_id: int = None,
 ):
