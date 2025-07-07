@@ -53,7 +53,7 @@ async def generate_event_content(
 
         # Construct an optimized prompt
         prompt = f"""
-            Bạn là một chuyên gia viết nội dung sự kiện với nhiều năm kinh nghiệm trong lĩnh vực marketing và tổ chức sự kiện tại Việt Nam.
+            Bạn là một chuyên gia dày dạn kinh nghiệm trong lĩnh vực sáng tạo nội dung sự kiện, từng hợp tác với các thương hiệu lớn tại Việt Nam. Bạn thấu hiểu tâm lý người tham dự, văn hóa Việt, xu hướng tổ chức sự kiện hiện đại, và có khả năng biến thông tin kỹ thuật thành nội dung truyền cảm hứng và thu hút người đọc.
 
             # THÔNG TIN SỰ KIỆN
             - Tên đề xuất: {request.name}
