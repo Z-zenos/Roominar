@@ -34,7 +34,7 @@ function CreateTargetForm({ onCreate }: CreateTargetFormProps) {
 
   const { trigger, isMutating: isCreating } = useCreateTargetMutation({
     onSuccess() {
-      toast.success('Tạo mục tiêu thành công! 🎉');
+      toast.success('Thiết lập đối tượng hướng tới thành công! 🎉');
       onCreate?.();
       form.reset();
     },
@@ -160,7 +160,7 @@ function CreateTargetForm({ onCreate }: CreateTargetFormProps) {
           isDisabled={!form.formState.isValid}
           type='submit'
         >
-          Tạo mục tiêu
+          Thiết lập đối tượng
         </Button>
       </form>
     </Form>
