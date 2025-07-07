@@ -107,7 +107,7 @@ async def update_comment(
 )
 async def update_comment_reply(
     db: Session = Depends(get_read_db),
-    user: User = Depends(authorize_role(RoleCode.AUDIENCE)),
+    user: User = Depends(get_current_user),
     request: UpdateCommentReplyRequest = None,
     reply_id: int = None,
 ):

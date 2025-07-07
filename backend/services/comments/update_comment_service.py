@@ -18,7 +18,7 @@ async def update_comment(
         select(Comment.__table__.columns, CommentReply.id.label("reply_id"))
         .outerjoin(CommentReply, Comment.id == CommentReply.comment_id)
         .where(Comment.id == comment_id, Comment.user_id == user.id)
-    ).one_or_none()
+    ).first()
 
     if not comment:
         raise BadRequestException(
