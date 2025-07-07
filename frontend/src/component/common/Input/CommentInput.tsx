@@ -61,7 +61,11 @@ export default function CommentInput({
               isLoading={isLoading}
               radius='sm'
               className='float-end'
-              isDisabled={status !== 'authenticated' || isLoading}
+              isDisabled={
+                status !== 'authenticated' ||
+                isLoading ||
+                !form.getValues('content')
+              }
               type='submit'
             >
               {isLoading ? 'Đang gửi...' : isUpdate ? 'Cập nhật' : 'Bình luận'}

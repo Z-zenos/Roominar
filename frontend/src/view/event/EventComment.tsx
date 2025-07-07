@@ -2,15 +2,13 @@ import {
   useCommentEventMutation,
   useListingEventCommentsQuery,
 } from '@/src/api/comment.api';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
 import type { CommentEventRequestSchema } from '@/src/schemas/event/CommentEventFormSchema';
-import { commentEventRequestSchema } from '@/src/schemas/event/CommentEventFormSchema';
 import { handleApiError } from '@/src/utils/app.util';
 import CommentInput from '@/src/component/common/Input/CommentInput';
 import Comment from '@/src/component/common/Comment/Comment';
 import { Button, Spinner } from '@nextui-org/react';
 import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 
 interface EventCommentProps {
   eventId: number;
@@ -21,28 +19,23 @@ export default function EventComment({ eventId }: EventCommentProps) {
   const [comments, setComments] = useState([]);
   const [isLoadAllComments, setIsLoadAllComments] = useState(false);
 
+  const [commentId, setCommentId] = useState<number | null>(null);
+  const [commentContent, setCommentContent] = useState<string | null>(null);
+  const { data: auth } = useSession();
+
   const {
     data: commentsData,
     isLoading: isLoadingComments,
     isPending: isFetchingComments,
-    refetch: refetchListingEventComments,
   } = useListingEventCommentsQuery({ eventId, page });
 
   const { trigger: commentEvent, isMutating: isCommenting } =
     useCommentEventMutation({
-      onSuccess() {
-        form.reset();
-        refetchListingEventComments();
+      onSuccess(commentId) {
+        setCommentId(commentId);
       },
       onError: handleApiError,
     });
-
-  const form = useForm<CommentEventRequestSchema>({
-    resolver: zodResolver(commentEventRequestSchema),
-    defaultValues: {
-      content: '',
-    },
-  });
 
   useEffect(() => {
     if (commentsData?.data) {
@@ -55,7 +48,29 @@ export default function EventComment({ eventId }: EventCommentProps) {
     }
   }, [commentsData]);
 
+  useEffect(() => {
+    if (commentId) {
+      setComments((prevComments) => [
+        {
+          id: commentId,
+          content: commentContent,
+          userId: auth?.user?.id,
+          userName: auth?.user?.firstName + ' ' + auth?.user?.lastName,
+          userAvatar: auth?.user?.avatarUrl,
+          userRole: auth?.user?.roleCode,
+          replyCount: 0,
+          voteCount: 0,
+          isPinned: false,
+          voteType: null,
+          deletedAt: null,
+        },
+        ...prevComments,
+      ]);
+    }
+  }, [commentId]);
+
   function handleCommentEvent(data: CommentEventRequestSchema) {
+    setCommentContent(data.content);
     commentEvent({
       eventId,
       commentEventRequest: {

@@ -1,6 +1,6 @@
 from sqlmodel import Date, Session, String, func, or_, select
 
-from backend.core.constants import AttendeeSortByCode
+from backend.core.constants import AttendeeSortByCode, TransactionStatusCode
 from backend.models.application import Application
 from backend.models.check_in import CheckIn
 from backend.models.event import Event
@@ -25,6 +25,10 @@ async def count_attendees(db: Session, filters: list):
         .select_from(User)
         .join(Application, Application.user_id == User.id)
         .join(Event, Event.id == Application.event_id)
+        .join(
+            Transaction,
+            Transaction.application_id == Application.id,
+        )
         .where(*filters)
     )
 
@@ -58,6 +62,7 @@ async def _get_attendees(
             Transaction.status.label("transaction_status"),
             CheckIn.id.label("check_in_id"),
         )
+        .select_from(User)
         .join(Application, Application.user_id == User.id)
         .outerjoin(CheckIn, CheckIn.application_id == Application.id)
         .join(Event, Event.id == Application.event_id)
@@ -79,7 +84,10 @@ async def _get_attendees(
 
 
 def _build_filters_sort(organizer: User, query_params: ListingAttendeesQueryParams):
-    filters = [Event.organization_id == organizer.organization_id]
+    filters = [
+        Event.organization_id == organizer.organization_id,
+        Transaction.status == TransactionStatusCode.SUCCESS,
+    ]
     sort_by = Application.created_at.desc()
     if query_params.keyword:
         filters.append(
