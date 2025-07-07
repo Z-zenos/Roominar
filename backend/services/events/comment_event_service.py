@@ -40,7 +40,7 @@ async def comment_event(
     db.exec(
         update(Event)
         .where(Event.id == event_id)
-        .values(comment_count=Event.comment_count + 1)
+        .values(comment_count=event.comment_count + 1)
     )
 
     user_action = UserAction(

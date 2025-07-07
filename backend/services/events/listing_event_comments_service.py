@@ -39,7 +39,7 @@ async def _get_all_event_comments(
             Comment.deleted_at,
         )
         .outerjoin(User, User.id == Comment.user_id)
-        .where(Comment.event_id == event_id)
+        .where(Comment.event_id == event_id, Comment.deleted_at.is_(None))
         .order_by(Comment.is_pinned.desc(), Comment.created_at.desc())
         .offset((query_params.page - 1) * query_params.per_page)
         .limit(query_params.per_page)
