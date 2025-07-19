@@ -1,19 +1,20 @@
-"""Migrate Database
+"""init migrate
 
-Revision ID: 208a06d4a9e5
+Revision ID: af7bfd807a3d
 Revises:
-Create Date: 2025-04-12 15:46:45.199167
+Create Date: 2025-07-19 04:40:04.927548
 
 """
 
 from typing import Sequence, Union
 
+import geoalchemy2
 import sqlalchemy as sa
 import sqlmodel
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "208a06d4a9e5"
+revision: str = "af7bfd807a3d"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -118,7 +119,7 @@ def upgrade() -> None:
     )
     op.create_table(
         "user_actions",
-        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("id", sa.BIGINT(), nullable=False),
         sa.Column(
             "created_at",
             sa.DateTime(timezone=True),
@@ -136,40 +137,10 @@ def upgrade() -> None:
         sa.Column("user_id", sa.Integer(), nullable=True),
         sa.Column("event_id", sa.Integer(), nullable=True),
         sa.Column("organization_id", sa.Integer(), nullable=True),
-        sa.Column(
-            "action_type",
-            sa.Enum(
-                "VIEW",
-                "BOOKMARK",
-                "SHARE",
-                "COMMENT",
-                "FOLLOW",
-                "RATE",
-                "CHECK_IN",
-                "CHECK_OUT",
-                "PURCHASE_TICKET",
-                "SEARCH",
-                "DOWNLOAD",
-                "UPGRADE_PLAN",
-                "WATCH_VIDEO",
-                "SUBMIT_SURVEY",
-                "CANCEL_TICKET",
-                "ADD_TO_CALENDAR",
-                "INVITE_FRIEND",
-                "ANSWER_APPLICATION_SURVEY",
-                name="useractiontypecode",
-            ),
-            nullable=False,
-        ),
+        sa.Column("action_type", sa.String(length=50), nullable=False),
         sa.Column("extra_info", sa.JSON(), nullable=True),
         sa.Column("ip_address", sa.String(length=45), nullable=True),
-        sa.Column(
-            "device_type",
-            sa.Enum(
-                "DESKTOP", "MOBILE", "TABLET", "WEB", "OTHER", name="devicetypecode"
-            ),
-            nullable=True,
-        ),
+        sa.Column("device_type", sa.String(length=50), nullable=True),
         sa.Column(
             "action_at",
             sa.DateTime(timezone=True),
@@ -426,6 +397,7 @@ def upgrade() -> None:
             ),
             nullable=True,
         ),
+        sa.Column("point", sa.Integer(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
@@ -451,17 +423,8 @@ def upgrade() -> None:
         sa.Column("end_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("application_start_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("application_end_at", sa.DateTime(timezone=True), nullable=True),
-        sa.Column(
-            "slug",
-            sa.String(length=36),
-            server_default=sa.text("gen_random_uuid()"),
-            nullable=False,
-        ),
-        sa.Column(
-            "status",
-            sa.Enum("PUBLIC", "DRAFT", "PRIVATE", "DEFERRED", name="eventstatuscode"),
-            nullable=True,
-        ),
+        sa.Column("slug", sa.String(length=255), nullable=False),
+        sa.Column("status", sa.String(length=50), nullable=True),
         sa.Column("total_ticket_number", sa.Integer(), nullable=True),
         sa.Column("cover_image_url", sa.String(length=2048), nullable=True),
         sa.Column("gallery", sa.ARRAY(sa.String(length=2048)), nullable=True),
@@ -471,28 +434,49 @@ def upgrade() -> None:
         sa.Column("organize_city_code", sa.String(length=50), nullable=True),
         sa.Column("organize_address", sa.String(length=255), nullable=True),
         sa.Column(
-            "meeting_tool_code",
-            sa.Enum(
-                "ZOOM",
-                "GOOGLE_MEET",
-                "DISCORD",
-                "ROOMINAR",
-                "OTHER",
-                "CONTACT_LATER",
-                name="eventmeetingtoolcode",
+            "coordinate",
+            geoalchemy2.types.Geography(
+                geometry_type="POINT",
+                srid=4326,
+                from_text="ST_GeogFromText",
+                name="geography",
             ),
             nullable=True,
         ),
+        sa.Column("lat", sa.DOUBLE_PRECISION(), nullable=True),
+        sa.Column("lng", sa.DOUBLE_PRECISION(), nullable=True),
+        sa.Column("meeting_tool_code", sa.String(length=50), nullable=True),
         sa.Column("meeting_url", sa.String(length=2048), nullable=True),
         sa.Column("survey_id", sa.Integer(), nullable=True),
         sa.Column("target_id", sa.Integer(), nullable=True),
-        sa.Column("comment", sa.Text(), nullable=True),
         sa.Column("published_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("application_form_url", sa.String(length=2048), nullable=True),
-        sa.Column("view_number", sa.Integer(), nullable=True),
         sa.Column("max_ticket_number_per_account", sa.Integer(), nullable=True),
+        sa.Column("min_ticket_price", sa.Float(), nullable=True),
+        sa.Column("request_feedback_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column(
+            "remind_start_before_10m_at", sa.DateTime(timezone=True), nullable=True
+        ),
+        sa.Column(
+            "remind_start_before_1d_at", sa.DateTime(timezone=True), nullable=True
+        ),
+        sa.Column(
+            "remind_start_before_3d_at", sa.DateTime(timezone=True), nullable=True
+        ),
+        sa.Column(
+            "remind_start_before_7d_at", sa.DateTime(timezone=True), nullable=True
+        ),
+        sa.Column("view_count", sa.Integer(), nullable=True),
+        sa.Column("bookmark_count", sa.Integer(), nullable=True),
+        sa.Column("sold_ticket_count", sa.Integer(), nullable=True),
+        sa.Column("share_count", sa.Integer(), nullable=True),
+        sa.Column("comment_count", sa.Integer(), nullable=True),
+        sa.Column("feedback_count", sa.Integer(), nullable=True),
+        sa.Column("rating_count", sa.Integer(), nullable=True),
+        sa.Column("average_rating", sa.Float(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
     )
+    op.create_index(op.f("ix_events_slug"), "events", ["slug"], unique=False)
     op.create_table(
         "notifications",
         sa.Column("id", sa.BIGINT(), nullable=False),
@@ -513,8 +497,9 @@ def upgrade() -> None:
         sa.Column("sender_id", sa.Integer(), nullable=True),
         sa.Column("receiver_id", sa.Integer(), nullable=True),
         sa.Column("content", sa.JSON(), nullable=True),
-        sa.Column("type_code", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+        sa.Column("type_code", sa.String(), nullable=False),
         sa.Column("is_read", sa.Boolean(), nullable=False),
+        sa.Column("action_url", sa.String(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
@@ -665,8 +650,10 @@ def upgrade() -> None:
         sa.Column("twitter_url", sa.String(length=2048), nullable=True),
         sa.Column("linkedin_url", sa.String(length=2048), nullable=True),
         sa.Column("youtube_url", sa.String(length=2048), nullable=True),
+        sa.Column("slug", sa.String(length=255), nullable=False),
         sa.PrimaryKeyConstraint("id"),
     )
+    op.create_index(op.f("ix_speakers_slug"), "speakers", ["slug"], unique=False)
     op.create_table(
         "tag_associations",
         sa.Column("id", sa.BIGINT(), nullable=False),
@@ -698,6 +685,41 @@ def upgrade() -> None:
             nullable=False,
         ),
         sa.PrimaryKeyConstraint("id"),
+    )
+    op.create_table(
+        "user_notification_tokens",
+        sa.Column("id", sa.BIGINT(), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column("created_by", sa.Integer(), nullable=True),
+        sa.Column("updated_by", sa.Integer(), nullable=True),
+        sa.Column("user_id", sa.Integer(), nullable=False),
+        sa.Column("fcm_token", sa.String(), nullable=False),
+        sa.Column(
+            "device_type",
+            sa.Enum(
+                "DESKTOP",
+                "ANDROID",
+                "IOS",
+                "TABLET",
+                "WEB",
+                "OTHER",
+                name="devicetypecode",
+            ),
+            nullable=True,
+        ),
+        sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("fcm_token"),
     )
     op.create_table(
         "answers",
@@ -863,6 +885,101 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
+        "comments",
+        sa.Column("id", sa.BIGINT(), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column("created_by", sa.Integer(), nullable=True),
+        sa.Column("updated_by", sa.Integer(), nullable=True),
+        sa.Column("event_id", sa.Integer(), nullable=False),
+        sa.Column("user_id", sa.Integer(), nullable=False),
+        sa.Column("content", sa.Text(), nullable=False),
+        sa.Column("is_pinned", sa.Boolean(), nullable=False),
+        sa.Column("deleted_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("deletion_reason", sa.String(length=255), nullable=True),
+        sa.Column("is_anonymous", sa.Boolean(), nullable=True),
+        sa.Column("vote_count", sa.Integer(), nullable=False),
+        sa.Column("reply_count", sa.Integer(), nullable=False),
+        sa.PrimaryKeyConstraint("id"),
+    )
+    op.create_index(
+        op.f("ix_comments_event_id"), "comments", ["event_id"], unique=False
+    )
+    op.create_index(op.f("ix_comments_user_id"), "comments", ["user_id"], unique=False)
+    op.create_table(
+        "feedback_criteria",
+        sa.Column("id", sa.BIGINT(), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column("created_by", sa.Integer(), nullable=True),
+        sa.Column("updated_by", sa.Integer(), nullable=True),
+        sa.Column("event_id", sa.Integer(), nullable=False),
+        sa.Column("name", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+        sa.PrimaryKeyConstraint("id"),
+    )
+    op.create_index(
+        op.f("ix_feedback_criteria_event_id"),
+        "feedback_criteria",
+        ["event_id"],
+        unique=False,
+    )
+    op.create_table(
+        "feedbacks",
+        sa.Column("id", sa.BIGINT(), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column("created_by", sa.Integer(), nullable=True),
+        sa.Column("updated_by", sa.Integer(), nullable=True),
+        sa.Column("event_id", sa.Integer(), nullable=False),
+        sa.Column("user_id", sa.Integer(), nullable=False),
+        sa.Column(
+            "positive_feedback", sqlmodel.sql.sqltypes.AutoString(), nullable=True
+        ),
+        sa.Column(
+            "negative_feedback", sqlmodel.sql.sqltypes.AutoString(), nullable=True
+        ),
+        sa.Column("is_anonymous", sa.Boolean(), nullable=True),
+        sa.Column("deleted_at", sa.DateTime(timezone=True), nullable=True),
+        sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("event_id", "user_id", name="uix_event_user_feedback"),
+    )
+    op.create_index(
+        op.f("ix_feedbacks_event_id"), "feedbacks", ["event_id"], unique=False
+    )
+    op.create_index(
+        op.f("ix_feedbacks_user_id"), "feedbacks", ["user_id"], unique=False
+    )
+    op.create_table(
         "site_visits",
         sa.Column("id", sa.BIGINT(), nullable=False),
         sa.Column(
@@ -886,7 +1003,13 @@ def upgrade() -> None:
         sa.Column(
             "device_type",
             sa.Enum(
-                "DESKTOP", "MOBILE", "TABLET", "WEB", "OTHER", name="devicetypecode"
+                "DESKTOP",
+                "ANDROID",
+                "IOS",
+                "TABLET",
+                "WEB",
+                "OTHER",
+                name="devicetypecode",
             ),
             nullable=True,
         ),
@@ -936,22 +1059,7 @@ def upgrade() -> None:
         sa.Column("description", sa.String(length=1024), nullable=True),
         sa.Column("price", sa.Float(), nullable=True),
         sa.Column("expired_at", sa.DateTime(timezone=True), nullable=True),
-        sa.Column(
-            "type",
-            sa.Enum(
-                "EARLY_BIRD",
-                "VIP",
-                "GROUP",
-                "CORPORATE",
-                "STUDENT",
-                "FREE",
-                "DONATION",
-                "MULTIDAY",
-                "DAY_PASS",
-                name="tickettypecode",
-            ),
-            nullable=True,
-        ),
+        sa.Column("type", sa.String(length=50), nullable=True),
         sa.Column(
             "status",
             sa.Enum("AVAILABLE", "SOLD_OUT", "CANCELED", name="ticketstatuscode"),
@@ -1007,6 +1115,111 @@ def upgrade() -> None:
         sa.Column("cancelation_fee", sa.Float(), nullable=True),
         sa.Column("refund_percentage", sa.Float(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
+    )
+    op.create_table(
+        "comment_replies",
+        sa.Column("id", sa.BIGINT(), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column("created_by", sa.Integer(), nullable=True),
+        sa.Column("updated_by", sa.Integer(), nullable=True),
+        sa.Column("comment_id", sa.Integer(), nullable=False),
+        sa.Column("user_id", sa.Integer(), nullable=False),
+        sa.Column("content", sa.Text(), nullable=False),
+        sa.Column("deleted_at", sa.DateTime(timezone=True), nullable=True),
+        sa.PrimaryKeyConstraint("id"),
+    )
+    op.create_index(
+        op.f("ix_comment_replies_comment_id"),
+        "comment_replies",
+        ["comment_id"],
+        unique=False,
+    )
+    op.create_index(
+        op.f("ix_comment_replies_user_id"), "comment_replies", ["user_id"], unique=False
+    )
+    op.create_table(
+        "comment_votes",
+        sa.Column("id", sa.BIGINT(), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column("created_by", sa.Integer(), nullable=True),
+        sa.Column("updated_by", sa.Integer(), nullable=True),
+        sa.Column("comment_id", sa.Integer(), nullable=False),
+        sa.Column("user_id", sa.Integer(), nullable=False),
+        sa.Column(
+            "vote_type",
+            sa.Enum("UPVOTE", "DOWNVOTE", name="votetypecode"),
+            nullable=False,
+        ),
+        sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("comment_id", "user_id", name="uix_comment_user_vote"),
+    )
+    op.create_index(
+        op.f("ix_comment_votes_comment_id"),
+        "comment_votes",
+        ["comment_id"],
+        unique=False,
+    )
+    op.create_index(
+        op.f("ix_comment_votes_user_id"), "comment_votes", ["user_id"], unique=False
+    )
+    op.create_table(
+        "feedback_scores",
+        sa.Column("id", sa.BIGINT(), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column("created_by", sa.Integer(), nullable=True),
+        sa.Column("updated_by", sa.Integer(), nullable=True),
+        sa.Column("feedback_id", sa.Integer(), nullable=False),
+        sa.Column("criteria_id", sa.Integer(), nullable=False),
+        sa.Column("score", sa.Integer(), nullable=False),
+        sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint(
+            "feedback_id", "criteria_id", name="uix_feedback_criteria_score"
+        ),
+    )
+    op.create_index(
+        op.f("ix_feedback_scores_criteria_id"),
+        "feedback_scores",
+        ["criteria_id"],
+        unique=False,
+    )
+    op.create_index(
+        op.f("ix_feedback_scores_feedback_id"),
+        "feedback_scores",
+        ["feedback_id"],
+        unique=False,
     )
     op.create_table(
         "survey_response_results",
@@ -1110,6 +1323,9 @@ def upgrade() -> None:
             sqlmodel.sql.sqltypes.AutoString(),
             nullable=True,
         ),
+        sa.Column(
+            "stripe_refund_id", sqlmodel.sql.sqltypes.AutoString(), nullable=True
+        ),
         sa.Column("reference", sqlmodel.sql.sqltypes.AutoString(), nullable=True),
         sa.Column(
             "status",
@@ -1202,7 +1418,15 @@ def upgrade() -> None:
         ),
         sa.Column("canceled_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("user_id", sa.Integer(), nullable=True),
+        sa.Column("qr_code_id", sa.String(length=64), nullable=True),
+        sa.Column("qr_code_url", sa.String(length=1024), nullable=True),
         sa.PrimaryKeyConstraint("id"),
+    )
+    op.create_index(
+        op.f("ix_transaction_items_qr_code_id"),
+        "transaction_items",
+        ["qr_code_id"],
+        unique=False,
     )
     op.create_table(
         "check_ins",
@@ -1233,30 +1457,75 @@ def upgrade() -> None:
         ),
         sa.Column("note", sa.String(length=255), nullable=True),
         sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint(
+            "event_id", "transaction_item_id", name="uix_event_transaction_item_checkin"
+        ),
     )
     # ### end Alembic commands ###
 
 
 def downgrade() -> None:
     # ### commands auto generated by Alembic - please adjust! ###
+    op.create_table(
+        "spatial_ref_sys",
+        sa.Column("srid", sa.INTEGER(), autoincrement=False, nullable=False),
+        sa.Column(
+            "auth_name", sa.VARCHAR(length=256), autoincrement=False, nullable=True
+        ),
+        sa.Column("auth_srid", sa.INTEGER(), autoincrement=False, nullable=True),
+        sa.Column(
+            "srtext", sa.VARCHAR(length=2048), autoincrement=False, nullable=True
+        ),
+        sa.Column(
+            "proj4text", sa.VARCHAR(length=2048), autoincrement=False, nullable=True
+        ),
+        sa.CheckConstraint(
+            "srid > 0 AND srid <= 998999", name="spatial_ref_sys_srid_check"
+        ),
+        sa.PrimaryKeyConstraint("srid", name="spatial_ref_sys_pkey"),
+    )
     op.drop_table("check_ins")
+    op.drop_index(
+        op.f("ix_transaction_items_qr_code_id"), table_name="transaction_items"
+    )
     op.drop_table("transaction_items")
     op.drop_table("transactions")
     op.drop_table("ticket_inventories")
     op.drop_table("survey_response_results")
+    op.drop_index(op.f("ix_feedback_scores_feedback_id"), table_name="feedback_scores")
+    op.drop_index(op.f("ix_feedback_scores_criteria_id"), table_name="feedback_scores")
+    op.drop_table("feedback_scores")
+    op.drop_index(op.f("ix_comment_votes_user_id"), table_name="comment_votes")
+    op.drop_index(op.f("ix_comment_votes_comment_id"), table_name="comment_votes")
+    op.drop_table("comment_votes")
+    op.drop_index(op.f("ix_comment_replies_user_id"), table_name="comment_replies")
+    op.drop_index(op.f("ix_comment_replies_comment_id"), table_name="comment_replies")
+    op.drop_table("comment_replies")
     op.drop_table("tickets")
     op.drop_index(op.f("ix_site_visits_visited_at"), table_name="site_visits")
     op.drop_index(op.f("ix_site_visits_organization_id"), table_name="site_visits")
     op.drop_index(op.f("ix_site_visits_ip_address"), table_name="site_visits")
     op.drop_index(op.f("ix_site_visits_event_id"), table_name="site_visits")
     op.drop_table("site_visits")
+    op.drop_index(op.f("ix_feedbacks_user_id"), table_name="feedbacks")
+    op.drop_index(op.f("ix_feedbacks_event_id"), table_name="feedbacks")
+    op.drop_table("feedbacks")
+    op.drop_index(op.f("ix_feedback_criteria_event_id"), table_name="feedback_criteria")
+    op.drop_table("feedback_criteria")
+    op.drop_index(op.f("ix_comments_user_id"), table_name="comments")
+    op.drop_index(op.f("ix_comments_event_id"), table_name="comments")
+    op.drop_table("comments")
     op.drop_table("bookmarks")
     op.drop_table("applications")
     op.drop_table("answers")
+    op.drop_table("user_notification_tokens")
     op.drop_table("tag_associations")
+    op.drop_index(op.f("ix_speakers_slug"), table_name="speakers")
     op.drop_table("speakers")
     op.drop_table("questions")
     op.drop_table("notifications")
+    op.drop_index(op.f("ix_events_slug"), table_name="events")
+    op.drop_index("idx_events_coordinate", table_name="events", postgresql_using="gist")
     op.drop_table("events")
     op.drop_table("users")
     op.drop_table("targets")

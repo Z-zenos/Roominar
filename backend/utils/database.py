@@ -13,7 +13,7 @@ def save(db: Session, object: BaseModel):
 
 
 def fetch_one(db: Session, query: Any) -> dict[str, Any] | None:
-    ret = db.exec(query).one_or_none()
+    ret = db.execute(query).one_or_none()
     return ret if ret else None
 
 
