@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlmodel import Session
+from sqlmodel import Session, update
 
 from backend.core.constants import RoleCode
 from backend.core.error_code import ErrorCode
@@ -9,7 +9,6 @@ from backend.mails.mail import Email
 from backend.models.user import User
 from backend.schemas.auth import ChangePasswordRequest
 from backend.services.auth.password_service import get_password_hash, verify_password
-from backend.utils.database import save
 
 
 async def change_password(
@@ -21,17 +20,20 @@ async def change_password(
         )
 
     try:
-        current_user.password = get_password_hash(request.new_password)
-        current_user.password_changed_at = datetime.now()
-        current_user.updated_by = current_user.id
-
-        current_user = save(db, current_user)
+        now = datetime.now()
+        db.exec(
+            update(User)
+            .where(User.id == current_user.id)
+            .values(
+                password=get_password_hash(request.new_password),
+                password_changed_at=now,
+                updated_by=current_user.id,
+            )
+        )
 
         context = {
             "first_name": f"{current_user.first_name}",
-            "password_changed_at": current_user.password_changed_at.strftime(
-                "%Y/%m/%d %H:%M"
-            ),
+            "password_changed_at": now.strftime("%Y/%m/%d %H:%M"),
         }
 
         mailer = Email()
@@ -42,8 +44,6 @@ async def change_password(
                 "Updated password",
                 context,
             )
-
-        return current_user
 
     except Exception as e:
         db.rollback()

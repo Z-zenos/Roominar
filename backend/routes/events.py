@@ -58,12 +58,12 @@ router = APIRouter()
     response_model=SearchEventsResponse,
     responses=public_api_responses,
 )
-async def search_events(
+def search_events(
     db: Session = Depends(get_read_db),
     user: User | None = Depends(get_user_if_logged_in),
     query_params: SearchEventsQueryParams = Depends(SearchEventsQueryParams),
 ):
-    events, total = await events_service.search_events(db, user, query_params)
+    events, total = events_service.search_events(db, user, query_params)
 
     return SearchEventsResponse(
         page=query_params.page, per_page=query_params.per_page, total=total, data=events

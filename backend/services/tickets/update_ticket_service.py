@@ -1,4 +1,4 @@
-from sqlmodel import Session, select
+from sqlmodel import Session, select, update
 
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
@@ -26,20 +26,24 @@ async def update_ticket(
             ErrorMessage.ERR_TICKET_NOT_FOUND,
         )
 
-    ticket.name = request.name
-    ticket.quantity = request.quantity
-    ticket.price = request.price
-    ticket.expired_at = request.expired_at
-    ticket.type = request.type
-    ticket.delivery_method = request.delivery_method
-    ticket.access_link_url = request.access_link_url
-    ticket.sales_end_at = request.sales_end_at
-    ticket.sales_start_at = request.sales_start_at
-    ticket.description = request.description
-
     try:
-        ticket = save(db, ticket)
-
+        db.exec(
+            update(Ticket)
+            .where(Ticket.id == ticket_id)
+            .values(
+                name=request.name,
+                quantity=request.quantity,
+                price=request.price,
+                expired_at=request.expired_at,
+                type=request.type,
+                delivery_method=request.delivery_method,
+                access_link_url=request.access_link_url,
+                sales_end_at=request.sales_end_at,
+                sales_start_at=request.sales_start_at,
+                description=request.description,
+            )
+        )
+        ticket = db.get(Ticket, ticket_id)
         return ticket
     except Exception as e:
         db.rollback()

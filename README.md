@@ -172,5 +172,11 @@
 ## Testing
 
 - Install: `pip install --upgrade fastapi starlette`
+- Running testing for each folder:
+
+```bash
+  poetry shell
+  pytest backend/tests/integration/auth/ -v -s
+```
 
 # ROOMINAR

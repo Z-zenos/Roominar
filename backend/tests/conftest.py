@@ -1,5 +1,7 @@
 import pytest
+import pytest_asyncio
 from fastapi.testclient import TestClient
+from httpx import ASGITransport, AsyncClient
 from sqlalchemy.exc import OperationalError as SQLAlchemyOperationalError
 from sqlalchemy.orm import declarative_base
 from sqlmodel import Session, StaticPool, create_engine
@@ -84,6 +86,34 @@ def client(db_session):
         yield client
 
 
+@pytest_asyncio.fixture
+async def async_client(db_session: Session):
+    def override_get_db():
+        try:
+            yield db_session
+        finally:
+            db_session.close()
+
+    app.dependency_overrides[get_read_db] = override_get_db
+
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        yield client
+
+
+@pytest.fixture(scope="function")
+def authenticated_client(client: TestClient, db_session: Session):
+    token = token_service.gen_auth_token(
+        User(
+            email="test@gmail.com",
+            role_code=RoleCode.AUDIENCE,
+        ),
+        remember_me=True,
+    )
+    client.headers.update({"Authorization": f"Bearer {token['access_token']}"})
+    return client
+
+
 @pytest.fixture(scope="function")
 def authenticated_organizer_client(client: TestClient, db_session: Session):
     # user = User(
@@ -96,7 +126,7 @@ def authenticated_organizer_client(client: TestClient, db_session: Session):
     # db_session.commit()
     token = token_service.gen_auth_token(
         User(
-            email="org@gmail.com",
+            email="test@example.com",
             role_code=RoleCode.ORGANIZER,
         ),
         remember_me=True,
