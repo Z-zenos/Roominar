@@ -1,7 +1,8 @@
 from datetime import datetime
 from typing import Any, Optional
 
-from sqlalchemy.ext.declarative import declarative_base
+# SQLAlchemy 2.0: declarative_base moved to sqlalchemy.orm (removes deprecation warning)
+from sqlalchemy.orm import declarative_base
 from sqlmodel import BIGINT, DateTime, Field, SQLModel, func
 
 Base = declarative_base()

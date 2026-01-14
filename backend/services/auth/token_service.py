@@ -105,3 +105,13 @@ def gen_payment_session_token(
         f"session:{session_token}", 3600
     )  # Hết hạn sau 1 giờ
     return session_token
+
+
+def decode_token(token: str):
+    try:
+        payload = jwt.decode(
+            token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
+        )
+        return payload
+    except JWTError:
+        raise BadRequestException(ErrorCode.ERR_INVALID_TOKEN)

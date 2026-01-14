@@ -70,6 +70,7 @@ class ErrorCode:
     ERR_STRIPE_REFUND_FAILED = "ERR_STRIPE_REFUND_FAILED"
     ERR_TICKET_ALREADY_REFUNDED = "ERR_TICKET_ALREADY_REFUNDED"
     ERR_TICKET_NOT_REFUNDABLE = "ERR_TICKET_NOT_REFUNDABLE"
+    ERR_TICKET_ALREADY_CHECKED_IN = "ERR_TICKET_ALREADY_CHECKED_IN"
 
 
 class ErrorMessage:
@@ -148,3 +149,4 @@ class ErrorMessage:
     ERR_STRIPE_REFUND_FAILED = "Hoàn tiền qua Stripe thất bại."
     ERR_TICKET_ALREADY_REFUNDED = "Vé đã được hoàn tiền trước đó."
     ERR_TICKET_NOT_REFUNDABLE = "Vé không được phép hoàn tiền."
+    ERR_TICKET_ALREADY_CHECKED_IN = "Vé đã được check-in."

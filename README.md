@@ -1,4 +1,5 @@
 # Roominar
+
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Z-zenos/Roominar)
 
 ### FastAPI - PostgreSQL - Next.js 14 (CSR)
@@ -166,6 +167,16 @@
 ```bash
   watchmedo auto-restart --directory=./ --pattern=*.py --recursive -- celery -A backend.celery worker --loglevel=info --logfile=backend/logs/celery.log
   watchmedo auto-restart --directory=./ --pattern=*.py --recursive -- celery -A backend.celery beat --loglevel=info --logfile=backend/logs/celery-beat.log
+```
+
+## Testing
+
+- Install: `pip install --upgrade fastapi starlette`
+- Running testing for each folder:
+
+```bash
+  poetry shell
+  pytest backend/tests/integration/auth/ -v -s
 ```
 
 # ROOMINAR

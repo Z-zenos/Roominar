@@ -12,9 +12,7 @@ import { handleApiError, timeAgo } from '@/src/utils/app.util';
 import {
   useDeleteCommentMutation,
   useListingCommentRepliesQuery,
-  usePinCommentMutation,
   useReplyCommentMutation,
-  useUnpinCommentMutation,
   useUpdateCommentMutation,
   useVoteCommentMutation,
 } from '@/src/api/comment.api';
@@ -43,8 +41,9 @@ export default function Comment({ comment }: CommentProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [userVote, setUserVote] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [isViewingReplies, setIsViewingReplies] = useState(false);
+  const [content, setContent] = useState(comment.content);
 
   const [page, setPage] = useState(1);
   const [isLoadAllReplies, setIsLoadAllReplies] = useState(false);
@@ -63,12 +62,18 @@ export default function Comment({ comment }: CommentProps) {
     page > 1,
   );
 
+  const { trigger: replyComment, isMutating: isReplyingComment } =
+    useReplyCommentMutation({
+      onSuccess() {
+        setIsViewingReplies(true);
+        refetchListingCommentReplies();
+      },
+      onError: handleApiError,
+    });
+
   useEffect(() => {
     if (listingCommentRepliesData?.data) {
-      setReplies((prevReplies) => [
-        ...prevReplies,
-        ...listingCommentRepliesData.data,
-      ]);
+      setReplies([...listingCommentRepliesData.data]);
     }
     if (listingCommentRepliesData?.data?.length === 0) {
       setIsLoadAllReplies(true);
@@ -77,17 +82,10 @@ export default function Comment({ comment }: CommentProps) {
     }
   }, [listingCommentRepliesData]);
 
-  const { trigger: replyComment, isMutating: isReplyingComment } =
-    useReplyCommentMutation({
-      onSuccess() {},
-      onError: handleApiError,
-    });
-
   const { trigger: updateComment, isMutating: isUpdating } =
     useUpdateCommentMutation({
       onSuccess() {
         setIsEditing(false);
-        refetchListingCommentReplies();
       },
       onError: handleApiError,
     });
@@ -96,23 +94,10 @@ export default function Comment({ comment }: CommentProps) {
     useDeleteCommentMutation({
       onSuccess() {
         setIsVisible(false);
+        onClose();
       },
       onError: handleApiError,
     });
-
-  const { trigger: pinComment } = usePinCommentMutation({
-    onSuccess() {
-      // setIsPinning(false);
-    },
-    onError: handleApiError,
-  });
-
-  const { trigger: unpinComment } = useUnpinCommentMutation({
-    onSuccess() {
-      // setIsUnpinning(false);
-    },
-    onError: handleApiError,
-  });
 
   const { trigger: voteComment } = useVoteCommentMutation({
     onSuccess() {
@@ -187,6 +172,7 @@ export default function Comment({ comment }: CommentProps) {
   };
 
   const handleUpdateComment = (data: CommentEventRequestSchema) => {
+    setContent(data.content);
     updateComment({
       commentId: comment.id,
       updateEventCommentRequest: {
@@ -236,7 +222,7 @@ export default function Comment({ comment }: CommentProps) {
                   <>
                     <p className='text-Grayish-Blue my-3 break-words font-light'>
                       {/* <span className='text-Moderate-blue font-bold'>{replyTag}</span>{' '} */}
-                      {comment.content}
+                      {content}
                     </p>
                     <div className='flex space-x-4'>
                       <div className='flex gap-4 items-center justify-around space-x-4 md:space-x-0 mr-5 px-2 rounded-md'>
@@ -264,11 +250,17 @@ export default function Comment({ comment }: CommentProps) {
                           onClick={handleEditComment}
                         />
                       )}
-                      <span className={clsx(styles.flexStart, 'gap-2')}>
-                        <BsReplyAll
-                          className='cursor-pointer min-w-5 min-h-5'
-                          onClick={handleOpenReplyInput}
-                        />
+                      <span
+                        className={clsx(
+                          styles.flexStart,
+                          'gap-2 cursor-pointer',
+                        )}
+                        onClick={handleOpenReplyInput}
+                      >
+                        <span className='text-Grayish-Blue text-sm'>
+                          phản hồi
+                        </span>
+                        <BsReplyAll className='cursor-pointer min-w-5 min-h-5' />
                       </span>
                     </div>
                   </>
@@ -276,7 +268,7 @@ export default function Comment({ comment }: CommentProps) {
                   <CommentInput
                     onSubmit={handleUpdateComment}
                     isLoading={isUpdating}
-                    defaultContent={comment.content}
+                    defaultContent={content}
                     isUpdate={true}
                     onCancel={() => setIsEditing(false)}
                   />
@@ -350,6 +342,7 @@ export default function Comment({ comment }: CommentProps) {
         onOpenChange={onOpenChange}
         onConfirm={handleDeleteComment}
         confirmLabel='Xóa'
+        isLoading={isDeleting}
       />
     </>
   );

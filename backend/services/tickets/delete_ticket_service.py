@@ -1,4 +1,4 @@
-from sqlmodel import Session, select
+from sqlmodel import Session, delete, select
 
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
@@ -24,7 +24,7 @@ async def delete_ticket(db: Session, organizer: User, ticket_id: int):
         )
 
     try:
-        db.delete(ticket)
+        db.exec(delete(Ticket).where(Ticket.id == ticket_id))
         db.commit()
     except Exception as e:
         db.rollback()

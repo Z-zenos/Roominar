@@ -1,7 +1,7 @@
 from datetime import datetime
 
 import pytz
-from sqlmodel import Date, Session, and_, asc, case, desc, exists, func, or_, select
+from sqlmodel import Session, and_, asc, case, desc, exists, func, or_, select
 
 from backend.core.constants import (
     EventSortByCode,
@@ -19,7 +19,7 @@ from backend.models.user import User
 from backend.schemas.event import SearchEventsQueryParams
 
 
-async def search_events(
+def search_events(
     db: Session,
     user: User | None,
     query_params: SearchEventsQueryParams,
@@ -172,7 +172,7 @@ def _build_filters_sort(query_params: SearchEventsQueryParams):
         filters.append(Event.application_end_at < datetime.now(pytz.utc))
 
     if query_params.is_today:
-        filters.append(Event.start_at.date() == datetime.now(pytz.utc).date())
+        filters.append(func.date(Event.start_at) == datetime.now(pytz.utc).date())
 
     if query_params.job_type_codes:
         filters.append(
@@ -200,13 +200,13 @@ def _build_filters_sort(query_params: SearchEventsQueryParams):
 
     if query_params.start_at_from:
         filters.append(
-            Event.start_at.cast(Date)
+            func.date(Event.start_at)
             >= datetime.strptime(query_params.start_at_from, "%Y-%m-%d").date()
         )
 
     if query_params.start_at_to:
         filters.append(
-            Event.start_at.cast(Date)
+            func.date(Event.start_at)
             <= datetime.strptime(query_params.start_at_to, "%Y-%m-%d").date()
         )
 

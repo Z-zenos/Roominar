@@ -37,6 +37,26 @@ services:
       timeout: 5s
       retries: 5
 
+  db-test:
+    container_name: roominar-db-test
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile.postgres
+    restart: unless-stopped
+    volumes:
+      - postgres-data-test:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - 5433:5432
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   stripe:
     image: stripe/stripe-cli
     container_name: stripe-cli
@@ -85,6 +105,7 @@ services:
 
 volumes:
   postgres-data:
+  postgres-data-test:
 
 networks:
   default:

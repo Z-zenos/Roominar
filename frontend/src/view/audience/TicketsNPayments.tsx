@@ -598,6 +598,7 @@ function TicketsNPayment() {
                                 isSelected={selectedTickets.some(
                                   (t) => t.id === ticket.id,
                                 )}
+                                isDisabled={!!ticket.checkInAt}
                               >
                                 <div className='w-full flex justify-between items-center gap-2'>
                                   <div className='font-normal w-full'>
@@ -759,7 +760,7 @@ function TicketsNPayment() {
                           isDisabled={!selectedTickets.length}
                           className='mt-6 mx-auto block w-[200px]'
                         >
-                          Huỷ
+                          {isCanceling ? 'Đang huỷ...' : 'Xác nhận huỷ vé'}
                         </Button>
                       </div>
                     ),

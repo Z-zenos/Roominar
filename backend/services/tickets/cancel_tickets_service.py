@@ -14,6 +14,7 @@ from backend.core.constants import (
 from backend.core.error_code import ErrorCode, ErrorMessage
 from backend.core.exception import BadRequestException
 from backend.models import (
+    CheckIn,
     Event,
     Ticket,
     TicketInventory,
@@ -30,6 +31,17 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 async def cancel_tickets(db: Session, user: User, request: CancelTicketsRequest):
     try:
         now = datetime.now(pytz.utc)
+
+        check_in = db.exec(
+            select(CheckIn).where(
+                CheckIn.transaction_item_id == request.transaction_item_id
+            )
+        ).one_or_none()
+        if check_in:
+            raise BadRequestException(
+                ErrorCode.ERR_TICKET_ALREADY_CHECKED_IN,
+                ErrorMessage.ERR_TICKET_ALREADY_CHECKED_IN,
+            )
 
         ticket = (
             db.exec(

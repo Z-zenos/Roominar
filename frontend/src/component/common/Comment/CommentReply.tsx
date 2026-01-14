@@ -16,6 +16,7 @@ import { PiTrashThin } from 'react-icons/pi';
 import { toast } from 'react-hot-toast';
 import clsx from 'clsx';
 import { styles } from '@/src/constants/styles.constant';
+import type { CommentEventRequestSchema } from '@/src/schemas/event/CommentEventFormSchema';
 
 interface CommentReplyProps {
   commentId: number;
@@ -32,7 +33,8 @@ export default function CommentReply({
   const [isReplying, setIsReplying] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const [content, setContent] = useState(reply.content);
 
   const { trigger: replyComment, isMutating: isReplyingComment } =
     useReplyCommentMutation({
@@ -43,18 +45,20 @@ export default function CommentReply({
       onError: handleApiError,
     });
 
-  const { trigger: updateCommentReply } = useUpdateCommentReplyMutation({
-    onSuccess() {
-      setIsEditing(false);
-      refetch();
-    },
-    onError: handleApiError,
-  });
+  const { trigger: updateCommentReply, isMutating: isUpdating } =
+    useUpdateCommentReplyMutation({
+      onSuccess() {
+        setIsEditing(false);
+        refetch();
+      },
+      onError: handleApiError,
+    });
 
   const { trigger: deleteCommentReply } = useDeleteCommentReplyMutation({
     onSuccess() {
       setIsVisible(false);
       refetch();
+      onClose();
     },
     onError: handleApiError,
   });
@@ -67,8 +71,13 @@ export default function CommentReply({
     deleteCommentReply({ replyId: reply.id });
   };
 
-  const handleEditComment = () => {
-    setIsEditing(true);
+  const handleEditComment = (data: CommentEventRequestSchema) => {
+    updateCommentReply({
+      replyId: reply.id,
+      updateCommentReplyRequest: {
+        content: data.content,
+      },
+    });
   };
 
   const handleReplyComment = () => {
@@ -128,7 +137,7 @@ export default function CommentReply({
                       {reply.userId === auth?.user?.id && (
                         <CiEdit
                           className='cursor-pointer min-w-5 min-h-5'
-                          onClick={handleEditComment}
+                          onClick={() => setIsEditing(true)}
                         />
                       )}
                       <span
@@ -145,15 +154,11 @@ export default function CommentReply({
                   </>
                 )) || (
                   <CommentInput
-                    onSubmit={(data) => {
-                      replyComment({
-                        commentId: commentId,
-                        createCommentReplyRequest: {
-                          content: data.content,
-                        },
-                      });
-                    }}
-                    isLoading={isReplyingComment}
+                    onSubmit={handleEditComment}
+                    isLoading={isUpdating}
+                    defaultContent={content}
+                    isUpdate={true}
+                    onCancel={() => setIsEditing(false)}
                   />
                 )}
               </>
@@ -163,6 +168,7 @@ export default function CommentReply({
           {isReplying && (
             <CommentInput
               onSubmit={(data) => {
+                setContent(data.content);
                 replyComment({
                   commentId: commentId,
                   createCommentReplyRequest: {
